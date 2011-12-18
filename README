@@ -3,7 +3,7 @@
 
  Rivetweb is a Tcl based engine for creating static template based websites.
 
- Rivetweb could be your tool if your goal is generation and update 
+ Rivetweb could useful if your goal is generation and update 
 of small to medium sized web sites bearing static content. Rivetweb maintains
 strict separation between content, representation and structure of the web site,
 it's template based, so you can easily change the XHTML/CSS code underlying
@@ -11,10 +11,10 @@ your pages and produce a whole entirely re-styled web site in seconds.
 
  Rivetweb is perfect when you have to create a website whose content is slowly
 changing, for example when pages must provide structural information about 
-working groups, small firms or technical documentation.  (Think of it: most 
-of what you deal with every day on the internet for technical documentation 
-is a different beast from Facebook or Youtube and changes at a much slower 
-pace) 
+working groups, small firms or technical documentation.  
+
+ Rivetweb is not meant to run fast changing dynamic content. It's focused
+on manageability and extensibility for HTML generation.
 
  Using Rivetweb with Apache's mod_rewrite you can let your 
 dynamically generated pages appear as if every internal link is
@@ -22,19 +22,24 @@ is pointing to good old static .html file. Therefore you can fake
 your website to be made out of only static HTML pages and generate an
 entirely static copy of them for both on-line and off-line browsing
 
- A Rivetweb web site can be running with several XHTML/CSS templates at the same 
-time, you just switch from one to another by passing the 'template' parameter 
-in the URL. This might be useful if you want to test different styles, 
-compare them and let your customers decide which is best to their taste.
-
- Rivetweb is based on Rivet (http://tcl.apache.org/rivet/) a Tcl based 
-programming suite and module for the Apache HTTP Webserver. 
-
  As a consequence, by means of any mirror tool (e.g. wget) you can recreate a 
 local copy of the website completely rewritten in .html files. This copy can 
 be thus deployed with *any* webserver or even distributed on a Pendrive or 
 a CD-ROM for offline browsing.
 
-Rivetweb is entirely free and released under GPL2+ licence.
+ A Rivetweb web site can be running several XHTML/CSS templates at the same 
+time, you just switch from one to another by passing the 'template' parameter 
+in the URL. This might be useful if you want to test different styles, 
+compare them and let your customers decide which is best to their taste.
+
+ Rivetweb is thought to be multilingual. Provided pages and other
+resources are translated, the whole content can be served in multiple
+languages. This is useful if you are generating multi language 
+documentation.
+
+ Rivetweb is based on Rivet (http://tcl.apache.org/rivet/). Rivet is a
+module and a Tcl programming suite for the Apache HTTP Webserver. 
+
+Rivetweb is entirely free and released under BSD licence.
 
 $Id: README 2092 2011-12-14 11:41:36Z massimo.manghi $
