@@ -1,0 +1,55 @@
+<page id="templates">
+    <ident>$Id: index.xml 2095 2011-12-14 17:40:52Z massimo.manghi $</ident>
+    <author>$Author: massimo.manghi $</author>
+    <date>$Date: 2011-12-14 18:40:52 +0100 (Wed, 14 Dec 2011) $</date>
+    <title>Modello di Pagina</title>
+    <headline>Modello di Pagina</headline>
+    <menu position="left">root,level1</menu>
+    <content>
+    	<title>Pagina Modello del Sito</title>
+    	<headline>Modello per una pagina di contenuti</headline>
+        <pagetext>
+            <!-- all'interno di pagetext va un testo xhtml valido  -->
+            <programlisting>
+    RivetServerConf ChildInitScript     "cd /home/manghi/www/mastergcf"
+    RivetServerConf ChildInitScript     "source init.tcl"
+    RivetServerConf ChildExitScript     "cd /home/manghi/www/mastergcf"
+    RivetServerConf ChildExitScript     "source exit.tcl"
+    RivetServerConf BeforeScript        "cd /home/manghi/www/mastergcf"
+    RivetServerConf BeforeScript        "source before.tcl"
+    RivetServerConf UploadFilesToVar    yes
+    RivetServerConf UploadDirectory     /tmp/</programlisting>
+            <div>
+            <p style="background: lightblue; border: 2px solid black; padding: 2em">
+
+                ... For history of times representeth the magnitude of actions, 
+                and the public faces and deportments of persons, and passeth over 
+                in silence the smaller passages and motions of men and matters. 
+                But such being the workmanship of God, as He doth hang the greatest weight 
+                upon the smallest wires, maxima e minimis, suspendens, it comes therefore 
+                to pass, that such histories do rather set forth the pomp of business 
+                than the true and inward resorts thereof... 
+                <span style="text-align: right; margin: 1em;display: block; padding: 0.5em; background: white;">Francis Bacon</span>
+            </p>
+            <photolink src="242px-Borromean_Rings_Illusion.png" fullres="1032px-Borromean_Rings_Illusion.png" download="1" />
+            <p>
+                Elementary particles are particles for which there is no known way of 
+                dividing them into smaller units. Theoretical and experimental studies 
+                have shown that the spin possessed by such particles cannot be explained 
+                by postulating that they are made up of even smaller particles rotating 
+                about a common center of mass (see classical electron radius); as far as 
+                <image src="spin.png" class="floatleft"/>
+                can be determined, these elementary particles are true point particles. The 
+                spin of an elementary particle is a truly intrinsic physical property, 
+                akin to the particle's electric charge and rest 
+                <sitereference href="mass">mass</sitereference>.<br />
+                Let the spin quantum number s be n/2, where n can be any non-negative integer.
+                Hence the allowed values of s are 0, 1/2, 1, 3/2, 2, etc. The value of s for an 
+                elementary particle depends only on the type of particle, and cannot be altered in 
+                any known way (in contrast to the spin direction described below). The spin angular
+                momentum S of any physical system is quantized. The allowed values of S are:
+            </p>
+            </div>
+        </pagetext>
+    </content>
+</page>

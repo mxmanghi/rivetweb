@@ -1,0 +1,43 @@
+<!-- $Id: mappa2.xml 1212 2011-10-24 17:25:26Z massimo.manghi $ -->
+
+<sitemenus parent="level1" id="level2">
+    <menu id="map2_1" type="node">
+    	<title language="it">Menu 2.1 (it)</title>
+    	<title language="en">Menu 2.1</title>
+        <link>
+           <type>internal</type>
+           <text language="en">link2.1.1<info>Info for link 2.1.1</info></text>
+           <reference>link2_1_1</reference>
+        </link>
+        <link>
+           <type>internal</type>
+           <text language="en">link2.1.2<info>Info for link 2.1.2</info></text>
+           <reference>link2_1_2</reference>
+        </link>
+        <link>
+           <type>internal</type>
+           <text language="en">link2.1.3<info>Info for link 2.1.3</info></text>
+           <reference>link2_1_3</reference>
+        </link>
+    </menu>
+    <menu id="map2_2" type="leaf">
+    	<title language="it">Menu 2.2</title>
+    	<title language="en">Menu 2.2</title>
+        <link>
+           <type>internal</type>
+           <text language="en">link2.2.1<info>Info for link 2.2.1</info></text>
+           <reference>link2_2_1</reference>
+        </link>
+        <link>
+           <type>internal</type>
+           <text language="en">link2.2.2<info>Info for link 2.2.2</info></text>
+           <reference>link2_2_2</reference>
+        </link>
+        <link>
+           <type>internal</type>
+           <text language="en">link2.2.3<info>Info for link 2.2.3</info></text>
+           <reference>link2_2_3</reference>
+        </link>
+    </menu>
+</sitemenus>
+

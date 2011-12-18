@@ -1,0 +1,34 @@
+<!-- $Id: sitemap.xml 1212 2011-10-24 17:25:26Z massimo.manghi $-->
+
+<sitemenus id="root">
+    <menu id="main" type="node">
+    	<title>Menù Principale</title>
+    	<title language="en">Main Menu</title>
+        <link>
+           <type>internal</type>
+           <text>Pagina di ingresso<info>Homepage del nostro sito</info></text>
+           <text language="en">Homepage<info>A Home to our site</info></text>
+           <reference>index</reference>
+        </link>
+        <link>
+           <type>external</type>
+           <text>Università di Parma<info>La pagina principale dell'Ateneo</info></text>
+           <url>http://www.biol.unipr.it/</url>
+        </link>
+        <link>
+            <type>external</type>
+            <url>http://www.tcl.tk/</url>
+            <text>The Tcl Language<info>The Tcl/Tk programming language</info></text>
+        </link>
+        <link>
+            <type>internal</type>
+            <reference>mass</reference>
+            <text>Mass</text>
+        </link>
+        <link>
+            <type>internal</type>
+            <reference>spin</reference>
+            <text>Spin of Quanta</text>
+        </link>
+    </menu>
+</sitemenus>

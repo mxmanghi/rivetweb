@@ -1,0 +1,5 @@
+<?
+    apache_log_error info "parsing $::rivetweb::running_template"
+
+    parse $::rivetweb::running_template
+?>

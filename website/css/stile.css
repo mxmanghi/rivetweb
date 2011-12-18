@@ -1,0 +1,21 @@
+/*
+ * $Id: stile.css 886 2010-05-28 11:05:34Z massimo.manghi $ 
+ *
+ *+
+ * File per gli stili base del sito
+ *-
+ */
+
+#content {
+    border: 2px dashed blue;
+}
+
+.floatleft {
+    float:  left;
+}
+
+.floatright {
+    float:  right;
+}
+
+ /* */
