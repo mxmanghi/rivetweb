@@ -2,7 +2,7 @@
 
 namespace eval ::rivetweb {
     set site_base	    [pwd]
-    set rivet_scripts	[file join [file dirname [info script]] tcl]
+    set rivet_scripts	[file join [file dirname [info script]] .. tcl]
 }
 
 apache_log_error err "Rivetweb: $::rivetweb::site_base"
