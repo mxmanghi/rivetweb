@@ -7,4 +7,7 @@ namespace eval ::rivetweb {
 
 apache_log_error err "Rivetweb: $::rivetweb::site_base"
 source [file join $::rivetweb::rivet_scripts rivet_init.tcl]
-source [file join $::rivetweb::site_base rivet_defs.tcl]
+
+namespace eval ::rivetweb {
+    set default_lang    it
+}

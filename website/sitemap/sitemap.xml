@@ -2,7 +2,7 @@
 
 <sitemenus id="root">
     <menu id="main" type="node">
-    	<title>MenÃ¹ Principale</title>
+    	<title>Menù Principale</title>
     	<title language="en">Main Menu</title>
         <link>
            <type>internal</type>
@@ -12,7 +12,7 @@
         </link>
         <link>
            <type>external</type>
-           <text>UniversitÃ  di Parma<info>La pagina principale dell'Ateneo</info></text>
+           <text>Università di Parma<info>La pagina principale dell'Ateneo</info></text>
            <url>http://www.biol.unipr.it/</url>
         </link>
         <link>

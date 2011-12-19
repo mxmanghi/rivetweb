@@ -10,15 +10,18 @@
     	<headline>Modello per una pagina di contenuti</headline>
         <pagetext>
             <!-- all'interno di pagetext va un testo xhtml valido  -->
+            <p>Example of init.tcl script</p>
             <programlisting>
-    RivetServerConf ChildInitScript     "cd /home/manghi/www/mastergcf"
-    RivetServerConf ChildInitScript     "source init.tcl"
-    RivetServerConf ChildExitScript     "cd /home/manghi/www/mastergcf"
-    RivetServerConf ChildExitScript     "source exit.tcl"
-    RivetServerConf BeforeScript        "cd /home/manghi/www/mastergcf"
-    RivetServerConf BeforeScript        "source before.tcl"
-    RivetServerConf UploadFilesToVar    yes
-    RivetServerConf UploadDirectory     /tmp/</programlisting>
+namespace eval ::rivetweb {
+    set site_base	    [pwd]
+    set rivet_scripts	[file join [file dirname [info script]] .. tcl]
+}
+
+apache_log_error err "Rivetweb: $::rivetweb::site_base"
+source [file join $::rivetweb::rivet_scripts rivet_init.tcl]
+source [file join $::rivetweb::site_base rivet_defs.tcl]
+                
+            </programlisting>
             <div>
             <p style="background: lightblue; border: 2px solid black; padding: 2em">
 

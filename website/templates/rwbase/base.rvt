@@ -26,6 +26,9 @@
 		<div class="headline"><? puts -nonewline $::rivetweb::page_headline ?></div>
 	    </div>
 	    <div id="pagecontents">
+        <pre>
+            <? puts "default_language: $::rivetweb::default_lang" ?>
+        </pre>
 		<div class="navbar navleft"><?  if {[info exists ::rivetweb::html_menu(left)]} { puts $::rivetweb::html_menu(left) } ?></div>
 		<div class="navbar navright"><? if {[info exists ::rivetweb::html_menu(right)]} { puts $::rivetweb::html_menu(right) } ?></div>
 		<div id="content"> 

@@ -16,6 +16,7 @@ namespace eval ::rivetweb {
 #   set site_base           [file dirname [info script]]
     set static_pages        [file join $site_base pages]
     set sitemap             [file join $site_base sitemap]
+    set local_pages	        [file join $site_base docs]
 
     set sitemap_mtime       0
 
@@ -253,15 +254,18 @@ namespace eval ::rivetweb {
                 array unset item_text
                 array unset item_a
 
+
+#               puts "<pre>[escape_sgml_chars [$item_o asXML]]</pre>"
                 foreach c [$item_o child all] {
                     set tag_name [$c tagName]
                     switch $tag_name {
                         text {
                             if {[$c hasAttribute language]} {
                                 set item_language [$c getAttribute language]
-                                if {[string match [$c getAttribute language] $::rivetweb::language]} {
-                                    set item_text($item_language) [$c text]
-                                }
+#                               if {[string match [$c getAttribute language] $::rivetweb::language]} {
+#                                   set item_text($item_language) [$c text]
+#                               }
+                                set item_text($item_language) [$c text]
                             } else {
                                 set item_text($::rivetweb::default_lang) [$c text]
                             }
@@ -272,12 +276,17 @@ namespace eval ::rivetweb {
                     }
                 }
 
-    #           parray item_a
+                if {![info exists item_text($::rivetweb::default_lang)]} {
+                    set item_text($::rivetweb::default_lang) [$c text]
+                }
 
-                if {$lang == ""} {
+#               parray item_a
+#               parray item_text
+
+                if {$::rivetweb::language == ""} {
                     set item_a(text)    $item_text($::rivetweb::default_lang)
                 } elseif {[info exists item_text($lang)]} {
-                    set item_a(text)    $item_text($lang)
+                    set item_a(text)    $item_text($::rivetweb::language)
                 } else {
                     set item_a(text) $item_text($::rivetweb::default_lang)
                 }
@@ -527,7 +536,7 @@ namespace eval ::rivetweb {
         if {$language == ""} { set language $::rivetweb::default_lang }
 
         set xmlfile [file join $::rivetweb::static_pages ${page_keyword}.xml]
-        apache_log_error err "->opening $xmlfile" 
+        apache_log_error info "->opening $xmlfile" 
         if {[file exists $xmlfile]} {
             if {[catch {
                 set xmlfp    [open $xmlfile r]
@@ -715,7 +724,7 @@ namespace eval ::rivetweb {
 set ::rivetweb::pagine($::rivetweb::index) [::rivetweb::buildPage index ::rivetweb::page_content]
 
 # costruiamo il database in memoria dei template disponibili
-apache_log_error err "pwd: [pwd]"
+apache_log_error notice "pwd: [pwd]"
 
 set templates_dir_list [glob -directory $::rivetweb::base_templates *]
 
@@ -768,7 +777,7 @@ foreach template $templates_dir_list {
 }
 
 foreach k [dict keys $::rivetweb::templates_db] {
-    apache_log_error err "$k: [dict get $::rivetweb::templates_db $k]"
+    apache_log_error debug "$k: [dict get $::rivetweb::templates_db $k]"
 }
 
 # now we build the hooks database
@@ -801,7 +810,7 @@ namespace eval ::rivetweb {
         }
 
         apache_log_error notice "$nhooks hooks processed"
-        apache_log_error notice $hooks
+        apache_log_error debug   $hooks
     }
 }
 
