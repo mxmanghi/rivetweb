@@ -52,8 +52,6 @@ array unset page_menu
 set page_xml [xmlPostProcessing $pagine($::rivetweb::page_content)]
 
 if {[dict keys $::rivetweb::hooks] > 0} {
-    puts [dict keys $hooks xmlpostproc]
-
     set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
 
     foreach hk [dict keys $xmlpp] {
