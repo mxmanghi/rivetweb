@@ -11,6 +11,7 @@
 set hook_descriptor(tag)        photolink 
 set hook_descriptor(function)   photolink
 set hook_descriptor(descrip)    "manipolazione tag photolink per costruire album di foto"
+set hook_descriptor(stage)      xmlpostproc
 
 proc photolink {xmlDoc child} {
 

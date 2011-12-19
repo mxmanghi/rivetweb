@@ -5,7 +5,7 @@
 set hook_descriptor(tag)        sitereference
 set hook_descriptor(function)   sitereference
 set hook_descriptor(descrip)    "link to other internal resource of the website"
-
+set hook_descriptor(stage)      xmlpostproc
 
 proc sitereference {xmlDoc child} {
 
@@ -42,7 +42,7 @@ proc sitereference {xmlDoc child} {
             $newAnchorElement setAttribute $refattr $attvalue
         }
 
-#           $newAnchorElement setAttribute href [makeUrl $page_ref]
+#       $newAnchorElement setAttribute href [makeUrl $page_ref]
         $newAnchorElement appendChild $new_anchor_txt
         [$child parentNode] replaceChild $newAnchorElement $child
         $child delete

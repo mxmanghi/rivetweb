@@ -5,6 +5,7 @@
 set hook_descriptor(tag)        programlisting
 set hook_descriptor(function)   programlisting
 set hook_descriptor(descrip)    "manipolazione tag pre inclusione testo preformattato (sorgenti)"
+set hook_descriptor(stage)      xmlpostproc
 
 
 proc programlisting {xmlDoc child} {

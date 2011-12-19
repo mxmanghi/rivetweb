@@ -52,10 +52,13 @@ array unset page_menu
 set page_xml [xmlPostProcessing $pagine($::rivetweb::page_content)]
 
 if {[dict keys $::rivetweb::hooks] > 0} {
+    puts [dict keys $hooks xmlpostproc]
 
-    foreach hk [dict keys $::rivetweb::hooks] {
-        apache_log_error info "processing hook: [dict get $::rivetweb::hooks $hk descrip]"
-        set xmlprocessor [dict get $::rivetweb::hooks $hk function]
+    set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
+
+    foreach hk [dict keys $xmlpp] {
+        apache_log_error info "processing hook: [dict get $xmlpp $hk descrip]"
+        set xmlprocessor [dict get $xmlpp $hk function]
         set xmlDoc $pagine($::rivetweb::page_content)
         foreach child [$xmlDoc getElementsByTagName $hk] {
                    
@@ -93,7 +96,7 @@ if {[array exists sitemenus_a]} {
 
         set menuid [lindex $mid end]
         set lvmenus [::rivetweb::walkTree $sitemenus_a(root) $menuid leaf]
-#       puts "<pre style=\"background-color: #0ff;border: 1px solid black;\">============ $lvmenus ==============</pre>"
+#       puts "<pre style=\"background-color: #0ff;border: 1px solid black;\">== $lvmenus ==</pre>"
 
         foreach mid $lvmenus {
             apache_log_error info "creating menu for $template_key"
@@ -107,20 +110,26 @@ if {[array exists sitemenus_a]} {
 if {[var exists debug]} { puts "<pre> ===== menu: [array names html_menu]</pre>" }
 
 set page_authors    [getElementValue $page_xml author]
-set ident	        [getElementValue $page_xml ident]
 
 #puts "<pre>==> $ident <===</pre>"
 
-if {[regexp {\$Id:\s+[-\w]+\.xml\s+\d*\s+(.*Z)\s+([\.\w]*)\s+\$} $ident match last_modified committer]} {
-    if {[var exists debug]} { 
-        puts "<pre>'Id' matched\n Last Modification: $last_modified </pre>" 
-    }
-    set last_modified [clock format [clock scan $last_modified -gmt 1] -format "%d-%m-%Y %H:%M:%S" -gmt 1]
-} else {
     
-    if {[var exists debug]} { puts "<pre>'Id' did not match</pre>" }
-    set last_modified ""
+if {[dict keys $::rivetweb::hooks] > 0} {
+
+    set metadatapp [dict get $::rivetweb::hooks metadata]
+    foreach hk [dict keys $metadatapp] {
+        set xmlprocessor [dict get $metadatapp $hk function]
+
+        set xmlDoc $pagine($::rivetweb::page_content)
+        foreach child [$xmlDoc getElementsByTagName $hk] {
+            apache_log_error info "processing hook: [dict get $metadatapp $hk descrip]"
+                   
+            eval $xmlprocessor $xmlDoc $child
+
+        }
+    }
 }
+
 
 if {[selectContent $page_xml $language content_selected]} {
     array unset content

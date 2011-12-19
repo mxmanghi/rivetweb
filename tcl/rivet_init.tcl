@@ -802,9 +802,10 @@ namespace eval ::rivetweb {
     # we assume everything has been stored in hook_descriptor
 
             if {[info exists hook_descriptor(tag)]} {
-                dict set hooks $hook_descriptor(tag)                            \
-                               [dict create function $hook_descriptor(function) \
-                                            descrip  $hook_descriptor(descrip)] 
+                dict set hooks  $hook_descriptor(stage)                          \
+                                $hook_descriptor(tag)                            \
+                                [dict create function $hook_descriptor(function) \
+                                             descrip  $hook_descriptor(descrip)] 
                 incr nhooks
             }
         }
