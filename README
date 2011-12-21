@@ -3,22 +3,32 @@
 
  Rivetweb is a Tcl based engine for creating static template based websites.
 
- Rivetweb could useful if your goal is generation and update 
+ Rivetweb could be your tool if your goal is creation and management
 of small to medium size web sites bearing static content. Rivetweb maintains
 strict separation between content, representation and structure of the web site,
 it's template based, so you can easily change the XHTML/CSS code underlying
 your pages and produce a whole entirely re-styled web site in seconds.
 
- Rivetweb is perfect when you have to create a website whose content is slowly
+ Rivetweb is good when you have to create a website whose content is slowly
 changing, for example when pages must provide structural information about 
-working groups, small firms or technical documentation.  
+working groups, small firms or technical documentation. 
 
  Rivetweb is not meant to run fast changing dynamic content. It's focused
 on manageability and extensibility for HTML generation.
 
+ Currently Rivetweb handles data coming from a single data source:
+a collection of XML files describing the website structure (sitemap), 
+page metadata and page content. A plan is under way to redesign Rivetweb
+so that data sources based on a abstract pattern will be accepted. 
+Still, even though it seems unpractical to have data stored in files, 
+they provide a good workable representation of the abstract internal 
+structure and information relationship of a website, at least from
+a conceptual perspective. Hence they offer a good starting point for
+the development of Rivet.
+
  Using Rivetweb with Apache's mod_rewrite you can let your 
 dynamically generated pages appear as if every internal link is
-is pointing to good old static .html files. Therefore you can fake
+pointing to good old static .html files. Therefore you can fake
 your website to be made out of only static HTML pages and generate an
 entirely static copy of them for both on-line and off-line browsing
 
@@ -39,6 +49,14 @@ languages.
  Rivetweb is based on Rivet (http://tcl.apache.org/rivet/). Rivet is a
 module and a Tcl programming suite for the Apache HTTP Webserver. 
 
+ Rivetweb relies extensively on tdom (http://tdom.github.com)
+to handle the internal representation of data. 
+Rivetweb has a basic support for extensibility: page creation can be 
+customized adding 'hooks' procedure to the code, thus adding new data 
+transformations.
+
+The last Rivet's dependency is with Tcllib
+
 Rivetweb is entirely free and released under BSD licence.
 
-# 2011-12-18
+# 2011-12-20

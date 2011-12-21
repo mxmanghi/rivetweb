@@ -4,6 +4,8 @@
 # $Author: massimo.manghi $
 # 
 # +
+# This is where at every request most of the work is done to prepare
+# a page. 
 # - 
 #
 
@@ -14,50 +16,9 @@
 set ::rivetweb::static_links [var exists static]
 set ::rivetweb::is_homepage  [var exists homepage]
     
-# and now we determine if site_structure has to be reloaded
-
-#set site_structure_file [file join $::rivetweb::site_base $sitemap_file]
-#
-#if {[file exists $site_structure_file]} {
-#
-## before we establish the revision number we check the mtime, it's probably better and faster
-#
-#    file stat $site_structure_file site_structure_stat
-#    set site_structure_reload [expr $site_structure_stat(mtime) > $::rivetweb::site_structure_mtime] 
-#
-#    # checking if the menu structure has been updated and has to be generated from scratch
-#
-#    if { $site_structure_reload } {
-#        set ::rivetweb::site_structure_mtime $site_structure_stat(mtime)
-#        apache_log_error err "opening site defs $site_structure_file (pid: [pid])"
-#        set xmlsite     [open $site_structure_file r]
-#
-## lines set up for deletion
-##
-##    set linea   [gets $xmlmenu]
-##    while {    ![eof $xmlmenu] && \
-##        ![regexp [subst {<\!--\s*\$Id:\s+{$sitemap_file}\s*(\d*).*\$\s*-->}] $linea match rev] && \
-##        ![regexp {<\!--\s*\$Revision:\s*(\d*)\s*-->} $linea match rev] } {
-##        set linea [gets $xmlmenu]
-##    #   puts "<pre>[escape_sgml_chars $linea]</pre>"
-##    }
-##
-#
-#        if {[info exists site_dom]} { $site_dom delete }
-#        set xml	            [read $xmlsite]
-#        set site_dom        [dom parse $xml doc]
-#        set domroot         [$site_dom documentElement root]
-#        set deflang_el      [$domroot getElementsByTagName default_language]
-#        set default_lang    [$deflang_el text]
-#
-#        close $xmlsite
-#    }
-#} else {
-#    set site_structure_reload 1
-#}
-
 # when Rivetweb is pretending to be a static site, pages fake their location to be in
-# the /static/ subdirectory 
+# the /static/ subdirectory, so 'running_picts_path' and running_css_path has
+# to be set accordingly
 
 set ::rivetweb::running_picts_path  $::rivetweb::picts_path
 set ::rivetweb::running_css_path    $::rivetweb::css_path
@@ -67,6 +28,9 @@ if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
 }
 #puts "<pre><b>static_links: $::rivetweb::static_links</b></pre>"
 
+# we rely on the 'sitemap' directory mtime to see if some of its files
+# have changed and a new tree of links has to be recreated
+
 file stat $sitemap sitemap_now
 set  site_menus_reload  [expr $sitemap_now(mtime) > $sitemap_mtime]
 
@@ -74,20 +38,33 @@ if { $site_menus_reload } {
 
     set sitemap_mtime $sitemap_now(mtime)
 
-    apache_log_error err "recreating sitemap..."
+    apache_log_error info "recreating sitemap..."
     if {[info exists menu_dom]} { $menu_dom delete }
-#####
+
+# we assume the sitemap is stored in .xml files 
+
     set maps [glob [file join $::rivetweb::sitemap *.xml]]
-#####
-#   set fragment [file join $::rivetweb::sitemap sitemap.xml]
-#####
     
     foreach map $maps {
         apache_log_error info "reading $map..."
 
         set xml [read_file $map]
-        set xmlmenu([file tail $map]) [dom parse $xml]
+
+# we silently drop malformed XML files. We just log a message
+# if Apache's loglevel is debug
+
+        if {[catch { set xmlmenu([file tail $map]) [dom parse $xml] }] e} {
+            apache_log_error debug "could not parse map $map: $e"
+        }
     }
+
+# finally for every DOM tree we extract information to build a tree of links
+#
+# there must be just one 'root' menu and we assume there are no disconnected
+# subtree (thus following any "parent" attribute eventually we get to the
+# 'root' menu
+#
+#
 
     foreach mdoc [array names xmlmenu] {
         set rootel      [$xmlmenu($mdoc) documentElement root]
@@ -122,21 +99,23 @@ if { $site_menus_reload } {
         }
     }
     
-    foreach blocco_id [array names sitemenus_a] {
-        if {$blocco_id == "root"} { continue }
-        set sm $sitemenus_a($blocco_id)
+    foreach menu_group_id [array names sitemenus_a] {
+        if {$menu_group_id == "root"} { continue }
+        set sm $sitemenus_a($menu_group_id)
         if {[$sm hasAttribute parent]} {
             set p [$sm getAttribute parent]
             if {[info exists sitemenus_a($p)]} {
                 domNode $sitemenus_a($p) appendChild $sm
             } else {
-                apache_log_error err "skipping $blocco_id, no parent defined for menu block"
+                apache_log_error err "skipping $menu_group_id, no parent defined for menu block"
             }
         }
     }
 } 
 
 # let's determine which template we are using
+
+# we set a couple of default values for them
 
 set running_template base.rvt
 set running_css      base.css 

@@ -30,45 +30,11 @@
 #  Returned value:
 #    - the tdom object reelaborated.
 #
+# The functionalities of the procedure have been handed to
+# the hooks mechanism
+# 
 
-proc xmlPostProcessing {xmlDoc} {
-
-
-    foreach child [$xmlDoc getElementsByTagName externref] {
-        if {[$child hasAttribute href]} {
-            set anchor_text [$child asText]
-
-            $xmlDoc createTextNode $anchor_text new_anchor_txt
-            set newAnchorElement [$xmlDoc createElement a]
-            foreach refattr [$child attributes] {
-                set attvalue [$child getAttribute $refattr]
-                $newAnchorElement setAttribute $refattr $attvalue
-            }
-            $newAnchorElement setAttribute target _blank 
-
-            $newAnchorElement appendChild $new_anchor_txt
-            [$child parentNode] replaceChild $newAnchorElement $child
-            $child delete     
-        }
-    }
-
-
-    foreach child [$xmlDoc getElementsByTagName localref] {
-        if {[$child hasAttribute href]} {
-            set page_ref    [$child getAttribute href]
-            set anchor_text [$child asText]
-
-            $xmlDoc createTextNode $anchor_text new_anchor_txt
-            set newAnchorElement [$xmlDoc createElement a]
-
-            $newAnchorElement setAttribute href $page_ref
-            $newAnchorElement appendChild $new_anchor_txt
-            [$child parentNode] replaceChild $newAnchorElement $child
-            $child delete
-        }
-    }
-    return $xmlDoc
-}
+proc xmlPostProcessing {xmlDoc} { return $xmlDoc }
 namespace export xmlPostProcessing
 
 

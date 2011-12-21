@@ -22,11 +22,12 @@ if {[var exists reset]} {
     array unset pagine
 } 
 
-# Prima di tutto individuiamo la pagina da mostrare
+# the central point is exactly here: we have to decide which page
+# we have to display
 
 if {[var exists show]} {
     set pagina [var get show]
-    if {[var exists debug]} { puts "requesting page '$pagina'" }
+    if {[var exists debug]} { apache_log_error info "requesting page '$pagina'" }
 #   parray pagine
 
 # if we are using cached content and requested page is cached we simply
@@ -40,10 +41,13 @@ if {[var exists show]} {
     }
 } else {
 
-# assumiamo quindi che la pagina sia indicata dalla variabile di
-# configurazione ::rivetweb::index
+# Rivetweb assumes the default page is defined in the ::rivetweb::index variable
 
     set ::rivetweb::page_content $::rivetweb::index
+    if {!$::rivetweb::use_page_cache} {
+        set xmldom [::rivetweb::buildPage $::rivetweb::index ::rivetweb::page_content $language]
+        set pagine($::rivetweb::page_content) $xmldom 
+    }
 }
 
 array unset page_menu
@@ -88,6 +92,8 @@ if {[array exists sitemenus_a]} {
 
     foreach pos [array names page_menu] {
 
+# in Rivetweb versions before 2.0 every page had to explicitly tell 
+
         set mid [split $page_menu($pos) ","]
 
 # assumiamo l'ultimo menu come quello di livello più basso (compatibilità con versione 1.x di rivetweb)
@@ -113,14 +119,13 @@ set page_authors    [getElementValue $page_xml author]
 
     
 if {[dict keys $::rivetweb::hooks] > 0} {
-
     set metadatapp [dict get $::rivetweb::hooks metadata]
-    foreach hk [dict keys $metadatapp] {
-        set xmlprocessor [dict get $metadatapp $hk function]
 
+    foreach hk [dict keys $metadatapp] {
+        apache_log_error info "processing hook: [dict get $metadatapp $hk descrip]"
+        set xmlprocessor [dict get $metadatapp $hk function]
         set xmlDoc $pagine($::rivetweb::page_content)
         foreach child [$xmlDoc getElementsByTagName $hk] {
-            apache_log_error info "processing hook: [dict get $metadatapp $hk descrip]"
                    
             eval $xmlprocessor $xmlDoc $child
 
@@ -128,6 +133,7 @@ if {[dict keys $::rivetweb::hooks] > 0} {
     }
 }
 
+# we finally create HTML out of the xml page so far handled.
 
 if {[selectContent $page_xml $language content_selected]} {
     array unset content

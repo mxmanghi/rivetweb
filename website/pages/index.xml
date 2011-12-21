@@ -10,6 +10,10 @@
     	<headline>Modello per una pagina di contenuti</headline>
         <pagetext>
             <!-- all'interno di pagetext va un testo xhtml valido  -->
+				<p style="background: lightblue; border: 2px solid black; padding: 2em">
+					Rivetweb has its own webspace at <externref href="http://www.rivetweb.org">http://www.rivetweb.org/</externref>
+				</p>
+            
             <p>Example of init.tcl script</p>
             <programlisting>
 namespace eval ::rivetweb {
