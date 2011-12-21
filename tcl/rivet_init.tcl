@@ -715,16 +715,126 @@ namespace eval ::rivetweb {
         return $lista
     }
 
+# -- selectContent
+#
+# Another Rivetweb's key feature is the ability to produce output
+# in different languages, provided text for links and content is
+# available for a language different from the default language.
+#
+# This procedure seeks for the right content in a xml_page
+# depending on the language 
+#
+# Arguments:
+#
+#   - xml_page: tdom object reference representing the page
+#   - lang: language to be sought
+#   - content_selected: name of a variable in the caller scope
+#     where the content will be stored
+#
+# Returned value:
+#
+#   - either true or false depeding on the search operation 
+#     success
+#
+#
+
+
+    proc selectContent {xml_page lang content_selected} {
+        upvar $content_selected content
+
+#       puts stderr "seeking content for language $lang"
+
+        set xmlroot [$xml_page documentElement root]
+        set default_content ""
+        set retv true
+        foreach content [$xmlroot getElementsByTagName content] {
+            if {[$content hasAttribute language]} {
+                set clang [$content getAttribute language]
+#               puts stderr "$content: ($clang) [$content asXML]"
+                if {[string equal $clang $lang]} {
+#                   puts stderr "content found ($clang)"
+                    return true
+                } elseif {[string match $clang $::rivetweb::default_lang]} {
+                    set default_content $content
+                }
+            } else {
+                set default_content $content
+#               puts stderr "$content: ($::rivetweb::default_lang) [$content text]"
+            }
+        }
+        
+        if {[string match $default_content ""]} {
+            set retv false
+        } else {
+            set content $default_content
+        }
+        return $retv
+    }
+
+    namespace export selectContent
+
+
+    proc getElementValue {xml tag} {
+        set xmlroot [$xml documentElement root]
+        set testo    ""
+        set elementi [$xmlroot getElementsByTagName $tag]
+        foreach elemento $elementi {
+            append testo [$elemento text]
+        }
+        return $testo
+    }
+
+# -- makePageHTML 
+#
+#
+
+    proc makePageHTML {xmldoc xmlnode_content content_a} {
+        upvar $content_a content  
+
+        if {[string match [$xmlnode_content nodeName] content]} {
+            foreach el [$xmlnode_content childNodes] {
+#               puts "<pre>processing element [$el nodeName]</pre>"
+                switch [$el nodeName] {
+                    title {
+                        set content(title) [$el text]
+                    }
+                    headline {
+#                       puts [escape_sgml_chars [$el asText]]
+                        set content(headline) [$el asXML]
+                    }
+                    pagetext {
+                        set content(pagetext) ""
+                        foreach txtElement [$el childNodes] {
+                            append content(pagetext) "[$txtElement asXML -indent 1]\n"
+                        }
+#                       puts stderr $pagetext
+                    }
+                }
+            }
+
+            if {![info exists content(headline)] && [info exists content(title)]} {
+                set content(headline) $content(title)
+            } elseif {![info exists content(title)] && [info exists content(headline)]} {
+                set content(title)  $content(headline)
+            }
+
+            return true
+        } else {
+            return false
+        }
+    }
+
 # more procedures for page generation here
 
-    source [file join $rivetweb::rivet_scripts makepagehtml.tcl]
+#   source [file join $rivetweb::rivet_scripts makepagehtml.tcl]
 }
 
+# index page
 
 set ::rivetweb::pagine($::rivetweb::index) [::rivetweb::buildPage index ::rivetweb::page_content]
 
 # costruiamo il database in memoria dei template disponibili
-apache_log_error notice "pwd: [pwd]"
+apache_log_error notice "rivet_init.tcl: [pwd]"
 
 set templates_dir_list [glob -directory $::rivetweb::base_templates *]
 

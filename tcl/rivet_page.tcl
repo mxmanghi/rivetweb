@@ -53,7 +53,8 @@ if {[var exists show]} {
 array unset page_menu
 #puts stderr "content: $::rivetweb::page_content"
 
-set page_xml [xmlPostProcessing $pagine($::rivetweb::page_content)]
+#set page_xml [xmlPostProcessing $pagine($::rivetweb::page_content)]
+set page_xml $pagine($::rivetweb::page_content)
 
 if {[dict keys $::rivetweb::hooks] > 0} {
     set xmlpp [dict get $::rivetweb::hooks xmlpostproc]

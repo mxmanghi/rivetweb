@@ -26,5 +26,5 @@ proc externref {domDoc child} {
         $child delete     
     }
 
-    return $docDoc
+    return $domDoc
 }
