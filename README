@@ -24,7 +24,7 @@ Still, even though it seems unpractical to have data stored in files,
 they provide a good workable representation of the abstract internal 
 structure and information relationship of a website, at least from
 a conceptual perspective. Hence they offer a good starting point for
-the development of Rivet.
+the development of Rivetweb.
 
  Using Rivetweb with Apache's mod_rewrite you can let your 
 dynamically generated pages appear as if every internal link is
