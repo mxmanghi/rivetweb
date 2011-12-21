@@ -280,9 +280,6 @@ namespace eval ::rivetweb {
                     set item_text($::rivetweb::default_lang) [$c text]
                 }
 
-#               parray item_a
-#               parray item_text
-
                 if {$::rivetweb::language == ""} {
                     set item_a(text)    $item_text($::rivetweb::default_lang)
                 } elseif {[info exists item_text($lang)]} {
@@ -578,7 +575,6 @@ namespace eval ::rivetweb {
 # the supported templates.
 #
 
-
     proc makeCssPath {css_file {style_dir ""}} {
         return [file join $::rivetweb::running_css_path $style_dir $css_file] 
     }
@@ -639,8 +635,6 @@ namespace eval ::rivetweb {
 #
 
     proc walkTree { radice node {eltype "node"} {menu_list {}} } {
-
-    #    puts "examining node '$node' (type '$eltype') menu_list: '$menu_list'"
      
         set menublock [$radice selectNodes {//sitemenus[@id=$node]}]
         if {$menublock == ""} { return $menu_list }
@@ -738,7 +732,6 @@ namespace eval ::rivetweb {
 #
 #
 
-
     proc selectContent {xml_page lang content_selected} {
         upvar $content_selected content
 
@@ -823,6 +816,15 @@ namespace eval ::rivetweb {
             return false
         }
     }
+
+# -- isDebugging 
+#
+#
+
+proc isDebugging { } {
+    return [expr $::rivetweb::debug && [var exists debug]]
+}
+
 
 # more procedures for page generation here
 

@@ -27,7 +27,7 @@ if {[var exists reset]} {
 
 if {[var exists show]} {
     set pagina [var get show]
-    if {[var exists debug]} { apache_log_error info "requesting page '$pagina'" }
+    if {[isDebugging]} { apache_log_error info "requesting page '$pagina'" }
 #   parray pagine
 
 # if we are using cached content and requested page is cached we simply
@@ -71,7 +71,7 @@ if {[dict keys $::rivetweb::hooks] > 0} {
     }
 }
 
-if {[var exists debug]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
+if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
 foreach pm [$page_xml getElementsByTagName menu] {
 
@@ -112,7 +112,7 @@ if {[array exists sitemenus_a]} {
     }
 }
 
-if {[var exists debug]} { puts "<pre> ===== menu: [array names html_menu]</pre>" }
+if {[isDebugging]} { puts "<pre> ===== menu: [array names html_menu]</pre>" }
 
 set page_authors    [getElementValue $page_xml author]
 

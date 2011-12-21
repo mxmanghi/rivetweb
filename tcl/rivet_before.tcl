@@ -53,7 +53,7 @@ if { $site_menus_reload } {
 # we silently drop malformed XML files. We just log a message
 # if Apache's loglevel is debug
 
-        if {[catch { set xmlmenu([file tail $map]) [dom parse $xml] }] e} {
+        if {[catch { set xmlmenu([file tail $map]) [dom parse $xml] } e]} {
             apache_log_error debug "could not parse map $map: $e"
         }
     }
