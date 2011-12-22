@@ -23,16 +23,16 @@ array set file_descriptor {}
 proc prompt {termch} {
     switch $::stato {
         file_input {
-            set prompt_text "nome file"
+            set prompt_text "filename"
         }
         title_input {
-            set prompt_text "titolo"
+            set prompt_text "title"
         }
         author_input {
             catch {
                 set autore_login [exec whoami]
             }
-            set prompt_text "autore \[$autore_login\]:"
+            set prompt_text "author \[$autore_login\]:"
         }
         default {
             incr ::stdin_signal
@@ -54,9 +54,9 @@ proc parse_line {linea} {
 
             set proposed_name [file join $::rivetweb::static_pages  ${nome_file}.xml] 
             set proposed_name [string tolower $proposed_name]
-            puts "nome proposto -> [file join $::rivetweb::static_pages $proposed_name]"
+            puts "proposed name -> [file join $::rivetweb::static_pages $proposed_name]"
             if {[file exists $proposed_name]} {
-                puts "Errore, file esistente"
+                puts "Error, file not existing"
             } else {
                 set ::file_descriptor(name)     $proposed_name
                 set ::file_descriptor(id)   $nome_file
@@ -171,7 +171,7 @@ $headline_o appendChild $text_o
 $content_o  appendChild $headline_o
 
 set pagetext_o  [$pagina_dom createElement pagetext]
-set comment_o   [$pagina_dom createComment "Qui va inserito il testo XHTML della pagina"]
+set comment_o   [$pagina_dom createComment "The XHTML content goes here"]
 $pagetext_o appendChild $comment_o
 $content_o  appendChild $pagetext_o
 
@@ -193,21 +193,21 @@ set page_dom $root_el
 # procediamo alla creazione della pagina.
 
 if {[catch {set xmlfp [open $file_descriptor(name) w+]} e]} {
-    puts "Errore: nella creazione di $file_descriptor(name) \n$e"
+    puts "Error creating $file_descriptor(name) \n$e"
     exit
 }
 
 $page_dom asXML -indent 4 -channel $xmlfp
 close $xmlfp
 
-puts "La pagina $file_descriptor(name) ($file_descriptor(title)) è stata creata"
+puts "Page $file_descriptor(name) ($file_descriptor(title)) has been created"
 
-if {[catch {
-    exec svn add $file_descriptor(name)
-    exec svn propset svn:keywords "Id Author Date" $file_descriptor(name)
-} e]} {
-    puts "Errore: $e"
-    puts "probabilmente questa non è una working copy di svn"
-}
+#if {[catch {
+#    exec svn add $file_descriptor(name)
+#    exec svn propset svn:keywords "Id Author Date" $file_descriptor(name)
+#} e]} {
+#    puts "Errore: $e"
+#    puts "probabilmente questa non è una working copy di svn"
+#}
 
 exit
