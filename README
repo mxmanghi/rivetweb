@@ -46,17 +46,13 @@ compare them and let your customers decide which is best to their taste.
 resources are translated, the whole content can be served in multiple
 languages. 
 
- Rivetweb is based on Rivet (http://tcl.apache.org/rivet/). Rivet is a
-module and a Tcl programming suite for the Apache HTTP Webserver. 
-
- Rivetweb relies extensively on tdom (http://tdom.github.com)
-to handle the internal representation of data. 
 Rivetweb has a basic support for extensibility: page creation can be 
 customized adding 'hooks' procedure to the code, thus adding new data 
 transformations.
 
-The last Rivet's dependency is with Tcllib
+ Rivetweb is based on Rivet (http://tcl.apache.org/rivet/). Rivet is a
+module and a Tcl programming suite for the Apache HTTP Webserver. 
 
-Rivetweb is entirely free and released under BSD licence.
+Rivetweb is entirely free and released under Apache 2.0 licence.
 
-# 2011-12-20
+# 2011-12-22
