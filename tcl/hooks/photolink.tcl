@@ -23,8 +23,8 @@ proc photolink {xmlDoc child} {
     if {[info exists plattrs(src)]} then {
         set plattrs(src)
         $newImgElement setAttribute src [::rivetweb::makePictsPath $plattrs(src) $::rivetweb::template_key]
-        if {[info exists plattrs(fullres)] && ![var exists static]} then {
-            if {[info exists plattrs(download)]} then {
+        if {[info exists plattrs(fullres)]} then {
+            if {[info exists plattrs(download)] && ![var exists static]} then {
 
                 set fullresImgEl [$xmlDoc createElement a]
                 set download_path [list \

@@ -817,13 +817,13 @@ namespace eval ::rivetweb {
         }
     }
 
-# -- isDebugging 
-#
-#
+    # -- isDebugging 
+    #
+    #
 
-proc isDebugging { } {
-    return [expr $::rivetweb::debug && [var exists debug]]
-}
+    proc isDebugging { } {
+        return [expr $::rivetweb::debug && [var exists debug]]
+    }
 
 
 # more procedures for page generation here
@@ -836,7 +836,7 @@ proc isDebugging { } {
 set ::rivetweb::pagine($::rivetweb::index) [::rivetweb::buildPage index ::rivetweb::page_content]
 
 # costruiamo il database in memoria dei template disponibili
-apache_log_error notice "rivet_init.tcl: [pwd]"
+apache_log_error notice "Initializing Apache child [pid], [pwd]"
 
 set templates_dir_list [glob -directory $::rivetweb::base_templates *]
 
