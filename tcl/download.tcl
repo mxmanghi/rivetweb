@@ -18,15 +18,13 @@
 
         if {[file exists $file_path]} {
 
-        # Dopo aver effettuato tutti i controlli procediamo al trasferimento via http
-
-        # Inviamo gli header per il trasferimento
+        # The file exists so we go ahead reading its size and determining its mime type
 
             set file_size [file size $file_path]
             set fname     [var get fname]
             set mimetype  [::fileutil::magic::mimetype $file_path]
 
-        # Si procede a leggere il file e inviarlo verso il client.
+        # We open the file and prepare the HTTP headers
 
             set file_handle [open $file_path r]
             fconfigure $file_handle -translation binary
@@ -35,44 +33,28 @@
             headers add Content-Disposition "attachment; filename=\"$fname\""
             headers add Content-Length		$file_size
 
-            if {$file_size > $::rivetweb::dwload_threshold} {
+        # we send it in one or more chunks
 
-                set nrecs 0
-                set sent_data  0
-                while {1} {
+            set nrecs 0
+            set sent_data  0
+            while {1} {
 
-                    set file_data [read $file_handle $::rivetweb::dwload_chunk_size]
-                    incr sent_data [string length $file_data]
+                set file_data  [read $file_handle $::rivetweb::download_chunksize]
+                incr sent_data [string length $file_data]
 
-                    if {[eof $file_handle]} {
-                        close $file_handle
-                        puts -nonewline $file_data
-                        flush stdout
-                        break
-                    } 
-                    incr nrecs
+                if {[eof $file_handle]} {
+                    close $file_handle
                     puts -nonewline $file_data
-
-                    apache_log_error debug "rec $nrecs"
-                }
-
-                apache_log_error info "download $file_path, transimitter $sent_data bytes in $nrecs chunks"
-            } else {
-                set file_data	[read $file_handle]
-                close $file_handle
-
-
-                apache_log_error notice "download $file_path, size: $file_size, transmit [string length $file_data] bytes "
-
+                    flush stdout
+                    break
+                } 
+                incr nrecs
                 puts -nonewline $file_data
 
-                if {[var exists dump]} {
-                    set tmp_handle [open "/tmp/download_debug-[pid].dat" w+]
-                    fconfigure $file_handle -translation binary
-                    puts -nonewline $tmp_handle $file_data
-                    close $tmp_handle
-                }
+                apache_log_error debug "rec $nrecs"
             }
-        }
 
+            apache_log_error info "download $file_path, transimitted $sent_data bytes in $nrecs chunk(s)"
+        }
+        set ::rivetweb::download_fname ""
     }

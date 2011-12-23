@@ -6,16 +6,13 @@
 			puts "<pre>$e</pre>"
 			abort_page
 	    }
+        puts [::rivetweb::contentType]
 	?>
 	<title><? puts -nonewline $::rivetweb::page_title ?></title>
 	<link rel="stylesheet" 
           href="<? puts -nonewline [::rivetweb::makeCssPath rivet.css $::rivetweb::template_key] ?>" />
     </head>
     <body>
-    	<!--p align="center"></p -->
-	<!-- ?
-	    parray rivetweb::menus_a
-	? -->
 	<div id="bigcontainer"> 
 	    <div id="pageheadline">
 		<div class="decoration">

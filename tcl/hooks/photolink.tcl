@@ -24,12 +24,15 @@ proc photolink {xmlDoc child} {
         set plattrs(src)
         $newImgElement setAttribute src [::rivetweb::makePictsPath $plattrs(src) $::rivetweb::template_key]
         if {[info exists plattrs(fullres)]} then {
-            if {[info exists plattrs(download)] && ![var exists static]} then {
+            if {[info exists plattrs(download)] && ($plattrs(download) == 1) && ![var exists static]} then {
 
                 set fullresImgEl [$xmlDoc createElement a]
-                set download_path [list \
-                                [file join /tcl $::rivetweb::download_proc] ? fname = $plattrs(fullres)]
-                set fullresUrl   [makeurl [join $download_path ""]]
+                set download_args [join [list fname=$plattrs(fullres) function=$::rivetweb::download_proc] &]
+
+                set fullresUrl   [makeurl [join [list index.rvt $download_args] ?]]
+
+                apache_log_error debug "download path $fullresUrl"
+
                 $fullresImgEl setAttribute href $fullresUrl
             } else {
 

@@ -112,13 +112,10 @@ if {[array exists sitemenus_a]} {
     }
 }
 
-if {[isDebugging]} { puts "<pre> ===== menu: [array names html_menu]</pre>" }
+if {[isDebugging]} { apache_log_error debug "<pre> ===== menu: [array names html_menu]</pre>" }
 
 set page_authors    [getElementValue $page_xml author]
 
-#puts "<pre>==> $ident <===</pre>"
-
-    
 if {[dict keys $::rivetweb::hooks] > 0} {
     set metadatapp [dict get $::rivetweb::hooks metadata]
 
@@ -150,4 +147,6 @@ if {[selectContent $page_xml $language content_selected]} {
 } else {
     set page_content_html "no content found"
 }
+
+headers type "text/html; charset=$::rivetweb::http_encoding"
 

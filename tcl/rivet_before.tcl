@@ -1,11 +1,8 @@
 #
 # $Id: rivet_before.tcl 2101 2011-12-15 10:43:10Z massimo.manghi $
 # 
-# $Author: massimo.manghi $
-# 
 # +
-# This is where at every request most of the work is done to prepare
-# a page. 
+# This is where at every request most of the work is done to prepare a page. 
 # - 
 #
 
@@ -23,8 +20,10 @@ set ::rivetweb::is_homepage  [var exists homepage]
 set ::rivetweb::running_picts_path  $::rivetweb::picts_path
 set ::rivetweb::running_css_path    $::rivetweb::css_path
 if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
+
     set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
     set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
+
 }
 #puts "<pre><b>static_links: $::rivetweb::static_links</b></pre>"
 

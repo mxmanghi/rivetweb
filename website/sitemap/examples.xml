@@ -1,4 +1,4 @@
-<sitemenus id="examples" parent="root">
+<!--sitemenus id="examples" parent="root">
     <menu id="examples" type="node">
         <title>Examples</title>
         <title language="it">Esempi</title>
@@ -38,4 +38,4 @@
             <reference>ajax</reference>
         </link>    
     </menu>
-</sitemenus>
+</sitemenus -->

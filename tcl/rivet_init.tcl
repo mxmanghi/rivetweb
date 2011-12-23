@@ -23,11 +23,12 @@ namespace eval ::rivetweb {
 # these are relative to the DocumentRoot
 
     set picts_path          picts
-    set css_path            css
+    set css_path            templates
     set base_templates      templates
     set running_template    [file join $base_templates base.rvt]
     set running_css         [file join $base_templates base.css]
     set default_template    rwbase
+    set http_encoding       utf-8
 
     set template_key        ""
 
@@ -113,8 +114,7 @@ namespace eval ::rivetweb {
 # parameters for downloading binary files
 
     set download_proc       download.tcl
-    set dwload_threshold    65536
-    set dwload_chunk_size   16384
+    set download_chunksize  65536
 
 # -- menuTitle
 #
@@ -597,6 +597,12 @@ namespace eval ::rivetweb {
 # we have to fake static links (relative to the ::rivetweb::static_path variable)
 # but still be aware we are running from /index.rvt
 
+#        set fn [file join $::rivetweb::site_base $::rivetweb::base_templates $style_dir $picts_file]
+#        apache_log_error debug "0 pict file: >$fn<"
+#        if {[file exists $fn]} {
+#            return [file join $::rivetweb::base_templates $style_dir $picts_file]
+#        }
+
         set fn [file join $::rivetweb::site_base $::rivetweb::picts_path $style_dir $picts_file]
         apache_log_error debug "1 pict file: >$fn<"
         if {[file exists $fn]} {
@@ -817,12 +823,24 @@ namespace eval ::rivetweb {
         }
     }
 
-    # -- isDebugging 
-    #
-    #
+# -- isDebugging 
+#
+#
 
     proc isDebugging { } {
         return [expr $::rivetweb::debug && [var exists debug]]
+    }
+
+ 
+# -- contentType
+#
+# Returns a 'meta' XHTML tag element specifying the content type
+# and charset as stored in 
+
+    proc contentType {} {
+
+        return "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$::rivetweb::http_encoding\" />"
+
     }
 
 

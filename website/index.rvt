@@ -1,5 +1,15 @@
 <?
-    apache_log_error info "parsing $::rivetweb::running_template"
 
-    parse $::rivetweb::running_template
+    if {[var exists rwinfo]} {
+        load_env env
+        parray_table env
+    } elseif {[var exists function]} {
+        set fun [var get function]
+        if {[catch {eval source [file join $::rivetweb::rivet_scripts $fun]} e]} {
+            puts $e
+        }
+    } else {
+        apache_log_error info "parsing $::rivetweb::running_template"
+        parse $::rivetweb::running_template
+    }
 ?>

@@ -13,7 +13,7 @@ set stato       file_input
 
 set site_base       [pwd]
 set script_dir      [file dirname [info script]]
-set defs_location   [file join [pwd] rivet_defs.tcl]
+set defs_location   [file join [pwd] init.tcl]
 
 puts "reading definitions from $defs_location"
 source $defs_location

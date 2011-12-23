@@ -2,33 +2,22 @@
 
 <sitemenus id="root">
     <menu id="main" type="node">
-    	<title>Menù Principale</title>
+    	<title>Resources</title>
     	<title language="en">Main Menu</title>
         <link>
-           <type>internal</type>
-           <text>Pagina di ingresso<info>Homepage del nostro sito</info></text>
-           <text language="en">Homepage<info>A Home to our site</info></text>
-           <reference>index</reference>
+           <type>external</type>
+           <text>Rivetweb code<info>Rivetweb git repository at Sourceforge</info></text>
+           <url>http://www.sf.net/projects/rivetweb/</url>
         </link>
         <link>
            <type>external</type>
-           <text>Università di Parma<info>La pagina principale dell'Ateneo</info></text>
-           <url>http://www.biol.unipr.it/</url>
-        </link>
-        <link>
-           <type>external</type>
+           <text>The Tcl Developer Exchange<info>The Information Hub for Tcl'ers</info></text>
            <url>http://www.tcl.tk/</url>
-           <text>The Tcl Language<info>The Tcl/Tk programming language</info></text>
         </link>
         <link>
-           <type>internal</type>
-           <reference>mass</reference>
-           <text>Mass</text>
-        </link>
-        <link>
-           <type>internal</type>
-           <reference>spin</reference>
-           <text>Spin of Quanta</text>
+           <type>external</type>
+           <url>http://wiki.tcl.tk/</url>
+           <text>The Tcl/Tk Wiki<info>The Tcl/Tk Wiki pages</info></text>
         </link>
     </menu>
 </sitemenus>

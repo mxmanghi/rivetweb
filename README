@@ -7,9 +7,9 @@
 of small to medium size web sites bearing static content. Rivetweb maintains
 strict separation between content, representation and structure of the web site,
 it's template based, so you can easily change the XHTML/CSS code underlying
-your pages and produce a whole entirely re-styled web site in seconds.
+your pages and produce a whole entirely re-styled web site.
 
- Rivetweb is good when you have to create a website whose content is slowly
+ Rivetweb is useful when you have to create a website whose content is slowly
 changing, for example when pages must provide structural information about 
 working groups, small firms or technical documentation. 
 

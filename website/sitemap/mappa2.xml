@@ -1,6 +1,6 @@
 <!-- $Id: mappa2.xml 1212 2011-10-24 17:25:26Z massimo.manghi $ -->
 
-<sitemenus parent="level1" id="level2">
+<!-- sitemenus parent="level1" id="level2">
     <menu id="map2_1" type="node">
     	<title language="it">Menu 2.1 (it)</title>
     	<title language="en">Menu 2.1</title>
@@ -39,5 +39,5 @@
            <reference>link2_2_3</reference>
         </link>
     </menu>
-</sitemenus>
+</sitemenus -->
 

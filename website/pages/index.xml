@@ -4,59 +4,71 @@
     <date>$Date: 2011-12-14 18:40:52 +0100 (Wed, 14 Dec 2011) $</date>
     <title>Modello di Pagina</title>
     <headline>Modello di Pagina</headline>
-    <menu position="left">root,level1</menu>
+    <menu position="left">root</menu>
     <content>
-    	<title>Pagina Modello del Sito</title>
-    	<headline>Modello per una pagina di contenuti</headline>
+    	<title>Rivetweb: easy HTML generation with Tcl</title>
+    	<headline>Rivetweb: easy HTML generation with Tcl</headline>
         <pagetext>
-            <!-- all'interno di pagetext va un testo xhtml valido  -->
-				<p style="background: lightblue; border: 2px solid black; padding: 2em">
-					Rivetweb has its own webspace at <externref href="http://www.rivetweb.org">http://www.rivetweb.org/</externref>
-				</p>
-            
-            <p>Example of init.tcl script</p>
-            <programlisting>
-namespace eval ::rivetweb {
-    set site_base	    [pwd]
-    set rivet_scripts	[file join [file dirname [info script]] .. tcl]
-}
-
-apache_log_error err "Rivetweb: $::rivetweb::site_base"
-source [file join $::rivetweb::rivet_scripts rivet_init.tcl]
-source [file join $::rivetweb::site_base rivet_defs.tcl]
-                
-            </programlisting>
-            <div>
-            <p style="background: lightblue; border: 2px solid black; padding: 2em">
-
-                ... For history of times representeth the magnitude of actions, 
-                and the public faces and deportments of persons, and passeth over 
-                in silence the smaller passages and motions of men and matters. 
-                But such being the workmanship of God, as He doth hang the greatest weight 
-                upon the smallest wires, maxima e minimis, suspendens, it comes therefore 
-                to pass, that such histories do rather set forth the pomp of business 
-                than the true and inward resorts thereof... 
-                <span style="text-align: right; margin: 1em;display: block; padding: 0.5em; background: white;">Francis Bacon</span>
-            </p>
-            <photolink src="242px-Borromean_Rings_Illusion.png" fullres="1032px-Borromean_Rings_Illusion.png" download="1" />
             <p>
-                Elementary particles are particles for which there is no known way of 
-                dividing them into smaller units. Theoretical and experimental studies 
-                have shown that the spin possessed by such particles cannot be explained 
-                by postulating that they are made up of even smaller particles rotating 
-                about a common center of mass (see classical electron radius); as far as 
-                <image src="spin.png" class="floatleft"/>
-                can be determined, these elementary particles are true point particles. The 
-                spin of an elementary particle is a truly intrinsic physical property, 
-                akin to the particle's electric charge and rest 
-                <sitereference href="mass">mass</sitereference>.<br />
-                Let the spin quantum number s be n/2, where n can be any non-negative integer.
-                Hence the allowed values of s are 0, 1/2, 1, 3/2, 2, etc. The value of s for an 
-                elementary particle depends only on the type of particle, and cannot be altered in 
-                any known way (in contrast to the spin direction described below). The spin angular
-                momentum S of any physical system is quantized. The allowed values of S are:
+                Rivetweb's website is under costruction as the first
+                release is on its way.
             </p>
-            </div>
+            <pre>
+ Rivetweb is a Tcl based engine for creating static template based websites.
+
+ Rivetweb could be your tool if your goal is creation and management
+of small to medium size web sites bearing static content. Rivetweb maintains
+strict separation between content, representation and structure of the web site,
+it's template based, so you can easily change the XHTML/CSS code underlying
+your pages and produce a whole entirely re-styled web site.
+
+ Rivetweb is useful when you have to create a website whose content is slowly
+changing, for example when pages must provide structural information about 
+working groups, small firms or technical documentation. 
+
+ Rivetweb is not meant to run fast changing dynamic content. It's focused
+on manageability and extensibility for HTML generation.
+
+ Currently Rivetweb handles data coming from a single data source:
+a collection of XML files describing the website structure (sitemap), 
+page metadata and page content. A plan is under way to redesign Rivetweb
+so that data sources based on a abstract pattern will be accepted. 
+Still, even though it seems unpractical to have data stored in files, 
+they provide a good workable representation of the abstract internal 
+structure and information relationship of a website, at least from
+a conceptual perspective. Hence they offer a good starting point for
+the development of Rivetweb.
+
+ Using Rivetweb with Apache's mod_rewrite you can let your 
+dynamically generated pages appear as if every internal link is
+pointing to good old static .html files. Therefore you can fake
+your website to be made out of only static HTML pages and generate an
+entirely static copy of them for both on-line and off-line browsing
+
+ As a consequence, by means of any mirror tool (e.g. wget) you can recreate a 
+local copy of the website completely rewritten in .html files. This copy can 
+be thus deployed with *any* webserver or even distributed on a Pendrive or 
+a CD-ROM for offline browsing.
+
+ A Rivetweb web site can be running several XHTML/CSS templates at the same 
+time, you just switch from one to another by passing the 'template' parameter 
+in the URL. This might be useful if you want to test different styles, 
+compare them and let your customers decide which is best to their taste.
+
+ Rivetweb is thought to be multilingual. Provided pages and other
+resources are translated, the whole content can be served in multiple
+languages. 
+
+Rivetweb has a basic support for extensibility: page creation can be 
+customized adding 'hooks' procedure to the code, thus adding new data 
+transformations.
+
+ Rivetweb is based on Rivet (http://tcl.apache.org/rivet/). Rivet is a
+module and a Tcl programming suite for the Apache HTTP Webserver. 
+
+Rivetweb is entirely free and released under Apache 2.0 licence.
+
+# 2011-12-22</pre>
         </pagetext>
     </content>
 </page>
