@@ -1,7 +1,7 @@
 body {
 	margin: 0;
 	padding: 0;
-	background: #fff url(/picts/rwbase/img01.jpg) repeat-x left top;
+	background: #fff url(../../picts/rwbase/img01.jpg) repeat-x left top;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	color: #000;
@@ -124,7 +124,7 @@ hr { display: none; }
 
 #menu .current_page_item a {
 	height: 26px;
-	background: #fff url(/picts/rwbase/img02.jpg) repeat-x left top;
+	background: #fff url(../../picts/rwbase/img02.jpg) repeat-x left top;
 	color: #193556;
 }
 
@@ -192,7 +192,7 @@ hr { display: none; }
 	width: 920px;
 	height: 134px;
 	margin: 0 auto;
-	background: url(/picts/rwbase/img04.jpg) no-repeat right top;
+	background: url(../../picts/rwbase/img04.jpg) no-repeat right top;
 }
 
 #logo h1, #logo p {
@@ -230,7 +230,7 @@ hr { display: none; }
 /* Post */
 
 .post {
-	background: url(/picts/rwbase/img07.jpg) repeat-x left bottom;
+	background: url(../../picts/rwbase/img07.jpg) repeat-x left bottom;
 	margin-bottom: 25px;
 }
 
@@ -250,7 +250,7 @@ hr { display: none; }
 .post .meta {
 	margin-top: -10px;
 	padding: 10px 0px 2px 16px;
-	background: url(/picts/rwbase/img03.gif) no-repeat left 8px;
+	background: url(../../picts/rwbase/img03.gif) no-repeat left 8px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-weight: normal;
 	font-size: 10px;
@@ -310,7 +310,7 @@ hr { display: none; }
 #sidebar li li {
 	margin: 0;
 	padding: 5px 5px 5px 7px;
-	background: url(/picts/rwbase/img07.jpg) repeat-x left bottom;
+	background: url(../../picts/rwbase/img07.jpg) repeat-x left bottom;
 }
 
 #sidebar p {

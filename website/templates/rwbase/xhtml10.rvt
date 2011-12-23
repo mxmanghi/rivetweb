@@ -17,15 +17,15 @@
 	<!-- end #logo -->
 	<div id="header">
 		<div id="menu">
-			<ul>
-                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>>
+			<!-- ul>
+                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>
                 <a href="<? puts -nonewline [::rivetweb::makeUrl index] ?>">Home</a></li>
-                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
+                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>
                 <a href="<? puts -nonewline [::rivetweb::makeUrl download] ?>">Downloads</a></li>
 				<li></li>
-                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content about current_page_item] ?>>
+                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content about current_page_item] ?>
                 <a href="<? puts -nonewline [::rivetweb::makeUrl about] ?>">About Us</a></li>
-			</ul>
+			</ul-->
 		</div>
 	</div>
 	<!-- end #header -->
@@ -53,7 +53,7 @@
 		<div id="content">
 			<div class="post">
 
-				<h2 class="title"><a href="#" <? puts -nonewline $::rivetweb::page_headline ?></a></h2>
+				<h2 class="title"><a href="#"><? puts -nonewline $::rivetweb::page_headline ?></a></h2>
 				<div class="entry">
                     <?
 
