@@ -11,6 +11,11 @@
         </link>
         <link>
            <type>external</type>
+           <text>Apache Rivet<info>Rivet website at ASF</info></text>
+           <url>http://tcl.apache.org/rivet/</url>
+        </link>
+        <link>
+           <type>external</type>
            <text>The Tcl Developer Exchange<info>The Information Hub for Tcl'ers</info></text>
            <url>http://www.tcl.tk/</url>
         </link>
