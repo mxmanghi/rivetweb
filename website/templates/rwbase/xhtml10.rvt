@@ -75,7 +75,7 @@
         <div id="footer">
             <p>
                 Copyright  2011 Apache Software Foundation. Design by <a href="http://www.rickyswebtemplates.com/">Ricky's Free web templates</a>.
-                <a href="http://sixserv.com/"><img src="<? puts -nonewline [::rivetweb::makePictsPath big.png] ?>" /></a>
+                <a href="http://sixserve.com/"><img src="<? puts -nonewline [::rivetweb::makePictsPath big.png] ?>" /></a>
             </p>
         </div>
 	</div>
