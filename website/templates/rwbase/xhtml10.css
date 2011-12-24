@@ -1,7 +1,7 @@
 body {
 	margin: 0;
 	padding: 0;
-	background: #fff url(../../picts/rwbase/img01.jpg) repeat-x left top;
+	background: #fff url(../picts/rwbase/img01.jpg) repeat-x left top;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	color: #000;
@@ -77,7 +77,7 @@ hr { display: none; }
 #wrapper {
 }
 
-/* Header */
+/* Headergc
 
 #header-wrapper {
 }
@@ -88,7 +88,7 @@ hr { display: none; }
 	margin: 0 auto;
 }
 
-/* Menu */
+/* Menugc
 
 #menu {
 	float: left;
@@ -124,14 +124,14 @@ hr { display: none; }
 
 #menu .current_page_item a {
 	height: 26px;
-	background: #fff url(../../picts/rwbase/img02.jpg) repeat-x left top;
+	background: #fff url(../picts/rwbase/img02.jpg) repeat-x left top;
 	color: #193556;
 }
 
 #menu .first {
 	background: none;
 }
-/* Search */
+/* Searchgc
 
 #search {
 	float: right;
@@ -175,7 +175,7 @@ hr { display: none; }
 	border: 1px solid #fff;
 }
 
-/* Page */
+/* Pagegc
 
 #page {
 	width: 920px;
@@ -186,13 +186,13 @@ hr { display: none; }
 	padding-top: 30px;
 }
 
-	/** LOGO */
+	/** LOGOgc
 
 #logo {
 	width: 920px;
 	height: 134px;
 	margin: 0 auto;
-	background: url(../../picts/rwbase/img04.jpg) no-repeat right top;
+	background: url(../picts/rwbase/img04.jpg) no-repeat right top;
 }
 
 #logo h1, #logo p {
@@ -218,7 +218,7 @@ hr { display: none; }
 	color: #FFFFFF;
 }
 
-/* Content */
+/* Contentgc
 
 #content {
 	float: leftt;
@@ -227,10 +227,10 @@ hr { display: none; }
 	padding-right: 30px;
 }
 
-/* Post */
+/* Postgc
 
 .post {
-	background: url(../../picts/rwbase/img07.jpg) repeat-x left bottom;
+	background: url(../picts/rwbase/img07.jpg) repeat-x left bottom;
 	margin-bottom: 25px;
 }
 
@@ -250,7 +250,7 @@ hr { display: none; }
 .post .meta {
 	margin-top: -10px;
 	padding: 10px 0px 2px 16px;
-	background: url(../../picts/rwbase/img03.gif) no-repeat left 8px;
+	background: url(../picts/rwbase/img03.gif) no-repeat left 8px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-weight: normal;
 	font-size: 10px;
@@ -280,7 +280,7 @@ hr { display: none; }
 	padding-left: 17px;
 }
 
-/* Sidebar */
+/* Sidebargc
 
 #sidebar {
 	float: right;
@@ -310,7 +310,7 @@ hr { display: none; }
 #sidebar li li {
 	margin: 0;
 	padding: 5px 5px 5px 7px;
-	background: url(../../picts/rwbase/img07.jpg) repeat-x left bottom;
+	background: url(../picts/rwbase/img07.jpg) repeat-x left bottom;
 }
 
 #sidebar p {
@@ -339,7 +339,7 @@ hr { display: none; }
 	color: #538f05;
 }
 
-/* Calendar */
+/* Calendargc
 
 #calendar {
 }
@@ -396,7 +396,7 @@ hr { display: none; }
 	background: #24130F;
 }
 
-/* Footer */
+/* Footergc
 
 #footer {
 	width: 920px;
