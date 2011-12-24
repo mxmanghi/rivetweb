@@ -597,11 +597,11 @@ namespace eval ::rivetweb {
 # we have to fake static links (relative to the ::rivetweb::static_path variable)
 # but still be aware we are running from /index.rvt
 
-#        set fn [file join $::rivetweb::site_base $::rivetweb::base_templates $style_dir $picts_file]
-#        apache_log_error debug "0 pict file: >$fn<"
-#        if {[file exists $fn]} {
-#            return [file join $::rivetweb::base_templates $style_dir $picts_file]
-#        }
+        set fn [file join $::rivetweb::site_base $::rivetweb::base_templates $style_dir picts $picts_file]
+        apache_log_error debug "0 pict file: >$fn<"
+        if {[file exists $fn]} {
+            return [file join $::rivetweb::base_templates $style_dir picts $picts_file]
+        }
 
         set fn [file join $::rivetweb::site_base $::rivetweb::picts_path $style_dir $picts_file]
         apache_log_error debug "1 pict file: >$fn<"

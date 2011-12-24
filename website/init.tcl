@@ -2,7 +2,7 @@
 
 namespace eval ::rivetweb {
     set site_base	    [pwd]
-    set rivet_scripts	/home/manghi/Projects/rivetweb/tcl/
+    set rivet_scripts	/home/manghi/Projects/rivetweb-sf/tcl/
 }
 
 apache_log_error err "Rivetweb: $::rivetweb::site_base"
