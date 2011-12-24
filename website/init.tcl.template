@@ -2,9 +2,13 @@
 
 namespace eval ::rivetweb {
     set site_base	    [file dirname [info script]]
-    set rivet_scripts   /home/manghi/www/rivetweb/trunk/tcl
+    set rivet_scripts	/home/manghi/Projects/rivetweb-sf/tcl/
 }
 
 apache_log_error err "Rivetweb: $::rivetweb::site_base"
 source [file join $::rivetweb::rivet_scripts rivet_init.tcl]
-source [file join $::rivetweb::site_base rivet_defs.tcl]
+
+namespace eval ::rivetweb {
+    set default_lang    en
+    set http_encoding   "iso-8859-1"
+}
