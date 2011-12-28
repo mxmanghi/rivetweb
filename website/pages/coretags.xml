@@ -1,0 +1,15 @@
+<page id="coretags">
+    <ident>$Id: $</ident>
+    <author>$Author: mxmanghi $</author>
+    <date>$Date: $</date>
+    <title>Rivetweb Tags</title>
+    <headline>Rivetweb Tags</headline>
+    <menu position="left">root</menu>
+    <content>
+        <title>Rivetweb Tags</title>
+        <headline>Rivetweb Tags</headline>
+        <pagetext>
+            <!--The XHTML content goes here-->
+        </pagetext>
+    </content>
+</page>

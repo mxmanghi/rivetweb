@@ -17,15 +17,15 @@
 	<!-- end #logo -->
 	<div id="header">
 		<div id="menu">
-			<!-- ul>
-                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>
+			<ul>
+                <li <? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>>
                 <a href="<? puts -nonewline [::rivetweb::makeUrl index] ?>">Home</a></li>
-                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>
+                <li <? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
                 <a href="<? puts -nonewline [::rivetweb::makeUrl download] ?>">Downloads</a></li>
 				<li></li>
-                <li<? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content about current_page_item] ?>
-                <a href="<? puts -nonewline [::rivetweb::makeUrl about] ?>">About Us</a></li>
-			</ul-->
+                <li <? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content installation current_page_item] ?>>
+                <a href="<? puts -nonewline [::rivetweb::makeUrl installation] ?>">Installation</a></li>
+			</ul>
 		</div>
 	</div>
 	<!-- end #header -->
@@ -33,12 +33,12 @@
 	<div id="page">
 	<div id="page-bgtop">
     
-    <div id="sidebar">
-			<ul>
+        <div id="sidebar">
+            <ul>
                 <? if {[string equal $::rivetweb::page_content index] == 1} {
                  ?>
                     <li>
-                        <h2>23 Dec 2011 </h2>
+                        <h2>23 Dec 2011</h2>
                         <p> <a href="<? puts -nonewline [::rivetweb::makeUrl dec23] ?>">Rivetweb website</a></p>
                     </li> 
                 <?
@@ -46,26 +46,26 @@
                 if {[info exists ::rivetweb::html_menu(left)]} { puts $::rivetweb::html_menu(left) } 
 
                 ?>
-			</ul>
-</div>
-		<!-- end #sidebar -->
-    
-		<div id="content">
-			<div class="post">
+            </ul>
+        </div>
+            <!-- end #sidebar -->
+        
+        <div id="content">
+            <div class="post">
 
-				<h2 class="title"><a href="#"><? puts -nonewline $::rivetweb::page_headline ?></a></h2>
-				<div class="entry">
+                <h2 class="title"><a href="#"><? puts -nonewline $::rivetweb::page_headline ?></a></h2>
+                <div class="entry">
                     <?
 
                         if {[string equal $::rivetweb::page_content index] == 1} {
-                            ?><!--img src="<? puts -nonewline [makePictsPath Rivetweb_tiny.png $::rivetweb::running_template] ?>" class="floatright" /--><?
+                            ?><!--img src="<? puts -nonewline [::rivetweb::makePictsPath Rivetweb_tiny.png $::rivetweb::running_template] ?>" class="floatright" /--><?
                         }
                         puts $::rivetweb::page_content_html 
                     ?>
                 </div>
-			</div>
-    </div>
-		<!-- end #content -->
+            </div>
+        </div>
+        <!-- end #content -->
 		
 		<div style="clear: both;">&nbsp;</div>
 	</div>

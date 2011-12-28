@@ -1,0 +1,15 @@
+<page id="index">
+    <ident> </ident>
+    <author>$Author: AUTHOR $</author>
+    <date>$Date: CREATION_DATE  $</date>
+    <title>Page Title</title>
+    <headline>Page Headline</headline>
+    <menu position="left">root</menu>
+    <content>
+    	<title>Rivetweb: easy HTML generation with Tcl</title>
+    	<headline>Rivetweb: easy HTML generation with Tcl</headline>
+        <pagetext>
+            <!-- page content goes here -->
+        </pagetext>
+    </content>
+</page>

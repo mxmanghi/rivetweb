@@ -1,0 +1,18 @@
+<page id="installation">
+    <ident>$Id: $</ident>
+    <author>$Author: mxmanghi $</author>
+    <date>$Date: $</date>
+    <title>Rivetweb Installation</title>
+    <headline>Rivetweb Installation</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">root</menu>
+    <content>
+        <title>Rivetweb Installation</title>
+        <headline>Rivetweb Installation</headline>
+        <pagetext>
+            Basic installation
+            <programlisting src="apache2conf.txt">
+            </programlisting>
+        </pagetext>
+    </content>
+</page>

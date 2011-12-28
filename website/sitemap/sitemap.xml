@@ -1,28 +1,44 @@
 <!-- $Id: sitemap.xml 1212 2011-10-24 17:25:26Z massimo.manghi $-->
 
 <sitemenus id="root">
-    <menu id="main" type="node">
+    <menu id="docs" type="node">
+        <title>Rivetweb</title>
+        <link>
+            <type>internal</type>
+            <text>Installation<info>Rivetweb Installation</info></text>
+            <reference>installation</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Core Tags<info>Rivetweb XML Tags</info></text>
+            <reference>coretags</reference>
+        </link>
+    </menu>
+    <menu id="main" type="leaf">
     	<title>Resources</title>
-    	<title language="en">Main Menu</title>
         <link>
-           <type>external</type>
-           <text>Rivetweb code<info>Rivetweb git repository at Sourceforge</info></text>
-           <url>http://www.sf.net/projects/rivetweb/</url>
+            <type>external</type>
+            <text>Rivetweb code<info>Rivetweb git repository at Sourceforge</info></text>
+            <url>http://www.sf.net/projects/rivetweb/</url>
+            <target>rivetwebsf</target>
         </link>
         <link>
-           <type>external</type>
-           <text>Apache Rivet<info>Rivet website at ASF</info></text>
-           <url>http://tcl.apache.org/rivet/</url>
+            <type>external</type>
+            <text>Apache Rivet<info>Rivet website at ASF</info></text>
+            <url>http://tcl.apache.org/rivet/</url>
+            <target>rivet</target>
         </link>
         <link>
-           <type>external</type>
-           <text>The Tcl Developer Exchange<info>The Information Hub for Tcl'ers</info></text>
-           <url>http://www.tcl.tk/</url>
+            <type>external</type>
+            <text>The Tcl Developer Xchange<info>The Information Hub for Tcl'ers</info></text>
+            <url>http://www.tcl.tk/</url>
+            <target>tclxchange</target>
         </link>
         <link>
-           <type>external</type>
-           <url>http://wiki.tcl.tk/</url>
-           <text>The Tcl/Tk Wiki<info>The Tcl/Tk Wiki pages</info></text>
+            <type>external</type>
+            <url>http://wiki.tcl.tk/</url>
+            <text>The Tcl/Tk Wiki<info>The Tcl/Tk Wiki pages</info></text>
+            <target>tclwiki</target>
         </link>
     </menu>
 </sitemenus>

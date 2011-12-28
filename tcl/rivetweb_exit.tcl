@@ -6,4 +6,5 @@
 #-
 #
 
+apache_log_error notice "Rivetweb: child [pwd] is leaving"
 

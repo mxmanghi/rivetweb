@@ -1,19 +1,35 @@
 #!/usr/bin/tclsh
 #
-# $Id: nuova_pagina.tcl 2092 2011-12-14 11:41:36Z massimo.manghi $
-#
-# 11-Jun-2010: La pagina viene creata con il menu 'banner' in posizione 'top'
 #
 #
 
 package require tdom
 
-set ::stdin_signal  0
-set stato       file_input
-
 set site_base       [pwd]
+set rivetweb_conf   [file join $site_base rivetweb.tcl]
+
+if {![file exists $rivetweb_conf]} {
+    puts "Error: rivetweb.tcl not existing."
+    exit
+}
+
+# By reading this we establish where Rivetweb scripts are
+# (::rivetweb::scripts)
+
+source $rivetweb_conf
+
+set ::stdin_signal  0
+set stato           file_input
+
 set script_dir      [file dirname [info script]]
-set defs_location   [file join [pwd] init.tcl]
+
+# rivetweb_ns.tcl defines Rivetweb status and configuration variables
+
+source [file join $::rivetweb::scripts rivetweb_ns.tcl]
+
+# site_defs.tcl overrides default
+
+set defs_location [file join $::rivetweb::site_base site_defs.tcl]
 
 puts "reading definitions from $defs_location"
 source $defs_location
@@ -47,52 +63,55 @@ proc prompt {termch} {
 
 proc parse_line {linea} {
     switch $::stato {
+
         file_input {
-       
-    # sostituiamo gli spazi con '_'
+    
+# we replace spaces with underscores   
+    
             regsub -all {\s+} [string trim $linea] "_" nome_file
 
-            set proposed_name [file join $::rivetweb::static_pages  ${nome_file}.xml] 
-            set proposed_name [string tolower $proposed_name]
+            set nome_file           [string tolower $nome_file]
+            set proposed_name       [file join  $::rivetweb::site_base      \
+                                                $::rivetweb::static_pages   \
+                                                ${nome_file}.xml]
+ 
             puts "proposed name -> [file join $::rivetweb::static_pages $proposed_name]"
             if {[file exists $proposed_name]} {
                 puts "Error, file not existing"
             } else {
-                set ::file_descriptor(name)     $proposed_name
+                set ::file_descriptor(name) $proposed_name
                 set ::file_descriptor(id)   $nome_file
-                set ::stato             title_input
+                set ::stato                 title_input
             }
         }
         title_input {
             set ::file_descriptor(title)    $linea
-            set ::stato author_input
+            set ::stato                     author_input
         }
         author_input {
             set ::file_descriptor(author)   $linea
-            set ::stato         final_state
+            set ::stato                     final_state
         }
     }
+
 }
 
 proc leggi_linea {ch} {
     if {![eof $ch]} {
-    if {[gets stdin linea] > 0} {
-        puts " <<< -- $linea"
-        parse_line $linea
-        prompt stdout
-    } else {
-        if {$::stato == "final_state"} {
-            incr ::stdin_signal
-        } elseif {$::stato == "author_input"} {
-            parse_line [exec whoami]
-            incr ::stdin_signal
-        } else {
+        if {[gets $ch linea] > 0} {
+            puts " <<< -- $linea"
+            parse_line $linea
             prompt stdout
+        } else {
+            if {$::stato == "final_state"} {
+                incr ::stdin_signal
+            } elseif {$::stato == "author_input"} {
+                parse_line [exec whoami]
+                incr ::stdin_signal
+            } else {
+                prompt stdout
+            }
         }
-    }
-#   if {$::stato == "final_state"} {
-#       incr ::stdin_signal
-#   } 
     } else {
         incr ::stdin_signal
     }

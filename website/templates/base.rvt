@@ -12,7 +12,6 @@
         <link rel="stylesheet" href="<? puts -nonewline [::rivetweb::makeCssPath stile.css] ?>" />
     </head>
     <body>
-    	<!-- p align="center"></p -->
         <!-- ?
             parray rivetweb::menus_a
         ? -->

@@ -15,7 +15,6 @@ proc sitereference {xmlDoc child} {
 # if we are running static the uri is <page_ref>(.<lang>).html
 
     if {[$child hasAttribute href]} {
-#       set page_ref    [$child getAttribute href]
         set anchor_text [$child asText]
 
 #           if { $::rivetweb::static_links } {
@@ -42,7 +41,6 @@ proc sitereference {xmlDoc child} {
             $newAnchorElement setAttribute $refattr $attvalue
         }
 
-#       $newAnchorElement setAttribute href [makeUrl $page_ref]
         $newAnchorElement appendChild $new_anchor_txt
         [$child parentNode] replaceChild $newAnchorElement $child
         $child delete

@@ -25,10 +25,12 @@ if {[var exists reset]} {
 # the central point is exactly here: we have to decide which page
 # we have to display
 
+
 if {[var exists show]} {
     set pagina [var get show]
+    apache_log_error notice "'$pagina' requested"
+
     if {[isDebugging]} { apache_log_error info "requesting page '$pagina'" }
-#   parray pagine
 
 # if we are using cached content and requested page is cached we simply
 # store in ::rivetweb::page_content
@@ -36,24 +38,36 @@ if {[var exists show]} {
     if {[info exists pagine($pagina)] && $::rivetweb::use_page_cache} {
         set ::rivetweb::page_content $pagina
     } else {
-        set xmldom [::rivetweb::buildPage $pagina ::rivetweb::page_content $language]
-        set pagine($::rivetweb::page_content) $xmldom 
+#       set pagine($::rivetweb::page_content)   [::rivetweb::buildPage  $pagina                  \
+#                                                                       ::rivetweb::page_content \
+#                                                                       $language]
+
+        set xmlpage  [::rivetweb::buildPage $pagina     \
+                                            ::rivetweb::page_content \
+                                            $language]
+
+        set pagine($::rivetweb::page_content) $xmlpage
+        apache_log_error info "[pid] page_content: $::rivetweb::page_content"
+#       foreach p [array names pagine] { apache_log_error err "[pid] $p: $pagine($p)" }
     }
+#   puts stderr [$pagine($::rivetweb::page_content) asXML]
+#   flush stderr
 } else {
 
 # Rivetweb assumes the default page is defined in the ::rivetweb::index variable
 
     set ::rivetweb::page_content $::rivetweb::index
     if {!$::rivetweb::use_page_cache} {
-        set xmldom [::rivetweb::buildPage $::rivetweb::index ::rivetweb::page_content $language]
-        set pagine($::rivetweb::page_content) $xmldom 
+        set pagine($::rivetweb::page_content) [::rivetweb::buildPage $::rivetweb::index \
+                                                                     ::rivetweb::page_content \
+                                                                     $language]
     }
 }
 
-array unset page_menu
-#puts stderr "content: $::rivetweb::page_content"
+#parray pagine
 
-#set page_xml [xmlPostProcessing $pagine($::rivetweb::page_content)]
+array unset page_menu
+
 set page_xml $pagine($::rivetweb::page_content)
 
 if {[dict keys $::rivetweb::hooks] > 0} {
