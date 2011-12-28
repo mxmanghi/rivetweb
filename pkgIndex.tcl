@@ -8,6 +8,6 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded rivetweb 2.0 [list source [file join $dir rivetweb.tcl]]
-package ifneeded rwconf 2.0 [list source [file join $dir rivetweb_ns.tcl]]
-package ifneeded rwterm 0.1 [list source [file join $dir terminal.tcl]]
+package ifneeded rivetweb 2.0 [list source [file join $dir tcl/rivetweb.tcl]]
+package ifneeded rwconf 2.0 [list source [file join $dir tcl/rivetweb_ns.tcl]]
+package ifneeded rwterm 0.1 [list source [file join $dir tcl/terminal.tcl]]

@@ -3,7 +3,6 @@
 #
 package require tdom
 package require Rivet
-package require rivetweb
 
 ## Rivetweb namespace encloses the whole configuration and status variables
 #

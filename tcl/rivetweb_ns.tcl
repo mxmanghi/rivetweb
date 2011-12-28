@@ -5,29 +5,28 @@
 namespace eval ::rivetweb {
 
 # this must be the local path to the site's document root
+    variable    site_base
+    variable    rivetweb_root
+    variable    scripts     
+    variable    static_pages
+    variable    sitemap
+    variable    local_pages
 
-    if {![info exists site_base]} {
-        set site_base       [file dirname [info script]]
-    }
-    set scripts             [file dirname [info script]]
-    set static_pages        [file join $site_base pages]
-    set sitemap             [file join $site_base sitemap]
-    set local_pages	        [file join $site_base docs]
+    variable    sitemap_mtime       0
 
-    set sitemap_mtime       0
+# these paths are relative to the DocumentRoot, so we don't need
+# to normalize them
 
-# these are relative to the DocumentRoot
+    variable picts_path          picts
+    variable css_path            templates
+    variable base_templates      templates
+    variable newsite_templates   rwtemplates
+    variable running_template    [file join $base_templates base.rvt]
+    variable running_css         [file join $base_templates base.css]
+    variable default_template    rwbase
+    variable http_encoding       utf-8
 
-    set picts_path          picts
-    set css_path            templates
-    set base_templates      templates
-    set newsite_templates   rwtemplates
-    set running_template    [file join $base_templates base.rvt]
-    set running_css         [file join $base_templates base.css]
-    set default_template    rwbase
-    set http_encoding       utf-8
-
-    set template_key        ""
+    variable template_key        ""
 
 # the procedure should quite easly evolve to have 
 # the ability to handle multilingual contents. 'default_lang' 
@@ -36,11 +35,11 @@ namespace eval ::rivetweb {
 # here but it will be assigned by the element <default_language>
 # in site_structure.xml
 
-    set default_lang        en
+    variable default_lang        en
 
-#   set sitemap_file        site_structure.xml
-    set site_defs           site_defs.xml
-    set language            $default_lang
+#   variable sitemap_file        site_structure.xml
+    variable site_defs           site_defs.xml
+    variable language            $default_lang
 
 # 'current_rev' is an integer number specifying
 # the current revision of the site.
@@ -53,49 +52,53 @@ namespace eval ::rivetweb {
 # array that maps 'content' keys and xhtml (to be replaced
 # by a dictionary?)
 
+    variable pagine
     array set pagine        {}
 
 # default key for content generation: basically this
 # is the key to the file containing the homepage.
 
-    set index               index
-    set page_content        0
+    variable index               index
+    variable page_content        0
 
 # we assume we are running dynamic. A static parameter in the url
 # would emulate a static site 
 
-    set static_links        false
+    variable static_links        false
 
-    set running_picts_path  $picts_path
-    set running_css_path    $css_path
+    variable running_picts_path  $picts_path
+    variable running_css_path    $css_path
 
 # static pages weill pretend to be stored in this directory
 
-    set static_path         static
+    variable static_path         static
 
 # page variables used to pass parameters between procs and pages
+
+    variable html_menu
+    variable content
 
     array set html_menu     {}
     array set content       {}
 
-    set page_headline       ""
-    set page_title          ""
-    set page_content_html   ""
-    set last_modified       ""
-    set page_authors        ""
-    set ident               ""
-    set site_structure_mtime 0
+    variable page_headline       ""
+    variable page_title          ""
+    variable page_content_html   ""
+    variable last_modified       ""
+    variable page_authors        ""
+    variable ident               ""
+    variable site_structure_mtime 0
 
 # the effect of this are rather sticky, because when enabled 
 # rivetweb uses the in-memory cache whenever possible 
 # and won't change attitude until che child process exits
  
-    set use_page_cache      0
+    variable use_page_cache      0
 
 # dictionary defining tags and class attributes for elements a menu
 # is made of
 
-    set templates_db       [dict create]
+    variable templates_db       [dict create]
 
     dict set templates_db rwbase menu_html       {div staticmenu}
     dict set templates_db rwbase title_html      {div menuheader}
@@ -103,15 +106,36 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase item_html       {span menuitem}
     dict set templates_db rwbase link_class      navitem
 
-    set debug               0
-    set hooks_dir           hooks
+    variable debug               0
+    variable hooks_dir           hooks
 
-    set hooks               [dict create]
+    variable hooks               [dict create]
 
 # parameters for downloading binary files
 
-    set download_proc       download.tcl
-    set download_chunksize  65536
+    variable download_proc       download.tcl
+    variable download_chunksize  65536
+
+    proc init {website_root } {
+        variable    site_base
+        variable    rivetweb_root
+        variable    scripts     
+        variable    static_pages
+        variable    sitemap
+        variable    local_pages
+
+        if {![info exists rivetweb_root]} {
+            set rivetweb_root   [file join [file dirname [info script]] ..]
+            set rivetweb_root   [file normalize $rivetweb_root]
+        }
+
+        set scripts             [file join $rivetweb_root tcl]
+
+        set site_base           $website_root        
+        set static_pages        [file normalize [file join $site_base pages]]
+        set sitemap             [file normalize [file join $site_base sitemap]]
+        set local_pages	        [file normalize [file join $site_base docs]]
+    }
 
 }
 
