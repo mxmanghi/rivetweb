@@ -52,7 +52,7 @@ namespace eval ::XMLData {
         }
 
         set pagedict [dict create]
-        dict set pagedict $key metadata [eval dict create $metadata_l]
+        dict set pagedict metadata [eval dict create $metadata_l]
         foreach content [$domroot getElementsByTagName content] {
             if {[$content hasAttribute language]} {
                 set clang [$content getAttribute language]
@@ -66,23 +66,12 @@ namespace eval ::XMLData {
 
 # creiamo un nuovo dom
             
-                    set cdom [dom createDocument pagetext]
-                    set ptext [$cdom documentElement]
-                    
-                    set composed_text ""
-                    foreach textchild [$c childNodes] {
-                        append composed_text [$textchild asXML]
-                    }
+                    set cdom [dom parse [$c asXML]]
+                    dict set pagedict content $clang pagetext $cdom
 
-                    set text_node [$cdom createTextNode $composed_text]
-                    $ptext appendChild $text_node
-                    if {[dict exists $pagedict $key content $clang pagetext]} {
-                        [dict get $pagedict $key content $clang pagetext] delete
-                    }
-                    dict set pagedict $key content $clang pagetext $cdom
                 } else {
 
-                    dict set pagedict $key content $clang $node_name [$c text]
+                    dict set pagedict content $clang $node_name [$c text]
 
                 }
             }
