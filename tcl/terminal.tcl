@@ -10,43 +10,33 @@ namespace eval ::rwterm {
         flush $termch
     }
 
-    proc parse_line {linea} {
-        if {[file exists $linea] && [file isdirectory $linea]} {
-            puts stderr "$linea existing"
-        } else {
-
-            if {[catch {[file mkdir $linea]} e]} {
-
-                puts "Error creating $linea:\n$e"
-
-            } else {
-
-                create_website $linea
-
-            }
-        }
-    }
-
     proc get_line {ch prompt_line input_line} {
         upvar $input_line line    
 
         prompt stdout $prompt_line
-        return [gets stdin line]
+        return [gets $ch line]
 
     }
 
     proc read_input_line {ch prompt_line} {
 
-        while {![eof $ch] && ([get_line stdin $prompt_line linea] <= 0)} {
-     
-        } 
+        while {![eof $ch]} {
+            if {([get_line stdin $prompt_line linea] > 0)} { 
+                return $linea
+            } 
+        }
 
-        return $linea
+        return ""
     }
 
-    proc termio_setup {} {
-        fileevent stdin readable [list leggi_linea stdin]
+# this method implements a state-machine through 'read_line_proc'
+# See tcl/newrwpage.tcl for an example
+
+    proc setup_input_handler { ch read_line_proc } {
+        fileevent $ch readable [list $read_line_proc $ch]
     }
+
+    proc deregister_input_handler {ch} { fileevent $ch readable {} }
 
 }
 

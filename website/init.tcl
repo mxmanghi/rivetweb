@@ -5,7 +5,9 @@ package require rivetweb
 
 ::rivetweb::init [file dirname [info script]]
 
-apache_log_error info "starting rivetweb for website at $::rivetweb::site_base"
+if {[info exists ::rivetweb::apache_running]} {
+    apache_log_error info "starting rivetweb for website at $::rivetweb::site_base"
+}
 
 # rivetweb initialization 
 

@@ -28,9 +28,7 @@ if {[var exists reset]} {
 
 if {[var exists show]} {
     set pagina [var get show]
-    apache_log_error notice "'$pagina' requested"
-
-    if {[isDebugging]} { apache_log_error info "requesting page '$pagina'" }
+    apache_log_error info "'$pagina' requested"
 
 # if we are using cached content and requested page is cached we simply
 # store in ::rivetweb::page_content
@@ -38,16 +36,23 @@ if {[var exists show]} {
     if {[info exists pagine($pagina)] && $::rivetweb::use_page_cache} {
         set ::rivetweb::page_content $pagina
     } else {
-#       set pagine($::rivetweb::page_content)   [::rivetweb::buildPage  $pagina                  \
-#                                                                       ::rivetweb::page_content \
-#                                                                       $language]
+        if {[info exists pagine($pagina)]} { $pagine($pagina) delete }
 
-        set xmlpage  [::rivetweb::buildPage $pagina     \
-                                            ::rivetweb::page_content \
-                                            $language]
+        set pagine($pagina)   [::rivetweb::buildPage   $pagina                   \
+                                                        ::rivetweb::page_content \
+                                                        $language]
 
-        set pagine($::rivetweb::page_content) $xmlpage
-        apache_log_error info "[pid] page_content: $::rivetweb::page_content"
+# experimental code, this is rather redundant and its usefulness is largely questionable
+
+        if {![string match $pagina $::rivetweb::page_content]} {
+
+            set pagine($::rivetweb::page_content) $pagine($pagina)
+            unset pagine($pagina)
+
+        }
+
+        apache_log_error info "[pid] page_content: $::rivetweb::page_content ([info exists pagine($::rivetweb::page_content)])"
+
 #       foreach p [array names pagine] { apache_log_error err "[pid] $p: $pagine($p)" }
     }
 #   puts stderr [$pagine($::rivetweb::page_content) asXML]
@@ -58,8 +63,8 @@ if {[var exists show]} {
 
     set ::rivetweb::page_content $::rivetweb::index
     if {!$::rivetweb::use_page_cache} {
-        set pagine($::rivetweb::page_content) [::rivetweb::buildPage $::rivetweb::index \
-                                                                     ::rivetweb::page_content \
+        set pagine($::rivetweb::index) [::rivetweb::buildPage $::rivetweb::index         \
+                                                                     ::rivetweb::page_content   \
                                                                      $language]
     }
 }
@@ -74,7 +79,7 @@ if {[dict keys $::rivetweb::hooks] > 0} {
     set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
 
     foreach hk [dict keys $xmlpp] {
-        apache_log_error info "processing hook: [dict get $xmlpp $hk descrip]"
+        apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
         set xmlprocessor [dict get $xmlpp $hk function]
         set xmlDoc $pagine($::rivetweb::page_content)
         foreach child [$xmlDoc getElementsByTagName $hk] {

@@ -124,6 +124,7 @@ namespace eval ::rivetweb {
         variable    sitemap
         variable    local_pages
 
+#       puts  [file dirname [info script]]
         if {![info exists rivetweb_root]} {
             set rivetweb_root   [file join [file dirname [info script]] ..]
             set rivetweb_root   [file normalize $rivetweb_root]

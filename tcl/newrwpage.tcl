@@ -3,29 +3,20 @@
 #
 #
 
+lappend auto_path [file normalize [file join [file dirname [info script]] ..]]
+
+package require rwterm
+package require rivetweb
 package require tdom
 
 set site_base       [pwd]
-set rivetweb_conf   [file join $site_base rivetweb.tcl]
-
-if {![file exists $rivetweb_conf]} {
-    puts "Error: rivetweb.tcl not existing."
-    exit
-}
-
-# By reading this we establish where Rivetweb scripts are
-# (::rivetweb::scripts)
-
-source $rivetweb_conf
 
 set ::stdin_signal  0
 set stato           file_input
 
-set script_dir      [file dirname [info script]]
+#source [file join $::rivetweb::scripts rivetweb_ns.tcl]
 
-# rivetweb_ns.tcl defines Rivetweb status and configuration variables
-
-source [file join $::rivetweb::scripts rivetweb_ns.tcl]
+::rivetweb::init [pwd]
 
 # site_defs.tcl overrides default
 
@@ -36,34 +27,9 @@ source $defs_location
 
 array set file_descriptor {}
 
-proc prompt {termch} {
-    switch $::stato {
-        file_input {
-            set prompt_text "filename"
-        }
-        title_input {
-            set prompt_text "title"
-        }
-        author_input {
-            catch {
-                set autore_login [exec whoami]
-            }
-            set prompt_text "author \[$autore_login\]:"
-        }
-        default {
-            incr ::stdin_signal
-            return
-        }
-    }
-
-    puts -nonewline $termch "$prompt_text: "
-
-    flush $termch
-}
-
 proc parse_line {linea} {
-    switch $::stato {
 
+    switch $::stato {
         file_input {
     
 # we replace spaces with underscores   
@@ -96,35 +62,39 @@ proc parse_line {linea} {
 
 }
 
-proc leggi_linea {ch} {
-    if {![eof $ch]} {
-        if {[gets $ch linea] > 0} {
-            puts " <<< -- $linea"
-            parse_line $linea
-            prompt stdout
-        } else {
-            if {$::stato == "final_state"} {
-                incr ::stdin_signal
-            } elseif {$::stato == "author_input"} {
-                parse_line [exec whoami]
-                incr ::stdin_signal
-            } else {
-                prompt stdout
+proc leggi_dati {ch} {
+
+    while {1} {
+
+        switch $::stato {
+            file_input {
+                set linea [::rwterm::read_input_line $ch "Filename: "]
+            }
+            title_input {
+                set linea [::rwterm::read_input_line $ch "Page Title: "]
+            }
+            author_input {
+                set linea [::rwterm::read_input_line $ch "Author: "]
             }
         }
-    } else {
-        incr ::stdin_signal
+        
+        if {[eof $ch]} {
+            puts "\nexiting..."
+            exit
+        }        
+
+        if {$::stato == "final_state"} { 
+            ::rwterm::deregister_input_handler $ch
+            incr ::stdin_signal 
+            puts "done.."
+            return
+        }
+
+        parse_line $linea
     }
 }
 
-proc termio_setup {} {
-    fileevent stdin readable [list leggi_linea stdin]
-    prompt stdout
-}
-
-termio_setup
-
-vwait ::stdin_signal
+leggi_dati stdin 
 
 parray file_descriptor
 
@@ -157,7 +127,8 @@ set text_o   [$pagina_dom createTextNode "\$Author: $file_descriptor(author) \$"
 $author_o   appendChild $text_o
 
 set date_o  [$pagina_dom createElement date]
-set text_o  [$pagina_dom createTextNode "\$Date: \$"]
+set text_o  [$pagina_dom createTextNode \
+                "\$Date: [clock format [clock seconds] -format \"%Y-%m-%d %H:%M:%S\"] \$"]
 $date_o     appendChild $text_o
 
 set titleg_o [$pagina_dom createElement title]
@@ -178,7 +149,7 @@ $menu_o     setAttribute position left
 set text_o  [$pagina_dom createTextNode main]
 $menu_o     appendChild $text_o
 
-set content_o   [$pagina_dom createElement content]
+set content_o [$pagina_dom createElement content]
 set title_o [$pagina_dom createElement title]
 set text_o  [$pagina_dom createTextNode $file_descriptor(title)]
 $title_o    appendChild $text_o

@@ -3,7 +3,7 @@
 #
 #
 
-lappend auto_path [file dirname [info script]]
+lappend auto_path [file normalize [file join [file dirname [info script]] ..]]
 
 package require rwterm
 package require rivetweb
@@ -126,11 +126,11 @@ set script_dir      [file dirname [info script]]
 #source $defs_location
 #
 
-::rwterm::termio_setup
+#::rwterm::termio_setup
 
 while {1} {
     set linea [::rwterm::read_input_line stdin "Linea: "]
-    if {[string match $linea END]} { break }
+    if {[string match $linea END] || [eof stdin]} { puts ""; break }
     puts " ---> $linea"
 }
 

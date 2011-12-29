@@ -5,6 +5,12 @@
     <title>Modello di Pagina</title>
     <headline>Modello di Pagina</headline>
     <menu position="left">root</menu>
+    <content language="it">
+    	<title>Rivetweb: semplice generatore di HTML basato su Tcl</title>
+        <pagetext>
+            Il sito di Rivetweb e' in costruzione
+        </pagetext>
+    </content>
     <content>
     	<title>Rivetweb: easy HTML generation with Tcl</title>
     	<headline>Rivetweb: easy HTML generation with Tcl</headline>

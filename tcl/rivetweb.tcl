@@ -630,22 +630,22 @@ namespace eval ::rivetweb {
 #   - either true or false depeding on the search operation 
 #     success
 #
-#
 
     proc selectContent {xml_page lang content_selected} {
         upvar $content_selected content
 
-#       puts stderr "seeking content for language $lang"
-
+# peeking the root of the page
         set xmlroot [$xml_page documentElement root]
+
+# we set an empty default_content to test if the page was consistent.
+ 
         set default_content ""
         set retv true
         foreach content [$xmlroot getElementsByTagName content] {
             if {[$content hasAttribute language]} {
                 set clang [$content getAttribute language]
-#               puts stderr "$content: ($clang) [$content asXML]"
+                apache_log_error debug "$content: ($clang)"         
                 if {[string equal $clang $lang]} {
-#                   puts stderr "content found ($clang)"
                     return true
                 } elseif {[string match $clang $::rivetweb::default_lang]} {
                     set default_content $content
@@ -709,6 +709,9 @@ namespace eval ::rivetweb {
                 set content(headline) $content(title)
             } elseif {![info exists content(title)] && [info exists content(headline)]} {
                 set content(title)  $content(headline)
+            } elseif {![info exists content(title)] && ![info exists content(headline)]} {
+                set content(title) "<undefined>"
+                set content(headline) "<undefined>"
             }
 
             return true
