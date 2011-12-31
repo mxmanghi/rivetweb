@@ -5,7 +5,7 @@
     <title>Rivetweb Installation</title>
     <headline>Rivetweb Installation</headline>
     <menu position="top">banner</menu>
-    <menu position="left">root</menu>
+    <menu position="left">rivetweb</menu>
     <content>
         <title>Rivetweb Installation</title>
         <headline>Rivetweb Installation</headline>

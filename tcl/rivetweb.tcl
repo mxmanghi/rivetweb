@@ -5,8 +5,11 @@
 #
 
 package require rwconf
+package require rwebdb
+package require rwlogger
 
 namespace eval ::rivetweb {
+
 # -- menuTitle
 #
 # menuTitle accepts a rivetweb xml object as argument. The procedure
@@ -554,7 +557,7 @@ namespace eval ::rivetweb {
                     -errorinfo  "Struttura menu inconsistente (manca 'radice')" $menu_list
         }
 
-        set ml {}
+        set ml { }
         foreach cn [$menublock childNodes] {
             if {[$cn nodeName] == "menu"} {
                 if {[$cn hasAttribute type]} {
@@ -597,7 +600,8 @@ namespace eval ::rivetweb {
 
 # -- itemSerialize 
 #
-# takes a tdom element object and makes a list of the child elements and their text nodes.
+# takes a tdom element object and makes a list of the child 
+# elements and their text nodes.
 # Useful when a tdom element's children are leaves of the tree
 #
 
@@ -681,37 +685,16 @@ namespace eval ::rivetweb {
 #
 #
 
-    proc makePageHTML {xmldoc xmlnode_content content_a} {
-        upvar $content_a content  
+    proc makePageHTML {xmldoc content_a} {
+        upvar $content_a content_html 
 
-        if {[string match [$xmlnode_content nodeName] content]} {
-            foreach el [$xmlnode_content childNodes] {
-#               puts "<pre>processing element [$el nodeName]</pre>"
-                switch [$el nodeName] {
-                    title {
-                        set content(title) [$el text]
-                    }
-                    headline {
-#                       puts [escape_sgml_chars [$el asText]]
-                        set content(headline) [$el asXML]
-                    }
-                    pagetext {
-                        set content(pagetext) ""
-                        foreach txtElement [$el childNodes] {
-                            append content(pagetext) "[$txtElement asXML -indent 1]\n"
-                        }
-#                       puts stderr $pagetext
-                    }
-                }
-            }
+        set content_html ""
+        set xmlnode_pt [$xmldoc documentElement]
 
-            if {![info exists content(headline)] && [info exists content(title)]} {
-                set content(headline) $content(title)
-            } elseif {![info exists content(title)] && [info exists content(headline)]} {
-                set content(title)  $content(headline)
-            } elseif {![info exists content(title)] && ![info exists content(headline)]} {
-                set content(title) "<undefined>"
-                set content(headline) "<undefined>"
+        if {[string match [$xmlnode_pt nodeName] pagetext]} {
+
+            foreach el [$xmlnode_pt childNodes] {
+                append content_html "[$el asXML -indent 1]\n"
             }
 
             return true
@@ -737,6 +720,7 @@ namespace eval ::rivetweb {
     proc contentType {} {
         return "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$::rivetweb::http_encoding\" />"
     }
+
 }
 
 package provide rivetweb 2.0

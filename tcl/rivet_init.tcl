@@ -7,8 +7,10 @@
 #
 
 # index page
-#return
-set ::rivetweb::pagine($::rivetweb::index) [::rivetweb::buildPage index ::rivetweb::page_content]
+
+#set ::rivetweb::pagine($::rivetweb::index) [::rivetweb::buildPage index ::rivetweb::page_content]
+
+$::rivetweb::rwebdb fetch index 
 
 # costruiamo il database in memoria dei template disponibili
 apache_log_error notice "Initializing Apache child [pid], [pwd]"

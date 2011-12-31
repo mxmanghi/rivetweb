@@ -15,11 +15,15 @@ if {[var exists lang]} {
 }
 
 if {[var exists reset]} {
-    foreach {codice_pag xmlref} [array get pagine] { $xmlref delete }
-    set pagine($::rivetweb::index)	[::rivetweb::buildPage index]
+
     set ::rivetweb::page_content	$::rivetweb::index
 
-    array unset pagine
+### set pagine($::rivetweb::index)	[::rivetweb::buildPage index]
+
+    $::rivetweb::rwebdb erase
+    $::rivetweb::rwebdb fetch $::rivetweb::index 
+
+### array unset pagine
 } 
 
 # the central point is exactly here: we have to decide which page
@@ -33,47 +37,30 @@ if {[var exists show]} {
 # if we are using cached content and requested page is cached we simply
 # store in ::rivetweb::page_content
 
-    if {[info exists pagine($pagina)] && $::rivetweb::use_page_cache} {
-        set ::rivetweb::page_content $pagina
-    } else {
-        if {[info exists pagine($pagina)]} { $pagine($pagina) delete }
+    set ::rivetweb::page_content $pagina
+    if {[$::rivetweb::rwebdb check $pagina]} { $::rivetweb::rwebdb dispose $pagina }
 
-        set pagine($pagina)   [::rivetweb::buildPage   $pagina                   \
-                                                        ::rivetweb::page_content \
-                                                        $language]
+    set ::rivetweb::current_pentry [$::rivetweb::rwebdb fetch $pagina]
 
-# experimental code, this is rather redundant and its usefulness is largely questionable
+    apache_log_error info "[pid] page_content: $::rivetweb::page_content"
 
-        if {![string match $pagina $::rivetweb::page_content]} {
-
-            set pagine($::rivetweb::page_content) $pagine($pagina)
-            unset pagine($pagina)
-
-        }
-
-        apache_log_error info "[pid] page_content: $::rivetweb::page_content ([info exists pagine($::rivetweb::page_content)])"
-
-#       foreach p [array names pagine] { apache_log_error err "[pid] $p: $pagine($p)" }
-    }
-#   puts stderr [$pagine($::rivetweb::page_content) asXML]
-#   flush stderr
 } else {
 
 # Rivetweb assumes the default page is defined in the ::rivetweb::index variable
 
     set ::rivetweb::page_content $::rivetweb::index
-    if {!$::rivetweb::use_page_cache} {
-        set pagine($::rivetweb::index) [::rivetweb::buildPage $::rivetweb::index         \
-                                                                     ::rivetweb::page_content   \
-                                                                     $language]
-    }
+    set ::rivetweb::current_pentry [$::rivetweb::rwebdb fetch $::rivetweb::index]
 }
 
-#parray pagine
+array unset content_a
+#set page_xml $pagine($::rivetweb::page_content)
 
-array unset page_menu
+set serialized_entry [$::rivetweb::pentry content $::rivetweb::current_pentry $language]
 
-set page_xml $pagine($::rivetweb::page_content)
+#puts "<pre>$serialized_entry ([llength $serialized_entry])</pre>"
+array set content_a $serialized_entry
+
+set page_xml $content_a(pagetext)
 
 if {[dict keys $::rivetweb::hooks] > 0} {
     set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
@@ -81,10 +68,9 @@ if {[dict keys $::rivetweb::hooks] > 0} {
     foreach hk [dict keys $xmlpp] {
         apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
         set xmlprocessor [dict get $xmlpp $hk function]
-        set xmlDoc $pagine($::rivetweb::page_content)
-        foreach child [$xmlDoc getElementsByTagName $hk] {
+        foreach child [$page_xml getElementsByTagName $hk] {
                    
-            eval $xmlprocessor $xmlDoc $child
+            eval $xmlprocessor $page_xml $child
 
         }
     }
@@ -92,27 +78,35 @@ if {[dict keys $::rivetweb::hooks] > 0} {
 
 if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
-foreach pm [$page_xml getElementsByTagName menu] {
+array unset page_menu
 
-    if {[$pm hasAttribute position]} {
-        set position [$pm getAttribute position]
-    } else {
-        set position left
-    }
-	
-    lappend page_menu($position) [$pm text]
+#foreach pm [$page_xml getElementsByTagName menu] {
+#
+#    if {[$pm hasAttribute position]} {
+#        set position [$pm getAttribute position]
+#    } else {
+#        set position left
+#    }
+#	
+#    lappend page_menu($position) [$pm text]
+#}
+
+set menu_d [$::rivetweb::pentry mdentry $::rivetweb::current_pentry menu]
+
+foreach {pos menuid} $menu_d {
+    lappend page_menu($pos) [dict get $menu_d $pos]
 }
 
 #parray page_menu
 array unset html_menu
 
-#parray sitemenus_a
-
 if {[array exists sitemenus_a]} {
+
+    apache_log_error info "recreating HTML menus "
 
     foreach pos [array names page_menu] {
 
-# in Rivetweb versions before 2.0 every page had to explicitly tell 
+# in Rivetweb versions before 2.0 every page had to explicitly list the menu id that were to be shown
 
         set mid [split $page_menu($pos) ","]
 
@@ -120,20 +114,18 @@ if {[array exists sitemenus_a]} {
 
         set menuid [lindex $mid end]
         set lvmenus [::rivetweb::walkTree $sitemenus_a(root) $menuid leaf]
-#       puts "<pre style=\"background-color: #0ff;border: 1px solid black;\">== $lvmenus ==</pre>"
+        apache_log_error debug " lvmenus ==> $lvmenus"
 
         foreach mid $lvmenus {
             apache_log_error info "creating menu for $template_key"
 
-            append html_menu($pos) [::rivetweb::htmlMenu $mid $language \
-                                   [dict get $::rivetweb::templates_db $template_key]]
+            append html_menu($pos)  [::rivetweb::htmlMenu $mid $language \
+                                                          [dict get $::rivetweb::templates_db $template_key]]
         }
     }
 }
 
-if {[isDebugging]} { apache_log_error debug "<pre> ===== menu: [array names html_menu]</pre>" }
-
-set page_authors    [getElementValue $page_xml author]
+apache_log_error debug "=====> menus: [array names html_menu]" 
 
 if {[dict keys $::rivetweb::hooks] > 0} {
     set metadatapp [dict get $::rivetweb::hooks metadata]
@@ -141,31 +133,50 @@ if {[dict keys $::rivetweb::hooks] > 0} {
     foreach hk [dict keys $metadatapp] {
         apache_log_error info "processing hook: [dict get $metadatapp $hk descrip]"
         set xmlprocessor [dict get $metadatapp $hk function]
-        set xmlDoc $pagine($::rivetweb::page_content)
-        foreach child [$xmlDoc getElementsByTagName $hk] {
                    
-            eval $xmlprocessor $xmlDoc $child
+        $xmlprocessor $::rivetweb::current_pentry 
 
-        }
     }
 }
 
 # we finally create HTML out of the xml page so far handled.
 
-if {[selectContent $page_xml $language content_selected]} {
-    array unset content
-    if {[makePageHTML $page_xml $content_selected content]} {
-        set page_content_html $content(pagetext)
-        set page_title        $content(title)
-        set page_headline     $content(headline)       
-    } else {
-        set page_content_html "Rivetweb internal error: could not create HTML from page data"
-        set page_headline     "Rivetweb error"
-        set page_title        "Rivetweb error"
+#if {[selectContent $page_xml $language content_selected]} {
+#    array unset content
+#    if {[makePageHTML $page_xml $content_selected content]} {
+#        set page_content_html $content(pagetext)
+#        set page_title        $content(title)
+#        set page_headline     $content(headline)       
+#    } else {
+#        set page_content_html "Rivetweb internal error: could not create HTML from page data"
+#        set page_headline     "Rivetweb error"
+#        set page_title        "Rivetweb error"
+#    }
+#} else {
+#    set page_content_html "no content found"
+#}
+
+# With the new object oriented approach the content language has been already
+# selected by the ::rivetweb::pentry page entry manager
+
+if {[makePageHTML $content_a(pagetext) page_content_html]} {
+    if {![info exists content_a(headline)] && [info exists content_a(title)]} {
+        set content_a(headline) $content_a(title)
+    } elseif {![info exists content_a(title)] && [info exists content_a(headline)]} {
+        set content_a(title)  $content_a(headline)
+    } elseif {![info exists content_a(title)] && ![info exists content_a(headline)]} {
+        set content_a(title) $::rivetweb::page_content
+        set content_a(headline) $::rivetweb::page_content
     }
+    set page_title        $content_a(title)
+    set page_headline     $content_a(headline)       
 } else {
-    set page_content_html "no content found"
+    set page_content_html "Rivetweb internal error: could not create HTML from page data"
+    set page_headline     "Rivetweb error"
+    set page_title        "Rivetweb error"
 }
+
+set page_authors [$::rivetweb::pentry mdentry $::rivetweb::current_pentry author]
 
 headers type "text/html; charset=$::rivetweb::http_encoding"
 

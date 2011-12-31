@@ -1,2 +1,20 @@
 <sitemenus id="rivetweb" parent="root">
+    <menu id="install" type="node">
+        <title>Install</title>
+        <link>
+            <type>internal</type>
+            <text>Step 1</text>
+            <reference>install1</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Step 2</text>
+            <reference>install2</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Step 3</text>
+            <reference>install3</reference>
+        </link>
+    </menu>
 </sitemenus>

@@ -6,5 +6,11 @@
 # Rivetweb pkgIndex.tcl builder
 #
 
-pkg_mkIndex -verbose . tcl/rivetweb.tcl tcl/rivetweb_ns.tcl tcl/terminal.tcl tcl/datasource/*.tcl 
+pkg_mkIndex -verbose .  tcl/rivetweb.tcl        \
+                        tcl/rwlogger.tcl        \
+                        tcl/rivetweb_ns.tcl     \
+                        tcl/terminal.tcl        \
+                        tcl/rweb_coredb.tcl     \
+                        tcl/rweb_pentry.tcl     \
+                        tcl/datasource/*.tcl  
 

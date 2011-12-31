@@ -17,16 +17,20 @@ namespace eval ::rivetweb {
 # these paths are relative to the DocumentRoot, so we don't need
 # to normalize them
 
-    variable picts_path          picts
-    variable css_path            templates
-    variable base_templates      templates
-    variable newsite_templates   rwtemplates
-    variable running_template    [file join $base_templates base.rvt]
-    variable running_css         [file join $base_templates base.css]
-    variable default_template    rwbase
-    variable http_encoding       utf-8
+    variable picts_path             picts
+    variable css_path               templates
+    variable base_templates         templates
+    variable newsite_templates      rwtemplates
+    variable running_template       [file join $base_templates base.rvt]
+    variable running_css            [file join $base_templates base.css]
+    variable default_template       rwbase
+    variable http_encoding          utf-8
+    variable datasource             XMLData
+    variable rwebdb                 ::rwebdb
+    variable logger                 ::rwlogger
+    variable pentry                 ::rwpentry
 
-    variable template_key        ""
+    variable template_key       ""
 
 # the procedure should quite easly evolve to have 
 # the ability to handle multilingual contents. 'default_lang' 
@@ -47,13 +51,13 @@ namespace eval ::rivetweb {
 # menus and contents as 'current_rev' changes  or
 # if 'reset' parameter is coded in the url
 
-    set current_rev         0
+    set current_rev             0
 
 # array that maps 'content' keys and xhtml (to be replaced
 # by a dictionary?)
 
     variable pagine
-    array set pagine        {}
+    array set pagine            {}
 
 # default key for content generation: basically this
 # is the key to the file containing the homepage.
@@ -77,9 +81,16 @@ namespace eval ::rivetweb {
 
     variable html_menu
     variable content
+    variable sitemenus_a
 
-    array set html_menu     {}
-    array set content       {}
+    array set html_menu         {}
+    array set content           {}
+    array set sitemenus_a       {}
+
+# and finally we create the dictionary that is to held the 
+# whole website database
+
+    variable sitepages          [dict create]
 
     variable page_headline       ""
     variable page_title          ""
@@ -106,7 +117,7 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase item_html       {span menuitem}
     dict set templates_db rwbase link_class      navitem
 
-    variable debug               0
+    variable debug               1
     variable hooks_dir           hooks
 
     variable hooks               [dict create]
@@ -116,13 +127,18 @@ namespace eval ::rivetweb {
     variable download_proc       download.tcl
     variable download_chunksize  65536
 
-    proc init {website_root } {
+    proc init {website_root ds } {
         variable    site_base
         variable    rivetweb_root
         variable    scripts     
         variable    static_pages
         variable    sitemap
         variable    local_pages
+        variable    datasource
+
+        package require $ds
+
+        set datasource  ::${ds}
 
 #       puts  [file dirname [info script]]
         if {![info exists rivetweb_root]} {

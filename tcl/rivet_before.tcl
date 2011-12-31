@@ -143,7 +143,6 @@ set ::rivetweb::running_template  [buildTemplateName $running_template $template
 set ::rivetweb::running_css       [makeCssPath $running_css $template_key]
 set ::rivetweb::template_key      $template_key
 
-
 if {[var exists staticroot]} {
     header redir index.html
 }

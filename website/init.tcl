@@ -3,7 +3,7 @@
 lappend auto_path  /home/manghi/Projects/rivetweb-sf/
 package require rivetweb
 
-::rivetweb::init [file dirname [info script]]
+::rivetweb::init [file dirname [info script]] XMLData
 
 if {[info exists ::rivetweb::apache_running]} {
     apache_log_error info "starting rivetweb for website at $::rivetweb::site_base"

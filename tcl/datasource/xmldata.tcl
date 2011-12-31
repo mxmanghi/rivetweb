@@ -4,28 +4,23 @@
 #
 
 package require tdom
-#package require rwconf
+package require rwconf
+package require rwlogger
+package require rwpentry
 
-namespace eval ::rivetweb {
-    variable site_base [file join [pwd] website]
-    variable default_language en
-    variable static_pages [file join $site_base pages]
-
-    proc itemSerialize {itemObj} {
-        set lista {}
-        foreach c [$itemObj child all] {
-            lappend lista [$c tagName] [$c text]
-        }
-        return $lista
-    }
-
-    proc buildSimplePage {messaggio cssclass code} {
-        variable default_language
-
-        return [dict create content [dict create $default_language page_text $messaggio]]
-    }
-
-}
+#namespace eval ::rivetweb {
+#    variable site_base [file join [pwd] website]
+#    variable default_language en
+#    variable static_pages [file join $site_base pages]
+#
+#    proc buildSimplePage {messaggio cssclass code} {
+#        variable default_language
+#
+#        return [dict create content [dict create \
+#                            $default_language page_text $messaggio]]
+#    }
+#
+#}
 
 namespace eval ::XMLData {
     variable xmlpath
@@ -43,21 +38,41 @@ namespace eval ::XMLData {
         set domroot [$xmldom documentElement root]
         if {[$domroot hasAttribute id]} {
             set rkey [$domroot getAttribute id]
+            set key  $rkey
+        } else {
+            set rkey $key
         }
 
-        set metadata_l {}
-        foreach {tag telem} [::rivetweb::itemSerialize $domroot] {
-            if {$tag == "content"} { continue }            
-            lappend metadata_l $tag $telem
+        set menu_d      [dict create]
+        set metadata_l  {}
+        foreach c [$domroot child all] {
+            switch [$c tagName] {
+                content {
+                    continue
+                }
+                menu {
+
+                    dict set menu_d menu [$c getAttribute position left] [$c text]
+
+                }
+                default {
+                    lappend metadata_l [$c tagName] [$c text]
+                }
+            }
         }
 
-        set pagedict [dict create]
-        dict set pagedict metadata [eval dict create $metadata_l]
+#       puts "<pre>metadata_l: $metadata_l</pre>"
+        set pageentry [$::rivetweb::pentry create]
+#       dict set pagedict metadata [eval dict create $metadata_l]
+        $::rivetweb::pentry set_metadata pageentry $metadata_l
+        $::rivetweb::pentry put_metadata pageentry $menu_d
+#       puts "<pre>menu_l: $menu_d</pre>"
+
         foreach content [$domroot getElementsByTagName content] {
             if {[$content hasAttribute language]} {
                 set clang [$content getAttribute language]
             } else {
-                set clang $::rivetweb::default_language
+                set clang $::rivetweb::default_lang
             }
 
             foreach c [$content childNodes] {
@@ -67,19 +82,18 @@ namespace eval ::XMLData {
 # creiamo un nuovo dom
             
                     set cdom [dom parse [$c asXML]]
-                    dict set pagedict content $clang pagetext $cdom
-
+#                   dict set pagedict content $clang pagetext $cdom
+                    $::rivetweb::pentry add_content pageentry $clang pagetext $cdom
                 } else {
 
-                    dict set pagedict content $clang $node_name [$c text]
-
+#                   dict set pagedict content $clang $node_name [$c text]
+                    $::rivetweb::pentry add_content pageentry $clang $node_name [$c text]
                 }
             }
         }
 
-        return $pagedict
+        return $pageentry
     }
-
 
     proc fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
@@ -99,21 +113,27 @@ namespace eval ::XMLData {
             } fileioerr]} {
                 set page_id errore_interno
                 set notfound_msg "It was impossible to open the requested page ($fileioerr)"
-#               apache_log_error err "[pid] $notfound_msg"
+                $::rivetweb::logger err "[pid] $notfound_msg"
                 return [::rivetweb::buildSimplePage $notfound_msg message internal_error]
             } else {
                 set pagedbentry [buildPageEntry $key $xmldata rkey]
                 return $pagedbentry
             }
         } else {
-            apache_log_error info "$xmlfile not found"
-            set rkey not_existing
-            set notexists_msg "The requested page does not exist"
-            return [::rivetweb::buildSimplePage $notexists_msg message $page_id]
+            $::rivetweb::logger log info "$xmlfile not found"
+            set notexisting_msg "The requested page does not exist"
+#           return [::rivetweb::buildSimplePage $notexists_msg message $page_id]
+            return -code error -errorcode not_existing \
+                   -errorinfo $notexisting_msg $notexisting_msg
         }
     }
 
     proc synchData {key data_dict} {
+
+    }
+
+    proc dispose {key} {
+
 
     }
 
@@ -122,7 +142,6 @@ namespace eval ::XMLData {
     namespace export   synchData
 
     namespace ensemble create
-
 }
 
 package provide XMLData 0.1
