@@ -127,7 +127,7 @@ namespace eval ::rivetweb {
     variable download_proc       download.tcl
     variable download_chunksize  65536
 
-    proc init {website_root ds } {
+    proc init {rweb_root website_root ds } {
         variable    site_base
         variable    rivetweb_root
         variable    scripts     
@@ -140,11 +140,8 @@ namespace eval ::rivetweb {
 
         set datasource  ::${ds}
 
-#       puts  [file dirname [info script]]
-        if {![info exists rivetweb_root]} {
-            set rivetweb_root   [file join [file dirname [info script]] ..]
-            set rivetweb_root   [file normalize $rivetweb_root]
-        }
+        set rivetweb_root   [file normalize $rweb_root]
+        apache_log_error info "rivetweb_root set as $rivetweb_root"
 
         set scripts             [file join $rivetweb_root tcl]
 
