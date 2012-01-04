@@ -28,7 +28,7 @@ namespace eval ::rivetweb {
     variable datasource             XMLData
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
-    variable pentry                 ::rwpentry
+    variable pmodel                 ::rwpmodel
 
     variable template_key       ""
 

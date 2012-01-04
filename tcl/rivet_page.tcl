@@ -40,7 +40,7 @@ if {[var exists show]} {
     set ::rivetweb::page_content $pagina
     if {[$::rivetweb::rwebdb check $pagina]} { $::rivetweb::rwebdb dispose $pagina }
 
-    set ::rivetweb::current_pentry [$::rivetweb::rwebdb fetch $pagina]
+    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $pagina]
 
     apache_log_error info "[pid] page_content: $::rivetweb::page_content"
 
@@ -49,16 +49,16 @@ if {[var exists show]} {
 # Rivetweb assumes the default page is defined in the ::rivetweb::index variable
 
     set ::rivetweb::page_content $::rivetweb::index
-    set ::rivetweb::current_pentry [$::rivetweb::rwebdb fetch $::rivetweb::index]
+    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::index]
 }
 
 array unset content_a
 #set page_xml $pagine($::rivetweb::page_content)
 
-set serialized_entry [$::rivetweb::pentry content $::rivetweb::current_pentry $language]
+set serialized_model [$::rivetweb::pmodel content $::rivetweb::current_pmodel $language]
 
-#puts "<pre>$serialized_entry ([llength $serialized_entry])</pre>"
-array set content_a $serialized_entry
+#puts "<pre>$serialized_model ([llength $serialized_model])</pre>"
+array set content_a $serialized_model
 
 set page_xml $content_a(pagetext)
 
@@ -91,7 +91,7 @@ array unset page_menu
 #    lappend page_menu($position) [$pm text]
 #}
 
-set menu_d [$::rivetweb::pentry mdentry $::rivetweb::current_pentry menu]
+set menu_d [$::rivetweb::pmodel mdmodel $::rivetweb::current_pmodel menu]
 
 foreach {pos menuid} $menu_d {
     lappend page_menu($pos) [dict get $menu_d $pos]
@@ -134,7 +134,7 @@ if {[dict keys $::rivetweb::hooks] > 0} {
         apache_log_error info "processing hook: [dict get $metadatapp $hk descrip]"
         set xmlprocessor [dict get $metadatapp $hk function]
                    
-        $xmlprocessor $::rivetweb::current_pentry 
+        $xmlprocessor $::rivetweb::current_pmodel 
 
     }
 }
@@ -157,7 +157,7 @@ if {[dict keys $::rivetweb::hooks] > 0} {
 #}
 
 # With the new object oriented approach the content language has been already
-# selected by the ::rivetweb::pentry page entry manager
+# selected by the ::rivetweb::pmodel page model manager
 
 if {[makePageHTML $content_a(pagetext) page_content_html]} {
     if {![info exists content_a(headline)] && [info exists content_a(title)]} {
@@ -176,7 +176,7 @@ if {[makePageHTML $content_a(pagetext) page_content_html]} {
     set page_title        "Rivetweb error"
 }
 
-set page_authors [$::rivetweb::pentry mdentry $::rivetweb::current_pentry author]
+set page_authors [$::rivetweb::pmodel mdmodel $::rivetweb::current_pmodel author]
 
 headers type "text/html; charset=$::rivetweb::http_encoding"
 

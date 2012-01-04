@@ -6,7 +6,7 @@
 package require tdom
 package require rwconf
 package require rwlogger
-package require rwpentry
+package require rwpmodel
 
 #namespace eval ::rivetweb {
 #    variable site_base [file join [pwd] website]
@@ -62,10 +62,10 @@ namespace eval ::XMLData {
         }
 
 #       puts "<pre>metadata_l: $metadata_l</pre>"
-        set pageentry [$::rivetweb::pentry create]
+        set pagemodel [$::rivetweb::pmodel create]
 #       dict set pagedict metadata [eval dict create $metadata_l]
-        $::rivetweb::pentry set_metadata pageentry $metadata_l
-        $::rivetweb::pentry put_metadata pageentry $menu_d
+        $::rivetweb::pmodel set_metadata pagemodel $metadata_l
+        $::rivetweb::pmodel put_metadata pagemodel $menu_d
 #       puts "<pre>menu_l: $menu_d</pre>"
 
         foreach content [$domroot getElementsByTagName content] {
@@ -83,16 +83,16 @@ namespace eval ::XMLData {
             
                     set cdom [dom parse [$c asXML]]
 #                   dict set pagedict content $clang pagetext $cdom
-                    $::rivetweb::pentry add_content pageentry $clang pagetext $cdom
+                    $::rivetweb::pmodel add_content pagemodel $clang pagetext $cdom
                 } else {
 
 #                   dict set pagedict content $clang $node_name [$c text]
-                    $::rivetweb::pentry add_content pageentry $clang $node_name [$c text]
+                    $::rivetweb::pmodel add_content pagemodel $clang $node_name [$c text]
                 }
             }
         }
 
-        return $pageentry
+        return $pagemodel
     }
 
     proc fetchData {key reassigned_key} {

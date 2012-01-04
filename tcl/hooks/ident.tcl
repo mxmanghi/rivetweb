@@ -9,9 +9,9 @@ set hook_descriptor(function)   extract_ident
 set hook_descriptor(descrip)    "extract information from 'ident' metatada element"
 set hook_descriptor(stage)      metadata
 
-proc extract_ident {pentry} {
+proc extract_ident {pmodel} {
 
-    set ident [$::rivetweb::pentry mdentry $pentry ident]
+    set ident [$::rivetweb::pmodel mdmodel $pmodel ident]
 
     if {[regexp {\$Id:\s+[-\w]+\.xml\s+\d*\s+(.*Z)\s+([\.\w]*)\s+\$} $ident match last_modified committer]} {
 
@@ -25,5 +25,5 @@ proc extract_ident {pentry} {
 
     }
 
-    return $pentry
+    return $pmodel
 }

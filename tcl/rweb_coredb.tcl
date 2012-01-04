@@ -6,7 +6,7 @@
 
 package require tdom
 package require rwconf
-package require rwpentry
+package require rwpmodel
 package require XMLData
 
 namespace eval ::rwebdb {
@@ -20,10 +20,10 @@ namespace eval ::rwebdb {
     }
     namespace export check
 
-    proc store {key page_entry} {
+    proc store {key page_model} {
         variable sitepages
 
-        dict set sitepages $key $page_entry
+        dict set sitepages $key $page_model
     }
     namespace export store
 
@@ -37,7 +37,7 @@ namespace eval ::rwebdb {
         if {![check $key]} {
 
             if {[catch {
-                set pentry [$::rivetweb::datasource fetchData $key rkey]
+                set pmodel [$::rivetweb::datasource fetchData $key rkey]
             } e]} {
                 puts stderr $e
                 if {$errorCode == "not_existing"} {
@@ -50,13 +50,13 @@ namespace eval ::rwebdb {
 
                 }
             } else {
-                store $key $pentry
+                store $key $pmodel
             }
 
         } else {
-            set pentry [dict get $sitepages $key]
+            set pmodel [dict get $sitepages $key]
         }
-        return $pentry
+        return $pmodel
     }
     namespace export fetch
 
@@ -64,9 +64,9 @@ namespace eval ::rwebdb {
         variable sitepages
 
         if {[check $key]} {
-            set pentry [dict get $sitepages $key]
+            set pmodel [dict get $sitepages $key]
 
-            $::rivetweb::pentry dispose $pentry 
+            $::rivetweb::pmodel dispose $pmodel 
 
             set sitepages [dict remove $sitepages $key]
         }
@@ -77,9 +77,9 @@ namespace eval ::rwebdb {
         variable sitepages
 
         foreach k [dict keys $sitepages] {
-            set pentry [dict get $sitepages $k]
+            set pmodel [dict get $sitepages $k]
 
-            $::rivetweb::pentry dispose $pentry
+            $::rivetweb::pmodel dispose $pmodel
         }
     }
     namespace export erase
