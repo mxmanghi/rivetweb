@@ -78,7 +78,7 @@ namespace eval ::XMLMenu {
         set menumodel $::rivetweb::menumodel
 
         foreach mdoc [array names xmlmenu] {
-            set rootel      [$xmlmenu($mdoc) documentElement root]
+#           set rootel      [$xmlmenu($mdoc) documentElement root]
             set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             
             $logger log info "analyzing data for $mdoc...."
@@ -86,12 +86,13 @@ namespace eval ::XMLMenu {
 
                 if {[$sm hasAttribute id]} {
 
-                    set group_menu_id          [$sm getAttribute id]
+                    set group_menu_id       [$sm getAttribute id]
                     if {[$sm hasAttribute parent]} {
                         set group_parent    [$sm getAttribute parent]
                     } else {
                         set group_parent    root
                     }
+                    $logger log debug "group parent set as $group_parent" 
                     
                     set group_menu_list {}
 
@@ -105,7 +106,7 @@ namespace eval ::XMLMenu {
                         if {[$menu hasAttribute id]} {
 
                             if {[$menu hasAttribute parent]} {
-                                set parent  [$sm getAttribute parent]
+                                set parent  [$menu getAttribute parent]
                             } else {
                                 set parent  $group_parent
                             }
@@ -120,7 +121,7 @@ namespace eval ::XMLMenu {
                                     set visibility normal
                                 }
                             }
-                                
+
                             set menuobj [$menumodel create  [$menu getAttribute id]     \
                                                             $parent                     \
                                                             $visibility                 ]
@@ -137,8 +138,10 @@ namespace eval ::XMLMenu {
                                     set language $::rivetweb::default_lang
                                 }
 
-                                $menumodel assign title menuobj title [$title text] $language
+                                $menumodel assign title menuobj [$title text] $language
                             }
+
+                            $menumodel assign parent menuobj $group_parent
 
                             set links [$menu getElementsByTagName link]
                             set lm    $::rivetweb::linkmodel         
@@ -186,7 +189,6 @@ namespace eval ::XMLMenu {
                         }
                         lappend group_menu_list $menuobj
                     }
-                    
                     $sitemap_mgr add_menu_group $group_parent $group_menu_id $group_menu_list
 
                 } else {

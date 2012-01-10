@@ -11,9 +11,9 @@ namespace eval ::rwmenu {
 
     proc create { id {parent none} {visibility normal} } {
 
-        return  [dict create menuid         $id     \
-                             parent         root    \
-                             visibility     normal  \
+        return  [dict create menuid         $id          \
+                             parent         $parent      \
+                             visibility     $visibility  \
                              title         [dict create] \
                              links          {}      \
                              attributes     {}      \
@@ -23,7 +23,11 @@ namespace eval ::rwmenu {
     }
 
     proc title {menuobj language} {
-        return [dict get $menuobj title $language]
+        if {[dict exists $menuobj title $language]} {
+            return [dict get $menuobj title $language]
+        } else {
+            return [dict get $menuobj title $::rivetweb::default_lang]
+        }
     }
 
     proc parent {menumodel} {
@@ -39,7 +43,6 @@ namespace eval ::rwmenu {
     }
 
     proc assign {parameter menuobj pvalue args} {
-
         upvar $menuobj menu_o
 
         switch $parameter {
@@ -51,13 +54,15 @@ namespace eval ::rwmenu {
                 dict set menu_o parent $pvalue
             }
             title {
-
                 set language [lindex $args 0]
 
 # the 'title' parameter expects the argument to be a dictionary
 
                 dict set menu_o title $language $pvalue
-
+                
+                if {![dict exists $menu_o title $::rivetweb::default_lang]} {
+                    dict set menu_o title $::rivetweb::default_lang $pvalue
+                }
             }
             index {
                 set index $pvalue             
@@ -89,11 +94,12 @@ namespace eval ::rwmenu {
     }
 
     proc id {menumodel} {
-        puts "--->$menumodel<----"
+#       puts "--->$menumodel<----"
         return [dict get $menumodel menuid]
     }
 
-    namespace export links add_link create menuid assign id parent index
+#   namespace export title links add_link create menuid assign id parent index
+    namespace export   *
     namespace ensemble create
 }
 

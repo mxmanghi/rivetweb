@@ -14,7 +14,7 @@
             <reference>coretags</reference>
         </link>
     </menu>
-    <menu id="main" type="leaf">
+    <menu id="tclwebsites" type="leaf">
     	<title>Resources</title>
         <link>
             <type>external</type>

@@ -14,3 +14,17 @@ package require XMLMenu
 ::rwsitemap create XMLMenu
 ::XMLMenu::loadsitemap rwsitemap
 
+set main [$::rwsitemap::sitemap children -all root]
+
+foreach mn $main {
+    if {[catch {
+        set menus [$::rwsitemap::sitemap get $mn menu]
+    }]} { continue }
+
+    foreach menu_d $menus {
+        ::rivet::putsnnl "Menu [::rwmenu id $menu_d], titolo: "
+        ::rivet::putsnnl "[::rwmenu title $menu_d $::rivetweb::default_lang], "
+        ::rivet::putsnnl "parent: [::rwmenu parent $menu_d]"
+        puts ""
+    }
+}
