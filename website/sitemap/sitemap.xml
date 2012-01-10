@@ -1,6 +1,6 @@
 <!-- $Id: sitemap.xml 1212 2011-10-24 17:25:26Z massimo.manghi $-->
 
-<sitemenus id="root">
+<sitemenus id="main">
     <menu id="docs" type="node">
         <title>Rivetweb</title>
         <link>

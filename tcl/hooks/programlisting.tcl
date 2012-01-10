@@ -16,11 +16,23 @@ proc programlisting {xmlDoc child} {
 
         set code_file   [$child getAttribute src]
 
-        set code_fp     [open [file join $::rivetweb::static_pages $code_file] r]
-        set code_text   [read $code_fp]
-#debug  apache_log_error debug "text in $code_file:\n $code_text"
-#debug  apache_log_error debug [escape_sgml_chars $code_text]
-        close $code_fp    
+        set code_file   [::rivetweb::searchPath $code_file [list $::rivetweb::static_pages \
+                                                                 $::rivetweb::site_base    \
+                                                                 $::rivetweb::rivetweb_root]]
+
+        if {[string length $code_file]} {
+
+            set code_fp     [open $code_file r]
+            set code_text   [read $code_fp]
+#debug      apache_log_error debug "text in $code_file:\n $code_text"
+#debug      apache_log_error debug [escape_sgml_chars $code_text]
+            close $code_fp    
+
+        } else {
+
+            set code_text ""
+
+        }
 
         $xmlDoc createTextNode $code_text newTextNode
         set newPreNode [$xmlDoc createElement pre]

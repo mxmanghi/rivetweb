@@ -11,7 +11,7 @@
 <div id="wrapper">
 	<div id="logo">
 		<h1>Rivetweb</h1>
-		<p><em>Website builder for dummies<a href="http://www.freecsstemplates.org/"></a></em></p>
+		<p><em>Simple Website creation<a href="http://www.freecsstemplates.org/"></a></em></p>
 	</div>
 	<hr />
 	<!-- end #logo -->
@@ -37,10 +37,10 @@
             <ul>
                 <? if {[string equal $::rivetweb::page_content index] == 1} {
                  ?>
-                    <li>
+                    <!-- li>
                         <h2>23 Dec 2011</h2>
                         <p> <a href="<? puts -nonewline [::rivetweb::makeUrl dec23] ?>">Rivetweb website</a></p>
-                    </li> 
+                    </li --> 
                 <?
                 } 
                 if {[info exists ::rivetweb::html_menu(left)]} { puts $::rivetweb::html_menu(left) } 

@@ -13,17 +13,14 @@ namespace eval ::rwlink {
     proc create {link_type reference link_text {link_info ""}} {
         set link_d [dict create type $link_type reference $reference]
 
-        dict set link_d text [dict create $::rivetweb::default_lang $link_text]
+        dict set link_d text $link_text
         if {[string length $link_info]} {
-            dict set link_d info \
-                    [dict create $::rivetweb::default_lang $link_info]
-        } else {
-            dict set link_d info [dict create $::rivetweb::default_lang ""]
-        }
+            dict set link_d info $link_info
+        } 
         return $link_d
     }
 
-    proc add {linkmodel language link_text {link_info ""}} {
+    proc add_text {linkmodel language link_text {link_info ""}} {
         upvar $linkmodel linkm
 
         dict set linkm text $language $link_text

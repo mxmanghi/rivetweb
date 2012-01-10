@@ -5,76 +5,18 @@
     <title>Modello di Pagina</title>
     <headline>Modello di Pagina</headline>
     <menu position="left">root</menu>
-    <content language="it">
-    	<title>Rivetweb: semplice generatore di HTML basato su Tcl</title>
-        <pagetext>
-            Il sito di Rivetweb e' in costruzione
-        </pagetext>
-    </content>
     <content>
     	<title>Rivetweb: easy HTML generation with Tcl</title>
     	<headline>Rivetweb: easy HTML generation with Tcl</headline>
         <pagetext>
-            <p>
-                Rivetweb's website is under costruction as the first
-                release is on its way.
-            </p>
-            <pre>
- Rivetweb is a Tcl based engine for creating static template based websites.
-
- Rivetweb could be your tool if your goal is creation and management
-of small to medium size web sites bearing static content. Rivetweb maintains
-strict separation between content, representation and structure of the web site,
-it's template based, so you can easily change the XHTML/CSS code underlying
-your pages and produce a whole entirely re-styled web site.
-
- Rivetweb is useful when you have to create a website whose content is slowly
-changing, for example when pages must provide structural information about 
-working groups, small firms or technical documentation. 
-
- Rivetweb is not meant to run fast changing dynamic content. It's focused
-on manageability and extensibility for HTML generation.
-
- Currently Rivetweb handles data coming from a single data source:
-a collection of XML files describing the website structure (sitemap), 
-page metadata and page content. A plan is under way to redesign Rivetweb
-so that data sources based on a abstract pattern will be accepted. 
-Still, even though it seems unpractical to have data stored in files, 
-they provide a good workable representation of the abstract internal 
-structure and information relationship of a website, at least from
-a conceptual perspective. Hence they offer a good starting point for
-the development of Rivetweb.
-
- Using Rivetweb with Apache's mod_rewrite you can let your 
-dynamically generated pages appear as if every internal link is
-pointing to good old static .html files. Therefore you can fake
-your website to be made out of only static HTML pages and generate an
-entirely static copy of them for both on-line and off-line browsing
-
- As a consequence, by means of any mirror tool (e.g. wget) you can recreate a 
-local copy of the website completely rewritten in .html files. This copy can 
-be thus deployed with *any* webserver or even distributed on a Pendrive or 
-a CD-ROM for offline browsing.
-
- A Rivetweb web site can be running several XHTML/CSS templates at the same 
-time, you just switch from one to another by passing the 'template' parameter 
-in the URL. This might be useful if you want to test different styles, 
-compare them and let your customers decide which is best to their taste.
-
- Rivetweb is thought to be multilingual. Provided pages and other
-resources are translated, the whole content can be served in multiple
-languages. 
-
-Rivetweb has a basic support for extensibility: page creation can be 
-customized adding 'hooks' procedure to the code, thus adding new data 
-transformations.
-
- Rivetweb is based on Rivet (http://tcl.apache.org/rivet/). Rivet is a
-module and a Tcl programming suite for the Apache HTTP Webserver. 
-
-Rivetweb is entirely free and released under Apache 2.0 licence.
-
-# 2011-12-22</pre>
+            <programlisting src="README" /> 
+        </pagetext>
+    </content>
+    <content language="it">
+    	<title>Rivetweb: semplice generatore di HTML basato su Tcl</title>
+        <pagetext>
+            <p>Il sito di Rivetweb e' in costruzione</p>
+            <programlisting src="README" /> 
         </pagetext>
     </content>
 </page>

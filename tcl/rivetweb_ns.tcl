@@ -29,8 +29,10 @@ namespace eval ::rivetweb {
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
     variable pmodel                 ::rwpmodel
+    variable linkmodel              ::rwlink
+    variable menumodel              ::rwmenu
 
-    variable template_key       ""
+    variable template_key           ""
 
 # the procedure should quite easly evolve to have 
 # the ability to handle multilingual contents. 'default_lang' 
@@ -39,11 +41,11 @@ namespace eval ::rivetweb {
 # here but it will be assigned by the element <default_language>
 # in site_structure.xml
 
-    variable default_lang        en
+    variable default_lang           en
 
-#   variable sitemap_file        site_structure.xml
-    variable site_defs           site_defs.xml
-    variable language            $default_lang
+#   variable sitemap_file           site_structure.xml
+    variable site_defs              site_defs.xml
+    variable language               $default_lang
 
 # 'current_rev' is an integer number specifying
 # the current revision of the site.
@@ -51,31 +53,31 @@ namespace eval ::rivetweb {
 # menus and contents as 'current_rev' changes  or
 # if 'reset' parameter is coded in the url
 
-    set current_rev             0
+    set current_rev                 0
 
 # array that maps 'content' keys and xhtml (to be replaced
 # by a dictionary?)
 
     variable pagine
-    array set pagine            {}
+    array set pagine                {}
 
 # default key for content generation: basically this
 # is the key to the file containing the homepage.
 
-    variable index               index
-    variable page_content        0
+    variable index                  index
+    variable page_content           0
 
 # we assume we are running dynamic. A static parameter in the url
 # would emulate a static site 
 
-    variable static_links        false
+    variable static_links           false
 
-    variable running_picts_path  $picts_path
-    variable running_css_path    $css_path
+    variable running_picts_path     $picts_path
+    variable running_css_path       $css_path
 
 # static pages weill pretend to be stored in this directory
 
-    variable static_path         static
+    variable static_path            static
 
 # page variables used to pass parameters between procs and pages
 
@@ -83,33 +85,33 @@ namespace eval ::rivetweb {
     variable content
     variable sitemenus_a
 
-    array set html_menu         {}
-    array set content           {}
-    array set sitemenus_a       {}
+    array set html_menu             {}
+    array set content               {}
+    array set sitemenus_a           {}
 
 # and finally we create the dictionary that is to held the 
 # whole website database
 
-    variable sitepages          [dict create]
+    variable sitepages              [dict create]
 
-    variable page_headline       ""
-    variable page_title          ""
-    variable page_content_html   ""
-    variable last_modified       ""
-    variable page_authors        ""
-    variable ident               ""
-    variable site_structure_mtime 0
+    variable page_headline          ""
+    variable page_title             ""
+    variable page_content_html      ""
+    variable last_modified          ""
+    variable page_authors           ""
+    variable ident                  ""
+    variable site_structure_mtime   0
 
 # the effect of this are rather sticky, because when enabled 
 # rivetweb uses the in-memory cache whenever possible 
 # and won't change attitude until che child process exits
  
-    variable use_page_cache      0
+    variable use_page_cache         0
 
 # dictionary defining tags and class attributes for elements a menu
 # is made of
 
-    variable templates_db       [dict create]
+    variable templates_db           [dict create]
 
     dict set templates_db rwbase menu_html       {div staticmenu}
     dict set templates_db rwbase title_html      {div menuheader}
@@ -117,15 +119,15 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase item_html       {span menuitem}
     dict set templates_db rwbase link_class      navitem
 
-    variable debug               1
-    variable hooks_dir           hooks
+    variable debug                  1
+    variable hooks_dir              hooks
 
-    variable hooks               [dict create]
+    variable hooks                  [dict create]
 
 # parameters for downloading binary files
 
-    variable download_proc       download.tcl
-    variable download_chunksize  65536
+    variable download_proc          download.tcl
+    variable download_chunksize     65536
 
     proc init {rweb_root website_root ds } {
         variable    site_base
@@ -135,13 +137,14 @@ namespace eval ::rivetweb {
         variable    sitemap
         variable    local_pages
         variable    datasource
+        variable    rwlogger
 
         package require $ds
 
         set datasource  ::${ds}
 
         set rivetweb_root   [file normalize $rweb_root]
-        apache_log_error info "rivetweb_root set as $rivetweb_root"
+        $::rivetweb::logger log info "rivetweb_root set as $rivetweb_root"
 
         set scripts             [file join $rivetweb_root tcl]
 

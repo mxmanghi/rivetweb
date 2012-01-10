@@ -8,20 +8,6 @@ package require rwconf
 package require rwlogger
 package require rwpmodel
 
-#namespace eval ::rivetweb {
-#    variable site_base [file join [pwd] website]
-#    variable default_language en
-#    variable static_pages [file join $site_base pages]
-#
-#    proc buildSimplePage {messaggio cssclass code} {
-#        variable default_language
-#
-#        return [dict create content [dict create \
-#                            $default_language page_text $messaggio]]
-#    }
-#
-#}
-
 namespace eval ::XMLData {
     variable xmlpath
 
@@ -100,7 +86,7 @@ namespace eval ::XMLData {
         variable xmlpath
 
         set xmlfile [file join $::rivetweb::static_pages ${key}.xml]
-#       apache_log_error info "->opening $xmlfile" 
+        $::rivetweb::logger log info "->opening $xmlfile" 
 
         if {[file exists $xmlfile]} {
             if {[catch {
@@ -127,6 +113,10 @@ namespace eval ::XMLData {
                    -errorinfo $notexisting_msg $notexisting_msg
         }
     }
+
+# -- synchData: I should do something with this and
+# make Rivetweb capable of storing new content
+#
 
     proc synchData {key data_dict} {
 

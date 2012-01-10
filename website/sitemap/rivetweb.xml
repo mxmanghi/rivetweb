@@ -1,4 +1,4 @@
-<sitemenus id="rivetweb" parent="root">
+<sitemenus id="rivetweb" parent="main">
     <menu id="install" type="node">
         <title>Install</title>
         <link>

@@ -708,7 +708,7 @@ namespace eval ::rivetweb {
 #
 
     proc isDebugging { } {
-        return [expr $::rivetweb::debug && [var exists debug]]
+        return [expr $::rivetweb::debug && [::rivet::var exists debug]]
     }
 
  
@@ -720,6 +720,27 @@ namespace eval ::rivetweb {
     proc contentType {} {
         return "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$::rivetweb::http_encoding\" />"
     }
+
+# -- searchPath 
+# 
+# looks for <filename> in a sequence of paths given in <pathList>
+# and returns the actual path (absolute path) if found, otherwise
+# returns an empty string
+#
+
+    proc searchPath {fileName pathList} {
+
+        foreach pth $pathList {
+
+            set fn [file join $pth $fileName]
+
+            if {[file exists $fn]} {
+                return [file normalize $fn]
+            }
+        }
+        return ""
+    }
+    namespace export searchPath
 
 }
 

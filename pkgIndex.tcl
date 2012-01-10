@@ -9,9 +9,13 @@
 # full path name of this file's directory.
 
 package ifneeded XMLData 0.1 [list source [file join $dir tcl/datasource/xmldata.tcl]]
+package ifneeded XMLMenu 1.0 [list source [file join $dir tcl/datasource/xmlmenu.tcl]]
 package ifneeded rivetweb 2.0 [list source [file join $dir tcl/rivetweb.tcl]]
 package ifneeded rwconf 2.0 [list source [file join $dir tcl/rivetweb_ns.tcl]]
 package ifneeded rwebdb 0.1 [list source [file join $dir tcl/rweb_coredb.tcl]]
+package ifneeded rwlink 1.0 [list source [file join $dir tcl/rweb_link.tcl]]
 package ifneeded rwlogger 1.0 [list source [file join $dir tcl/rwlogger.tcl]]
+package ifneeded rwmenu 1.0 [list source [file join $dir tcl/rweb_menumodel.tcl]]
 package ifneeded rwpmodel 0.1 [list source [file join $dir tcl/rweb_pmodel.tcl]]
+package ifneeded rwsitemap 1.0 [list source [file join $dir tcl/sitemap.tcl]]
 package ifneeded rwterm 0.1 [list source [file join $dir tcl/terminal.tcl]]

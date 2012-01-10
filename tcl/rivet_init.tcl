@@ -8,8 +8,6 @@
 
 # index page
 
-#set ::rivetweb::pagine($::rivetweb::index) [::rivetweb::buildPage index ::rivetweb::page_content]
-
 $::rivetweb::rwebdb fetch index 
 
 # costruiamo il database in memoria dei template disponibili

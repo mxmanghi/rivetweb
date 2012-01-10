@@ -52,12 +52,12 @@ if {[var exists show]} {
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::index]
 }
 
-array unset content_a
 #set page_xml $pagine($::rivetweb::page_content)
 
 set serialized_model [$::rivetweb::pmodel content $::rivetweb::current_pmodel $language]
 
 #puts "<pre>$serialized_model ([llength $serialized_model])</pre>"
+array unset content_a
 array set content_a $serialized_model
 
 set page_xml $content_a(pagetext)

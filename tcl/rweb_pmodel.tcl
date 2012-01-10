@@ -1,6 +1,7 @@
 # -- rweb_pmodel.tcl
 #
-# we try to hide as much as possible the page model implementation
+# page model implementation. The namespace provides interface
+# for setting and reading separately content and metadata
 #
 #
 

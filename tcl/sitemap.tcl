@@ -5,46 +5,50 @@
 
 package require struct::tree
 
-
 namespace eval ::rwsitemap {
 
     variable sitemap
     variable disconnected
+    variable datasource
 
-    proc create { datasource } {
+    proc create { ds } {
         variable sitemap 
         variable disconnected       
+        variable datasource
+
+        set datasource $ds
 
 # The sitemap structure is implemented by a ::struct::tree Tcl structure
 
         set sitemap         [::struct::tree sitemap]
         $sitemap insert root end disconnected
+        return $sitemap
     }
 
-    proc addmenu {menuobj} {
+    proc add_menu_group {parent_id group_id menuobjs} {
         variable sitemap
 
         set mm $::rivetweb::menumodel
 
 # we get the menuid from the model so to use it as the node name
 
-        set menuid      [$mm id $menuobj]
-        set menuparent  [$mm parent $menuobj]
-        set index       [$mm index $menuobj]
+#        set menuid      [$mm id $menuobj]
+#        set menuparent  [$mm parent $menuobj]
+#        set index       [$mm index $menuobj]
 
-        if {[$sitemap exists $menuparent]} {
+        if {[$sitemap exists $parent_id]} {
 
-            $sitemap insert $menuparent $index $menuid 
-            $sitemap set $menuid menu $menuobj
+            $sitemap insert $parent_id end $group_id 
+            $sitemap set $group_id menu $menuobjs
 
         } else {
 
-            $sitemap insert disconnected end $menuobj
+            $sitemap insert disconnected end $menuobjs
 
         }
 
 # now we check whether we have just inserted the parent of
-# a menuobject previously stored in the 'disconnected' branch
+# a menu group object previously stored in the 'disconnected' branch
 
         set disconnected [$sitemap children disconnected]
         
@@ -58,6 +62,9 @@ namespace eval ::rwsitemap {
             }
         }
     }
+
+    namespace export create add_menu_group
+    namespace ensemble create
 }
 
 package provide rwsitemap 1.0

@@ -12,5 +12,8 @@ pkg_mkIndex -verbose .  tcl/rivetweb.tcl        \
                         tcl/terminal.tcl        \
                         tcl/rweb_coredb.tcl     \
                         tcl/rweb_pmodel.tcl     \
+                        tcl/rweb_link.tcl       \
+                        tcl/rweb_menumodel.tcl  \
+                        tcl/sitemap.tcl         \
                         tcl/datasource/*.tcl  
 

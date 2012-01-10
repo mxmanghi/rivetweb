@@ -12,28 +12,195 @@ package require rwsitemap
 
 
 namespace eval ::XMLMenu {
-
     variable sitemap
+    variable timestamp      0
+    variable sitemap_stat   
 
     proc init {xmlpath} {
         variable sitemap
+        variable sitemap_stat   
 
-        set sitemap $xmlpath
+        array set sitemap_stat {}
+
+        set sitemap [file normalize [file join $::rivetweb::site_base $xmlpath]]
 
         if {![file isdirectory $sitemap]} {
 
             return -code error  -error_code invalid_path \
-                                -errorinfo "Wrong path $sitemap" \
-                                "Wrong path $sitemap"
+                                -errorinfo  "Wrong path $sitemap" \
+                                            "Wrong path $sitemap"
 
         }
 
+        set lastaccess 0
+
     }
 
-    
+    proc has_updates {} {
+        variable timestamp
+        variable sitemap
+
+        file stat $sitemap  sitemap_stat
+        if {($sitemap_stat(mtime) > $timestamp)} { 
+
+            return true
+        }
+
+        return false
+    }
+
+    proc loadsitemap {sitemap_mgr} {
+        variable sitemap
+        variable sitemap_stat   
+
+        set logger $::rivetweb::logger
+        $logger log info "recreating sitemap"
+
+        file stat $sitemap  sitemap_stat
+        set timestamp $sitemap_stat(mtime) 
+
+        array unset xmlmenu
+
+# This object assumes the files to be in the 'sitemap' directory
+# (its existence has been checked in 'init')
+
+        set xmlmenus [glob [file join $sitemap *.xml]]
+
+        foreach xmlfile $xmlmenus {
+            $logger log info "reading $xmlfile...."
+
+            set xml [::rivet::read_file $xmlfile]
+            if {[catch { set xmlmenu([file tail $xmlfile]) [dom parse $xml] } e]} {
+                $logger log info alert "could not parse map $map: $e"
+            }
+        }
+# 
+        set menumodel $::rivetweb::menumodel
+
+        foreach mdoc [array names xmlmenu] {
+            set rootel      [$xmlmenu($mdoc) documentElement root]
+            set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
+            
+            $logger log info "analyzing data for $mdoc...."
+            foreach sm $sitemenus {
+
+                if {[$sm hasAttribute id]} {
+
+                    set group_menu_id          [$sm getAttribute id]
+                    if {[$sm hasAttribute parent]} {
+                        set group_parent    [$sm getAttribute parent]
+                    } else {
+                        set group_parent    root
+                    }
+                    
+                    set group_menu_list {}
+
+                    foreach menu [$sm getElementsByTagName menu] {
+                        if {$::rivetweb::debug} {
+                            foreach cn [$menu childNodes] {
+                                $logger log info "  $menu: [$cn nodeName] - [$cn text]"
+                            }                            
+                        }
+
+                        if {[$menu hasAttribute id]} {
+
+                            if {[$menu hasAttribute parent]} {
+                                set parent  [$sm getAttribute parent]
+                            } else {
+                                set parent  $group_parent
+                            }
+
+                            if {[$menu hasAttribute visibility]} {
+                                set visibility [$menu getAttribute visibility]
+                            } else {
+                                
+                                if {[$menu hasAttribute type]} {
+                                    set visibility [$menu getAttribute type]
+                                } else {
+                                    set visibility normal
+                                }
+                            }
+                                
+                            set menuobj [$menumodel create  [$menu getAttribute id]     \
+                                                            $parent                     \
+                                                            $visibility                 ]
+
+                # Elements within 'menu' are <title lang="..">...</title> and
+                # one or more <link>....</link>
+
+                            set headers [$menu getElementsByTagName title]
+                            foreach title $headers {
+
+                                if {[$title hasAttribute lang]} {
+                                    set language [$title getAttribute lang]
+                                } else {
+                                    set language $::rivetweb::default_lang
+                                }
+
+                                $menumodel assign title menuobj title [$title text] $language
+                            }
+
+                            set links [$menu getElementsByTagName link]
+                            set lm    $::rivetweb::linkmodel         
+                            foreach l $links {
+
+                                set ltype internal
+                                set lref  index
+                                set linfo ""
+                                set ltext [dict create]
+
+                                foreach linkdata [$l childNodes] {
 
 
+                    # In order not to replicate the same snippet of code
+                    # we anyway try to determine the language of the datum, regardless it's
+                    # meaninful or not
+                                
+                                    if {[$linkdata hasAttribute lang]} {
+                                        set language [$linkdata getAttribute lang]
+                                    } else {
+                                        set language $::rivetweb::default_lang
+                                    }
 
+                                    switch [$linkdata tagName] {
+                                        text {
+                                            dict set ltext text $language [$linkdata text]
+                                        }
+                                        info {
+                                            set linfo [$linkdata text]
+                                        }
+                                        type {
+                                            set ltype [$linkdata text]
+                                        }
+                                        reference {
+                                            set ref   [$linkdata text]
+                                        }
+                                        default {
+                                        }
+                                    }
+                                }
+                                
+                                $menumodel add_link menuobj [$lm create $ltype $lref $ltext $linfo]
+
+                            }
+                        }
+                        lappend group_menu_list $menuobj
+                    }
+                    
+                    $sitemap_mgr add_menu_group $group_parent $group_menu_id $group_menu_list
+
+                } else {
+
+                    $logger log alert "skipping data from $mdoc, missing menu id"
+
+                }
+            }
+        }
+    }
+
+
+    namespace export loadsitemap init has_updates
+    namespace ensemble create
 }
 
 

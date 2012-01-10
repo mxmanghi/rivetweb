@@ -4,12 +4,13 @@
     <date>$Date: $</date>
     <title>Rivetweb Tags</title>
     <headline>Rivetweb Tags</headline>
-    <menu position="left">root</menu>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
     <content>
         <title>Rivetweb Tags</title>
         <headline>Rivetweb Tags</headline>
         <pagetext>
-            <!--The XHTML content goes here-->
+            <i>...to be written yet</i>
         </pagetext>
     </content>
 </page>
