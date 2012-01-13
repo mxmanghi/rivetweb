@@ -89,8 +89,8 @@ namespace eval ::rwmenu {
         dict set mmodel links $link_list
     }
 
-    proc links {menumodel} {
-        return [dict get $menumodel links]
+    proc links {menuobj} {
+        return [dict get $menuobj links]
     }
 
     proc id {menumodel} {

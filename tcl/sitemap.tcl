@@ -2,10 +2,16 @@
 # 
 # The main responsability for the sitemap manager is to 
 # build and maintain a tree of menus. 
+#
 
 package require struct::tree
 
 namespace eval ::rwsitemap {
+
+# - sitemap keeps the tree object representing the
+# website structure, its menus, links and multilanguage
+# text definitions. 'sitemap' is a tree of menu models
+# implemented by ::rivetweb::menumodel
 
     variable sitemap
     variable disconnected
@@ -20,8 +26,19 @@ namespace eval ::rwsitemap {
 
 # The sitemap structure is implemented by a ::struct::tree Tcl structure
 
-        set sitemap         [::struct::tree sitemap]
+        set sitemap [::struct::tree sitemap]
+
+# After the sitemap build-up process has completed the 'disconnected' 
+# branch should be empty. We will use this assumption as a check for
+# a consistent definition of the website structure
+
         $sitemap insert root end disconnected
+
+###### one the debug phase has finished here will go the
+###### datasource call
+
+######
+
         return $sitemap
     }
 

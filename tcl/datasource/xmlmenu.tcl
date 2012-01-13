@@ -149,7 +149,7 @@ namespace eval ::XMLMenu {
 
                                 set ltype internal
                                 set lref  index
-                                set linfo ""
+                                set linfo [dict create]
                                 set ltext [dict create]
 
                                 foreach linkdata [$l childNodes] {
@@ -167,10 +167,10 @@ namespace eval ::XMLMenu {
 
                                     switch [$linkdata tagName] {
                                         text {
-                                            dict set ltext text $language [$linkdata text]
-                                        }
-                                        info {
-                                            set linfo [$linkdata text]
+                                            dict set ltext $language [$linkdata text]
+                                            foreach infoel [$linkdata getElementsByTagName info] {
+                                                dict set linfo $language [$infoel text]
+                                            }
                                         }
                                         type {
                                             set ltype [$linkdata text]
@@ -182,6 +182,7 @@ namespace eval ::XMLMenu {
                                         }
                                     }
                                 }
+#                               puts "-> $ltext $linfo"
                                 
                                 $menumodel add_link menuobj [$lm create $ltype $lref $ltext $linfo]
 

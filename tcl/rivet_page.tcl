@@ -38,7 +38,9 @@ if {[var exists show]} {
 # store in ::rivetweb::page_content
 
     set ::rivetweb::page_content $pagina
-    if {[$::rivetweb::rwebdb check $pagina]} { $::rivetweb::rwebdb dispose $pagina }
+    if {[$::rivetweb::rwebdb check $pagina]} { 
+        $::rivetweb::rwebdb dispose $pagina 
+    }
 
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $pagina]
 
@@ -49,12 +51,14 @@ if {[var exists show]} {
 # Rivetweb assumes the default page is defined in the ::rivetweb::index variable
 
     set ::rivetweb::page_content $::rivetweb::index
-    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::index]
+    set ::rivetweb::current_pmodel \
+                [$::rivetweb::rwebdb fetch $::rivetweb::index]
 }
 
 #set page_xml $pagine($::rivetweb::page_content)
 
-set serialized_model [$::rivetweb::pmodel content $::rivetweb::current_pmodel $language]
+set serialized_model [$::rivetweb::pmodel content \
+                                    ::rivetweb::current_pmodel $language]
 
 #puts "<pre>$serialized_model ([llength $serialized_model])</pre>"
 array unset content_a
@@ -106,11 +110,13 @@ if {[array exists sitemenus_a]} {
 
     foreach pos [array names page_menu] {
 
-# in Rivetweb versions before 2.0 every page had to explicitly list the menu id that were to be shown
+# in Rivetweb versions before 2.0 every page had to explicitly list 
+# the menu id that were to be shown
 
         set mid [split $page_menu($pos) ","]
 
-# assumiamo l'ultimo menu come quello di livello più basso (compatibilità con versione 1.x di rivetweb)
+# a page should refer to a single menu group. Anyway, for compatibility 
+# with early versions of rivetweb we pick the last one
 
         set menuid [lindex $mid end]
         set lvmenus [::rivetweb::walkTree $sitemenus_a(root) $menuid leaf]
@@ -120,7 +126,7 @@ if {[array exists sitemenus_a]} {
             apache_log_error info "creating menu for $template_key"
 
             append html_menu($pos)  [::rivetweb::htmlMenu $mid $language \
-                                                          [dict get $::rivetweb::templates_db $template_key]]
+                       [dict get $::rivetweb::templates_db $template_key]]
         }
     }
 }

@@ -22,9 +22,18 @@ foreach mn $main {
     }]} { continue }
 
     foreach menu_d $menus {
-        ::rivet::putsnnl "Menu [::rwmenu id $menu_d], titolo: "
+        ::rivet::putsnnl "$mn group -> Menu [::rwmenu id $menu_d], titolo: "
         ::rivet::putsnnl "[::rwmenu title $menu_d $::rivetweb::default_lang], "
         ::rivet::putsnnl "parent: [::rwmenu parent $menu_d]"
         puts ""
+
+        set links [::rwmenu links $menu_d]
+
+        puts "links: $links"
+        foreach l $links {
+            ::rivet::putsnnl $l 
+            ::rivet::putsnnl "---> [::rwlink link_text $l]"
+            puts ""
+        }
     }
 }

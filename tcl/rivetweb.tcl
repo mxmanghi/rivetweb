@@ -70,18 +70,22 @@ namespace eval ::rivetweb {
 #
 #   Arguments: 
 #
-#	- menuObj: tdom object representing the menu to be printed
-#       - lang: language code
-#	- menu_html: 2 element list. 
-#		* Element 0: html element tag that will encompass the whole menu (default: div)
-#		* Element 1: css class for the element (default: staticmenu)
-#	- title_html: 2 element list
+# - menuObj: tdom object representing the menu to be printed
+#     - lang: language code
+# - menu_html: 2 element list.
+#
+#	  * Element 0: html element tag that will encompass the whole menu 
+#                  (default: div)
+#	  * Element 1: css class for the element (default: staticmenu)
+#
+# - title_html: 2 element list
 #		* Element 0: html element tag enclosing the menu title (def: div)
 #		* Element 1: css class for the element (default: menuheader)
-#	- it_cont_html: 2 element list
+#
+# - it_cont_html: 2 element list
 #		* Element 0: html element tag enclosing the menu items (def: div)
 #		* Element 1: css class for the element (default: itemcontainer)
-#	- item_html: 2 element list
+# - item_html: 2 element list
 #		* Element 0: html element delimiting an item (def: span)
 #		* Element 1: css class for the element (default: navitem)
 #
@@ -126,7 +130,9 @@ namespace eval ::rivetweb {
             set menudom [dom createDocument $menu_tag]
             set htmlmenu_o  [$menudom documentElement]
             eval $htmlmenu_o setAttribute id $menuid
-            if {[string length $menu_class]} { eval $htmlmenu_o setAttribute class $menu_class }
+            if {[string length $menu_class]} { 
+            	eval $htmlmenu_o setAttribute class $menu_class 
+            }
 
             if {[lsearch $menuattributes "notitle"] < 0} {
                 set titolo_txt  [menuTitle $menuObj $lang]
@@ -155,12 +161,14 @@ namespace eval ::rivetweb {
                         text {
                             if {[$c hasAttribute language]} {
                                 set item_language [$c getAttribute language]
-#                               if {[string match [$c getAttribute language] $::rivetweb::language]} {
+#                               if {[string match [$c getAttribute language] \
+#						    $::rivetweb::language]} { \
 #                                   set item_text($item_language) [$c text]
 #                               }
                                 set item_text($item_language) [$c text]
                             } else {
-                                set item_text($::rivetweb::default_lang) [$c text]
+                                set item_text($::rivetweb::default_lang) \
+                                				[$c text]
                             }
                         }
                         default {
@@ -206,7 +214,8 @@ namespace eval ::rivetweb {
                     switch $item_a(type) {
                         internal {
                             if {[info exists item_a(reference)]} {
-                                $link_o setAttribute href [makeUrl $item_a(reference)]
+                                $link_o setAttribute href \
+                                		[makeUrl $item_a(reference)]
                             }
                             $link_o setAttribute class $item_class
                         }
@@ -259,16 +268,18 @@ namespace eval ::rivetweb {
 
 # -- makeUrl
 #
-# Central method for generating hypetext links pointing to other pages of the site.
+# Central method for generating hypetext links pointing to other pages of the 
+# site.
 #
-# References are built accordingly with the mode we are generating a page (either static or dynamic). 
-# In case the 'lang' or 'reset' parameters are passed in their values are appended to the local
-# path
+# References are built accordingly with the mode we are generating a page
+# (either static or dynamic). In case the 'lang' or 'reset' parameters are 
+# passed in their values are appended to the local path
 #
 #
 # Arguments:
 #
-#   reference:  a string that works as a key to the page to be generated. A value
+#   reference:  a string that works as a key to the page to be generated. 
+#  		A value
 #               'key' maps to 'index.rvt?show=<key>....' in dynamic mode or
 #               to '/static/<key>.html' in static mode. 
 #
@@ -282,7 +293,8 @@ namespace eval ::rivetweb {
 
         if {$::rivetweb::static_links} {
 #           apache_log_error err "static_links flag $::rivetweb::static_links"
-            if {([string length $reference] == 0) || [string equal $reference index]}  {
+            if {([string length $reference] == 0) || \
+                 [string equal $reference index]}  {
                 if {$::rivetweb::is_homepage} {
                     return index.html
                 } else {
@@ -311,9 +323,15 @@ namespace eval ::rivetweb {
 
 # structural variables passover
 
-            if {[var exists lang]}      { set local_ref "${local_ref}&lang=[var get lang]" }
-            if {[var exists reset]}     { set local_ref "${local_ref}&reset=[var get reset]" }
-            if {[var exists template]}  { set local_ref "${local_ref}&template=[var get template]" }
+            if {[var exists lang]} { 
+                set local_ref "${local_ref}&lang=[var get lang]" 
+            }
+            if {[var exists reset]} { 
+                set local_ref "${local_ref}&reset=[var get reset]" 
+            }
+            if {[var exists template]} { 
+                set local_ref "${local_ref}&template=[var get template]" 
+            }
             return $local_ref
         }
     }
