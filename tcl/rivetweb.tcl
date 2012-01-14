@@ -8,6 +8,11 @@ package require rwconf
 package require rwebdb
 package require rwlogger
 
+package require rwlink
+package require rwmenu
+package require rwsitemap
+
+
 namespace eval ::rivetweb {
 
 # -- menuTitle

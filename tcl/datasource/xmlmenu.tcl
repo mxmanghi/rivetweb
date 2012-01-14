@@ -199,8 +199,8 @@ namespace eval ::XMLMenu {
                 }
             }
         }
-    }
 
+    }
 
     namespace export loadsitemap init has_updates
     namespace ensemble create

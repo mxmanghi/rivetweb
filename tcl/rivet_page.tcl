@@ -56,15 +56,22 @@ if {[var exists show]} {
 }
 
 #set page_xml $pagine($::rivetweb::page_content)
+if {[catch {
+    set serialized_model [$::rivetweb::pmodel content \
+                                    $::rivetweb::current_pmodel $language]
+} e]} {
 
-set serialized_model [$::rivetweb::pmodel content \
-                                    ::rivetweb::current_pmodel $language]
+    puts "error getting page content: $e ($::rivetweb::current_pmodel)"
+
+}
 
 #puts "<pre>$serialized_model ([llength $serialized_model])</pre>"
 array unset content_a
 array set content_a $serialized_model
 
 set page_xml $content_a(pagetext)
+
+parray_table content_a
 
 if {[dict keys $::rivetweb::hooks] > 0} {
     set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
@@ -103,6 +110,8 @@ foreach {pos menuid} $menu_d {
 
 #parray page_menu
 array unset html_menu
+
+parray_table sitemenus_a
 
 if {[array exists sitemenus_a]} {
 

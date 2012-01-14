@@ -34,12 +34,24 @@ namespace eval ::rwsitemap {
 
         $sitemap insert root end disconnected
 
-###### one the debug phase has finished here will go the
+###### once the debug phase has finished here will go the
 ###### datasource call
 
 ######
 
         return $sitemap
+    }
+
+    proc recreate {} {
+        variable sitemap 
+        variable disconnected       
+        variable datasource
+
+        $sitemap destroy
+        set sitemap [::struct::tree sitemap]
+        $sitemap insert root end disconnected
+        return $sitemap
+
     }
 
     proc add_menu_group {parent_id group_id menuobjs} {
@@ -49,14 +61,18 @@ namespace eval ::rwsitemap {
 
 # we get the menuid from the model so to use it as the node name
 
-#        set menuid      [$mm id $menuobj]
-#        set menuparent  [$mm parent $menuobj]
-#        set index       [$mm index $menuobj]
+#       set menuid      [$mm id $menuobj]
+#       set menuparent  [$mm parent $menuobj]
+#       set index       [$mm index $menuobj]
 
         if {[$sitemap exists $parent_id]} {
 
             $sitemap insert $parent_id end $group_id 
-            $sitemap set $group_id menu $menuobjs
+            foreach menu_o $menuobjs {
+                set menuid [$::rivetweb::menumodel id $menu_o]
+
+                $sitemap set $group_id $menuid $menu_o
+            }
 
         } else {
 
@@ -80,8 +96,46 @@ namespace eval ::rwsitemap {
         }
     }
 
-    namespace export create add_menu_group
+# -- menu_list: walks the tree and returns a list of menu objs
+# starting with the sought menu up to the root, skipping the
+# leaf menus.
+
+    proc menu_list {group_id} {
+        variable sitemap
+
+        set menuobjs {}
+        if {[$sitemap exists $group_id]} {
+            puts ">>>[$sitemap keys $group_id]<<<"
+            foreach m [$sitemap keys $group_id] {
+
+                set menu_o [$sitemap get $group_id $m] 
+                lappend menuobjs $menu_o
+
+            }
+            
+            foreach anc [$sitemap ancestors $group_id] {
+
+                if {[string match $anc "root"]} { continue }
+
+                foreach menuid [$sitemap keys $anc] {
+
+                    set menu_o [$sitemap get $anc $menuid]
+                    set menutype [$::rivetweb::menumodel peek $menu_o visibility]
+                    if {[string match $menutype "node"]} {
+                        puts " <== $menu_o"
+                        lappend menuobjs $menu_o
+                    }
+
+                }
+            }
+        }
+
+        return $menuobjs
+    }
+
+    namespace export create add_menu_group menu_list
     namespace ensemble create
 }
 
 package provide rwsitemap 1.0
+

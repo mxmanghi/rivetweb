@@ -5,7 +5,7 @@ set rweb_root /home/manghi/rivetweb
 lappend auto_path  $rweb_root
 package require rivetweb
 
-::rivetweb::init $rweb_root [file dirname [info script]] XMLData
+::rivetweb::init $rweb_root [file dirname [info script]] XMLData XMLMenu
 
 if {[info exists ::rivetweb::apache_running]} {
     apache_log_error info "starting rivetweb for website at $::rivetweb::site_base"

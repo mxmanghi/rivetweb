@@ -42,6 +42,10 @@ namespace eval ::rwmenu {
         return [dict get $menumodel attributes]
     }
 
+    proc peek {menuobj param} {
+        return [dict get $menuobj $param]
+    }
+
     proc assign {parameter menuobj pvalue args} {
         upvar $menuobj menu_o
 
@@ -93,9 +97,9 @@ namespace eval ::rwmenu {
         return [dict get $menuobj links]
     }
 
-    proc id {menumodel} {
+    proc id {menuobj} {
 #       puts "--->$menumodel<----"
-        return [dict get $menumodel menuid]
+        return [dict get $menuobj menuid]
     }
 
 #   namespace export title links add_link create menuid assign id parent index

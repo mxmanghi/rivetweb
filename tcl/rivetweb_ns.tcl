@@ -9,7 +9,6 @@ namespace eval ::rivetweb {
     variable    rivetweb_root
     variable    scripts     
     variable    static_pages
-    variable    sitemap
     variable    local_pages
 
     variable    sitemap_mtime       0
@@ -20,17 +19,20 @@ namespace eval ::rivetweb {
     variable picts_path             picts
     variable css_path               templates
     variable base_templates         templates
+    variable sitemap_dir            sitemap
     variable newsite_templates      rwtemplates
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable default_template       rwbase
     variable http_encoding          utf-8
     variable datasource             XMLData
+    variable menusource             XMLMenu
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
     variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
+    variable sitemap                ::rwsitemap
 
     variable template_key           ""
 
@@ -129,19 +131,23 @@ namespace eval ::rivetweb {
     variable download_proc          download.tcl
     variable download_chunksize     65536
 
-    proc init {rweb_root website_root ds } {
+    proc init {rweb_root website_root datasrc menusrc } {
         variable    site_base
         variable    rivetweb_root
         variable    scripts     
         variable    static_pages
+        variable    sitemap_dir
         variable    sitemap
         variable    local_pages
         variable    datasource
+        variable    menusource
         variable    rwlogger
 
-        package require $ds
+        package require $datasrc
+        package require $menusrc
 
-        set datasource  ::${ds}
+        set datasource  ::${datasrc}
+        set menusource  ::${menusrc}
 
         set rivetweb_root   [file normalize $rweb_root]
         $::rivetweb::logger log info "rivetweb_root set as $rivetweb_root"
@@ -150,8 +156,13 @@ namespace eval ::rivetweb {
 
         set site_base           $website_root        
         set static_pages        [file normalize [file join $site_base pages]]
-        set sitemap             [file normalize [file join $site_base sitemap]]
         set local_pages	        [file normalize [file join $site_base docs]]
+
+        set sitemap_dir         [file normalize [file join $site_base sitemap]]
+
+        $menusource init $sitemap_dir
+        $sitemap create $menusource
+        $menusource loadsitemap $sitemap
     }
 
 }
