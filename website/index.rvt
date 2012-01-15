@@ -1,11 +1,21 @@
 <?
+# -- index.rvt
+#
+# This template is actually just a basic handler of a request. It select
+# code execution for the template. It should evolve to handle dynamic page
+# generation, but for the time present it's just able to run rivetweb
+# scripts like download.tcl (binary file download)
+#
+
+# first of all we test the parameter rwinfo. 
 
     if {[var exists rwinfo]} {
-        load_env env
-        parray_table env
+#       load_env env
+#       parray_table env
+        parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
     } elseif {[var exists function]} {
         set fun [var get function]
-        if {[catch {eval source [file join $::rivetweb::rivet_scripts $fun]} e]} {
+        if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {
             puts $e
         }
     } else {

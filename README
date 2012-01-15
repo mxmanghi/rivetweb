@@ -2,39 +2,40 @@
                         ---------------
 
  Rivetweb is a minimum requirements Tcl based engine for creating template 
-based websites. 
+based websites. The only mandatory software you need is the Apache HTTP 
+Webserver and Apache Rivet.
  
- Rivetweb relies on Rivet (http://tcl.apache.org/rivet/) for doing most
-of the work needed to create and manipulate content to be put in
-HTML pages. Rivetweb basically exploits the ability of Rivet of handling 
+ Rivetweb relies on Apache Rivet (http://tcl.apache.org/rivet/) for doing 
+most of the work needed to create and manipulate content to be displayed in
+HTML pages. Rivetweb exploits the ability of Rivet of handling 
 templates as models structuring HTML code into pages having a consistent
 appearance thorough a whole website.
 
- Rivetweb internal organizazion emphasizes indipendence from actual
-implementation of its components. Rivetweb wants to be customizable so 
-that you may extend and/or reimplement specific components and still have
-them working with the other components. 
+ Rivetweb internal machinery and organizazion was entirely developed in 
+Tcl. Rivetweb was written with an emphasis on indipendence from actual
+implementation of its components. Rivetweb aims to evolve to a fully
+customizable, extensible framework for simple websites with varying needs.
 
- As of today Rivetweb is largely only a basic framework and attempts to
-be a workable ground for developing a Tcl based website framework. 
-For instance data are now read only from XML documents bearing both metadata 
-and content of a page. The data source implemented in tcl/datasource/xmldata.tcl 
-(which does the actual work of reading the files and filling Rivetweb 
-database) can be taken as a model for implementing more data sources. 
-Data in XML files may not be practical but they provide a good 
-workable representation of the abstract form of data coming from any
-data source, hence they offer a good starting point for the development of 
-Rivetweb.
+ Current code provides components that work with XML documents bearing 
+both metadata and content of a page. The data source implemented in 
+tcl/datasource/xmldata.tcl (which does the actual work of reading 
+the files and filling Rivetweb database) can be taken as a model 
+for implementing more data sources. Also the site structure is
+laid down in XML files. This XML centric choice is maybe not practical 
+but it provides a good workable and sufficently abstract representation 
+of data sources, thus it offers a good starting point for future 
+development. Rivetweb is not a feature rich website development
+framework, it's a blank canvas on which small size websites
+can be created.
 
- As long as you are delivering pure static pages, Rivetweb lets your 
-dynamically generated pages appear as if every internal link is
-pointing to good old static .html files. By adding a few simple mod_rewrite
-rules you can fake your website to be made out of only static 
-HTML pages and generate an entirely static copy of them for both on-line 
-and off-line browsing. As a consequence, by means of any mirror tool 
-(e.g. wget) you can recreate a local copy of the website completely rewritten 
-in .html files. This copy can be thus deployed with *any* webserver or even 
-distributed on a Pendrive or a CD-ROM for offline browsing.
+ From the beginning a basic feature of Rivetweb has been the
+ability of faking a dinamically generated website as a consistent 
+set of pure HTML pages. This is done by rewriting internal
+links as if each of them are pointing to good old static HTML files. 
+As a consequence, by means of any mirror tool (e.g. wget), you can recreate 
+a local copy of the website completely rewritten in .html files. 
+This copy can be thus deployed with *any* webserver or even distributed 
+on a Pendrive or a CD-ROM for offline browsing.
 
  A Rivetweb web site can be running several XHTML/CSS templates at the same 
 time, you just switch from one to another by passing the 'template' parameter 
@@ -42,21 +43,14 @@ in the URL. This might be useful if you want to test different styles,
 compare them and let your customers decide which is best to their taste.
 
  Rivetweb is thought to be multilingual. Its page model interface handles
-language codes.
+language codes and also menu links and headers can switch from a language
+to another language provided your datasource has method for fetching 
+content in different languages
 
-Rivetweb has a basic support for extensibility: page creation can be 
-customized adding 'hooks' procedure to the code, thus adding new data 
-transformations.
+Rivetweb has a basic support for extensibility of the markup: 
+page creation can be customized adding 'hooks' procedure to the code, 
+thus adding new data transformations.
 
- Rivetweb is based on Rivet. Rivet is a module and a Tcl programming suite 
-for the Apache HTTP Webserver. 
+Rivetweb is entirely free and released under the Apache 2.0 licence.
 
- You may find Rivetweb useful if your goal is creation and management
-of small to medium size web sites bearing static content. Rivetweb maintains
-strict separation between content, representation and structure of the web site,
-it's template based, so you can easily change the XHTML/CSS code underlying
-your pages and produce a whole entirely re-styled web site.
-
-Rivetweb is entirely free and released under Apache 2.0 licence.
-
-# 2012-01-04
+# 2012-01-15

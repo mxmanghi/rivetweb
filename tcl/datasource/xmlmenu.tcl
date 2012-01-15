@@ -70,8 +70,10 @@ namespace eval ::XMLMenu {
             $logger log info "reading $xmlfile...."
 
             set xml [::rivet::read_file $xmlfile]
-            if {[catch { set xmlmenu([file tail $xmlfile]) [dom parse $xml] } e]} {
-                $logger log info alert "could not parse map $map: $e"
+
+            set map [file tail $xmlfile]
+            if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
+                $logger log alert "could not parse map $map: $e"
             }
         }
 # 
@@ -151,7 +153,7 @@ namespace eval ::XMLMenu {
                                 set lref  index
                                 set linfo [dict create]
                                 set ltext [dict create]
-
+                                set attributes {}
                                 foreach linkdata [$l childNodes] {
 
 
@@ -165,7 +167,8 @@ namespace eval ::XMLMenu {
                                         set language $::rivetweb::default_lang
                                     }
 
-                                    switch [$linkdata tagName] {
+                                    set tagname [$linkdata tagName]
+                                    switch $tagname {
                                         text {
                                             dict set ltext $language [$linkdata text]
                                             foreach infoel [$linkdata getElementsByTagName info] {
@@ -175,16 +178,21 @@ namespace eval ::XMLMenu {
                                         type {
                                             set ltype [$linkdata text]
                                         }
+                                        url -
                                         reference {
-                                            set ref   [$linkdata text]
+                                            set lref   [$linkdata text]
                                         }
                                         default {
+                                            lappend attributes $tagname [$linkdata text]
                                         }
                                     }
                                 }
 #                               puts "-> $ltext $linfo"
+
+                                set linkobj [$lm create $ltype $lref $ltext $linfo]
+                                $lm set_attribute linkobj $attributes
                                 
-                                $menumodel add_link menuobj [$lm create $ltype $lref $ltext $linfo]
+                                $menumodel add_link menuobj $linkobj
 
                             }
                         }
