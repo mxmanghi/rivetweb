@@ -22,7 +22,11 @@ namespace eval ::rwmenu {
 
     }
 
-    proc title {menuobj language} {
+    proc title {menuobj {language ""}} {
+        if {[string length $language] == 0} {
+            set language $::rivetweb::default_lang
+        }
+
         if {[dict exists $menuobj title $language]} {
             return [dict get $menuobj title $language]
         } else {

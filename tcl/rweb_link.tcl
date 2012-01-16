@@ -7,7 +7,6 @@
 package require rwconf
 package require rwlogger
 
-
 namespace eval ::rwlink {
 
 # -- create
@@ -57,6 +56,24 @@ namespace eval ::rwlink {
 
     }
 
+    proc set_attribute {linkobj attribute_list} {
+        upvar $linkobj link_o
+
+        foreach {attribute attrvalue} $attribute_list {
+            dict set link_o attributes $attribute $attrvalue
+        }
+    }
+
+    proc get_attribute {linkobj attribute} {
+
+        if {[dict exists $linkobj attributes $attribute]} {
+            return [dict get $linkobj attributes $attribute]
+        } else {
+            return ""
+        }
+
+    }
+
     proc link_text {linkmodel {language ""}} {
         if {[string length $language] == 0} {
             set language $::rivetweb::default_lang
@@ -64,13 +81,34 @@ namespace eval ::rwlink {
         return [dict get $linkmodel text $language]
     }
 
+    proc reference {linkobj} {
+        return [dict get $linkobj reference]
+    }
+
+
+## -- link_info
+#
+#
+#
+
     proc link_info {linkmodel {language ""}} {
         if {[string length $language] == 0} {
+            set language $::rivetweb::default_lang
+        } 
+
+        if {[dict exists $linkmodel info $language]} {
             return [dict get $linkmodel info $language]
+        } else {
+            return ""
         }
     }
 
-    namespace export create add link_text link_info
+    proc type {linkmodel} {
+        return [dict get $linkmodel type]
+    }
+
+    namespace export create add link_text link_info reference type \
+                     set_attribute get_attribute 
     namespace ensemble create
 }
 

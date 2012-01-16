@@ -31,15 +31,19 @@ namespace eval ::XMLData {
 
         set menu_d      [dict create]
         set metadata_l  {}
+
         foreach c [$domroot child all] {
             switch [$c tagName] {
                 content {
                     continue
                 }
                 menu {
-
-                    dict set menu_d menu [$c getAttribute position left] [$c text]
-
+                    if {[$c hasAttribute position]} {
+                        set position [$c getAttribute position]
+                    } else {
+                        set position $::rivetweb::menu_default_pos
+                    }
+                    dict set menu_d menu [$c getAttribute position $position] [$c text]
                 }
                 default {
                     lappend metadata_l [$c tagName] [$c text]

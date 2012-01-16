@@ -11,7 +11,7 @@ package require rwlogger
 package require rwlink
 package require rwmenu
 package require rwsitemap
-
+package require htmlizer
 
 namespace eval ::rivetweb {
 
@@ -234,9 +234,6 @@ namespace eval ::rivetweb {
                                 $link_o setAttribute href "$item_a(reference)"
                             }
                         }
-                    }
-                    if {[info exists item_a(target)]} {
-                        $link_o setAttribute target $item_a(target)
                     }
                 }
             }

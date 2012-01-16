@@ -158,5 +158,58 @@ if {[$::rivetweb::menusource has_updates]} {
 #    }
 #} 
 
+# we determine the language for this request (keep in mind we are running
+# within the ::rivetweb namespace.
+
+if {[var exists lang]} {
+    set language [var get lang]
+} else {
+    set language $::rivetweb::default_lang
+}
+
+# Experimental: with early versions of Rivetweb if variable 'reset' 
+# was set then the in memory database was reset. To be tested in
+# this version
+
+if {[var exists reset]} {
+
+    set ::rivetweb::page_content	$::rivetweb::index
+
+### set pagine($::rivetweb::index)	[::rivetweb::buildPage index]
+
+    $::rivetweb::rwebdb erase
+    $::rivetweb::rwebdb fetch $::rivetweb::index 
+
+### array unset pagine
+} 
+
+#
+# the central point is exactly here: we determine which page we have to display
+#
+
+if {[var exists show]} {
+    set pagina [var get show]
+    apache_log_error info "'$pagina' requested"
+
+# if we are using cached content and requested page is cached we simply
+# store in ::rivetweb::page_content
+
+    set ::rivetweb::page_content $pagina
+    if {[$::rivetweb::rwebdb check $pagina]} { 
+        $::rivetweb::rwebdb dispose $pagina 
+    }
+
+    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $pagina]
+
+    apache_log_error info "[pid] page_content: $::rivetweb::page_content"
+
+} else {
+
+# Rivetweb assumes the default page is defined in the ::rivetweb::index variable
+
+    set ::rivetweb::page_content $::rivetweb::index
+    set ::rivetweb::current_pmodel \
+                [$::rivetweb::rwebdb fetch $::rivetweb::index]
+}
 
 # vi:shiftwidth=4:softtabstop=4:

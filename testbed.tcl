@@ -45,12 +45,27 @@ foreach mngrp $site_groups {
     }
 }
 
+array unset menu_catalog {}
 
 foreach mngrp $site_groups {
     set menu_list [::rwsitemap menu_list $mngrp]
 
     puts "menu list for $mngrp: "
     foreach mn $menu_list {
-        puts "ok---> $mn"
+        set menu_title [$::rivetweb::menumodel title $mn]
+        set links [$::rivetweb::menumodel links $mn] 
+        set menuid [$::rivetweb::menumodel id $mn]
+        puts "links for menu $menuid ($menu_title)"
+
+        set menu_catalog($menuid) $mn
+
+        foreach l $links {
+
+            ::rivet::putsnnl " ---> [$::rivetweb::linkmodel link_text $l] "
+            ::rivet::putsnnl "([$::rivetweb::linkmodel type $l])"
+            ::rivet::putsnnl " ---> [$::rivetweb::linkmodel reference $l] ("
+            puts "[$::rivetweb::linkmodel get_attribute $l target])"
+
+        }
     }
 }

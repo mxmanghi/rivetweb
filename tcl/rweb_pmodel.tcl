@@ -72,12 +72,6 @@ namespace eval ::rwpmodel {
 #           puts "$pmodel: $field"
             return ""
         }
-#        if {[catch {
-#            return [dict get $pmodel metadata $field]
-#        }]} {
-#            $::rivetweb::logger log emerg "wrong model structure? ($pmodel)"
-#            return -code error
-#        }
     }
 
     proc dispose { pmodel } {

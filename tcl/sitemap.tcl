@@ -96,7 +96,7 @@ namespace eval ::rwsitemap {
         }
     }
 
-# -- menu_list: walks the tree and returns a list of menu objs
+# -- menu_list: walks the tree of menus and returns a list of menu objs
 # starting with the sought menu up to the root, skipping the
 # leaf menus.
 
@@ -105,7 +105,7 @@ namespace eval ::rwsitemap {
 
         set menuobjs {}
         if {[$sitemap exists $group_id]} {
-            puts ">>>[$sitemap keys $group_id]<<<"
+#           puts ">>>[$sitemap keys $group_id]<<<"
             foreach m [$sitemap keys $group_id] {
 
                 set menu_o [$sitemap get $group_id $m] 
@@ -122,7 +122,7 @@ namespace eval ::rwsitemap {
                     set menu_o [$sitemap get $anc $menuid]
                     set menutype [$::rivetweb::menumodel peek $menu_o visibility]
                     if {[string match $menutype "node"]} {
-                        puts " <== $menu_o"
+#                       puts " <== $menu_o"
                         lappend menuobjs $menu_o
                     }
 
@@ -133,7 +133,7 @@ namespace eval ::rwsitemap {
         return $menuobjs
     }
 
-    namespace export create add_menu_group menu_list
+    namespace export create recreate add_menu_group menu_list
     namespace ensemble create
 }
 

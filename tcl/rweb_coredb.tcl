@@ -40,8 +40,22 @@ namespace eval ::rwebdb {
                 set pmodel [$::rivetweb::datasource fetchData $key rkey]
             } e]} {
                 puts stderr $e
-                if {$errorCode == "not_existing"} {
+                if {$::errorCode == "not_existing"} {
 # let's return a conventional page (to be preloaded in the database)
+
+                    set pmodel [$::rivetweb::pmodel create]
+                    $::rivetweb::pmodel put_metadata pmodel                 \
+                                        [list   title    "Content not found" \
+                                                menu     [list left main]    \
+                                                header   "Rivetweb error: content not found"]
+
+                    set error_page_dom [dom createDocument div]
+                    set error_page_o   [$error_page_dom documentElement]
+                    set error_message_o  [$error_page_dom createTextNode "Content for $key not found"]
+                    $error_page_dom appendChild $error_message_o
+
+                    $::rivetweb::pmodel add_content pmodel $::rivetweb::default_lang \
+                                                    pagetext $error_page_dom
 
 
                 } else {
