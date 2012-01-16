@@ -112,7 +112,9 @@ namespace eval ::rwsitemap {
                 lappend menuobjs $menu_o
 
             }
-            
+
+	    $::rivetweb::logger log info "walking up ancestors -> [$sitemap ancestors $group_id]"    
+
             foreach anc [$sitemap ancestors $group_id] {
 
                 if {[string match $anc "root"]} { continue }

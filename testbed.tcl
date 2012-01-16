@@ -1,4 +1,4 @@
-lappend auto_path . /usr/local/lib/rivet2.1 /usr/local/lib/rivet2.1/rivet-tcl
+lappend auto_path . /usr/local/apache2/lib/rivet2.1.0a1 /usr/local/apache2/lib/rivet2.1.0a1/rivet-tcl
 package require rwconf
 package require rwlogger
 package require rwlink
