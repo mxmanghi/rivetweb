@@ -39,7 +39,6 @@ namespace eval ::rwebdb {
             if {[catch {
                 set pmodel [$::rivetweb::datasource fetchData $key rkey]
             } e]} {
-                puts stderr $e
                 if {$::errorCode == "not_existing"} {
 # let's return a conventional page (to be preloaded in the database)
 
@@ -61,6 +60,7 @@ namespace eval ::rwebdb {
                 } else {
 # we don't know what to do in this case
 
+		    $::rivetweb::logger log err "Don't know what to do...$e"
 
                 }
             } else {
