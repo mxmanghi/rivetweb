@@ -134,17 +134,30 @@ namespace eval ::rivetweb {
     variable download_proc          download.tcl
     variable download_chunksize     65536
 
-    proc init {rweb_root website_root datasrc menusrc } {
-        variable    site_base
+    proc setup {rweb_root website_root} {
+	variable    scripts
         variable    rivetweb_root
-        variable    scripts     
+        variable    site_base
         variable    static_pages
         variable    sitemap_dir
         variable    sitemap
         variable    local_pages
+
+        set rivetweb_root   [file normalize $rweb_root]
+	set scripts	    [file join $rivetweb_root tcl]
+        set site_base           $website_root        
+        set static_pages        [file normalize [file join $site_base pages]]
+        set local_pages	        [file normalize [file join $site_base docs]]
+        set sitemap_dir         [file normalize [file join $site_base sitemap]]
+        $::rivetweb::logger log info "rivetweb_root set as $rivetweb_root"
+    }
+
+    proc init {datasrc menusrc } {
+        variable    scripts     
         variable    datasource
         variable    menusource
-        variable    rwlogger
+        variable    sitemap_dir
+        variable    sitemap
 
         package require $datasrc
         package require $menusrc
@@ -152,22 +165,10 @@ namespace eval ::rivetweb {
         set datasource  ::${datasrc}
         set menusource  ::${menusrc}
 
-        set rivetweb_root   [file normalize $rweb_root]
-        $::rivetweb::logger log info "rivetweb_root set as $rivetweb_root"
-
-        set scripts             [file join $rivetweb_root tcl]
-
-        set site_base           $website_root        
-        set static_pages        [file normalize [file join $site_base pages]]
-        set local_pages	        [file normalize [file join $site_base docs]]
-
-        set sitemap_dir         [file normalize [file join $site_base sitemap]]
-
         $menusource init $sitemap_dir
         $sitemap create $menusource
         $menusource loadsitemap $sitemap
     }
-
 }
 
 package provide rwconf 2.0
