@@ -17,14 +17,13 @@ if {[$::rivetweb::menusource has_updates]} {
 
 # This code is running within the ::rivetweb namespace
 
-#set page_xml $pagine($::rivetweb::page_content)
 if {[catch {
-    set serialized_model \
-                [$::rivetweb::pmodel content \
-                 $::rivetweb::current_pmodel $language]
+    set serialized_model [$::rivetweb::pmodel content \
+                          $::rivetweb::current_pmodel $language]
 } e]} {
 
-    puts "error getting page content: $e ($::rivetweb::current_pmodel)"
+    puts "error getting page content for language <b>$language</b>:\n <em>$e</em>\n$::rivetweb::current_pmodel"
+    abort_page content_error
 
 }
 
@@ -81,19 +80,23 @@ foreach {pos menuid} $menu_d {
 array unset html_menu
 
 foreach pos [dict keys $menu_d] {
+    array unset menu_a {}
+    set n_menus [$::rivetweb::sitemap menu_list [dict get $menu_d $pos] menu_a]
+#   puts "<pre>--->$pos [dict get $menu_d $pos] $menu_list</pre>"
+#   puts "\n $n_menus \n"
+    foreach {menuid menuobj} [array get menu_a] {
 
-    set menu_list [$::rivetweb::sitemap menu_list [dict get $menu_d $pos]]
+            append html_menu($pos)                          \
+                    [$::rivetweb::htmlizer html_menu        \
+                                        $menuobj            \
+                                        $language           \
+                                        [dict get $::rivetweb::templates_db $template_key]]
+    
+    }
 
-    foreach menuobj $menu_list {
-        append html_menu($pos) \
-            [$::rivetweb::htmlizer html_menu \
-                                    $menuobj \
-                                    $language \
-            [dict get $::rivetweb::templates_db $template_key]]
-
+            
 ##### debug puts "<pre>[escape_sgml_chars $html_menu($pos)]</pre>"
 
-    }
 }
 
 #parray_table sitemenus_a
@@ -124,6 +127,7 @@ foreach pos [dict keys $menu_d] {
 #        }
 #    }
 #}
+
 
 apache_log_error debug "=====> menus: [array names html_menu]" 
 

@@ -101,7 +101,7 @@ namespace eval ::XMLMenu {
                     foreach menu [$sm getElementsByTagName menu] {
                         if {$::rivetweb::debug} {
                             foreach cn [$menu childNodes] {
-                                $logger log info "  $menu: [$cn nodeName] - [$cn text]"
+                                $logger log info "  $menu: [$cn nodeName] - [$cn asXML]"
                             }                            
                         }
 
@@ -198,6 +198,7 @@ namespace eval ::XMLMenu {
                         }
                         lappend group_menu_list $menuobj
                     }
+
                     $sitemap_mgr add_menu_group $group_parent $group_menu_id $group_menu_list
 
                 } else {

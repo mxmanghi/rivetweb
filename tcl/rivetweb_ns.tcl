@@ -135,7 +135,7 @@ namespace eval ::rivetweb {
     variable download_chunksize     65536
 
     proc setup {rweb_root website_root} {
-	variable    scripts
+	    variable    scripts
         variable    rivetweb_root
         variable    site_base
         variable    static_pages
@@ -143,8 +143,8 @@ namespace eval ::rivetweb {
         variable    sitemap
         variable    local_pages
 
-        set rivetweb_root   [file normalize $rweb_root]
-	set scripts	    [file join $rivetweb_root tcl]
+        set rivetweb_root       [file normalize $rweb_root]
+	    set scripts	            [file join $rivetweb_root tcl]
         set site_base           $website_root        
         set static_pages        [file normalize [file join $site_base pages]]
         set local_pages	        [file normalize [file join $site_base docs]]
@@ -154,10 +154,14 @@ namespace eval ::rivetweb {
 
     proc init {datasrc menusrc } {
         variable    scripts     
+        variable    site_base
         variable    datasource
         variable    menusource
         variable    sitemap_dir
         variable    sitemap
+        variable    logger
+        variable    lang
+        variable    default_lang
 
         package require $datasrc
         package require $menusrc
@@ -168,6 +172,7 @@ namespace eval ::rivetweb {
         $menusource init $sitemap_dir
         $sitemap create $menusource
         $menusource loadsitemap $sitemap
+        $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }
 }
 

@@ -60,7 +60,7 @@ namespace eval ::rwebdb {
                 } else {
 # we don't know what to do in this case
 
-		    $::rivetweb::logger log err "Don't know what to do...$e"
+		            $::rivetweb::logger log err "Don't know what to do...$e"
 
                 }
             } else {

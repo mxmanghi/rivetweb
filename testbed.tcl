@@ -8,7 +8,8 @@ package require XMLData
 package require rivetweb
 package require XMLMenu
 
-::rivetweb::init . website XMLData XMLMenu
+::rivetweb::setup . website 
+::rivetweb::init XMLData XMLMenu
 #::XMLMenu::init sitemap
 #::rwsitemap create XMLMenu
 #::XMLMenu::loadsitemap rwsitemap

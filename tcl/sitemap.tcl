@@ -76,23 +76,38 @@ namespace eval ::rwsitemap {
 
         } else {
 
-            $sitemap insert disconnected end $menuobjs
+            $sitemap insert disconnected end $group_id
+            foreach menu_o $menuobjs {
+                set menuid [$::rivetweb::menumodel id $menu_o]
 
+                $sitemap set $group_id $menuid $menu_o
+                $sitemap set $group_id parent  $parent_id
+            }
+
+            return
         }
 
 # now we check whether we have just inserted the parent of
 # a menu group object previously stored in the 'disconnected' branch
 
         set disconnected [$sitemap children disconnected]
-        
+        set i 0
         foreach dmenu $disconnected {
-            set parent [$mm parent $dmenu]
+#           set dmenu [eval set dmenu]
+            $::rivetweb::logger log debug "$i: $group_id $dmenu"
+#           set menu_group [$sitemap get disconnected $dmenu]
+            set menu_group $dmenu
 
-            if {[$sitemap exists $parent]} {
-                set index [$mm index $dmenu]
+            set parent [$sitemap get $menu_group parent]
 
-                $sitemap move $parent $index $dmenu
+#           if {[$sitemap exists $parent]} 
+
+#           puts "$group_id <- $parent"
+            if {[string match $group_id $parent]} {
+                $sitemap move $parent end $menu_group
+                $sitemap unset $menu_group parent
             }
+            incr i
         }
     }
 
@@ -100,20 +115,20 @@ namespace eval ::rwsitemap {
 # starting with the sought menu up to the root, skipping the
 # leaf menus.
 
-    proc menu_list {group_id} {
+    proc menu_list {group_id menu_array} {
+        upvar $menu_array menu_a
         variable sitemap
 
-        set menuobjs {}
         if {[$sitemap exists $group_id]} {
 #           puts ">>>[$sitemap keys $group_id]<<<"
             foreach m [$sitemap keys $group_id] {
 
                 set menu_o [$sitemap get $group_id $m] 
-                lappend menuobjs $menu_o
+                set menu_a($m) $menu_o
 
             }
 
-	    $::rivetweb::logger log info "walking up ancestors -> [$sitemap ancestors $group_id]"    
+	        $::rivetweb::logger log info "walking up ancestors -> [$sitemap ancestors $group_id]"    
 
             foreach anc [$sitemap ancestors $group_id] {
 
@@ -124,15 +139,13 @@ namespace eval ::rwsitemap {
                     set menu_o [$sitemap get $anc $menuid]
                     set menutype [$::rivetweb::menumodel peek $menu_o visibility]
                     if {[string match $menutype "node"]} {
-#                       puts " <== $menu_o"
-                        lappend menuobjs $menu_o
+                        set menu_a($menuid) $menu_o
                     }
-
                 }
             }
         }
 
-        return $menuobjs
+        return [llength [array names menu_a]]
     }
 
     namespace export create recreate add_menu_group menu_list

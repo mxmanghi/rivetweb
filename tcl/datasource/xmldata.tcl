@@ -46,7 +46,7 @@ namespace eval ::XMLData {
                     dict set menu_d menu [$c getAttribute position $position] [$c text]
                 }
                 default {
-                    lappend metadata_l [$c tagName] [$c text]
+                    lappend metadata_l [$c tagName] [escape_shell_command [$c text]]
                 }
             }
         }
@@ -65,14 +65,19 @@ namespace eval ::XMLData {
                 set clang $::rivetweb::default_lang
             }
 
+#           puts "clang->$clang ($::rivetweb::default_lang)"
+
             foreach c [$content childNodes] {
                 set node_name [$c nodeName]
+
+                $::rivetweb::logger log debug "Adding content for language $clang ($node_name,$key)"
+
                 if {$node_name == "pagetext"} {
 
 # creiamo un nuovo dom
-            
                     set cdom [dom parse [$c asXML]]
 #                   dict set pagedict content $clang pagetext $cdom
+                    $::rivetweb::logger log info "Adding content for language $clang ($key)"
                     $::rivetweb::pmodel add_content pagemodel $clang pagetext $cdom
                 } else {
 
