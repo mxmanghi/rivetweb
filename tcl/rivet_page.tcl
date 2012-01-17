@@ -81,10 +81,10 @@ array unset html_menu
 
 foreach pos [dict keys $menu_d] {
     array unset menu_a {}
-    set n_menus [$::rivetweb::sitemap menu_list [dict get $menu_d $pos] menu_a]
+    set menus [$::rivetweb::sitemap menu_list [dict get $menu_d $pos]]
 #   puts "<pre>--->$pos [dict get $menu_d $pos] $menu_list</pre>"
 #   puts "\n $n_menus \n"
-    foreach {menuid menuobj} [array get menu_a] {
+    foreach menuobj $menus {
 
             append html_menu($pos)                          \
                     [$::rivetweb::htmlizer html_menu        \

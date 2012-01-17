@@ -5,6 +5,7 @@
 #
 
 package require struct::tree
+package require struct::stack
 
 namespace eval ::rwsitemap {
 
@@ -16,6 +17,7 @@ namespace eval ::rwsitemap {
     variable sitemap
     variable disconnected
     variable datasource
+    variable cnt	    0
 
     proc create { ds } {
         variable sitemap 
@@ -115,20 +117,22 @@ namespace eval ::rwsitemap {
 # starting with the sought menu up to the root, skipping the
 # leaf menus.
 
-    proc menu_list {group_id menu_array} {
-        upvar $menu_array menu_a
+    proc menu_list {group_id} {
         variable sitemap
+	variable cnt
+
+	set menu_s [::struct::stack menu_stack[incr cnt]]
 
         if {[$sitemap exists $group_id]} {
-#           puts ">>>[$sitemap keys $group_id]<<<"
+#	    puts ">>>[$sitemap keys $group_id]<<<"
             foreach m [$sitemap keys $group_id] {
 
                 set menu_o [$sitemap get $group_id $m] 
-                set menu_a($m) $menu_o
+                $menu_s push $menu_o
 
             }
 
-	        $::rivetweb::logger log info "walking up ancestors -> [$sitemap ancestors $group_id]"    
+	    $::rivetweb::logger log info "walking up ancestors -> [$sitemap ancestors $group_id]"    
 
             foreach anc [$sitemap ancestors $group_id] {
 
@@ -139,13 +143,20 @@ namespace eval ::rwsitemap {
                     set menu_o [$sitemap get $anc $menuid]
                     set menutype [$::rivetweb::menumodel peek $menu_o visibility]
                     if {[string match $menutype "node"]} {
-                        set menu_a($menuid) $menu_o
+                        $menu_s push $menu_o
                     }
                 }
             }
         }
 
-        return [llength [array names menu_a]]
+# let's revert the list of menu by extracting them from the stack
+	if {[$menu_s size] > 0}  {
+	    set menuobjs [$menu_s pop [$menu_s size]]
+	} else {
+	    set menuobjs {}
+	}
+	$menu_s destroy
+        return $menuobjs
     }
 
     namespace export create recreate add_menu_group menu_list
