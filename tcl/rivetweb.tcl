@@ -728,7 +728,7 @@ namespace eval ::rivetweb {
 #
 
     proc isDebugging { } {
-        return [expr $::rivetweb::debug && [::rivet::var exists debug]]
+        return [expr $::rivetweb::debug && [var exists debug]]
     }
 
  

@@ -69,7 +69,7 @@ namespace eval ::XMLMenu {
         foreach xmlfile $xmlmenus {
             $logger log info "reading $xmlfile...."
 
-            set xml [::rivet::read_file $xmlfile]
+            set xml [read_file $xmlfile]
 
             set map [file tail $xmlfile]
             if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
