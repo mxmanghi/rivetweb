@@ -1,7 +1,8 @@
 #
 # -- rweb_link.tcl
 #
-#
+# Model for a hypertext link. The model accepts
+# any number 
 #
 
 package require rwconf
@@ -31,7 +32,9 @@ namespace eval ::rwlink {
 
 # -- add_text 
 #
-# add text and info for a specific language
+# add text and optionally an info for a given language. This method 
+# guarantees the default language has a definition (hopefully the
+# right one.
 #
 #
 
@@ -56,6 +59,10 @@ namespace eval ::rwlink {
 
     }
 
+# -- set_attribute, get_attribute: accessors to generic piece
+# of information that other components of Rivetweb might need to
+# associate with this link object
+
     proc set_attribute {linkobj attribute_list} {
         upvar $linkobj link_o
 
@@ -74,6 +81,10 @@ namespace eval ::rwlink {
 
     }
 
+# -- link_text. accessor for the text to become the
+# active part of the link. If 'language' is not specified
+# the language will fall back to the default language
+
     proc link_text {linkmodel {language ""}} {
         if {[string length $language] == 0} {
             set language $::rivetweb::default_lang
@@ -81,14 +92,13 @@ namespace eval ::rwlink {
         return [dict get $linkmodel text $language]
     }
 
-    proc reference {linkobj} {
-        return [dict get $linkobj reference]
-    }
 
 
-## -- link_info
-#
-#
+## -- link_info. The link info is the text to be stored
+# in an attribute 'title'. It will show up as popup when
+# the cursor hovers on the link. In this implementation
+# a dictionary controls the information enabling the storage
+# of the information in multiple languages 
 #
 
     proc link_info {linkmodel {language ""}} {
@@ -103,8 +113,19 @@ namespace eval ::rwlink {
         }
     }
 
+# -- type. Accessor which returs the link type. Possible
+# values are 'internal','external' and 'local'
+
     proc type {linkmodel} {
         return [dict get $linkmodel type]
+    }
+
+# -- reference. Accessor which returs the hypetext reference
+# the link points to. This parameter is set through the 
+# set_parameter method
+
+    proc reference {linkobj} {
+        return [dict get $linkobj reference]
     }
 
     namespace export create add link_text link_info reference type \

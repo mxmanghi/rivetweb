@@ -1,9 +1,60 @@
 # -- htmlizer.tcl
 #
-#
+# ::htmlizer ensemble that is meant to collect method
+# to transform different objects in their HTML representation
+#  
 
 namespace eval ::htmlizer {
 
+# -- html_menu, a procedure whose specialization is 
+# transforming a menuobj into an
+# HTML menu. menustruct is a even lenght list of attribute
+# value pairs controlling the markup
+#
+# html_menu takes a tdom object command from the menu dom and generates the html
+# code for the menu. This procedure uses tdom calls in order to obtain an xhtml
+# page fragment.
+#
+# This is the general dom pseudo-structure of the menu 
+#
+# - <$menu_tag class="$menu_class" id="$menu_id">
+#       <$title_tag class="$title_class"> $titolo_txt </$title_tag>
+#         <div class="itemcontainer">
+#             <span class="navitem"><a href="<hypetext-link-1>" class="$item_class" title="<info-1>"> 
+#                link 1 </span>
+#             <span class="navitem"><a href="<hypetext-link-2>" class="$item_class" title="<info-2>">
+#                link 2 </span>
+#       ....
+#         </div>
+#       </div>
+#   </$menu_tag>
+#
+#
+#   Arguments: 
+#
+# - menuObj: tdom object representing the menu to be printed
+# - language: language code
+# - menu_struct: list of attr-value pairs controlling the markup of the menu
+#
+#	  * Element 0: html element tag that will encompass the whole menu 
+#                  (default: div)
+#	  * Element 1: css class for the element (default: staticmenu)
+#
+# - title_html: 2 element list
+#		* Element 0: html element tag enclosing the menu title (def: div)
+#		* Element 1: css class for the element (default: menuheader)
+#
+# - it_cont_html: 2 element list
+#		* Element 0: html element tag enclosing the menu items (def: div)
+#		* Element 1: css class for the element (default: itemcontainer)
+# - item_html: 2 element list
+#		* Element 0: html element delimiting an item (def: span)
+#		* Element 1: css class for the element (default: navitem)
+#
+#   Returned value:
+#
+#	menu in XHTML 
+#  
     proc html_menu { menuobj language menustruct} {
 
 # let's remap menustruct into local variables

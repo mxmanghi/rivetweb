@@ -1,9 +1,10 @@
 #
-# $Id: rivet_before.tcl 2101 2011-12-15 10:43:10Z massimo.manghi $
+# -- rivet_before.tcl
 # 
-# +
 # This is where at every request most of the work is done to prepare a page. 
-# - 
+# rivet_before sets some Rivetweb status variables depending on the value
+# of some typically urlencoded parameters
+#
 #
 
 # let's assign the controlling variables with the corresponding parameters 
@@ -26,9 +27,8 @@ if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
 
 }
 
-# let's determine which template we are using
-
-# we set a couple of default values for them
+# let's determine which template we are using. We set a couple of default
+# values for them
 
 set running_template base.rvt
 set running_css      base.css 
@@ -52,6 +52,7 @@ if {[var exists template]} {
 } else {
     set template_key rwbase
 }
+
 apache_log_error info "template: $running_template (css: $running_css)"
 set ::rivetweb::running_template  [buildTemplateName $running_template $template_key]
 set ::rivetweb::running_css       [makeCssPath $running_css $template_key]
@@ -72,91 +73,6 @@ if {[$::rivetweb::menusource has_updates]} {
 
     $::rivetweb::menusource loadsitemap $::rivetweb::sitemap
 }
-
-
-#file stat $sitemap sitemap_now
-#set  site_menus_reload  [expr $sitemap_now(mtime) > $sitemap_mtime]
-#
-#if { $site_menus_reload } {
-#
-#    set sitemap_mtime $sitemap_now(mtime)
-#
-#    apache_log_error info "recreating sitemap..."
-#    if {[info exists menu_dom]} { $menu_dom delete }
-#
-## we assume the sitemap is stored in .xml files 
-#
-#    set maps [glob [file join $::rivetweb::sitemap *.xml]]
-#    
-#    foreach map $maps {
-#        apache_log_error info "reading $map..."
-#
-#        set xml [read_file $map]
-#
-## we silently drop malformed XML files. We just log a message
-## if Apache's loglevel is debug
-#
-#        if {[catch { set xmlmenu([file tail $map]) [dom parse $xml] } e]} {
-#            apache_log_error debug "could not parse map $map: $e"
-#        }
-#    }
-#
-## finally for every DOM tree we extract information to build a tree of links
-##
-## there must be just one 'root' menu and we assume there are no disconnected
-## subtree (thus following any "parent" attribute eventually we get to the
-## 'root' menu
-##
-#
-#    foreach mdoc [array names xmlmenu] {
-#        set rootel      [$xmlmenu($mdoc) documentElement root]
-#        set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
-#
-#        foreach sm $sitemenus {
-#            if {[$sm hasAttribute id]} {
-#                set parent ""
-#                if {[$sm hasAttribute parent]} {
-#                    set parent [$sm getAttribute parent]
-#                }
-#
-#                set menublock_id [$sm getAttribute id]
-#
-#                apache_log_error debug \
-#                                "$mdoc - id: $menublock_id (parent: $parent)"
-#                
-#                foreach menu [$sm getElementsByTagName menu] {
-#                    foreach cn [$menu childNodes] {
-#                        apache_log_error debug \
-#                                "  $menu: [$cn nodeName] - [$cn text]"
-#                    }
-#                }
-#
-#                if {$menublock_id == "root"} {
-#                    set root_doc $xmlmenu($mdoc)
-#                }
-#
-#                set sitemenus_a($menublock_id) $sm
-#
-#            } else {
-#                apache_log_error err "no id attribute for $sm"
-#            }
-#        }
-#    }
-#    
-#    foreach menu_group_id [array names sitemenus_a] {
-#        if {$menu_group_id == "root"} { continue }
-#        set sm $sitemenus_a($menu_group_id)
-#        if {[$sm hasAttribute parent]} {
-#            set p [$sm getAttribute parent]
-#            if {[info exists sitemenus_a($p)]} {
-#                domNode $sitemenus_a($p) appendChild $sm
-#            } else {
-#                apache_log_error err \
-#                    "skipping $menu_group_id, no parent defined for menu block"
-#            }
-#        }
-#    }
-#} 
 
 # we determine the language for this request (keep in mind we are running
 # within the ::rivetweb namespace.
