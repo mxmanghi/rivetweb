@@ -99,36 +99,6 @@ foreach pos [dict keys $menu_d] {
 
 }
 
-#parray_table sitemenus_a
-#
-#if {[array exists sitemenus_a]} {
-#
-#    apache_log_error info "recreating HTML menus "
-#
-#    foreach pos [array names page_menu] {
-#
-## in Rivetweb versions before 2.0 every page had to explicitly list 
-## the menu id that were to be shown
-#
-#        set mid [split $page_menu($pos) ","]
-#
-## a page should refer to a single menu group. Anyway, for compatibility 
-## with early versions of rivetweb we pick the last one
-#
-#        set menuid [lindex $mid end]
-#        set lvmenus [::rivetweb::walkTree $sitemenus_a(root) $menuid leaf]
-#        apache_log_error debug " lvmenus ==> $lvmenus"
-#
-#        foreach mid $lvmenus {
-#            apache_log_error info "creating menu for $template_key"
-#
-#            append html_menu($pos)  [::rivetweb::htmlMenu $mid $language \
-#                       [dict get $::rivetweb::templates_db $template_key]]
-#        }
-#    }
-#}
-
-
 apache_log_error debug "=====> menus: [array names html_menu]" 
 
 if {[dict keys $::rivetweb::hooks] > 0} {
