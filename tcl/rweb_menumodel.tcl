@@ -1,6 +1,8 @@
 #
 # -- rweb_menumodel.tcl
 #
+# Model for menu data.
+#
 #
 
 package require rwconf
@@ -11,16 +13,21 @@ namespace eval ::rwmenu {
 
     proc create { id {parent none} {visibility normal} } {
 
-        return  [dict create menuid         $id          \
-                             parent         $parent      \
-                             visibility     $visibility  \
-                             title         [dict create] \
-                             links          {}      \
+        return  [dict create menuid         $id           \
+                             parent         $parent       \
+                             visibility     $visibility   \
+                             title          [dict create] \
+                             links          {}            \
                              attributes     {}      \
                              index          end     \
                 ]
 
     }
+
+# -- title <menuobj> ?language?. 
+# Accessor to the title to be printed in the menu. If
+# no ?language? parameter is passed then the title
+# for the default language is returned
 
     proc title {menuobj {language ""}} {
         if {[string length $language] == 0} {
@@ -34,6 +41,19 @@ namespace eval ::rwmenu {
         }
     }
 
+# -- parent, index, attributes
+# 
+# specific accessors for structural information of 
+# a menuobj. 
+#
+#    - parent: id of the parent. If a menuobj
+#    has no parent it will be put as root of
+#    menu hirarchy
+#    - index: not used
+#    - attributes: not handled. It's supposed to
+#   return a list of HTML attribute-value pairs.
+#
+
     proc parent {menumodel} {
         return [dict get $menumodel parent]
     }
@@ -46,9 +66,16 @@ namespace eval ::rwmenu {
         return [dict get $menumodel attributes]
     }
 
+# -- peek: generic accessor for a custom parameter
+# associated to the menuobj. if the attribute 'param'
+# is not existing in the object an error is raised
+
     proc peek {menuobj param} {
         return [dict get $menuobj $param]
     }
+
+# -- assign: multipurpose method to assign various parameters
+#
 
     proc assign {parameter menuobj pvalue args} {
         upvar $menuobj menu_o
@@ -89,24 +116,32 @@ namespace eval ::rwmenu {
         }
     }
 
-    proc add_link {menumodel linkmodel {position ""}} {
-        upvar $menumodel    mmodel
+# --add_link
+#
+# Adds a link object to the menu
+#
 
-        set     link_list [dict get $mmodel links]
+    proc add_link {menuobj linkmodel {position ""}} {
+        upvar $menuobj  menu_o
+
+        set     link_list [dict get $menu_o links]
         lappend link_list $linkmodel
-        dict set mmodel links $link_list
+        dict set menu_o links $link_list
     }
+
+# -- links
 
     proc links {menuobj} {
         return [dict get $menuobj links]
     }
+
+# -- id 
 
     proc id {menuobj} {
 #       puts "--->$menumodel<----"
         return [dict get $menuobj menuid]
     }
 
-#   namespace export title links add_link create menuid assign id parent index
     namespace export   *
     namespace ensemble create
 }

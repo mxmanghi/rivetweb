@@ -8,13 +8,13 @@ Webserver and Apache Rivet.
  Rivetweb relies on Apache Rivet (http://tcl.apache.org/rivet/) for doing 
 most of the work needed to create and manipulate content to be displayed in
 HTML pages. Rivetweb exploits the ability of Rivet of handling 
-templates as models structuring HTML code into pages having a consistent
+templates to structure HTML code into pages having a consistent
 appearance thorough a whole website.
 
  Rivetweb internal machinery and organizazion was entirely developed in 
 Tcl. Rivetweb was written with an emphasis on indipendence from actual
 implementation of its components. Rivetweb aims to evolve to a fully
-customizable, extensible framework for simple websites with varying needs.
+customizable, extensible framework for simple websites. 
 
  Current code provides components that work with XML documents bearing 
 both metadata and content of a page. The data source implemented in 

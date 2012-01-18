@@ -1,9 +1,16 @@
 # -- htmlizer.tcl
 #
-#
+# ::htmlizer ensemble that is meant to collect method
+# to transform different objects in their HTML representation
+#  
 
 namespace eval ::htmlizer {
 
+# -- html_menu, a procedure whose specialization is 
+# transforming a menuobj into an
+# HTML menu. menustruct is a even lenght list of attribute
+# value pairs controlling the markup
+#
     proc html_menu { menuobj language menustruct} {
 
 # let's remap menustruct into local variables
