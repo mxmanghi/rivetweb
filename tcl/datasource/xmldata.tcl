@@ -1,5 +1,6 @@
-# 
 # -- XMLData: Rivetweb's default data source
+#
+# Basic datasource implementation
 #
 #
 
@@ -91,6 +92,13 @@ namespace eval ::XMLData {
         return $pagemodel
     }
 
+# -- fetchData: 
+#
+# This method retrieves a page content from the backend. This implementation
+# looks for an XML file in the website directory tree (::rivetweb::static_pages). 
+#
+#
+
     proc fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
         variable xmlpath
@@ -124,7 +132,9 @@ namespace eval ::XMLData {
         }
     }
 
-# -- synchData: I should do something with this and
+# -- synchData
+#
+# I should do something with this and
 # make Rivetweb capable of storing new content
 #
 
