@@ -1,6 +1,6 @@
 # $Id: init.tcl 2098 2011-12-15 09:41:47Z massimo.manghi $
 
-set rweb_root /home/manghi/Projects/rivetweb-sf/
+set rweb_root /home/manghi/Projects/rivetweb/
 
 lappend auto_path  $rweb_root
 package require rivetweb
