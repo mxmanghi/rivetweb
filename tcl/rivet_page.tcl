@@ -53,20 +53,7 @@ if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
 array unset page_menu
 
-#foreach pm [$page_xml getElementsByTagName menu] {
-#
-#    if {[$pm hasAttribute position]} {
-#        set position [$pm getAttribute position]
-#    } else {
-#        set position left
-#    }
-#	
-#    lappend page_menu($position) [$pm text]
-#}
-
 set menu_d [$::rivetweb::pmodel mdmodel $::rivetweb::current_pmodel menu]
-
-##### debug puts "page menu: $menu_d"
 
 # menu_d is actually a dictionary, but a simple one which lists
 # pairs of (position-menu_id)

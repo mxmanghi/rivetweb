@@ -142,6 +142,45 @@ namespace eval ::rwpmodel {
 
     }
 
+# -- postproc_hooks
+#
+# general purpose method to call specific code for handling 
+# elements of a page. It should be general enough to hide 
+# the page internal implementation.
+#
+
+    proc postproc_hooks { pageobj hooks_d hooks_class language} {
+
+	if {[dict exists $hooks_d $hooks_class]} {
+
+	    if {[string length $language] == 0} { 
+		set language $::rivetweb::default_lang 
+	    }
+
+# xmlpp is a subdictionary for hooks of 'hooks_class'
+# the keys of the dictionary are the tag names to be manipulated
+
+	    set xmlpp [dict get $::rivetweb::hooks $hooks_class]
+
+	    foreach hk [dict keys $xmlpp] {
+
+		apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
+		set xmlprocessor [dict get $xmlpp $hk function]
+
+# we must fetch the content for a specific language and get the 
+# elements whose tag name is $hk. Tagname and attributes are then
+# passed as arguments to the hook, which returns a new tag name
+# and a new list of attributes which are to replace the element
+
+	# .....
+
+
+	    }
+
+	}
+
+    }
+
     namespace export *
     namespace ensemble create
 }

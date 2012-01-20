@@ -1,6 +1,8 @@
 # -- image
 #
-# $Id: $
+# Transform 'image' tags into HTML img tags rewriting the image referenced
+# in the src attribute into a valid path to the file.
+#
 #
 
 set hook_descriptor(tag)        image
