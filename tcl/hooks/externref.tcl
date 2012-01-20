@@ -7,7 +7,6 @@ set hook_descriptor(function)   externref
 set hook_descriptor(descrip)    "builds an ordinary link to an external resource"
 set hook_descriptor(stage)      xmlpostproc
 
-
 proc externref {domDoc child} {
     
     if {[$child hasAttribute href]} {

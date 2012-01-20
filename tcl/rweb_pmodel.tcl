@@ -57,7 +57,6 @@ namespace eval ::rwpmodel {
 # 
 # like set_metadata with a dictionary as second argument instead of a 
 # list
-#
 
     proc put_metadata {pmodel dictionary} {
         upvar $pmodel page_model
@@ -73,7 +72,6 @@ namespace eval ::rwpmodel {
 #
 # set the content branch of the page object for a specific content type and
 # language. Meaningful content types are 'pagetext', 'header', 'title'
-#
 
     proc set_content {pmodel language field value} {
         upvar $pmodel page_model
