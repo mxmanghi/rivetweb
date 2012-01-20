@@ -48,14 +48,17 @@ namespace eval ::rwebdb {
                                                 menu     [list left main]    \
                                                 header   "Rivetweb error: content not found"]
 
-                    set error_page_dom [dom createDocument div]
-                    set error_page_o   [$error_page_dom documentElement]
-                    set error_message_o  [$error_page_dom createTextNode "Content for $key not found"]
-                    $error_page_dom appendChild $error_message_o
+#                    set error_page_dom [dom createDocument div]
+#                    set error_page_o   [$error_page_dom documentElement]
+#                    set error_message_o  [$error_page_dom createTextNode "Content for $key not found"]
+#                    $error_page_dom appendChild $error_message_o
+#
+#                    $::rivetweb::pmodel set_content pmodel $::rivetweb::default_lang \
+#                                                    pagetext $error_page_dom
 
-                    $::rivetweb::pmodel add_content pmodel $::rivetweb::default_lang \
-                                                    pagetext $error_page_dom
 
+                    $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang \
+                                                            "Content for $key not found"
 
                 } else {
 # we don't know what to do in this case

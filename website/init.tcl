@@ -7,7 +7,6 @@ package require rivetweb
 
 ::rivetweb::setup $rweb_root [file normalize [file dirname [info script]]]
 
-
 # rivetweb initialization 
 
 source [file join $::rivetweb::site_base site_defs.tcl]

@@ -1,5 +1,6 @@
-# 
 # -- XMLData: Rivetweb's default data source
+#
+# Basic datasource implementation
 #
 #
 
@@ -78,17 +79,25 @@ namespace eval ::XMLData {
                     set cdom [dom parse [$c asXML]]
 #                   dict set pagedict content $clang pagetext $cdom
                     $::rivetweb::logger log info "Adding content for language $clang ($key)"
-                    $::rivetweb::pmodel add_content pagemodel $clang pagetext $cdom
+                    $::rivetweb::pmodel set_content pagemodel $clang pagetext $cdom
+
                 } else {
 
-#                   dict set pagedict content $clang $node_name [$c text]
-                    $::rivetweb::pmodel add_content pagemodel $clang $node_name [$c text]
+                    $::rivetweb::pmodel set_content pagemodel $clang $node_name [$c text]
+
                 }
             }
         }
 
         return $pagemodel
     }
+
+# -- fetchData: 
+#
+# This method retrieves a page content from the backend. This implementation
+# looks for an XML file in the website directory tree (::rivetweb::static_pages). 
+#
+#
 
     proc fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
@@ -123,7 +132,9 @@ namespace eval ::XMLData {
         }
     }
 
-# -- synchData: I should do something with this and
+# -- synchData
+#
+# I should do something with this and
 # make Rivetweb capable of storing new content
 #
 
