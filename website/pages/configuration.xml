@@ -11,20 +11,29 @@
         <headline>Configuring Rivetweb</headline>
         <pagetext>
 	    <p>
-		 If you cloned the repository at 
-		<externref href="http://sourceforge.net/projects/rivetweb/">SF</externref> you should have
-		a copy of Rivetweb's pages in the directory 'website'. You may check out basic Rivetweb
-		functionalities having this website working on your own Apache installation.
+		After you cloned Rivetweb repository you can start a new website configuring
+		Apache to let it know where Rivetweb and your website are.
 	    </p>
 	    <p>
 		Open Apache's configuration file and create this stanza of Rivet directives
 	    </p>
 
-	    <programlisting>RivetServerConf ChildInitScript \     
-    "namespace eval ::rivetweb { set rivetweb_root &lt;path to rivetweb root&gt; }"
-RivetServerConf ChildInitScript     "cd &lt;path to the website root directory&gt;"
-RivetServerConf ChildInitScript     "source init.tcl"
-RivetServerConf BeforeScript        "source before.tcl"</programlisting>
+	    <programlisting>&lt;IfModule rivet_module&gt;
+    RivetServerConf ChildInitScript \     
+	"namespace eval ::rivetweb { set rivetweb_root &lt;rivetweb_root&gt; }"
+    RivetServerConf ChildInitScript     "cd &lt;website_root&gt;"
+    RivetServerConf ChildInitScript     "source init.tcl"
+    RivetServerConf BeforeScript        "source before.tcl"
+&lt;/IfModule&gt;</programlisting>
+	    <p>
+		Depending on your goal you may put these lines within a &lt;VirtualHost&gt;...&lt;/VirtualHost&gt; 
+		definition and consider to add
+	    </p>
+	    <programlisting>RivetServerConf SeparateVirtualInterps on</programlisting>
+	    <p>
+		To improve application safety if you have others Rivet based applications running
+		on the same Apache server.
+	    </p>
         </pagetext>
     </content>
 </page>
