@@ -35,19 +35,21 @@ set page_xml $content_a(pagetext)
 
 #parray_table content_a
 
-if {[dict keys $::rivetweb::hooks] > 0} {
-    set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
+#if {[dict keys $::rivetweb::hooks] > 0} {
+#    set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
+#
+#    foreach hk [dict keys $xmlpp] {
+#        apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
+#        set xmlprocessor [dict get $xmlpp $hk function]
+#        foreach child [$page_xml getElementsByTagName $hk] {
+#                   
+#            eval $xmlprocessor $page_xml $child
+#
+#        }
+#    }
+#}
 
-    foreach hk [dict keys $xmlpp] {
-        apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
-        set xmlprocessor [dict get $xmlpp $hk function]
-        foreach child [$page_xml getElementsByTagName $hk] {
-                   
-            eval $xmlprocessor $page_xml $child
-
-        }
-    }
-}
+$::rivetweb::pmodel postproc_hooks $::rivetweb::current_pmodel $::rivetweb::hooks xmlpostproc $language
 
 if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 

@@ -2,10 +2,10 @@
 #
 #
 
-set hook_descriptor(tag)        localref
-set hook_descriptor(function)   localref
-set hook_descriptor(descrip)    "link to local static resources"
-set hook_descriptor(stage)      xmlpostproc
+#set hook_descriptor(tag)        localref
+#set hook_descriptor(function)   localref
+#set hook_descriptor(descrip)    "link to local static resources"
+#set hook_descriptor(stage)      xmlpostproc
 
 proc localref {domDoc child} {
 

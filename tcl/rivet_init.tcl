@@ -86,13 +86,18 @@ namespace eval ::rivetweb {
             array unset hook_descriptor
             source $hook_file
 
-    # we assume everything has been stored in hook_descriptor
+# we assume everything has been stored in hook_descriptor
+
+            if {![info exists hook_descriptor(textmode)]} {
+                set hook_descriptor(textmode)   text
+            }
 
             if {[info exists hook_descriptor(tag)]} {
                 dict set hooks  $hook_descriptor(stage)                          \
                                 $hook_descriptor(tag)                            \
                                 [dict create function $hook_descriptor(function) \
-                                             descrip  $hook_descriptor(descrip)] 
+                                             textmode $hook_descriptor(textmode) \
+                                             descrip  $hook_descriptor(descrip)]
                 incr nhooks
             }
         }

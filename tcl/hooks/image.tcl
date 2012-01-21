@@ -5,10 +5,10 @@
 #
 #
 
-set hook_descriptor(tag)        image
-set hook_descriptor(function)   imagehandler
-set hook_descriptor(descrip)    "handler per tag <image src=..... />"
-set hook_descriptor(stage)      xmlpostproc
+#set hook_descriptor(tag)        image
+#set hook_descriptor(function)   imagehandler
+#set hook_descriptor(descrip)    "handler per tag <image src=..... />"
+#set hook_descriptor(stage)      xmlpostproc
 
 proc imagehandler {xmlDoc child} {
 
