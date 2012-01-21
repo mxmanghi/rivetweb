@@ -197,7 +197,7 @@ namespace eval ::rwpmodel {
                     } else {
                         set new_element_d [::rivetweb::$processor [$el2xform text] $attribute_list]
                     }
-                    apache_log_error err $new_element_d
+#                   apache_log_error debug $new_element_d
                     if {[string length $new_element_d]} {
                         set new_tag     [dict get $new_element_d tagname]
                         set attributes  [dict get $new_element_d attributes]
@@ -205,7 +205,6 @@ namespace eval ::rwpmodel {
                         set new_element [$page_xml createElement $new_tag]
 
                         foreach {attrib attrib_value} $attributes {
-#                           puts "attr: $attrib -> $attrib_value</pre>"
                             $new_element setAttribute $attrib $attrib_value
                         }
 

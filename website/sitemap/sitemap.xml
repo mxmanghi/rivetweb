@@ -9,6 +9,11 @@
             <text lang="it">Installazione<info>Installazione di Rivetweb</info></text>
             <reference>installation</reference>
         </link>
+	<link>
+	    <type>internal</type>
+	    <text>Configuration<info>Configuring Rivetweb</info></text>
+	    <reference>configuration</reference>
+	</link>
         <link>
             <type>internal</type>
             <text>Core Tags<info>Rivetweb XML Tags</info></text>

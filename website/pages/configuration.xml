@@ -1,0 +1,31 @@
+<page id="configuration">
+    <ident>$Id: $</ident>
+    <author>$Author: mxmanghi $</author>
+    <date>$Date: 2012-01-21$</date>
+    <title>Configuring Rivetweb</title>
+    <headline>Configuring Rivetweb</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
+    <content>
+        <title>Configuring Rivetweb</title>
+        <headline>Configuring Rivetweb</headline>
+        <pagetext>
+	    <p>
+		 If you cloned the repository at 
+		<externref href="http://sourceforge.net/projects/rivetweb/">SF</externref> you should have
+		a copy of Rivetweb's pages in the directory 'website'. You may check out basic Rivetweb
+		functionalities having this website working on your own Apache installation.
+	    </p>
+	    <p>
+		Open Apache's configuration file and create this stanza of Rivet directives
+	    </p>
+
+	    <programlisting>RivetServerConf ChildInitScript \     
+    "namespace eval ::rivetweb { set rivetweb_root &lt;path to rivetweb root&gt; }"
+RivetServerConf ChildInitScript     "cd &lt;path to the website root directory&gt;"
+RivetServerConf ChildInitScript     "source init.tcl"
+RivetServerConf BeforeScript        "source before.tcl"</programlisting>
+        </pagetext>
+    </content>
+</page>
+

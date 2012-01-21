@@ -1,7 +1,7 @@
 <page id="installation">
     <ident>$Id: $</ident>
     <author>$Author: mxmanghi $</author>
-    <date>$Date: $</date>
+    <date>$Date: 2012-01-21$</date>
     <title>Rivetweb Installation</title>
     <headline>Rivetweb Installation</headline>
     <menu position="top">banner</menu>
@@ -13,15 +13,15 @@
             <p>
             	Rivetweb requires Apache HTTP Webserver 2.2 with Apache Rivet >= 2.0.1. It is also
             	recommended you use Tcl &gt;= 8.5 with Rivet as current implementation of hidden
-            	data structures rely heavily on Tcl's <span class="code">dict</span> command.
-            	Current implementation of Rivet also uses 
+            	data structures relies heavily on Tcl's <span class="code">dict</span> command.
+            	Current implementation of some of Rivetweb components also exploits
             	<externalref href="http://tdom.github.com/">tdom</externalref> to manipulate 
-            	XML and XHTML code.
+            	XML and XHTML code. 
             </p>
             <p>
-           		As of today Rivetweb hasn't released any artifact, so you if you want to test it
-	           	you have to clone the code from the 
-	           	<externref href="http://sourceforge.net/projects/rivetweb/">git repository</externref> 
+		As of today Rivetweb hasn't released any artifact, so you if you want to test it
+		you have to clone the code from the 
+		<externref href="http://sourceforge.net/projects/rivetweb/">git repository</externref> 
             </p>
             <programlisting>git clone git://git.code.sf.net/p/rivetweb/code rivetweb</programlisting>
             <p>
@@ -33,10 +33,6 @@ cd &lt;path-to-rivetweb-dir&gt;
 git pull</programlisting>
 	    <p>
 		Se the documentation for you OS to see how to install Apache HTTP Server, Tcl, tdom and git.
-	    </p>
-	    <h2>Configuring Rivetweb</h2>
-	    <p>
-		    
 	    </p>
         </pagetext>
     </content>
