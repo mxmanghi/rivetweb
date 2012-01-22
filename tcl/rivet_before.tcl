@@ -9,14 +9,18 @@
 
 # let's assign the controlling variables with the corresponding parameters 
 # definitions.
-# parameter static -> enabling generation of 'static' (i.e. .html pages)
+#
+# static -> enabling generation of 'static' (i.e. .html) pages
+# homepage -> the home is treated in a slightly different way, so we have
+#             to signal it with this flag
+# 
 
 set ::rivetweb::static_links [var exists static]
 set ::rivetweb::is_homepage  [var exists homepage]
     
 # when Rivetweb is pretending to be a static site, pages fake their location 
-# to be in the /static/ subdirectory, so 'running_picts_path' and 
-# running_css_path has to be set accordingly
+# to be in the a subdirectory of the site root (default: 'static'), so 
+# 'running_picts_path' and running_css_path have to be set accordingly
 
 set ::rivetweb::running_picts_path  $::rivetweb::picts_path
 set ::rivetweb::running_css_path    $::rivetweb::css_path
@@ -57,6 +61,8 @@ apache_log_error info "template: $running_template (css: $running_css)"
 set ::rivetweb::running_template  [buildTemplateName $running_template $template_key]
 set ::rivetweb::running_css       [makeCssPath $running_css $template_key]
 set ::rivetweb::template_key      $template_key
+
+# setting this parameter redirs to the 'static' form of the website.
 
 if {[var exists staticroot]} {
     header redir index.html
