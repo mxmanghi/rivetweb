@@ -1,9 +1,10 @@
+# 
+# -- rivet_page
+# 
+# various stuff here to prepare the actual page generation.
 #
-# $Id: rivet_page.tcl 2102 2011-12-15 12:01:09Z massimo.manghi $
-#
-#+
-#
-#-
+# First of all we have to determine which menus have to be displayed in this
+# context. Let's check to see if the sitemap has to be updated
 #
 
 if {[$::rivetweb::menusource has_updates]} {
@@ -15,7 +16,9 @@ if {[$::rivetweb::menusource has_updates]} {
 
 }
 
-# This code is running within the ::rivetweb namespace
+# This code is running within the ::rivetweb namespace, but we keep to 
+# fully qualify variables so to make explicit their role of status variables
+# in the request processing
 
 if {[catch {
     set serialized_model [$::rivetweb::pmodel content \
@@ -27,29 +30,19 @@ if {[catch {
 
 }
 
-#puts "<pre>$serialized_model ([llength $serialized_model])</pre>"
+#apache_log_error info "content to display:\n$serialized_model"
+
+# serialized_model is a flat dictionary we move into an array for
+# sake of simplicity in referencing its parts: title, headline, content
+#
+
 array unset content_a
 array set content_a $serialized_model
 
 set page_xml $content_a(pagetext)
 
-#parray_table content_a
-
-#if {[dict keys $::rivetweb::hooks] > 0} {
-#    set xmlpp [dict get $::rivetweb::hooks xmlpostproc]
-#
-#    foreach hk [dict keys $xmlpp] {
-#        apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
-#        set xmlprocessor [dict get $xmlpp $hk function]
-#        foreach child [$page_xml getElementsByTagName $hk] {
-#                   
-#            eval $xmlprocessor $page_xml $child
-#
-#        }
-#    }
-#}
-
-$::rivetweb::pmodel postproc_hooks $::rivetweb::current_pmodel $::rivetweb::hooks xmlpostproc $language
+$::rivetweb::pmodel metadata_hooks  $::rivetweb::current_pmodel     \
+                                    $::rivetweb::hooks
 
 if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
@@ -90,17 +83,10 @@ foreach pos [dict keys $menu_d] {
 
 apache_log_error debug "=====> menus: [array names html_menu]" 
 
-if {[dict keys $::rivetweb::hooks] > 0} {
-    set metadatapp [dict get $::rivetweb::hooks metadata]
-
-    foreach hk [dict keys $metadatapp] {
-        apache_log_error info "processing hook: [dict get $metadatapp $hk descrip]"
-        set xmlprocessor [dict get $metadatapp $hk function]
-                   
-        $xmlprocessor $::rivetweb::current_pmodel 
-
-    }
-}
+$::rivetweb::pmodel postproc_hooks  $::rivetweb::current_pmodel \
+                                    $::rivetweb::hooks          \
+                                    xmlpostproc                 \
+                                    $language
 
 # we finally create HTML out of the xml page so far handled.
 

@@ -1,6 +1,8 @@
 # -- ident
 # 
-# manipulation of the 'ident' element in a page DOM
+# manipulation of the 'ident' element in a page DOM. This metadata hook should
+# detect a subversion style Id, extract the timestamp from it and store it in
+# the ::rivetweb::last_modified variable.
 #
 #
 
@@ -22,6 +24,11 @@ proc extract_ident {pmodel} {
     
         $::rivetweb::logger log debug "'Id' did not match" 
         set ::rivetweb::last_modified ""
+
+# we couldn't match the subversion Id, so we store the content of this
+# element in a ::rivetweb::ident variable anyway
+
+        set ::rivetweb::ident $ident
 
     }
 

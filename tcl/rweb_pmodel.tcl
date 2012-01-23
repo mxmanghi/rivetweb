@@ -91,17 +91,22 @@ namespace eval ::rwpmodel {
         upvar $page pageobj
 
         set page_dom  [dom createDocument pagetext]
-        set root_node [$page_dom createElement $rootel]        
+#       set root_node [$page_dom createElement $rootel]        
         set page_o    [$page_dom documentElement]
-        $page_o appendChild $root_node
 
-        set message_o [$page_dom createTextNode $page_text]
-        
-        $root_node appendChild $message_o
+#       $page_o appendChild $root_node
+#       set message_o [$page_dom createTextNode $page_text]
+#       $root_node appendChild $message_o
+
+        $page_o appendXML "<${rootel}>$page_text</${rootel}>"
+
         dict set pageobj content $language pagetext $page_dom
-
         return $pageobj
     }
+
+# -- content
+#
+#
 
     proc content { pmodel language } {
         if {[dict exists $pmodel content $language]} {
@@ -142,6 +147,25 @@ namespace eval ::rwpmodel {
 
     }
 
+# -- metadata_hooks
+#
+# metadata hooks are processed in a similar wayto xml postproc hooks, 
+# but they apply in slightly different manner
+#
+
+proc metadata_hooks { pageobj hooks_d } {
+    if {[dict exists $hooks_d metadata]} {
+        set ppp [dict get $::rivetweb::hooks metadata]
+        foreach hk [dict keys $ppp] {
+            apache_log_error info "processing hook: [dict get $ppp $hk descrip]"
+            set processor [dict get $ppp $hk function]
+            
+            ::rivetweb::$processor $pageobj 
+
+        }
+    }
+}
+
 # -- postproc_hooks
 #
 # general purpose method to call specific code for handling 
@@ -156,7 +180,7 @@ namespace eval ::rwpmodel {
 #       <processor_name> { element_text attributes }
 #
 
-    proc postproc_hooks { pageobj hooks_d hooks_class language} {
+    proc postproc_hooks { pageobj hooks_d hooks_class {language ""}} {
 
         if {[dict exists $hooks_d $hooks_class]} {
 

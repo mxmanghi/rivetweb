@@ -10,10 +10,10 @@ namespace eval ::rivetweb {
     # let's load the environment into array ::request::env
 
     load_env env
-    set template_defs "[file rootname $env(DOCUMENT_NAME)].defs"
-    if {[file exists $template_defs]} { source $template_defs }
+#   set template_defs "[file rootname $env(DOCUMENT_NAME)].defs"
+#   if {[file exists $template_defs]} { source $template_defs }
 
-    source [file join [file dirname [info script]] rivet_before.tcl]
-    source [file join [file dirname [info script]] rivet_page.tcl]
+    source [file join $scripts rivet_before.tcl]
+    source [file join $scripts rivet_page.tcl]
 
 }

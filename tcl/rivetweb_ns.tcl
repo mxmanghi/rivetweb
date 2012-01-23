@@ -20,6 +20,7 @@ namespace eval ::rivetweb {
     variable css_path               templates
     variable base_templates         templates
     variable sitemap_dir            sitemap
+    variable site_scritps           tcl
     variable newsite_templates      rwtemplates
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
@@ -135,23 +136,23 @@ namespace eval ::rivetweb {
     variable download_chunksize     65536
 
     proc setup {rweb_root website_root} {
-	variable    scripts
-        variable    rivetweb_root
-        variable    site_base
-        variable    static_pages
-        variable    sitemap_dir
-        variable    sitemap
-        variable    logger
-        variable    local_pages
+            variable    scripts
+            variable    rivetweb_root
+            variable    site_base
+            variable    static_pages
+            variable    sitemap_dir
+            variable    sitemap
+            variable    logger
+            variable    local_pages
 
-        set rivetweb_root       [file normalize $rweb_root]
-	set scripts	        [file join $rivetweb_root tcl]
-        set site_base           $website_root        
-        set static_pages        [file normalize [file join $site_base pages]]
-        set local_pages	        [file normalize [file join $site_base docs]]
-        set sitemap_dir         [file normalize [file join $site_base sitemap]]
+            set rivetweb_root       [file normalize $rweb_root]
+            set scripts	            [file join $rivetweb_root tcl]
+            set site_base           $website_root        
+            set static_pages        [file normalize [file join $site_base pages]]
+            set local_pages	        [file normalize [file join $site_base docs]]
+            set sitemap_dir         [file normalize [file join $site_base sitemap]]
 
-        $logger log info "rivetweb_root set as $rivetweb_root"
+            $logger log info "rivetweb_root set as $rivetweb_root"
     }
 
     proc init {datasrc menusrc } {

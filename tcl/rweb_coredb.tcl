@@ -13,12 +13,25 @@ namespace eval ::rwebdb {
 
     variable sitepages [dict create]
 
+# -- check
+#
+# nothing else that checkin if the page associated to the key
+# is already in the database
+#
+
     proc check {key} {
         variable sitepages
 
         return [dict exists $sitepages $key] 
     }
     namespace export check
+
+# -- store
+#
+# This method stores a page model in the in memory database
+# The method should evolve to a simple cache mechanism if
+# requested by the size of the web site.
+#
 
     proc store {key page_model} {
         variable sitepages
@@ -39,23 +52,14 @@ namespace eval ::rwebdb {
             if {[catch {
                 set pmodel [$::rivetweb::datasource fetchData $key rkey]
             } e]} {
+                set pmodel [$::rivetweb::pmodel create]
                 if {$::errorCode == "not_existing"} {
 # let's return a conventional page (to be preloaded in the database)
 
-                    set pmodel [$::rivetweb::pmodel create]
                     $::rivetweb::pmodel put_metadata pmodel                 \
                                         [list   title    "Content not found" \
                                                 menu     [list left main]    \
                                                 header   "Rivetweb error: content not found"]
-
-#                    set error_page_dom [dom createDocument div]
-#                    set error_page_o   [$error_page_dom documentElement]
-#                    set error_message_o  [$error_page_dom createTextNode "Content for $key not found"]
-#                    $error_page_dom appendChild $error_message_o
-#
-#                    $::rivetweb::pmodel set_content pmodel $::rivetweb::default_lang \
-#                                                    pagetext $error_page_dom
-
 
                     $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang \
                                                             "Content for $key not found"
@@ -64,6 +68,13 @@ namespace eval ::rwebdb {
 # we don't know what to do in this case
 
 		            $::rivetweb::logger log err "Don't know what to do...$e"
+                    $::rivetweb::pmodel put_metadata pmodel                 \
+                                        [list   title    "Error creating page for key $key" \
+                                                menu     [list left main]    \
+                                                header   "Error creating page for key $key"]
+
+                    $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang \
+                                                         "Error creating page for key $key"
 
                 }
             } else {
