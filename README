@@ -48,8 +48,8 @@ to another language provided your datasource has method for fetching
 content in different languages
 
 Rivetweb has a basic support for extensibility of the markup: 
-page creation can be customized adding 'hooks' procedure to the code, 
-thus adding new data transformations.
+page creation can be customized adding 'hook' procedures to the code, 
+thus adding new data transformations and/or tag expansion.
 
 Rivetweb is entirely free and released under the Apache 2.0 licence.
 

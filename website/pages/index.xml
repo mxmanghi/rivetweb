@@ -9,7 +9,56 @@
     	<title>Rivetweb: easy HTML generation with Tcl</title>
     	<headline>Rivetweb: easy HTML generation with Tcl</headline>
         <pagetext>
-            <programlisting src="README" /> 
+	    <p>
+		Rivetweb is a minimum requirements Tcl based engine for creating template 
+		based websites. The only required software packages you need are 
+		the <externref href="http://httpd.apache.org/">Apache HTTP Webserver</externref> 
+		and <externref href="http://tcl.apache.org/rivet/">Apache Rivet</externref>. 
+		In the current base implementation
+		also <externref href="http://tdom.github.com">tdom</externref> is used to 
+		manimulate data and XHTML ouput.
+
+		Rivetweb internal machinery and organizazion is entirely developed in 
+		Tcl. Rivetweb was written with an emphasis on indipendence from actual
+		implementation of its components and aims at evolving to a simple yet
+		fully customizable, extensible framework for simple websites. 
+	    </p>
+	    <h3>What <b>Rivetweb</b> can do for you</h3>
+	    <p>
+		Rivetweb was born as a simple application to create 
+		websites whose content is static and, possibly, made available 
+		in different languages. It proved to be a useful ground 
+		where workgroups developing static documentation to be published 
+		on the web could work together focusing their work on page writing 
+		and site structure.
+		Unlike other powerful open source tools for publishing (namely 
+		<externref href="http://www.docbook.org/">Docbook</externref>)
+		Rivetweb doesn't ship with a rich set of semantic tags ready to use 
+		(except for a few inherently needed tags like <b>siteref</b> and 
+		<b>externref</b>), but has a simple mechanism that lets you write 
+		Tcl hooks to transform and/or expand specific element of a page into 
+		full HTML code. It's thought for Tcl'ers needing a simple, extensible 
+		tool for website creation.
+	    </p>
+	    <h3><b>Rivetweb</b> as an HTML generator</h3>
+	    <p>
+		If links in a Rivetweb site are consistently written the whole
+		website can be generated as if every page was stored in a good
+		old fashioned .html page. By setting up Apache mod_rewrite with a
+		few configuration lines the whole website can be cloned into
+		static <em>.html</em> pages and then deployed with <b>any</b> 
+		webserver with no backend needed at all. When used for this purpose
+		Rivetweb is a good tool to generate documentation that is not going to 
+		change every second (even though recreating it can be done easily or
+		even automated with scripts)
+	    </p>
+	    <p>
+		Rivetweb supports multiple templates at onc\e. You can take several
+		templates, adapt them to show your pages and run the website with
+		as many templates as you like. Your website changes appearance
+		by simply starting the browsing with a an extra urlencoded parameter
+		<em>template=&lt;template_name&gt;</em>
+	    </p>
         </pagetext>
     </content>
     <content language="it">
