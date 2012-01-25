@@ -138,7 +138,6 @@ namespace eval ::rwmenu {
 # -- id 
 
     proc id {menuobj} {
-#       puts "--->$menumodel<----"
         return [dict get $menuobj menuid]
     }
 

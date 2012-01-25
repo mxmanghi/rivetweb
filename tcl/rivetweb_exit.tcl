@@ -6,5 +6,5 @@
 #-
 #
 
-apache_log_error notice "Rivetweb: child [pwd] is leaving"
+$::rivetweb::logger log notice "Rivetweb: child [pwd] is leaving"
 

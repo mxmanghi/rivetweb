@@ -9,6 +9,11 @@
 </head>
 <body>
 <div id="wrapper">
+    <? 
+#       puts [$::rivetweb::pmodel languages $::rivetweb::current_pmodel] 
+#       puts [dict get $::rivetweb::current_pmodel content en]
+        
+    ?>
 	<div id="logo">
 		<h1>Rivetweb</h1>
 		<p><em>Simple Website creation<a href="http://www.freecsstemplates.org/"></a></em></p>
@@ -28,6 +33,11 @@
 			</ul>
 		</div>
 	</div>
+                <?
+#                   foreach l [$::rivetweb::pmodel languages $::rivetweb::current_pmodel] {
+#                       puts "<li>$l</li>"
+#                   }
+                ?>
 	<!-- end #header -->
 	<!-- end #header-wrapper -->
 	<div id="page">

@@ -57,7 +57,7 @@ if {[var exists template]} {
     set template_key rwbase
 }
 
-apache_log_error info "template: $running_template (css: $running_css)"
+$::rivetweb::logger log info "template: $running_template (css: $running_css)"
 set ::rivetweb::running_template  [buildTemplateName $running_template $template_key]
 set ::rivetweb::running_css       [makeCssPath $running_css $template_key]
 set ::rivetweb::template_key      $template_key
@@ -72,13 +72,13 @@ if {[var exists staticroot]} {
 # we rely on the 'sitemap' directory mtime to see if some of its files
 # have changed and a new tree of links has to be recreated
 
-if {[$::rivetweb::menusource has_updates]} {
-
-    $::rivetweb::logger log notice "(re-)loading sitemap"
-    $::rivetweb::sitemap recreate
-
-    $::rivetweb::menusource loadsitemap $::rivetweb::sitemap
-}
+#if {[$::rivetweb::menusource has_updates]} {
+#
+#    $::rivetweb::logger log notice "(re-)loading sitemap"
+#    $::rivetweb::sitemap recreate
+#
+#    $::rivetweb::menusource loadsitemap $::rivetweb::sitemap
+#}
 
 # we determine the language for this request (keep in mind we are running
 # within the ::rivetweb namespace.
@@ -111,7 +111,7 @@ if {[var exists reset]} {
 
 if {[var exists show]} {
     set pagina [var get show]
-    apache_log_error info "'$pagina' requested"
+    $::rivetweb::logger log info "'$pagina' requested"
 
 # if we are using cached content and requested page is cached we simply
 # store in ::rivetweb::page_content
@@ -123,7 +123,7 @@ if {[var exists show]} {
 
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $pagina]
 
-    apache_log_error info "[pid] page_content: $::rivetweb::page_content"
+    $::rivetweb::logger log info "page_content: $::rivetweb::page_content"
 
 } else {
 

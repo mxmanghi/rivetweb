@@ -1,10 +1,14 @@
 # --  rwlogger
 #
 #
+#
 
 namespace eval ::rwlogger {
 
     proc log {severity msg} {
+
+        set msg "\[[pid]\] $msg"
+
         if {[catch {
             apache_log_error $severity $msg
         }]} {

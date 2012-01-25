@@ -86,9 +86,11 @@ namespace eval ::rwlink {
 # the language will fall back to the default language
 
     proc link_text {linkmodel {language ""}} {
-        if {[string length $language] == 0} {
+        if {([string length $language] == 0) || \
+            ![dict exists $linkmodel text $language]} {
             set language $::rivetweb::default_lang
         }
+
         return [dict get $linkmodel text $language]
     }
 

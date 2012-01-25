@@ -123,6 +123,16 @@ namespace eval ::rwpmodel {
         }
     }
 
+# -- languages
+#
+#
+
+    proc languages { pageobj } {
+
+        return [dict keys [eval dict create [dict get $pageobj content]]]
+
+    }
+
     proc metadata { pmodel } {
 
         return [dict get $pmodel metadata]
@@ -157,7 +167,7 @@ proc metadata_hooks { pageobj hooks_d } {
     if {[dict exists $hooks_d metadata]} {
         set ppp [dict get $::rivetweb::hooks metadata]
         foreach hk [dict keys $ppp] {
-            apache_log_error info "processing hook: [dict get $ppp $hk descrip]"
+            $::rivetweb::logger log info "processing hook: [dict get $ppp $hk descrip]"
             set processor [dict get $ppp $hk function]
             
             ::rivetweb::$processor $pageobj 

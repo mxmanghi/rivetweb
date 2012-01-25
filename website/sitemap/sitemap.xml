@@ -9,15 +9,22 @@
             <text lang="it">Installazione<info>Installazione di Rivetweb</info></text>
             <reference>installation</reference>
         </link>
-	<link>
-	    <type>internal</type>
-	    <text>Configuration<info>Configuring Rivetweb</info></text>
-	    <reference>configuration</reference>
-	</link>
+        <link>
+            <type>internal</type>
+            <text>Configuration<info>Configuring Rivetweb</info></text>
+            <text lang="it">Configurazione<info>Configurazione di Rivetweb</info></text>
+            <reference>configuration</reference>
+        </link>
         <link>
             <type>internal</type>
             <text>Core Tags<info>Rivetweb XML Tags</info></text>
             <reference>coretags</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Examples<info>Existing Rivetweb websites</info></text>
+            <text lang="it">Siti Esistenti<info>Siti già sviluppati con Rivetweb</info></text>
+            <reference>examples</reference>
         </link>
     </menu>
     <menu id="tclwebsites" type="leaf">

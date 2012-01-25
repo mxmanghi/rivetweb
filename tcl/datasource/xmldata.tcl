@@ -21,6 +21,8 @@ namespace eval ::XMLData {
     proc buildPageEntry {key xmldata reassigned_key} {
         upvar $reassigned_key rkey
 
+        $::rivetweb::logger log debug "getting data for key $key"
+
         set xmldom [dom parse $xmldata]
         set domroot [$xmldom documentElement root]
         if {[$domroot hasAttribute id]} {
@@ -69,9 +71,8 @@ namespace eval ::XMLData {
 #           puts "clang->$clang ($::rivetweb::default_lang)"
 
             foreach c [$content childNodes] {
+#               $::rivetweb::logger log debug "Adding content for language $clang ($node_name,$key)"
                 set node_name [$c nodeName]
-
-                $::rivetweb::logger log debug "Adding content for language $clang ($node_name,$key)"
 
                 if {$node_name == "pagetext"} {
 

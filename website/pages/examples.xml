@@ -1,0 +1,39 @@
+<page id="examples">
+    <ident>$Id: $</ident>
+    <author>$Author: mxmanghi $</author>
+    <date>2012-01-25</date>
+    <title>Rivetweb Websites</title>
+    <headline>Rivetweb Websites</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
+    <content>
+        <title>Rivetweb Websites</title>
+        <headline>Rivetweb Websites</headline>
+        <pagetext>
+            <p>
+                A few website have been created with Rivetweb
+                <ul>
+                    <li>
+                        <externref href="http://tcl.apache.org/rivet/">Rivet's</externref> 
+                        website is an pure static HTML clone
+                        of a Rivetweb generated website.
+                    </li>
+                    <li>
+                        A very interesting website about
+                        <externref href="http://lcn2010.biol.unipr.it/">Biodiversity</externref>
+                        written in a cooperative work among students (<em>in Italian</em>).
+                    </li>
+                    <li>
+                        A website delivering information concerning a Master of Science 
+                        degree in <q><externref href="http://masterfauna.biol.unipr.it/">
+                        Wildlife ecology, conservation, and management</externref></q>
+                        (<em>in Italian</em>)
+                    </li>
+                </ul>
+            </p>
+            <p>
+                Needless to say, also this website was generated with Rivetweb
+            </p>
+        </pagetext>
+    </content>
+</page>

@@ -41,6 +41,8 @@ namespace eval ::XMLMenu {
         variable sitemap
 
         file stat $sitemap  sitemap_stat
+
+        $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
         if {($sitemap_stat(mtime) > $timestamp)} { 
 
             return true
@@ -51,7 +53,8 @@ namespace eval ::XMLMenu {
 
     proc loadsitemap {sitemap_mgr} {
         variable sitemap
-        variable sitemap_stat   
+        variable sitemap_stat
+        variable timestamp
 
         set logger $::rivetweb::logger
         $logger log info "recreating sitemap"
@@ -101,7 +104,7 @@ namespace eval ::XMLMenu {
                     foreach menu [$sm getElementsByTagName menu] {
                         if {$::rivetweb::debug} {
                             foreach cn [$menu childNodes] {
-                                $logger log info "  $menu: [$cn nodeName] - [$cn asXML]"
+                                $logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
                             }                            
                         }
 

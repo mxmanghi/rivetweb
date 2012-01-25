@@ -1,20 +1,26 @@
 <sitemenus id="rivetweb" parent="main">
-    <menu id="install" type="node">
-        <title>Install</title>
+    <menu id="internals" type="node">
+        <title>Extending Rivetweb</title>
         <link>
             <type>internal</type>
-            <text>Step 1</text>
-            <reference>install1</reference>
+            <text>Postprocessing hooks</text>
+            <reference>postprocessing</reference>
         </link>
         <link>
             <type>internal</type>
-            <text>Step 2</text>
-            <reference>install2</reference>
+            <text>Metadata hooks</text>
+            <reference>mdhooks</reference>
         </link>
         <link>
             <type>internal</type>
-            <text>Step 3</text>
-            <reference>install3</reference>
+            <text>Sitemap</text>
+            <reference>sitemap</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Data Sources</text>
+            <reference>datasource</reference>
         </link>
     </menu>
+
 </sitemenus>
