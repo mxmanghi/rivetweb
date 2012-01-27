@@ -130,6 +130,19 @@ namespace eval ::rivetweb {
 
     variable hooks                  [dict create]
 
+# These variables are of interest only for the basic XML pages support
+# They can be superseded in /<path_site_root>/site_defs.tcl
+
+# variable controlling metadata for a new static page creation 
+
+    set metadatatags		    {date author ident keywords}
+
+# if any RCS system it should be set here. 
+# Possible values are 'svn' and 'git' or 'none'. Any other string
+# falls back on 'none'
+
+    set versioning_system	    none
+
 # parameters for downloading binary files
 
     variable download_proc          download.tcl
@@ -149,7 +162,7 @@ namespace eval ::rivetweb {
             set scripts	            [file join $rivetweb_root tcl]
             set site_base           $website_root        
             set static_pages        [file normalize [file join $site_base pages]]
-            set local_pages	        [file normalize [file join $site_base docs]]
+            set local_pages	    [file normalize [file join $site_base docs]]
             set sitemap_dir         [file normalize [file join $site_base sitemap]]
 
             $logger log info "rivetweb_root set as $rivetweb_root"
