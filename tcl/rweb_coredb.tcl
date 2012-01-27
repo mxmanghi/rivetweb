@@ -50,7 +50,9 @@ namespace eval ::rwebdb {
         if {![check $key]} {
 
             if {[catch {
+
                 set pmodel [$::rivetweb::datasource fetchData $key rkey]
+
             } e]} {
                 set pmodel [$::rivetweb::pmodel create]
                 if {$::errorCode == "not_existing"} {
