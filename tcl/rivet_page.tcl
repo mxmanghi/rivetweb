@@ -90,21 +90,6 @@ $::rivetweb::pmodel postproc_hooks  $::rivetweb::current_pmodel \
 
 # we finally create HTML out of the xml page so far handled.
 
-#if {[selectContent $page_xml $language content_selected]} {
-#    array unset content
-#    if {[makePageHTML $page_xml $content_selected content]} {
-#        set page_content_html $content(pagetext)
-#        set page_title        $content(title)
-#        set page_headline     $content(headline)       
-#    } else {
-#        set page_content_html "Rivetweb internal error: could not create HTML from page data"
-#        set page_headline     "Rivetweb error"
-#        set page_title        "Rivetweb error"
-#    }
-#} else {
-#    set page_content_html "no content found"
-#}
-
 # content and language had been already selected within the 
 # ::rivetweb::pmodel page model manager
 
