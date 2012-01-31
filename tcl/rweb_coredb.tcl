@@ -54,8 +54,12 @@ namespace eval ::rwebdb {
                 set pmodel [$::rivetweb::datasource fetchData $key rkey]
 
             } e]} {
+
+                set error_caught $::errorCode
+
                 set pmodel [$::rivetweb::pmodel create]
-                if {$::errorCode == "not_existing"} {
+                if {$error_caught == "not_existing"} {
+
 # let's return a conventional page (to be preloaded in the database)
 
                     $::rivetweb::pmodel put_metadata pmodel                 \
@@ -67,28 +71,39 @@ namespace eval ::rwebdb {
                                                             "Content for $key not found"
 
                 } else {
-# we don't know what to do in this case
 
-		            $::rivetweb::logger log err "Don't know what to do...$e"
+# something else went wrong, it's a rivetweb internal error
+
+		            $::rivetweb::logger log err "Rivetweb internal error: $error_caught"
                     $::rivetweb::pmodel put_metadata pmodel                 \
-                                        [list   title    "Error creating page for key $key" \
+                                        [list   title    "Error creating page for key $key ($error_caught)" \
                                                 menu     [list left main]    \
                                                 header   "Error creating page for key $key"]
 
                     $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang \
-                                                         "Error creating page for key $key"
+                                                         "Error creating page for key $key<br /><pre>$e</pre>"
 
                 }
             } else {
+
+# page is stored in the in memory database
+
                 store $key $pmodel
             }
 
         } else {
+
+# page was in the database, we hand it on to the client
+
             set pmodel [dict get $sitepages $key]
         }
         return $pmodel
     }
     namespace export fetch
+
+# -- dispose: page corresponding to the key argument
+# is removed for the database and method 'dispose' for
+# the page object called.
 
     proc dispose {key} {
         variable sitepages
@@ -98,10 +113,15 @@ namespace eval ::rwebdb {
 
             $::rivetweb::pmodel dispose $pmodel 
 
-            set sitepages [dict remove $sitepages $key]
+            dict unset sitepages
         }
     }
     namespace export dispose
+
+
+# -- erase is a fairly distructive call that empties
+# the database after calling the 'dispose' method 
+# for each page object
 
     proc erase {} {
         variable sitepages
@@ -111,6 +131,9 @@ namespace eval ::rwebdb {
 
             $::rivetweb::pmodel dispose $pmodel
         }
+        
+        set sitepages [dict create]
+
     }
     namespace export erase
 
