@@ -32,7 +32,7 @@
 cd &lt;path-to-rivetweb-dir&gt;
 git pull</programlisting>
 	    <p>
-		Se the documentation for you OS to see how to install Apache HTTP Server, Tcl, tdom and git.
+		    See the documentation of your OS to install the Apache HTTP Server, Tcl, tdom and git.
 	    </p>
         </pagetext>
     </content>
