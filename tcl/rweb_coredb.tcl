@@ -113,7 +113,7 @@ namespace eval ::rwebdb {
 
             $::rivetweb::pmodel dispose $pmodel 
 
-            dict unset sitepages
+            dict unset sitepages $key
         }
     }
     namespace export dispose
