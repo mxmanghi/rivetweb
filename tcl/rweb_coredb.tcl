@@ -42,6 +42,9 @@ namespace eval ::rwebdb {
 
 # -- fetch
 #
+# central method for rwebdb. The argument 'key' is passed to the
+# datasource(s) objects until the resource matching the argument is
+# found.
 #
 
     proc fetch {key} {
@@ -75,15 +78,16 @@ namespace eval ::rwebdb {
 # something else went wrong, it's a rivetweb internal error
 
 		            $::rivetweb::logger log err "Rivetweb internal error: $error_caught"
-                    $::rivetweb::pmodel put_metadata pmodel                 \
-                                        [list   title    "Error creating page for key $key ($error_caught)" \
-                                                menu     [list left main]    \
-                                                header   "Error creating page for key $key"]
+                    $::rivetweb::pmodel put_metadata pmodel     \
+                                        [list   title       "Error creating page for key $key ($error_caught)" \
+                                                menu        [list left main]    \
+                                                header      "Error creating page for key $key"]
 
                     $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang \
                                                          "Error creating page for key $key<br /><pre>$e</pre>"
 
                 }
+
             } else {
 
 # page is stored in the in memory database
@@ -96,15 +100,18 @@ namespace eval ::rwebdb {
 # page was in the database, we hand it on to the client
 
             set pmodel [dict get $sitepages $key]
+
         }
         return $pmodel
     }
     namespace export fetch
 
-# -- dispose: page corresponding to the key argument
+# -- dispose 
+#
+# page corresponding to the key argument
 # is removed for the database and method 'dispose' for
 # the page object called.
-
+#
     proc dispose {key} {
         variable sitepages
 
@@ -119,9 +126,12 @@ namespace eval ::rwebdb {
     namespace export dispose
 
 
-# -- erase is a fairly distructive call that empties
+# -- erase
+# 
+# is a fairly distructive call that empties
 # the database after calling the 'dispose' method 
 # for each page object
+#
 
     proc erase {} {
         variable sitepages
