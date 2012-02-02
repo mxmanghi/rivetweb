@@ -16,7 +16,9 @@ if {[$::rivetweb::sitemap has_updates]} {
     $::rivetweb::logger log notice "Recreating sitemap from menu data source"
     $::rivetweb::sitemap recreate
  
-    $::rivetweb::menusource loadsitemap $::rivetweb::sitemap
+#   $::rivetweb::menusource loadsitemap $::rivetweb::sitemap
+
+    $::rivetweb::sitemap sitemap_reload
 
 }
 
