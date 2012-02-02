@@ -108,6 +108,7 @@ namespace eval ::rivetweb {
 
     namespace export makeUrl
 
+
 # -- buildSimplePage 
 #
 # Utility function that builds a simple page out of a message 
@@ -171,12 +172,12 @@ namespace eval ::rivetweb {
 #
 #   creates rivetweb path to a CSS file
 #
-#   Arguments:
+# Arguments:
 #
 #	css_file:   CSS file name
 #	style_dir:  template/CSS key
 #
-#   style_dir is supposed to be a 'key' in a database of templates, it
+# style_dir is supposed to be a 'key' in a database of templates, it
 # represents the directory name where the CSS is located within the 
 # ::rivetweb::running_css_path directory containing the css files for 
 # the supported templates.
@@ -189,7 +190,7 @@ namespace eval ::rivetweb {
 
 # -- makePictsPath
 #
-#
+# 
 
     proc makePictsPath {picts_file {style_dir ""}} {
 
@@ -198,44 +199,63 @@ namespace eval ::rivetweb {
 # search list for a picts file. 
 #    - We first try in the template's specific dir
 #    - then we try the picts root directory 
+#    - then we try in the website root 'picts' directory
 #    - last we attempt in the rwbase dir
 
 
 # we have to fake static links (relative to the ::rivetweb::static_path variable)
 # but still be aware we are running from /index.rvt
 
-        set fn [file join $::rivetweb::site_base $::rivetweb::base_templates $style_dir picts $picts_file]
+        set fn [file join   $::rivetweb::site_base      \
+                            $::rivetweb::base_templates \
+                            $style_dir                  \
+                            picts $picts_file]
+
         apache_log_error debug "0 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::base_templates $style_dir picts $picts_file]
         }
 
-        set fn [file join $::rivetweb::site_base $::rivetweb::picts_path $style_dir $picts_file]
+        set fn [file join   $::rivetweb::site_base  \
+                            $::rivetweb::picts_path \
+                            $style_dir              \
+                            $picts_file]
+
         apache_log_error debug "1 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::running_picts_path $style_dir $picts_file]
         } 
 
-        set fn [file join $::rivetweb::site_base $::rivetweb::picts_path $picts_file]
+        set fn [file join   $::rivetweb::site_base    \
+                            $::rivetweb::picts_path   \
+                            $picts_file]
+
         apache_log_error debug "2 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::running_picts_path $picts_file]
         } 
 
-        set fn [file join $::rivetweb::site_base $::rivetweb::picts_path $::rivetweb::default_template $picts_file]
+        set fn [file join   $::rivetweb::site_base          \
+                            $::rivetweb::picts_path         \
+                            $::rivetweb::default_template   \
+                            $picts_file]
+
         apache_log_error debug "3 pict file: >$fn<"
-        return [file join $::rivetweb::running_picts_path $::rivetweb::default_template $picts_file]
+        return [file join   $::rivetweb::running_picts_path   \
+                            $::rivetweb::default_template     \
+                            $picts_file]
     }
     namespace export makePictsPath
 
 
-    proc buildTemplateName {template_name {template_dir ""}} {
+# -- template_path
+#
+# 
+
+    proc template_path {template_name {template_dir ""}} {
         return [file join $::rivetweb::base_templates $template_dir $template_name]
-
     }
-    namespace export buildTemplateName
-
-
+    namespace export template_path
 
 # -- thisClass 
 #

@@ -100,25 +100,112 @@ namespace eval ::rwpmodel {
 
 # -- content
 #
+# returns the content of <pageobj> for <language> and
+# in one of four possible formats: 
 #
+#   1) '-xml': XML representation
+#   2) '-text': Markup language is removed and text in it returned
+#   3) '-html': HTML representation (thus not 'well formed')
+#   4) '-reference': reference to internal object representation
+#   
 
-    proc content { pmodel language } {
-        if {[dict exists $pmodel content $language]} {
-            return [dict get $pmodel content $language]
-        } elseif {[dict exists $pmodel content $::rivetweb::default_lang]} {
-            return [dict get $pmodel content $::rivetweb::default_lang]
+    proc content { pageobj language {fmt -reference}} {
+        
+        if {[dict exists $pageobj content $language]} {
+            set page_content [dict get $pageobj content $language]
+        } elseif {[dict exists $pageobj content $::rivetweb::default_lang]} {
+            set page_content [dict get $pageobj content $::rivetweb::default_lang]
         } else {
             set errormsg "Inconsistent model: Missing data for default language"
 
-            $::rivetweb::logger log emerg "inconsistent model: $pmodel"
-
+            $::rivetweb::logger log emerg "inconsistent model: $pageobj"
             return -code error  -errorcode missing_default_content  \
                                 -errorinfo $errormsg $errormsg
         }
+
+        switch -nocase -- $fmt {
+            -xml {
+                set method asXML
+            }
+            -text {
+                set method asText
+            }
+            -html {
+                set method asHTML
+            }
+            default {
+                set method ""
+            }
+        }
+
+# we prepare the data for display in another dictionary
+# title and headline are choosen from more to less specific, with
+# headline falling back to title if not resolvable
+
+        set page_data [dict create]
+
+        foreach {key field} $page_content {
+
+            switch $key {
+
+                title - 
+                headline {
+                    dict set page_data $key $field
+                }
+
+                pagetext {
+                    if {[string length $method] == 0} {
+                        dict set page_data $key $field
+                    } else {
+
+                        set output_buffer ""
+                        set xmlnode_pt [$field documentElement]
+                        if {[string match [$xmlnode_pt nodeName] pagetext]} {
+
+                            foreach el [$xmlnode_pt childNodes] {
+                                append output_buffer "[$el $method]\n"
+                            }
+
+                            dict set page_data pagetext $output_buffer
+                        } else {
+                            set errormsg "Inconsistent model: Missing 'pagetext' tag for language $language"
+
+                            $::rivetweb::logger log emerg "inconsistent model: $pageobj"
+                            return -code error  -errorcode missing_default_content  \
+                                                -errorinfo $errormsg $errormsg
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if {![dict exists $page_data headline]} {
+            if {[dict exists $pageobj metadata headline]} {
+                dict set page_data headline [dict get $pageobj metadata headline]
+            } elseif {[dict exists $page_data title]} {
+                dict set page_data headline [dict get $page_data title]
+            } elseif {[dict exists $pageobj metadata title]} {
+                dict set page_data headline [dict get $pageobj metadata title]
+            }
+        } 
+
+        if {![dict exists $page_data title]} {
+            if {[dict exists $pageobj metadata title]} {
+                dict set page_data title [dict get $pageobj metadata title]
+            } else {
+                dict set page_data title ""
+            }
+        }
+
+        return $page_data
     }
+
 
 # -- languages
 #
+# returns a list of available languages for <pageobj>. The list is assumed
+# to always have length > 0 as the default language has to be present
 #
 
     proc languages { pageobj } {
@@ -127,12 +214,35 @@ namespace eval ::rwpmodel {
 
     }
 
-    proc metadata { pmodel } {
 
-        return [dict get $pmodel metadata]
+# -- metadata
+#
+# when called with one argument 'metadata' returns the whole metadata section,
+# when called with a second 'key' argument the call returns the metadata value
+# corresponding to the 'key'. If the 'key' metadata doesn't exist in the page
+# object an emty string is returned.
+# 
 
+    proc metadata { pageobj {key ""} } {
+
+        if {$key == "" } {
+
+            return [dict get $pageobj metadata]
+
+        } else {
+
+            if {[dict exists $pageobj metadata $key]} {
+                return [dict get $pageobj metadata $key]
+            } else {
+                return ""
+            }
+        }
     }
 
+# -- mdmodel (deprecated)
+#
+# to be moved into 'legacy'
+#
     proc mdmodel { pmodel field } {
         if {[dict exists $pmodel metadata $field]} {
             return [dict get $pmodel metadata $field]
@@ -142,10 +252,16 @@ namespace eval ::rwpmodel {
         }
     }
 
-    proc dispose { pmodel } {
+# -- dispose
+#
+# deletes the storage <pageobj> internal data, making possible to 
+# dispose of the <pageobj> itself
+# 
+
+    proc dispose { pageobj } {
             
-        foreach {language v} [dict get $pmodel content] {
-            set pagedom [dict get $pmodel content $language pagetext]
+        foreach {language v} [dict get $pageobj content] {
+            set pagedom [dict get $pageobj content $language pagetext]
             $pagedom delete
         }
 
@@ -211,7 +327,7 @@ namespace eval ::rwpmodel {
 # passed as arguments to the hook, which returns a new tag name
 # and a new list of attributes which are to replace the element
 
-                set page_content [[namespace current]::content $pageobj $language]
+                set page_content [[namespace current]::content $pageobj $language -reference]
                 set page_xml [dict get $page_content pagetext]
                 foreach el2xform [$page_xml getElementsByTagName $hk] {
                     

@@ -58,7 +58,7 @@ if {[var exists template]} {
 }
 
 $::rivetweb::logger log info "template: $running_template (css: $running_css)"
-set ::rivetweb::running_template  [buildTemplateName $running_template $template_key]
+set ::rivetweb::running_template  [template_path $running_template $template_key]
 set ::rivetweb::running_css       [makeCssPath $running_css $template_key]
 set ::rivetweb::template_key      $template_key
 
@@ -67,18 +67,6 @@ set ::rivetweb::template_key      $template_key
 if {[var exists staticroot]} {
     header redir index.html
 }
-
-# puts "<pre><b>static_links: $::rivetweb::static_links</b></pre>"
-# we rely on the 'sitemap' directory mtime to see if some of its files
-# have changed and a new tree of links has to be recreated
-
-#if {[$::rivetweb::menusource has_updates]} {
-#
-#    $::rivetweb::logger log notice "(re-)loading sitemap"
-#    $::rivetweb::sitemap recreate
-#
-#    $::rivetweb::menusource loadsitemap $::rivetweb::sitemap
-#}
 
 # we determine the language for this request (keep in mind we are running
 # within the ::rivetweb namespace.
@@ -90,14 +78,11 @@ if {[var exists lang]} {
 }
 
 # Experimental: with early versions of Rivetweb if variable 'reset' 
-# was set then the in memory database was reset. To be tested in
-# this version
+# was set then the in memory database was cleared. To be tested.
 
 if {[var exists reset]} {
 
-    set ::rivetweb::page_content	$::rivetweb::index
-
-### set pagine($::rivetweb::index)	[::rivetweb::buildPage index]
+    set ::rivetweb::page_content $::rivetweb::index
 
     $::rivetweb::rwebdb erase
     $::rivetweb::rwebdb fetch $::rivetweb::index 
@@ -129,9 +114,8 @@ if {[var exists show]} {
 
 # Rivetweb assumes the default page is defined in the ::rivetweb::index variable
 
-    set ::rivetweb::page_content $::rivetweb::index
-    set ::rivetweb::current_pmodel \
-                [$::rivetweb::rwebdb fetch $::rivetweb::index]
+    set ::rivetweb::page_content    $::rivetweb::index
+    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::index]
 }
 
 # vi:shiftwidth=4:softtabstop=4:

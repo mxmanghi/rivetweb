@@ -14,7 +14,7 @@ proc timestamps_extraction { pageobj } {
 
     namespace eval ::rivetweb::pagestatus { set date "" }
 
-    set ::rivetweb::pagestatus::date [$::rivetweb::pmodel mdmodel $pageobj date]
+    set ::rivetweb::pagestatus::date [$::rivetweb::pmodel metadata $pageobj date]
 
     return $pageobj
 

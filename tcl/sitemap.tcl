@@ -9,10 +9,11 @@ package require struct::stack
 
 namespace eval ::rwsitemap {
 
-# - sitemap keeps the tree object representing the
-# website structure, its menus, links and multilanguage
-# text definitions. 'sitemap' is a tree of menu models
-# implemented by ::rivetweb::menumodel
+# the 'sitemap' variable keeps the tree object representing the
+# website structure, its menus, links and multilanguage text 
+# definitions. 'sitemap' is a tree of menu models implemented 
+# by ::rivetweb::menumodel
+#
 
     variable sitemap
     variable disconnected
@@ -26,20 +27,17 @@ namespace eval ::rwsitemap {
 
         set datasource $ds
 
-# The sitemap structure is implemented by a ::struct::tree Tcl structure
+# The sitemap structure is implemented by a ::struct::tree Tcl
+# structure
 
         set sitemap [::struct::tree sitemap]
 
 # After the sitemap build-up process has completed the 'disconnected' 
 # branch should be empty. We will use this assumption as a check for
 # a consistent definition of the website structure
+#
 
         $sitemap insert root end disconnected
-
-###### once the debug phase has finished here will go the
-###### datasource call
-
-######
 
         return $sitemap
     }
@@ -52,8 +50,14 @@ namespace eval ::rwsitemap {
         $sitemap destroy
         set sitemap [::struct::tree sitemap]
         $sitemap insert root end disconnected
-        return $sitemap
 
+        return $sitemap
+    }
+
+    proc has_updates {} {
+        variable datasource
+
+        return [$datasource has_updates]
     }
 
     proc add_menu_group {parent_id group_id menuobjs} {
@@ -119,12 +123,12 @@ namespace eval ::rwsitemap {
 
     proc menu_list {group_id} {
         variable sitemap
-	variable cnt
+        variable cnt
 
-	set menu_s [::struct::stack menu_stack[incr cnt]]
+        set menu_s [::struct::stack menu_stack[incr cnt]]
 
         if {[$sitemap exists $group_id]} {
-#	    puts ">>>[$sitemap keys $group_id]<<<"
+#	        puts ">>>[$sitemap keys $group_id]<<<"
             foreach m [$sitemap keys $group_id] {
 
                 set menu_o [$sitemap get $group_id $m] 
@@ -132,7 +136,7 @@ namespace eval ::rwsitemap {
 
             }
 
-	    $::rivetweb::logger log info "walking up ancestors -> [$sitemap ancestors $group_id]"    
+	        $::rivetweb::logger log info "walking up ancestors -> [$sitemap ancestors $group_id]"    
 
             foreach anc [$sitemap ancestors $group_id] {
 
@@ -150,16 +154,17 @@ namespace eval ::rwsitemap {
         }
 
 # let's revert the list of menu by extracting them from the stack
-	if {[$menu_s size] > 0}  {
-	    set menuobjs [$menu_s pop [$menu_s size]]
-	} else {
-	    set menuobjs {}
-	}
-	$menu_s destroy
+
+        if {[$menu_s size] > 0}  {
+            set menuobjs [$menu_s pop [$menu_s size]]
+        } else {
+            set menuobjs {}
+        }
+        $menu_s destroy
         return $menuobjs
     }
 
-    namespace export create recreate add_menu_group menu_list
+    namespace export   create recreate add_menu_group menu_list has_updates
     namespace ensemble create
 }
 

@@ -36,7 +36,6 @@ namespace eval ::rivetweb {
     variable sitemap                ::rwsitemap
     variable htmlizer               ::htmlizer
 
-
     variable menu_default_pos       left
     variable template_key           ""
 
@@ -78,10 +77,16 @@ namespace eval ::rivetweb {
 
     variable static_links           false
 
+# 'picts_path' and 'css_path' are paths relative to the 
+# website root. 'running_*_paths' are needed because paths
+# change when pages are simulating a static website.
+
     variable running_picts_path     $picts_path
     variable running_css_path       $css_path
 
-# static pages weill pretend to be stored in this directory
+# static pages will pretend to be stored in this directory
+# (mirroring tools like 'wget' will actually store them
+# in the 'static' subdirectory)
 
     variable static_path            static
 
@@ -119,11 +124,11 @@ namespace eval ::rivetweb {
 
     variable templates_db           [dict create]
 
-    dict set templates_db rwbase menu_html       {div staticmenu}
-    dict set templates_db rwbase title_html      {div menuheader}
-    dict set templates_db rwbase it_cont_html    {div itemcontainer}
-    dict set templates_db rwbase item_html       {span menuitem}
-    dict set templates_db rwbase link_class      navitem
+    dict set templates_db rwbase menu_html      {div staticmenu}
+    dict set templates_db rwbase title_html     {div menuheader}
+    dict set templates_db rwbase it_cont_html   {div itemcontainer}
+    dict set templates_db rwbase item_html      {span menuitem}
+    dict set templates_db rwbase link_class     navitem
 
     variable debug                  1
     variable hooks_dir              hooks
@@ -135,13 +140,13 @@ namespace eval ::rivetweb {
 
 # variable controlling metadata for a new static page creation 
 
-    set metadatatags		    {date author ident keywords}
+    set metadatatags		        {date author ident keywords}
 
 # if any RCS system it should be set here. 
 # Possible values are 'svn' and 'git' or 'none'. Any other string
 # falls back on 'none'
 
-    set versioning_system	    none
+    set versioning_system	        none
 
 # parameters for downloading binary files
 
@@ -149,23 +154,23 @@ namespace eval ::rivetweb {
     variable download_chunksize     65536
 
     proc setup {rweb_root website_root} {
-            variable    scripts
-            variable    rivetweb_root
-            variable    site_base
-            variable    static_pages
-            variable    sitemap_dir
-            variable    sitemap
-            variable    logger
-            variable    local_pages
+        variable    scripts
+        variable    rivetweb_root
+        variable    site_base
+        variable    static_pages
+        variable    sitemap_dir
+        variable    sitemap
+        variable    logger
+        variable    local_pages
 
-            set rivetweb_root       [file normalize $rweb_root]
-            set scripts	            [file join $rivetweb_root tcl]
-            set site_base           $website_root        
-            set static_pages        [file normalize [file join $site_base pages]]
-            set local_pages	    [file normalize [file join $site_base docs]]
-            set sitemap_dir         [file normalize [file join $site_base sitemap]]
+        set rivetweb_root       [file normalize $rweb_root]
+        set scripts	            [file join $rivetweb_root tcl]
+        set site_base           $website_root        
+        set static_pages        [file normalize [file join $site_base pages]]
+        set local_pages	        [file normalize [file join $site_base docs]]
+        set sitemap_dir         [file normalize [file join $site_base sitemap]]
 
-            $logger log info "rivetweb_root set as $rivetweb_root"
+        $logger log info "rivetweb_root set as $rivetweb_root"
     }
 
     proc init {datasrc menusrc } {
@@ -186,10 +191,11 @@ namespace eval ::rivetweb {
         set menusource  ::${menusrc}
 
         $menusource init $sitemap_dir
-        $sitemap create $menusource
+        $sitemap create  $menusource
         $menusource loadsitemap $sitemap
         $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }
 }
 
 package provide rwconf 2.0
+

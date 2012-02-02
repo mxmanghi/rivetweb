@@ -55,10 +55,10 @@ namespace eval ::XMLData {
         }
 
 #       puts "<pre>metadata_l: $metadata_l</pre>"
-        set pagemodel [$::rivetweb::pmodel create]
+        set newpage [$::rivetweb::pmodel create]
 #       dict set pagedict metadata [eval dict create $metadata_l]
-        $::rivetweb::pmodel set_metadata pagemodel $metadata_l
-        $::rivetweb::pmodel put_metadata pagemodel $menu_d
+        $::rivetweb::pmodel set_metadata newpage $metadata_l
+        $::rivetweb::pmodel put_metadata newpage $menu_d
 #       puts "<pre>menu_l: $menu_d</pre>"
 
         foreach content [$domroot getElementsByTagName content] {
@@ -80,20 +80,20 @@ namespace eval ::XMLData {
                     set cdom [dom parse [$c asXML]]
 #                   dict set pagedict content $clang pagetext $cdom
                     $::rivetweb::logger log info "Adding content for language $clang ($key)"
-                    $::rivetweb::pmodel set_content pagemodel $clang pagetext $cdom
+                    $::rivetweb::pmodel set_content newpage $clang pagetext $cdom
 
                 } else {
 
-                    $::rivetweb::pmodel set_content pagemodel $clang $node_name [$c text]
+                    $::rivetweb::pmodel set_content newpage $clang $node_name [$c text]
 
                 }
             }
         }
 
-        return $pagemodel
+        return $newpage
     }
 
-# -- fetchData: 
+# -- fetchData 
 #
 # This method retrieves a page content from the backend. This implementation
 # looks for an XML file in the website directory tree (::rivetweb::static_pages). 
