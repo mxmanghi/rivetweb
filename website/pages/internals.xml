@@ -1,0 +1,18 @@
+<page id="internals">
+    <ident>$Id: $</ident>
+    <author>Massimo Manghi</author>
+    <date>2012-02-04</date>
+    <title>Rivetweb Internals</title>
+    <headline>Rivetweb Internals</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
+    <content>
+        <title>Rivetweb Internals</title>
+        <headline>Rivetweb Internals</headline>
+        <pagetext>
+        	<p>
+        	
+        	</p>
+        </pagetext>
+    </content>
+</page>

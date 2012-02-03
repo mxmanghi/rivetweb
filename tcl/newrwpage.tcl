@@ -3,24 +3,27 @@
 #
 #
 
-lappend auto_path [file normalize [file join [file dirname [info script]] ..]]
+set rweb_root [file normalize [file join [file dirname [info script]] ..]]
+
+lappend auto_path $rweb_root 
+
+puts "setting auto_path as $auto_path"
 
 package require rwterm
 package require rivetweb
 package require tdom
 
-set site_base       [pwd]
-
 set ::stdin_signal  0
 set stato           file_input
 
 #source [file join $::rivetweb::scripts rivetweb_ns.tcl]
-
-::rivetweb::init [pwd]
+::rivetweb::setup $rweb_root [pwd]
+::rivetweb::init $::rivetweb::datasource $::rivetweb::menusource
 
 # site_defs.tcl overrides default
 
 set defs_location [file join $::rivetweb::site_base site_defs.tcl]
+eval lappend auto_path $::rivetweb::rivetlib
 
 puts "reading definitions from $defs_location"
 source $defs_location
