@@ -86,8 +86,6 @@ if {[var exists reset]} {
 
     $::rivetweb::rwebdb erase
     $::rivetweb::rwebdb fetch $::rivetweb::index 
-
-### array unset pagine
 } 
 
 #
@@ -95,18 +93,19 @@ if {[var exists reset]} {
 #
 
 if {[var exists show]} {
-    set pagina [var get show]
-    $::rivetweb::logger log info "'$pagina' requested"
+    set page_key [var get show]
+    $::rivetweb::logger log info "processing request for '$page_key'"
 
 # if we are using cached content and requested page is cached we simply
 # store in ::rivetweb::page_content
 
-    set ::rivetweb::page_content $pagina
-    if {[$::rivetweb::rwebdb check $pagina]} { 
-        $::rivetweb::rwebdb dispose $pagina 
-    }
+    set ::rivetweb::page_content $page_key
+    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
 
-    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $pagina]
+#   if {[$::rivetweb::rwebdb is_stale $page_key]} { 
+#       $::rivetweb::logger log info "page $page_key stale: fetching from ds"
+#       set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
+#   }
 
     $::rivetweb::logger log info "page_content: $::rivetweb::page_content"
 

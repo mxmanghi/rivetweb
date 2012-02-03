@@ -25,7 +25,7 @@ if {[$::rivetweb::sitemap has_updates]} {
 # we run metadata hooks for variable that have to be extracted to control the
 # display of our template
 
-$::rivetweb::pmodel metadata_hooks  $::rivetweb::current_pmodel     \
+$::rivetweb::pmodel metadata_hooks  $::rivetweb::current_pmodel \
                                     $::rivetweb::hooks
 
 if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
@@ -68,46 +68,48 @@ foreach pos [dict keys $menu_d] {
 
 apache_log_error debug "=====> menus: [array names html_menu]" 
 
-$::rivetweb::pmodel postproc_hooks  $::rivetweb::current_pmodel \
-                                    $::rivetweb::hooks          \
-                                    xmlpostproc                 \
-                                    $language
+if {[catch {
+
+    $::rivetweb::pmodel postproc_hooks  $::rivetweb::current_pmodel \
+                                        $::rivetweb::hooks          \
+                                        xmlpostproc                 \
+                                        $language
 
 # we finally create HTML out of the xml page so far handled.
 
 # content and language had been already selected within the 
 # ::rivetweb::pmodel page model manager
 
-# TODO: errors have to be handled properly. Error messages have to be elaborated
+    set page_vars [$::rivetweb::pmodel content $::rivetweb::current_pmodel $language -xml]
 
-set page_vars [$::rivetweb::pmodel content $::rivetweb::current_pmodel $language -xml]
+    set page_title [dict get $page_vars title]
+    set page_headline [dict get $page_vars headline]
+    set page_content_html [dict get $page_vars pagetext]
 
-set page_title [dict get $page_vars title]
-set page_headline [dict get $page_vars headline]
-set page_content_html [dict get $page_vars pagetext]
+    set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
 
-##if {[makePageHTML $content_a(pagetext) page_content_html]} {
-##
-## we try to infer page headline and title from data available
-## and store it in the content_a array.
-#
-#    if {![info exists content_a(headline)] && [info exists content_a(title)]} {
-#        set content_a(headline) $content_a(title)
-#    } elseif {![info exists content_a(title)] && [info exists content_a(headline)]} {
-#        set content_a(title)  $content_a(headline)
-#    } elseif {![info exists content_a(title)] && ![info exists content_a(headline)]} {
-#        set content_a(title) $::rivetweb::page_content
-#        set content_a(headline) $::rivetweb::page_content
-#    }
-#    set page_title        $content_a(title)
-#    set page_headline     $content_a(headline)       
-#} else {
-#    set page_content_html "Rivetweb internal error: could not create HTML from page data"
-#    set page_headline     "Rivetweb error"
-#    set page_title        "Rivetweb error"
-#}
+} e]} {
 
-set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
+    $::rivetweb::logger log err "Error processing data for page ($e)"
+
+    set pobj [$::rivetweb::pmodel create]
+    $::rivetweb::pmodel put_metadata pobj           \
+                [list   title   "Error processing XHTML data " \
+                        menu    [list left main]    \
+                        header  "Error processing XHTML data "]
+    $::rivetweb::pmodel set_pagetext pobj $::rivetweb::default_lang "Error creating page<br/><pre>$e</pre>"
+
+# we must assume this is going to be ok...
+
+    set page_vars [$::rivetweb::pmodel content $pobj $language -xml]
+
+    set page_title [dict get $page_vars title]
+    set page_headline [dict get $page_vars headline]
+    set page_content_html [dict get $page_vars pagetext]
+
+    set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
+    
+}
 
 headers type "text/html; charset=$::rivetweb::http_encoding"
 

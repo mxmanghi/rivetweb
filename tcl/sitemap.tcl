@@ -42,6 +42,10 @@ namespace eval ::rwsitemap {
         return $sitemap_tree
     }
 
+# -- recreate
+#
+#
+
     proc recreate {} {
         variable sitemap_tree 
         variable disconnected       
@@ -67,10 +71,12 @@ namespace eval ::rwsitemap {
 # -- sitemap_reload
 #
 # reloads the sitemap and informs the datasource that this
-# ensemble is the sitemap.
+# ensemble is the sitemap manager he has to talk to.
 #
 
     proc sitemap_reload {} {
+        variable datasource
+
         $datasource loadsitemap $::rivetweb::sitemap   
     }
 

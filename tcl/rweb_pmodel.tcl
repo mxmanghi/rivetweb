@@ -110,7 +110,6 @@ namespace eval ::rwpmodel {
 #   
 
     proc content { pageobj language {fmt -reference}} {
-        
         if {[dict exists $pageobj content $language]} {
             set page_content [dict get $pageobj content $language]
         } elseif {[dict exists $pageobj content $::rivetweb::default_lang]} {

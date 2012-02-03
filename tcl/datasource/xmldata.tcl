@@ -54,7 +54,6 @@ namespace eval ::XMLData {
             }
         }
 
-#       puts "<pre>metadata_l: $metadata_l</pre>"
         set newpage [$::rivetweb::pmodel create]
 #       dict set pagedict metadata [eval dict create $metadata_l]
         $::rivetweb::pmodel set_metadata newpage $metadata_l
@@ -71,14 +70,15 @@ namespace eval ::XMLData {
 #           puts "clang->$clang ($::rivetweb::default_lang)"
 
             foreach c [$content childNodes] {
-#               $::rivetweb::logger log debug "Adding content for language $clang ($node_name,$key)"
+
+# adding content for language '$clang'
+
                 set node_name [$c nodeName]
 
                 if {$node_name == "pagetext"} {
 
 # creiamo un nuovo dom
                     set cdom [dom parse [$c asXML]]
-#                   dict set pagedict content $clang pagetext $cdom
                     $::rivetweb::logger log info "Adding content for language $clang ($key)"
                     $::rivetweb::pmodel set_content newpage $clang pagetext $cdom
 
@@ -91,6 +91,17 @@ namespace eval ::XMLData {
         }
 
         return $newpage
+    }
+
+# -- time_reference 
+#
+#
+
+    proc time_reference {key} {
+
+        set xmlfile [file join $::rivetweb::static_pages ${key}.xml]
+        file stat $xmlfile file_stat
+        return $file_stat(mtime)
     }
 
 # -- fetchData 
@@ -148,10 +159,7 @@ namespace eval ::XMLData {
 
     }
 
-    namespace export   init
-    namespace export   fetchData
-    namespace export   synchData
-
+    namespace export init fetchData synchData time_reference
     namespace ensemble create
 }
 
