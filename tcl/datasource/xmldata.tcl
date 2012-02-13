@@ -35,6 +35,10 @@ namespace eval ::XMLData {
         set menu_d      [dict create]
         set metadata_l  {}
 
+# metadata are stored accordingly. <menu>...</menu> elements
+# receive a special treatment and go into the menu_d dictionary
+# before they get into the page metadata
+
         foreach c [$domroot child all] {
             switch [$c tagName] {
                 content {
@@ -55,10 +59,10 @@ namespace eval ::XMLData {
         }
 
         set newpage [$::rivetweb::pmodel create]
-#       dict set pagedict metadata [eval dict create $metadata_l]
         $::rivetweb::pmodel set_metadata newpage $metadata_l
         $::rivetweb::pmodel put_metadata newpage $menu_d
-#       puts "<pre>menu_l: $menu_d</pre>"
+
+# data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
 
         foreach content [$domroot getElementsByTagName content] {
             if {[$content hasAttribute language]} {
@@ -66,8 +70,6 @@ namespace eval ::XMLData {
             } else {
                 set clang $::rivetweb::default_lang
             }
-
-#           puts "clang->$clang ($::rivetweb::default_lang)"
 
             foreach c [$content childNodes] {
 
@@ -102,6 +104,7 @@ namespace eval ::XMLData {
         set xmlfile [file join $::rivetweb::static_pages ${key}.xml]
         file stat $xmlfile file_stat
         return $file_stat(mtime)
+
     }
 
 # -- fetchData 
@@ -139,8 +142,8 @@ namespace eval ::XMLData {
             $::rivetweb::logger log info "$xmlfile not found"
             set notexisting_msg "The requested page does not exist"
 #           return [::rivetweb::buildSimplePage $notexists_msg message $page_id]
-            return -code error -errorcode not_existing \
-                   -errorinfo $notexisting_msg $notexisting_msg
+            return -code error  -errorcode not_existing         \
+                                -errorinfo $notexisting_msg     $notexisting_msg
         }
     }
 
@@ -155,7 +158,6 @@ namespace eval ::XMLData {
     }
 
     proc dispose {key} {
-
 
     }
 

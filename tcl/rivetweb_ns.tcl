@@ -192,7 +192,6 @@ namespace eval ::rivetweb {
 
         $menusource init $sitemap_dir
         $sitemap create  $menusource
-#       $menusource loadsitemap $sitemap
 
         $sitemap sitemap_reload
         $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"

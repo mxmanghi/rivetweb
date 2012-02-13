@@ -1,7 +1,9 @@
 #
-# -- XMLMenu: Data source responsible for reading
-# menu data from <website-root>/sitemap/ and talk
-# to the sitemap manager to build a menu tree
+# -- XMLMenu: 
+#
+#
+# Data source responsible for reading menu data from <website-root>/sitemap/ 
+# and talk to the sitemap manager to build a menu tree
 #
 #
 
@@ -9,7 +11,6 @@ package require tdom
 package require rwconf
 package require rwlogger
 package require rwsitemap
-
 
 namespace eval ::XMLMenu {
     variable sitemap
@@ -33,14 +34,13 @@ namespace eval ::XMLMenu {
         }
 
         set lastaccess 0
-
     }
 
     proc has_updates {} {
         variable timestamp
         variable sitemap
 
-        file stat $sitemap  sitemap_stat
+        file stat $sitemap sitemap_stat
 
         $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
         if {($sitemap_stat(mtime) > $timestamp)} { 
@@ -79,11 +79,10 @@ namespace eval ::XMLMenu {
                 $logger log alert "could not parse map $map: $e"
             }
         }
-# 
+
         set menumodel $::rivetweb::menumodel
 
         foreach mdoc [array names xmlmenu] {
-#           set rootel      [$xmlmenu($mdoc) documentElement root]
             set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             
             $logger log info "analyzing data for $mdoc...."
@@ -161,8 +160,8 @@ namespace eval ::XMLMenu {
 
 
                     # In order not to replicate the same snippet of code
-                    # we anyway try to determine the language of the datum, regardless it's
-                    # meaninful or not
+                    # we anyway try to determine the language of the link, 
+                    # regardless it's meaninful or not
                                 
                                     if {[$linkdata hasAttribute lang]} {
                                         set language [$linkdata getAttribute lang]

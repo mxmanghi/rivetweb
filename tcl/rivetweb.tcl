@@ -15,26 +15,6 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
-# -- field
-#
-# field is a convenience proc that checks for the existence
-# of a variable in an array. The function generates an error
-# if the variable doesn't exist that can be caught for handling
-#  
-# Input: a       - array name
-#        field   - name of the variable in the array
-#
-#
-
-    proc field {a field} {
-        upvar $a a
-        
-        if {[info exists a($field)]} { 
-            return -code ok $a($field) 
-        } else {
-            return -code error
-        }
-    }
 
 # -- makeUrl
 #
@@ -190,7 +170,8 @@ namespace eval ::rivetweb {
 
 # -- makePictsPath
 #
-# 
+# search 'picts_file' in the graphic files search path sequence
+#
 
     proc makePictsPath {picts_file {style_dir ""}} {
 
@@ -272,110 +253,6 @@ namespace eval ::rivetweb {
     }
     namespace export thisClass
 
-# -- itemSerialize 
-#
-# takes a tdom element object and makes a list of the child 
-# elements and their text nodes.
-# Useful when a tdom element's children are leaves of the tree
-#
-
-    proc itemSerialize {itemObj} {
-        set lista {}
-        foreach c [$itemObj child all] {
-            lappend lista [$c tagName] [$c text]
-        }
-        return $lista
-    }
-
-# -- selectContent
-#
-# Another Rivetweb's key feature is the ability to produce output
-# in different languages, provided text for links and content is
-# available for a language different from the default language.
-#
-# This procedure seeks for the right content in a xml_page
-# depending on the language 
-#
-# Arguments:
-#
-#   - xml_page: tdom object reference representing the page
-#   - lang: language to be sought
-#   - content_selected: name of a variable in the caller scope
-#     where the content will be stored
-#
-# Returned value:
-#
-#   - either true or false depeding on the search operation 
-#     success
-#
-
-    proc selectContent {xml_page lang content_selected} {
-        upvar $content_selected content
-
-# peeking the root of the page
-        set xmlroot [$xml_page documentElement root]
-
-# we set an empty default_content to test if the page was consistent.
- 
-        set default_content ""
-        set retv true
-        foreach content [$xmlroot getElementsByTagName content] {
-            if {[$content hasAttribute language]} {
-                set clang [$content getAttribute language]
-                apache_log_error debug "$content: ($clang)"         
-                if {[string equal $clang $lang]} {
-                    return true
-                } elseif {[string match $clang $::rivetweb::default_lang]} {
-                    set default_content $content
-                }
-            } else {
-                set default_content $content
-#               puts stderr "$content: ($::rivetweb::default_lang) [$content text]"
-            }
-        }
-        
-        if {[string match $default_content ""]} {
-            set retv false
-        } else {
-            set content $default_content
-        }
-        return $retv
-    }
-
-    namespace export selectContent
-
-
-    proc getElementValue {xml tag} {
-        set xmlroot [$xml documentElement root]
-        set testo    ""
-        set elementi [$xmlroot getElementsByTagName $tag]
-        foreach elemento $elementi {
-            append testo [$elemento text]
-        }
-        return $testo
-    }
-
-# -- makePageHTML 
-#
-#
-
-    proc makePageHTML {xmldoc content_a} {
-        upvar $content_a content_html 
-
-        set content_html ""
-        set xmlnode_pt [$xmldoc documentElement]
-
-        if {[string match [$xmlnode_pt nodeName] pagetext]} {
-
-            foreach el [$xmlnode_pt childNodes] {
-                append content_html "[$el asXML -indent 1]\n"
-            }
-
-            return true
-        } else {
-            return false
-        }
-    }
 
 # -- isDebugging 
 #
