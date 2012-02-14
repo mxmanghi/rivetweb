@@ -16,7 +16,7 @@
             <externref href="http://tcl.apache.org/rivet/">Apache Rivet</externref> and (in 
             the current implementation) also 
             <externref href="http://tdom.github.com">tdom</externref> is used to 
-            manimulate data and XHTML ouput.
+            manipulate data and XHTML ouput.
         </p>
         <p>
             Rivetweb internal machinery and organizazion is entirely developed in 
