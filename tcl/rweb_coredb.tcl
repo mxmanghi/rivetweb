@@ -56,10 +56,9 @@ namespace eval ::rwebdb {
         variable sitepages
 
         if {![check $key]} { return true }
-        set time_ref [$::rivetweb::datasource time_reference $key]
-
         set ts [dict get $sitepages $key timestamp]
-        return [expr $ts < $time_ref]
+        return [$::rivetweb::datasource is_stale $key $ts]
+
     }
     namespace export is_stale
 

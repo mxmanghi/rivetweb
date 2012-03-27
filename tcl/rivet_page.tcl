@@ -49,20 +49,19 @@ foreach pos [dict keys $menu_d] {
     array unset menu_a {}
     set menus [$::rivetweb::sitemap menu_list [dict get $menu_d $pos]]
 
-#   puts "<pre>--->$pos [dict get $menu_d $pos] $menu_list</pre>"
-#   puts "\n $n_menus \n"
-
+#   puts "<pre>--->$pos [dict get $menu_d $pos]</pre>"
+#   puts "<pre>$menus</pre>"
     foreach menuobj $menus {
 
-            append html_menu($pos)                          \
-                    [$::rivetweb::htmlizer  html_menu       \
-                                            $menuobj        \
-                                            $language       \
-                                            [dict get $::rivetweb::templates_db $template_key]]
+        append html_menu($pos)                          \
+                [$::rivetweb::htmlizer  html_menu       \
+                                        $menuobj        \
+                                        $language       \
+                                        [dict get $::rivetweb::templates_db $template_key]]
 
     }
 
-##### debug puts "<pre>[escape_sgml_chars $html_menu($pos)]</pre>"
+#   puts "<pre>[escape_sgml_chars $html_menu($pos)]</pre>"
 
 }
 

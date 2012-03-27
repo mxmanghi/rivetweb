@@ -43,13 +43,15 @@ namespace eval ::rwsitemap {
     }
 
 # -- recreate
-#
-#
+# 
+# 
 
     proc recreate {} {
         variable sitemap_tree 
         variable disconnected       
         variable datasource
+
+# 21-03-2012: shouldn't we destroy every single menu object???
 
         $sitemap_tree destroy
         set sitemap_tree [::struct::tree sitemap_tree]
@@ -60,11 +62,16 @@ namespace eval ::rwsitemap {
 
 # -- has_updates
 #
-# 
+# this method should cycle through the data sources listed
+# in the data_source_l list ("*" means all of the registered datasources)
+# and returns in the ood variable a list of datasources that have
+# updates
 
-    proc has_updates {} {
+    proc has_updates {{data_source_l "*"} {ood out_of_date}} {
+        upvar $ood need_update_l
         variable datasource
 
+        set need_update_ds {}
         return [$datasource has_updates]
     }
 
@@ -138,8 +145,8 @@ namespace eval ::rwsitemap {
     }
 
 # -- menu_list: walks the tree of menus and returns a list of menu objs
-# starting with the sought menu up to the root, skipping the
-# leaf menus.
+# starting with the sought menu up to the root, skipping all the menus
+# marked as leaves.
 
     proc menu_list {group_id} {
         variable sitemap_tree
@@ -171,6 +178,8 @@ namespace eval ::rwsitemap {
                     }
                 }
             }
+        } else {
+            $::rivetweb::logger log err "No menu group $group_id"
         }
 
 # let's revert the list of menu by extracting them from the stack
