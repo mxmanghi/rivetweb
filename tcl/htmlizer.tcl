@@ -148,7 +148,7 @@ namespace eval ::htmlizer {
                 }
                 local {
                     $link_o setAttribute href \
-                        [file join $::rivetweb::local_pages $link_ref]
+                        [file join / $::rivetweb::local_pages $link_ref]
                     
                 }
 
