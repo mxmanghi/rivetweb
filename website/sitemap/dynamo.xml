@@ -1,0 +1,6 @@
+<!-- experimental dynamic site menu group -->
+
+<sitemenus id="dynamo" class="dynamic" parent="root">
+    <title>Menù dinamico</title>
+    <functor>atom</functor>
+</sitemenus>
