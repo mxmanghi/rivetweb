@@ -14,7 +14,7 @@ package require rwsitemap
 
 namespace eval ::XMLMenu {
     variable sitemap
-    variable timestamp      0
+    variable timestamp          0
     variable sitemap_stat   
 
     proc init {xmlpath} {

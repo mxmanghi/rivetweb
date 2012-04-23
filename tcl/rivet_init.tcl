@@ -71,10 +71,16 @@ foreach k [dict keys $::rivetweb::templates_db] {
 
 namespace eval ::rivetweb {
 
+# actually there's must be a search list of directories where hooks
+# can be stored...
+
     set hooks_dir_fq [file join $scripts $hooks_dir *.tcl]
 
-    set nhooks 0
+# every hook defines a tag or data element transformer. Hooks
+# must define a hook_descriptor array where code characteristics
+# are listed.
 
+    set nhooks 0
     if {[catch {set hooks_list [glob $hooks_dir_fq]} e]} {
 
         apache_log_error notice "no hooks read from $hooks_dir_fq"
@@ -86,7 +92,7 @@ namespace eval ::rivetweb {
             array unset hook_descriptor
             source $hook_file
 
-# we assume everything has been stored in hook_descriptor
+# we assume everything has been stored in the hook_descriptor array
 
             if {![info exists hook_descriptor(textmode)]} {
                 set hook_descriptor(textmode)   text
