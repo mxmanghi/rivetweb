@@ -9,7 +9,7 @@ namespace eval ::rivetweb {
     variable    rivetweb_root
     variable    scripts     
     variable    static_pages
-    variable    local_pages
+    variable    local_pages	    docs
 
     variable    sitemap_mtime       0
 
@@ -161,13 +161,11 @@ namespace eval ::rivetweb {
         variable    sitemap_dir
         variable    sitemap
         variable    logger
-        variable    local_pages
 
         set rivetweb_root       [file normalize $rweb_root]
-        set scripts	            [file join $rivetweb_root tcl]
+        set scripts	        [file join $rivetweb_root tcl]
         set site_base           $website_root        
         set static_pages        [file normalize [file join $site_base pages]]
-        set local_pages	        [file normalize [file join $site_base docs]]
         set sitemap_dir         [file normalize [file join $site_base sitemap]]
 
         $logger log info "rivetweb_root set as $rivetweb_root"

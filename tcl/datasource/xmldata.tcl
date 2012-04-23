@@ -97,7 +97,10 @@ namespace eval ::XMLData {
 
 # -- time_reference 
 #
-#
+# time reference might eventually disappear from the public interface as
+# the datasource interface is going to bear the whole responsability
+# for determining which method has to be used to tell whether a resource
+# needs to be refreshed.
 
     proc time_reference {key} {
 
@@ -106,6 +109,18 @@ namespace eval ::XMLData {
         return $file_stat(mtime)
 
     }
+
+# -- is_stale
+#
+# returns a boolean condition if the resource linked to 'key' has
+# to be refreshed
+
+    proc is_stale {key timereference } {
+        
+        set current_timeref [$::rivetweb::datasource time_reference $key]
+        return [expr $timereference < $current_timeref]
+    }
+
 
 # -- fetchData 
 #
@@ -161,7 +176,7 @@ namespace eval ::XMLData {
 
     }
 
-    namespace export init fetchData synchData time_reference
+    namespace export init fetchData synchData time_reference is_stale
     namespace ensemble create
 }
 
