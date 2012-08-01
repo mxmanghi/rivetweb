@@ -48,10 +48,10 @@ if {[var exists template]} {
 } elseif {[string compare $::rivetweb::default_template ""] != 0} {
 
     set template_key $::rivetweb::default_template
-    catch {
+    if {[catch {
         set running_template  [dict get $::rivetweb::templates_db $template_key template]
         set running_css       [dict get $::rivetweb::templates_db $template_key css]
-    }
+    } e]} { puts "errore: $e" }
 
 } else {
     set template_key rwbase

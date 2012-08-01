@@ -6,11 +6,15 @@
 # set rweb_root /home/manghi/Projects/rivetweb/
 #
 
-lappend auto_path $::rivetweb::rivetweb_root
+set rweb_root [file normalize [file join ..]]
+
+lappend auto_path $rweb_root
+
+puts stderr "auto_path: $auto_path"
 
 package require rivetweb
 
-::rivetweb::setup $::rivetweb::rivetweb_root [file normalize [file dirname [info script]]]
+::rivetweb::setup $rweb_root [file normalize [file dirname [info script]]]
 
 # rivetweb initialization 
 

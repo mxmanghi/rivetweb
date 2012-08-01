@@ -1,5 +1,5 @@
 <page id="index">
-    <ident>$Ident: Tue Mar 27, 2012 at 11:43 AM +0200
+    <ident>$Ident: Tue Mar 27, 2012 at 07:22 PM +0200
     </ident>
     <author>$Author: massimo.manghi $</author>
     <date>$Date: 2011-12-14 18:40:52 +0100 (Wed, 14 Dec 2011) $</date>
@@ -21,8 +21,9 @@
         </p>
         <p>
             Rivetweb internal machinery and organizazion is entirely developed in 
-            Tcl. Rivetweb was written with an emphasis on indipendence of its components 
-            from actual implementation  and aims at evolving to a simple yet
+            Tcl. Rivetweb was written with an emphasis on indipendence from the 
+            actual implementation of its components 
+            and aims at evolving to a simple yet
             fully customizable, extensible framework for simple websites. 
         </p>
         <h3>What <b>Rivetweb</b> can do for you</h3>
@@ -36,13 +37,13 @@
             <sitereference href="examples">Examples</sitereference>) organization.
             Unlike other powerful open source publishing tools (namely 
             <externref href="http://www.docbook.org/">Docbook</externref>)
-            Rivetweb doesn't ship with a rich set of semantic tags ready to use 
+            Rivetweb doesn't come with a rich set of semantic tags ready to use 
             (except for a few inherently needed tags like <b>sitereference</b>), 
             but has a simple mechanism that lets you add Tcl written
             hooks to transform and/or expand specific element of a page into 
             full XHTML code. Rivetweb is meant to be a blank canvas where Tcl'ers can
             add markup language transformations or combine datasource
-            to create web pages.
+            to create web sites.
         </p>
         <h3><b>Rivetweb</b> as an HTML generator</h3>
         <p>
