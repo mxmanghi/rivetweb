@@ -1,0 +1,427 @@
+#
+# -- XMLBase
+#
+# Base unified datasource model. This model reads sitemap files to 
+# build a menu tree and reads XML data from files to build pages objects
+#
+#
+
+package require tdom
+package require rwconf
+package require rwlogger
+package require rwsitemap
+package require rwpmodel
+
+# temporary variable names
+#
+# - sitemap -> Path to sitemap dir
+# - timestamp -> saved timestamp of the sitemap dir
+# - sitemap_stat -> [file stat] info for sitemap dir
+# - xmlpath -> path to xml pages
+#
+
+namespace eval ::XMLBase {
+    variable sitemap
+    variable timestamp          0
+    variable sitemap_stat   
+    variable xmlpath
+
+    proc init {xmldata xmlsitemap} {
+        variable xmlpath
+        variable sitemap
+        variable sitemap_stat   
+
+# we first set up the variables controlling the sitemap
+
+        array set sitemap_stat {}
+        set sitemap [file normalize [file join $::rivetweb::site_base $xmlsitemap]]
+
+        if {![file isdirectory $sitemap]} {
+
+            return -code error  -error_code invalid_path \
+                                -errorinfo  "Wrong path $sitemap" \
+                                            "Wrong path $sitemap"
+
+        }
+        
+# and the we set the path to the XML pages
+
+        set xmlpath [file join $::rivetweb::site_base pages]
+    }
+
+
+#
+# -- buildPageEntry
+#
+#
+#
+
+    proc buildPageEntry {key xmldata reassigned_key} {
+        upvar $reassigned_key rkey
+
+        $::rivetweb::logger log debug "getting data for key $key"
+
+        set xmldom [dom parse $xmldata]
+        set domroot [$xmldom documentElement root]
+        if {[$domroot hasAttribute id]} {
+            set rkey [$domroot getAttribute id]
+            set key  $rkey
+        } else {
+            set rkey $key
+        }
+
+        set menu_d      [dict create]
+        set metadata_l  {}
+
+# metadata are stored accordingly. <menu>...</menu> elements
+# receive a special treatment and go into the menu_d dictionary
+# before they get into the page metadata
+
+        foreach c [$domroot child all] {
+            switch [$c tagName] {
+                content {
+                    continue
+                }
+                menu {
+                    if {[$c hasAttribute position]} {
+                        set position [$c getAttribute position]
+                    } else {
+                        set position $::rivetweb::menu_default_pos
+                    }
+                    dict set menu_d menu [$c getAttribute position $position] [$c text]
+                }
+                default {
+                    lappend metadata_l [$c tagName] [escape_shell_command [$c text]]
+                }
+            }
+        }
+
+        set newpage [$::rivetweb::pmodel create]
+        $::rivetweb::pmodel set_metadata newpage $metadata_l
+        $::rivetweb::pmodel put_metadata newpage $menu_d
+
+# data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
+
+        foreach content [$domroot getElementsByTagName content] {
+            if {[$content hasAttribute language]} {
+                set clang [$content getAttribute language]
+            } else {
+                set clang $::rivetweb::default_lang
+            }
+
+            foreach c [$content childNodes] {
+
+# adding content for language '$clang'
+
+                set node_name [$c nodeName]
+
+                if {$node_name == "pagetext"} {
+
+# creiamo un nuovo dom
+                    set cdom [dom parse [$c asXML]]
+                    $::rivetweb::logger log info "Adding content for language $clang ($key)"
+                    $::rivetweb::pmodel set_content newpage $clang pagetext $cdom
+
+                } else {
+
+                    $::rivetweb::pmodel set_content newpage $clang $node_name [$c text]
+
+                }
+            }
+        }
+
+        return $newpage
+    }
+
+
+# -- time_reference 
+#
+# time reference might eventually disappear from the public interface as
+# the datasource interface is going to bear the whole responsability
+# for determining which method has to be used to tell whether a resource
+# needs to be refreshed.
+
+    proc time_reference {key} {
+
+        set xmlfile [file join $::rivetweb::static_pages ${key}.xml]
+        file stat $xmlfile file_stat
+        return $file_stat(mtime)
+
+    }
+
+# -- is_stale
+#
+# returns a boolean condition if the resource linked to 'key' has
+# to be refreshed
+#
+    proc is_stale {key timereference } {
+        
+        set current_timeref [$::rivetweb::datasource time_reference $key]
+        return [expr $timereference < $current_timeref]
+    }
+
+# -- fetchData 
+#
+# This method retrieves a page content from the backend. This implementation
+# looks for an XML file in the website directory tree (::rivetweb::static_pages). 
+#
+#
+
+    proc fetchData {key reassigned_key} {
+        upvar $reassigned_key rkey
+        variable xmlpath
+
+        set xmlfile [file join $::rivetweb::static_pages ${key}.xml]
+        $::rivetweb::logger log info "->opening $xmlfile" 
+
+        if {[file exists $xmlfile]} {
+            if {[catch {
+                set xmlfp    [open $xmlfile r]
+                set xmldata  [read $xmlfp]
+                set xmldata  [regsub -all {<\?} $xmldata {\&lt;?}]
+                set xmldata  [regsub -all {\?>} $xmldata {?\&gt;}]
+#               puts stderr $xmldata
+                close $xmlfp
+            } fileioerr]} {
+                set page_id errore_interno
+                set notfound_msg "It was impossible to open the requested page ($fileioerr)"
+                $::rivetweb::logger err "[pid] $notfound_msg"
+                return [::rivetweb::buildSimplePage $notfound_msg message internal_error]
+            } else {
+                set pagedbentry [buildPageEntry $key $xmldata rkey]
+                return $pagedbentry
+            }
+        } else {
+            $::rivetweb::logger log info "$xmlfile not found"
+            set notexisting_msg "The requested page does not exist"
+#           return [::rivetweb::buildSimplePage $notexists_msg message $page_id]
+            return -code error  -errorcode not_existing         \
+                                -errorinfo $notexisting_msg     $notexisting_msg
+        }
+    }
+
+# -- synchData
+#
+# I should do something with this and
+# make Rivetweb capable of storing new content
+#
+
+    proc synchData {key data_dict} {
+
+    }
+
+    proc dispose {key} {
+
+    }
+
+    proc has_updates {} {
+        variable timestamp
+        variable sitemap
+
+        file stat $sitemap sitemap_stat
+
+        $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
+        if {($sitemap_stat(mtime) > $timestamp)} { 
+
+            return true
+        }
+
+        return false
+    }
+
+# -- listStaticMenus
+#
+
+    proc listStaticMenus {sm parent_mg} {
+        
+        set menumodel $::rivetweb::menumodel
+        set group_menu_list {}
+
+        foreach menu [$sm getElementsByTagName menu] {
+            if {$::rivetweb::debug} {
+                foreach cn [$menu childNodes] {
+                    $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
+                }                            
+            }
+
+            if {[$menu hasAttribute id]} {
+
+                if {[$menu hasAttribute parent]} {
+                    set parent  [$menu getAttribute parent]
+                } else {
+                    set parent  $parent_mg
+                }
+
+                if {[$menu hasAttribute visibility]} {
+                    set visibility [$menu getAttribute visibility]
+                } else {
+                    
+                    if {[$menu hasAttribute type]} {
+                        set visibility [$menu getAttribute type]
+                    } else {
+                        set visibility normal
+                    }
+                }
+
+                set menuobj [$menumodel create  [$menu getAttribute id]     \
+                                                $parent                     \
+                                                $visibility                     ]
+
+    # Elements within 'menu' are <title lang="..">...</title> and
+    # one or more <link>....</link>
+
+                set headers [$menu getElementsByTagName title]
+                foreach title $headers {
+
+                    if {[$title hasAttribute lang]} {
+                        set language [$title getAttribute lang]
+                    } else {
+                        set language $::rivetweb::default_lang
+                    }
+
+                    $menumodel assign title menuobj [$title text] $language
+                }
+
+                $menumodel assign parent menuobj $parent_mg
+
+                set links [$menu getElementsByTagName link]
+                set lm    $::rivetweb::linkmodel         
+                foreach l $links {
+
+                    set ltype internal
+                    set lref  index
+                    set linfo [dict create]
+                    set ltext [dict create]
+                    set attributes {}
+                    foreach linkdata [$l childNodes] {
+
+
+        # In order not to replicate the same snippet of code
+        # we anyway try to determine the language of the link, 
+        # regardless it's meaninful or not
+                    
+                        if {[$linkdata hasAttribute lang]} {
+                            set language [$linkdata getAttribute lang]
+                        } else {
+                            set language $::rivetweb::default_lang
+                        }
+
+                        set tagname [$linkdata tagName]
+                        switch $tagname {
+                            text {
+                                dict set ltext $language [$linkdata text]
+                                foreach infoel [$linkdata getElementsByTagName info] {
+                                    dict set linfo $language [$infoel text]
+                                }
+                            }
+                            type {
+                                set ltype [$linkdata text]
+                            }
+                            url -
+                            reference {
+                                set lref   [$linkdata text]
+                            }
+                            default {
+                                lappend attributes $tagname [$linkdata text]
+                            }
+                        }
+                    }
+#                   puts "-> $ltext $linfo"
+
+                    set linkobj [$lm create $ltype $lref $ltext $linfo]
+                    $lm set_attribute linkobj $attributes
+                    
+                    $menumodel add_link menuobj $linkobj
+
+                }
+            }
+            lappend group_menu_list $menuobj
+        }
+        return $group_menu_list
+    }
+
+# -- loadsitemap
+#
+# Must call the sitemap manager methods to build (update) a sitemap 
+# This method knows how to load the sitemap depending from the context
+#
+#
+
+    proc loadsitemap {sitemap_mgr {ctx ""}} {
+        variable sitemap
+        variable sitemap_stat
+        variable timestamp
+
+        set logger $::rivetweb::logger
+        $logger log info "recreating sitemap"
+
+        file stat $sitemap  sitemap_stat
+        set timestamp $sitemap_stat(mtime) 
+
+        array unset xmlmenu
+
+# This object assumes the files to be in the 'sitemap' directory
+# (its existence has been already checked in 'init')
+
+        set xmlmenus [glob [file join $sitemap *.xml]]
+
+        foreach xmlfile $xmlmenus {
+            $logger log info "reading $xmlfile...."
+
+            set xml [read_file $xmlfile]
+
+            set map [file tail $xmlfile]
+            if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
+                $logger log alert "could not parse map $map: $e"
+            }
+        }
+
+        foreach mdoc [array names xmlmenu] {
+            set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
+            
+            $logger log info "analyzing data for $mdoc...."
+            foreach sm $sitemenus {
+
+                if {[$sm hasAttribute id]} {
+                    set group_menu_id       [$sm getAttribute id]
+                    if {[$sm hasAttribute parent]} {
+                        set group_parent    [$sm getAttribute parent]
+                    } else {
+                        set group_parent    root
+                    }
+                    $logger log debug "group parent set as $group_parent"
+
+                    switch [$sm hasAttribute class] {
+
+                        dynamic {
+                            set functor [lindex [$sm getElementsByTagName functor] 0]
+                            set functor [$functor text]
+
+                            if {[catch {
+                                $sitemap_mgr add_menu_group $group_parent $group_menu_id \
+                                                            [${functor}::loadSiteMap $sm $group_parent]
+                            } e]} {
+                                $logger log err "dynamic menu error for functor $functor: $e"
+                            } 
+                        }                       
+
+                        default {
+                            $sitemap_mgr add_menu_group $group_parent $group_menu_id \
+                                                    [listStaticMenus $sm $group_parent]
+                        }
+                    }
+
+                } else {
+
+                    $logger log alert "skipping data from $mdoc, missing menu id"
+
+                }
+            }
+        }
+
+    }
+
+    namespace export loadsitemap init has_updates
+    namespace export init fetchData synchData time_reference is_stale
+    namespace ensemble create
+}
