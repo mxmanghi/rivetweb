@@ -42,13 +42,13 @@ proc expandcalendar {element_xml attribute_list} {
 
     set d [dict create]
     dict set d expansion "<b>error</b>"
-    dict set d tagname pre
+    dict set d tagname div
     dict set d attributes {}
 
     if {[ catch {
             set pagedom [dom parse $element_xml]
             set domroot [$pagedom documentElement]
-            set xmltext ""
+            set xmltext "<div>"
 
             foreach calentry [$domroot getElementsByTagName calentry] {
 
@@ -97,7 +97,7 @@ proc expandcalendar {element_xml attribute_list} {
 #    dict set d attributes [array get attributes]
 #    dict set d tagname img
 
-    dict set d expansion $xmltext
+    dict set d expansion "$xmltext</div>"
     return $d
 }
 

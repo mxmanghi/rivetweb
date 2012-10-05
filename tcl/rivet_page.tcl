@@ -15,9 +15,6 @@ if {[$::rivetweb::sitemap has_updates]} {
 
     $::rivetweb::logger log notice "Recreating sitemap from menu data source"
     $::rivetweb::sitemap recreate
- 
-#   $::rivetweb::menusource loadsitemap $::rivetweb::sitemap
-
     $::rivetweb::sitemap sitemap_reload
 
 }
@@ -25,8 +22,7 @@ if {[$::rivetweb::sitemap has_updates]} {
 # we run metadata hooks for variable that have to be extracted to control the
 # display of our template
 
-$::rivetweb::pmodel metadata_hooks  $::rivetweb::current_pmodel \
-                                    $::rivetweb::hooks
+$::rivetweb::pmodel metadata_hooks $::rivetweb::current_pmodel $::rivetweb::hooks
 
 if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
@@ -54,10 +50,10 @@ foreach pos [dict keys $menu_d] {
     foreach menuobj $menus {
 
         append html_menu($pos)                          \
-                [$::rivetweb::htmlizer  html_menu       \
-                                        $menuobj        \
-                                        $language       \
-                                        [dict get $::rivetweb::templates_db $template_key]]
+            [$::rivetweb::htmlizer  html_menu           \
+                                    $menuobj            \
+                                    $language           \
+                                    [dict get $::rivetweb::templates_db $template_key]]
 
     }
 
@@ -81,9 +77,9 @@ if {[catch {
 
     set page_vars [$::rivetweb::pmodel content $::rivetweb::current_pmodel $language -xml]
 
-    set page_title [dict get $page_vars title]
-    set page_headline [dict get $page_vars headline]
-    set page_content_html [dict get $page_vars pagetext]
+    set page_title          [dict get $page_vars title]
+    set page_headline       [dict get $page_vars headline]
+    set page_content_html   [dict get $page_vars pagetext]
 
     set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
 
@@ -92,22 +88,22 @@ if {[catch {
     $::rivetweb::logger log err "Error processing data for page ($e)"
 
     set pobj [$::rivetweb::pmodel create]
-    $::rivetweb::pmodel put_metadata pobj           \
-                [list   title   "Error processing XHTML data " \
-                        menu    [list left main]    \
+    $::rivetweb::pmodel put_metadata pobj                       \
+                [list   title   "Error processing XHTML data "  \
+                        menu    [list left main]                \
                         header  "Error processing XHTML data "]
+
     $::rivetweb::pmodel set_pagetext pobj $::rivetweb::default_lang "Error creating page<br/><pre>$e</pre>"
 
 # we must assume this is going to be ok...
 
     set page_vars [$::rivetweb::pmodel content $pobj $language -xml]
 
-    set page_title [dict get $page_vars title]
-    set page_headline [dict get $page_vars headline]
-    set page_content_html [dict get $page_vars pagetext]
+    set page_title          [dict get $page_vars title]
+    set page_headline       [dict get $page_vars headline]
+    set page_content_html   [dict get $page_vars pagetext]
 
     set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
-    
 }
 
 headers type "text/html; charset=$::rivetweb::http_encoding"

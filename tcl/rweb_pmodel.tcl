@@ -42,8 +42,9 @@ namespace eval ::rwpmodel {
 
 # -- set_metadata
 #
-# the list 'mdlist' is treated as a even length set of keyword-value
-# pairs. The keywords are assembled and become the new metadata of
+# the list 'mdlist' is treated as a even length list to be interpreted
+# as a sequence of keyword-value pairs. 
+# The keywords are assembled and become the new metadata of
 # the instance 'pageobj' erasing metadata that could have been defined
 # beforehand  
 
@@ -55,16 +56,18 @@ namespace eval ::rwpmodel {
 
 # -- put_metadata 
 # 
-# like set_metadata with a dictionary as second argument instead of a 
-# list
+# like set_metadata with a dictionary as second argument instead of a list
+#
 
     proc put_metadata {pmodel dictionary} {
         upvar $pmodel page_model
  
         dict set page_model metadata $dictionary       
+
 #       foreach k [dict keys $dictionary] {
 #            dict set page_model metadata $k [dict get $dictionary $k]
 #       }
+
     }
 
 # -- set_content
@@ -82,7 +85,6 @@ namespace eval ::rwpmodel {
     }
 
 # -- set_pagetext
-#
 #
 #
 
