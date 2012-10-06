@@ -38,8 +38,8 @@ namespace eval ::XMLBase {
 
         if {![file isdirectory $sitemap]} {
 
-            return -code error  -error_code invalid_path \
-                                -errorinfo  "Wrong path $sitemap" \
+            return -code error  -error_code invalid_path            \
+                                -errorinfo  "Wrong path $sitemap"   \
                                             "Wrong path $sitemap"
 
         }

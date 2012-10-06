@@ -51,12 +51,9 @@ namespace eval ::XMLBase {
 # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
-
         set datachannel [::thread::create {
-
             set mtx [::thread::mutex create]
         }]
-
 
         ::thread::send $datachannel [list set xmlpath $xmlpath]
     }
