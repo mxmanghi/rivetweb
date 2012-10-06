@@ -60,8 +60,4 @@ namespace eval ::XMLBase {
 
         ::thread::send $datachannel [list set xmlpath $xmlpath]
     }
-
-
-
-
 }

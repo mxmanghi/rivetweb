@@ -296,4 +296,3 @@ namespace eval ::rivetweb {
 }
 
 package provide rivetweb 2.0
-

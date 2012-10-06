@@ -19,7 +19,7 @@ namespace eval ::XMLMenu {
 
     proc init {xmlpath} {
         variable sitemap
-        variable sitemap_stat   
+        variable sitemap_stat
 
         array set sitemap_stat {}
 
@@ -36,6 +36,11 @@ namespace eval ::XMLMenu {
         set lastaccess 0
     }
 
+
+# -- has_updates
+#
+#
+
     proc has_updates {} {
         variable timestamp
         variable sitemap
@@ -51,9 +56,10 @@ namespace eval ::XMLMenu {
         return false
     }
 
+
 # -- listStaticMenus
 #
-
+#
     proc listStaticMenus {sm parent_mg} {
         
         set menumodel $::rivetweb::menumodel

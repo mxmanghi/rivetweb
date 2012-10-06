@@ -163,7 +163,7 @@ namespace eval ::rivetweb {
         variable    logger
 
         set rivetweb_root       [file normalize $rweb_root]
-        set scripts	        [file join $rivetweb_root tcl]
+        set scripts	            [file join $rivetweb_root tcl]
         set site_base           $website_root        
         set static_pages        [file normalize [file join $site_base pages]]
         set sitemap_dir         [file normalize [file join $site_base sitemap]]
@@ -171,7 +171,7 @@ namespace eval ::rivetweb {
         $logger log info "rivetweb_root set as $rivetweb_root"
     }
 
-    proc init {datasrc menusrc } {
+    proc init {datasrc menusrc} {
         variable    scripts     
         variable    site_base
         variable    datasource
