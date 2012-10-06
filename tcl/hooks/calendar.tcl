@@ -26,7 +26,7 @@ proc listaPunti {punti} {
                         append puntitxt [string trim [$subel nodeValue]]
                     }
                     docente {
-                        append puntitxt "<strong>[$subel text]</strong>"
+                        append puntitxt "<strong class=\"docbox\">([$subel text])</strong>"
                     }
                 }
             }
@@ -59,20 +59,24 @@ proc expandcalendar {element_xml attribute_list} {
                 set calheader [$calentry getElementsByTagName calheader]
 #               puts "calheader ->> [$calheader asXML]"
                 append xmltext "<div class=\"calheader\">"
+                array unset calheader_a
                 foreach calhdr [$calheader childNodes] {
                     set calheader_a([$calhdr nodeName]) [$calhdr text]
                 }
                 append xmltext "<span class=\"caldate\">$calheader_a(date)</span>"
                 append xmltext "<span class=\"sede\">$calheader_a(sede)</span>"
-                append xmltext "<div class=\"docenti\">$calheader_a(docenti)</div>"
+                if {[info exists calheader_a(docenti)]} {
+                    append xmltext \
+                        "<div class=\"docenti\">Docenti Responsabili: <strong>$calheader_a(docenti)</strong></div>"
+                }
                 append xmltext "</div><!-- calheader -->\n"
 
-                append xmltext "<p>"
+                append xmltext "<div class=\"programma\">"
                 set programma [$calentry getElementsByTagName programma]
                 foreach pgmel [$programma childNodes] {
                     switch [$pgmel nodeName] {
                         #text {
-                            append xmltext [$pgmel nodeValue]
+                            append xmltext "<p>[$pgmel nodeValue]</p>"
                         }
                         punti {
                             append xmltext [listaPunti $pgmel]
@@ -82,7 +86,7 @@ proc expandcalendar {element_xml attribute_list} {
                         }
                     }
                 }
-                append xmltext "</p><!-- programma -->"
+                append xmltext "</div><!-- programma -->"
                 append xmltext "</div><!-- calentry -->\n"
             }
         } e]} {
