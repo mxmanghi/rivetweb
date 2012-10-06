@@ -193,8 +193,7 @@ namespace eval ::rwsitemap {
         return $menuobjs
     }
 
-    namespace export create recreate add_menu_group menu_list \
-                     has_updates sitemap_reload
+    namespace export create recreate add_menu_group menu_list has_updates sitemap_reload
     namespace ensemble create
 }
 
