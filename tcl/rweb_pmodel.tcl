@@ -110,6 +110,7 @@ namespace eval ::rwpmodel {
 #   
 
     proc content { pageobj language {fmt -reference}} {
+
         if {[dict exists $pageobj content $language]} {
             set page_content [dict get $pageobj content $language]
         } elseif {[dict exists $pageobj content $::rivetweb::default_lang]} {
@@ -273,6 +274,7 @@ namespace eval ::rwpmodel {
 #
 
     proc metadata_hooks { pageobj hooks_d } {
+
         if {[dict exists $hooks_d metadata]} {
             set ppp [dict get $::rivetweb::hooks metadata]
             foreach hk [dict keys $ppp] {
@@ -283,6 +285,7 @@ namespace eval ::rwpmodel {
 
             }
         }
+
     }
 
 # -- postproc_hooks
