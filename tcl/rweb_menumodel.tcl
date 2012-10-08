@@ -11,6 +11,10 @@ package require rwlink
 
 namespace eval ::rwmenu {
 
+# -- create <id> ?<parent> none? ?<visibility> normal?
+#
+# 
+
     proc create { id {parent none} {visibility normal} } {
 
         return  [dict create menuid         $id           \
@@ -25,6 +29,7 @@ namespace eval ::rwmenu {
     }
 
 # -- title <menuobj> ?language?. 
+#
 # Accessor to the title to be printed in the menu. If
 # no ?language? parameter is passed then the title
 # for the default language is returned
@@ -43,15 +48,13 @@ namespace eval ::rwmenu {
 
 # -- parent, index, attributes
 # 
-# specific accessors for structural information of 
-# a menuobj. 
+# specific accessors for structural information of a menuobj. 
 #
-#    - parent: id of the parent. If a menuobj
-#    has no parent it will be put as root of
-#    menu hirarchy
+#    - parent: id of the parent. If a menuobj has no parent 
+#      it will be put as root of menu hirarchy
 #    - index: not used
-#    - attributes: not handled. It's supposed to
-#   return a list of HTML attribute-value pairs.
+#    - attributes: not handled. It's supposed to return a 
+#      list of HTML attribute-value pairs.
 #
 
     proc parent {menumodel} {
@@ -103,7 +106,8 @@ namespace eval ::rwmenu {
                 set index $pvalue             
 
                 if {![string is integer $index] && ($index != "end")} {
-                    return -code error "Wrong index parameter, must be either 'end' or integer"
+                    return -code error \
+                        "Wrong index parameter, must be either 'end' or integer"
                 } elseif {[string is integer $index] && ($index < 0)} {
                     set index "end-${index}"
                 }
@@ -112,8 +116,8 @@ namespace eval ::rwmenu {
             default {
                 $::rivetweb::logger log err "unmanaged parameter $parameter"
             }
-
         }
+
     }
 
 # --add_link
@@ -130,13 +134,15 @@ namespace eval ::rwmenu {
     }
 
 # -- links
-
+#
+#
     proc links {menuobj} {
         return [dict get $menuobj links]
     }
 
 # -- id 
-
+#
+#
     proc id {menuobj} {
         return [dict get $menuobj menuid]
     }

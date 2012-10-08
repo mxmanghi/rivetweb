@@ -171,7 +171,7 @@ namespace eval ::rivetweb {
         $logger log info "rivetweb_root set as $rivetweb_root"
     }
 
-    proc init {datasrc menusrc } {
+    proc init {datasrc menusrc} {
         variable    scripts     
         variable    site_base
         variable    datasource
