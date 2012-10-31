@@ -211,9 +211,7 @@ namespace eval ::rwpmodel {
 #
 
     proc languages { pageobj } {
-
         return [dict keys [eval dict create [dict get $pageobj content]]]
-
     }
 
 
@@ -287,7 +285,6 @@ namespace eval ::rwpmodel {
 
             }
         }
-
     }
 
 # -- postproc_hooks

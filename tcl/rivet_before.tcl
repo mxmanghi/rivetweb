@@ -79,6 +79,7 @@ if {[var exists lang]} {
 
 # Experimental: with early versions of Rivetweb if variable 'reset' 
 # was set then the in memory database was cleared. To be tested.
+# ####### REMOVE #######
 
 if {[var exists reset]} {
 
@@ -87,6 +88,7 @@ if {[var exists reset]} {
     $::rivetweb::rwebdb erase
     $::rivetweb::rwebdb fetch $::rivetweb::index 
 } 
+# ####### REMOVE #######
 
 #
 # the central point is exactly here: we determine which page we have to display
