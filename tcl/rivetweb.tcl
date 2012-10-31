@@ -241,14 +241,23 @@ namespace eval ::rivetweb {
 # -- thisClass 
 #
 # returns a class="classname" attribute when we are generating
-# a certain page. Useful in selectors both in forms or templates to highlight
+# a specific page. Useful in selectors both in forms or templates to highlight
 # an element.
 
     proc thisClass {this_page page_reference class_selected {class_unselected ""}} {
+
         if {[string match $this_page $page_reference]} { 
+
             return " class=\"$class_selected\""
+
         } else {
-            return ""
+
+            if {$class_unselected != ""} {
+                return " class=\"$class_unselected\""
+            } else {
+                return ""
+            }
+
         }
     }
     namespace export thisClass
