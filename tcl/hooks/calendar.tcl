@@ -1,7 +1,7 @@
 # -- calendar
 #
 # Realizzato per il sito del Master, potrebbe diventare una base per
-# costruire dei log
+# costruire dei blog
 #
 #
 
@@ -15,26 +15,26 @@ set hook_descriptor(textmode)   XML
 
 proc listaPunti {punti} {
 
-        set puntitxt "<ul>"
+    set puntitxt "<ul>"
 
-        foreach punto [$punti childNodes] {
-            append puntitxt "<li>"
-            foreach subel [$punto childNodes] {
-#               puts "subel -> [$subel asXML]"
-                switch [$subel nodeName] {
-                    #text {
-                        append puntitxt [string trim [$subel nodeValue]]
-                    }
-                    docente {
-                        append puntitxt "<strong class=\"docbox\">([$subel text])</strong>"
-                    }
+    foreach punto [$punti childNodes] {
+        append puntitxt "<li>"
+        foreach subel [$punto childNodes] {
+#           puts "subel -> [$subel asXML]"
+            switch [$subel nodeName] {
+                #text {
+                    append puntitxt [string trim [$subel nodeValue]]
+                }
+                docente {
+                    append puntitxt "<strong class=\"docbox\">([$subel text])</strong>"
                 }
             }
-            append puntitxt "</li>\n"
         }
+        append puntitxt "</li>\n"
+    }
 
-        append puntitxt "</ul>"
-        return $puntitxt
+    append puntitxt "</ul>"
+    return $puntitxt
 }
 
 
@@ -63,8 +63,13 @@ proc expandcalendar {element_xml attribute_list} {
                 foreach calhdr [$calheader childNodes] {
                     set calheader_a([$calhdr nodeName]) [$calhdr text]
                 }
-                append xmltext "<span class=\"caldate\">$calheader_a(date)</span>"
-                append xmltext "<span class=\"sede\">$calheader_a(sede)</span>"
+
+                if {[info exists calheader_a(date)]} {
+                    append xmltext "<span class=\"caldate\">$calheader_a(date)</span>"
+                }
+                if {[info exists calheader_a(sede)]} {
+                    append xmltext "<span class=\"sede\">$calheader_a(sede)</span>"
+                }
                 if {[info exists calheader_a(docenti)]} {
                     append xmltext \
                         "<div class=\"docenti\">Docenti Responsabili: <strong>$calheader_a(docenti)</strong></div>"
@@ -92,36 +97,8 @@ proc expandcalendar {element_xml attribute_list} {
         } e]} {
         dict set d expansion "<pre>$e</pre>"
     } 
-#
-#    array set attributes $attribute_list
-#    if {[info exists attributes(src)]} {
-#        set attributes(src) [makePictsPath $attributes(src) $::rivetweb::template_key]
-#    }
-#
-#    dict set d attributes [array get attributes]
-#    dict set d tagname img
 
     dict set d expansion "$xmltext</div>"
     return $d
 }
 
-#proc imagehandler {xmlDoc child} {
-#
-#    set newImgElement [$xmlDoc createElement img]
-#    foreach imgatt [$child attributes] {
-#        set attvalue [$child getAttribute $imgatt]
-#        switch $imgatt {
-#            src {
-#                set attvalue [makePictsPath $attvalue $::rivetweb::template_key]
-#            }
-#            default {
-#            
-#            }
-#        }
-#        $newImgElement setAttribute $imgatt $attvalue
-#    }
-#    [$child parentNode] replaceChild $newImgElement $child
-#    $child delete
-#
-#    return $xmlDoc
-#}

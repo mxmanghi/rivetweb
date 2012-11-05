@@ -22,11 +22,12 @@ package require rwpmodel
 
 namespace eval ::XMLBase {
     variable sitemap
-    variable timestamp          0
+    variable timestamp      0
     variable sitemap_stat   
     variable xmlpath
 
-    proc init {xmldata xmlsitemap} {
+#    proc init {xmldata xmlsitemap} 
+    proc init {xmlsitemap} {
         variable xmlpath
         variable sitemap
         variable sitemap_stat   
@@ -202,8 +203,7 @@ namespace eval ::XMLBase {
 
 # -- synchData
 #
-# I should do something with this and
-# make Rivetweb capable of storing new content
+# I should do something with this and make Rivetweb capable of storing new content
 #
 
     proc synchData {key data_dict} {
@@ -425,3 +425,5 @@ namespace eval ::XMLBase {
     namespace export init fetchData synchData time_reference is_stale
     namespace ensemble create
 }
+
+package provide XMLBase 1.0

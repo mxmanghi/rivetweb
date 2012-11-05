@@ -171,7 +171,7 @@ namespace eval ::rivetweb {
         $logger log info "rivetweb_root set as $rivetweb_root"
     }
 
-    proc init {datasrc menusrc} {
+    proc init {datasrc} {
         variable    scripts     
         variable    site_base
         variable    datasource
@@ -183,10 +183,9 @@ namespace eval ::rivetweb {
         variable    default_lang
 
         package require $datasrc
-        package require $menusrc
 
         set datasource  ::${datasrc}
-        set menusource  ::${menusrc}
+        set menusource  $datasource
 
         $menusource init $sitemap_dir
         $sitemap create  $menusource

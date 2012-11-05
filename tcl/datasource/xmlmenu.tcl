@@ -253,5 +253,4 @@ namespace eval ::XMLMenu {
     namespace ensemble create
 }
 
-
 package provide XMLMenu 1.0

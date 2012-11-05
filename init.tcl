@@ -12,6 +12,7 @@ lappend auto_path $rweb_root
 apache_log_error debug "rweb_root: $rweb_root, website_root: $website_root"
 apache_log_error debug "auto_path: $auto_path"
 
+package require rwlogger
 package require rivetweb
 
 #::rivetweb::setup $rweb_root [file normalize [file dirname [info script]]]

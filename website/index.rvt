@@ -10,8 +10,8 @@
 # first of all we test the parameter rwinfo. 
 
     if {[var exists rwinfo]} {
-       load_env env
-       parray_table env
+        load_env env
+        parray_table env
         parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
     } elseif {[var exists function]} {
         set fun [var get function]

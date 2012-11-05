@@ -71,7 +71,7 @@ foreach k [dict keys $::rivetweb::templates_db] {
 
 namespace eval ::rivetweb {
 
-# actually there's must be a search list of directories where hooks
+# actually this should be a search list of directories where hooks
 # can be stored...
 
     set hooks_dir_fq [file join $scripts $hooks_dir *.tcl]
