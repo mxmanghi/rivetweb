@@ -16,7 +16,6 @@
 	<div id="bigcontainer"> 
 	    <div id="pageheadline">
 		<div class="decoration">
-		    <!-- a href="/" -->
             <img src="<? puts -nonewline [::rivetweb::makePictsPath Rivetlogo_smaller.png $::rivetweb::template_key] ?>" alt="Apache Rivet" /><!-- /a -->
             <? puts [pwd] ?>
 		</div>

@@ -21,12 +21,12 @@ package require rwpmodel
 #
 
 namespace eval ::XMLBase {
-    variable sitemap
+    variable sitemap        
     variable timestamp      0
     variable sitemap_stat   
     variable xmlpath
 
-#    proc init {xmldata xmlsitemap} 
+#   proc init {xmldata xmlsitemap} 
     proc init {xmlsitemap} {
         variable xmlpath
         variable sitemap

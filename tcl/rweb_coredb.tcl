@@ -7,7 +7,7 @@
 package require tdom
 package require rwconf
 package require rwpmodel
-package require XMLData
+#package require XMLData
 
 namespace eval ::rwebdb {
 
