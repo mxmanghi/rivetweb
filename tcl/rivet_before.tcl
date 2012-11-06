@@ -57,7 +57,7 @@ if {[var exists template]} {
     set template_key rwbase
 }
 
-$::rivetweb::logger log info "template: $running_template (css: $running_css)"
+$::rivetweb::logger log info "selected template: $running_template (css: $running_css)"
 set ::rivetweb::running_template  [template_path $running_template $template_key]
 set ::rivetweb::running_css       [makeCssPath $running_css $template_key]
 set ::rivetweb::template_key      $template_key

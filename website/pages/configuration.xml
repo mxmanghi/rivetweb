@@ -17,15 +17,13 @@
             <p>
                 Open Apache's configuration file and create this stanza of Rivet directives
             </p>
-
             <programlisting>&lt;IfModule rivet_module&gt;
-    RivetServerConf ChildInitScript \
-	"namespace eval ::rivetweb { set rivetweb_root &lt;rivetweb_root&gt; }"
-    RivetServerConf ChildInitScript     "cd &lt;website_root&gt;"
-    RivetServerConf ChildInitScript     "source init.tcl"
-    RivetServerConf BeforeScript        "source before.tcl"
+    RivetServerConf ChildInitScript "set rweb_root &lt;rivetweb_root&gt;"
+    RivetServerConf ChildInitScript "set website_root &lt;website_root&gt;"
+    RivetServerConf ChildInitScript "source [file join $rweb_root init.tcl]"
+    RivetServerConf BeforeScript    "cd $website_root"
+    RivetServerConf BeforeScript    "source before.tcl"
 &lt;/IfModule&gt;</programlisting>
-
             <p>
                 Depending on your goal you may put these lines within a &lt;VirtualHost&gt;...&lt;/VirtualHost&gt; 
                 definition and consider to add

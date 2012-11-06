@@ -50,7 +50,6 @@ namespace eval ::XMLBase {
         set xmlpath [file join $::rivetweb::site_base pages]
     }
 
-
 #
 # -- buildPageEntry
 #

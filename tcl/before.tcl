@@ -13,6 +13,8 @@ namespace eval ::rivetweb {
 #   set template_defs "[file rootname $env(DOCUMENT_NAME)].defs"
 #   if {[file exists $template_defs]} { source $template_defs }
 
+
+    apache_log_error notice "running tcl/before.tcl"
     source [file join $scripts rivet_before.tcl]
     source [file join $scripts rivet_page.tcl]
 

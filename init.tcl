@@ -8,10 +8,9 @@ lappend auto_path $rweb_root
 
 package require rwlogger
 package require rivetweb
-#package require XMLBase
 
-apache_log_error err "rweb_root: $rweb_root, website_root: $website_root"
-apache_log_error err "auto_path: $auto_path"
+apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
+apache_log_error notice "auto_path: $auto_path"
 
 ::rivetweb::setup $rweb_root $website_root 
 
@@ -19,8 +18,8 @@ apache_log_error err "auto_path: $auto_path"
 
 source [file join $::rivetweb::site_base site_defs.tcl]
  
-apache_log_error err "datasource: $::rivetweb::datasource"
+::rivetweb::init XMLBase
+
 cd $website_root
 source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
-::rivetweb::init XMLBase
