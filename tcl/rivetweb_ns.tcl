@@ -182,10 +182,9 @@ namespace eval ::rivetweb {
         variable    lang
         variable    default_lang
 
-#       package require $datasrc
-        puts stderr "--------------->$datasource"
-        lappend datasource  ::${datasrc}
-        set menusource      $datasource
+        package require $datasrc
+        set datasource  ::${datasrc}
+        set menusource  $datasource
 
         $menusource init $sitemap_dir
         $sitemap create  $menusource

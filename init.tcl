@@ -4,11 +4,11 @@
 # clear way to make it site specific
 #
 
+lappend auto_path $rweb_root
+
 package require rwlogger
 package require rivetweb
-package require XMLBase
-
-lappend auto_path $rweb_root
+#package require XMLBase
 
 apache_log_error err "rweb_root: $rweb_root, website_root: $website_root"
 apache_log_error err "auto_path: $auto_path"
@@ -24,4 +24,3 @@ cd $website_root
 source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
 ::rivetweb::init XMLBase
-

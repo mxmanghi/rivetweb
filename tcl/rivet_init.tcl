@@ -64,7 +64,7 @@ foreach template $templates_dir_list {
 }
 
 foreach k [dict keys $::rivetweb::templates_db] {
-    apache_log_error debug "$k: [dict get $::rivetweb::templates_db $k]"
+    apache_log_error notice "$k: [dict get $::rivetweb::templates_db $k]"
 }
 
 # now we build the hooks database
