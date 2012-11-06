@@ -9,8 +9,8 @@
 #set rweb_root [file normalize [file join ..]]
 lappend auto_path $rweb_root
 
-apache_log_error debug "rweb_root: $rweb_root, website_root: $website_root"
-apache_log_error debug "auto_path: $auto_path"
+apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
+apache_log_error notice "auto_path: $auto_path"
 
 package require rwlogger
 package require rivetweb
