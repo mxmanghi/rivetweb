@@ -26,7 +26,7 @@ namespace eval ::rivetweb {
     variable running_css            [file join $base_templates base.css]
     variable default_template       rwbase
     variable http_encoding          utf-8
-    variable datasource             XMLData
+    variable datasource             {}
     variable menusource             XMLMenu
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
@@ -182,10 +182,10 @@ namespace eval ::rivetweb {
         variable    lang
         variable    default_lang
 
-        package require $datasrc
-
-        set datasource  ::${datasrc}
-        set menusource  $datasource
+#       package require $datasrc
+        puts stderr "--------------->$datasource"
+        lappend datasource  ::${datasrc}
+        set menusource      $datasource
 
         $menusource init $sitemap_dir
         $sitemap create  $menusource
