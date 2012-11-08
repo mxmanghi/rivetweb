@@ -10,7 +10,7 @@
 # let's assign the controlling variables with the corresponding parameters 
 # definitions.
 #
-# static -> enabling generation of 'static' (i.e. .html) pages
+# static   -> enabling generation of 'static' (i.e. .html) pages
 # homepage -> the home is treated in a slightly different way, so we have
 #             to signal it with this flag
 # 
@@ -26,8 +26,8 @@ set ::rivetweb::running_picts_path  $::rivetweb::picts_path
 set ::rivetweb::running_css_path    $::rivetweb::css_path
 if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
 
-    set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
-    set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
+    set ::rivetweb::running_picts_path  [file join $::rivetweb::site_base $::rivetweb::picts_path]
+    set ::rivetweb::running_css_path    [file join $::rivetweb::site_base $::rivetweb::css_path]
 
 }
 
@@ -76,19 +76,6 @@ if {[var exists lang]} {
 } else {
     set language $::rivetweb::default_lang
 }
-
-# Experimental: with early versions of Rivetweb if variable 'reset' 
-# was set then the in memory database was cleared. To be tested.
-# ####### REMOVE #######
-
-if {[var exists reset]} {
-
-    set ::rivetweb::page_content $::rivetweb::index
-
-    $::rivetweb::rwebdb erase
-    $::rivetweb::rwebdb fetch $::rivetweb::index 
-} 
-# ####### REMOVE #######
 
 #
 # the central point is exactly here: we determine which page we have to display

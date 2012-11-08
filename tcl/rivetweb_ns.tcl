@@ -9,8 +9,7 @@ namespace eval ::rivetweb {
     variable    rivetweb_root
     variable    scripts     
     variable    static_pages
-    variable    local_pages	    docs
-
+    variable    local_pages	        docs
     variable    sitemap_mtime       0
 
 # these paths are relative to the DocumentRoot, so we don't need

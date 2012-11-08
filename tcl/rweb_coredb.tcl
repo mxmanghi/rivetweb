@@ -33,11 +33,12 @@ namespace eval ::rwebdb {
 # requested by the size of the web site.
 #
 
-    proc store {key page_model} {
+    proc store {key page_model {class static}} {
         variable sitepages
 
         dict set sitepages $key object    $page_model
         dict set sitepages $key timestamp [clock seconds]
+        dict set sitepages $key class     $class
     }
     namespace export store
 
@@ -56,6 +57,9 @@ namespace eval ::rwebdb {
         variable sitepages
 
         if {![check $key]} { return true }
+        set class [dict get $sitepages $key class]
+        if {$class ne "static"} { return true }
+
         set ts [dict get $sitepages $key timestamp]
         return [$::rivetweb::datasource is_stale $key $ts]
 

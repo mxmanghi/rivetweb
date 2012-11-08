@@ -38,11 +38,12 @@ namespace eval ::XMLBase {
         set sitemap [file normalize [file join $::rivetweb::site_base $xmlsitemap]]
 
         if {![file isdirectory $sitemap]} {
+            
+            $::rivetweb::logger log "Wrong path for sitemap ($sitemap)"
 
             return -code error  -error_code invalid_path            \
                                 -errorinfo  "Wrong path $sitemap"   \
                                             "Wrong path $sitemap"
-
         }
         
 # and the we set the path to the XML pages

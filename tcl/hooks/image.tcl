@@ -16,7 +16,7 @@ proc imagehandler {element_text attribute_list} {
 
     array set attributes $attribute_list
     if {[info exists attributes(src)]} {
-	set attributes(src) [makePictsPath $attributes(src) $::rivetweb::template_key]
+        set attributes(src) [makePictsPath $attributes(src) $::rivetweb::template_key]
     }
 
     dict set d attributes [array get attributes]
@@ -24,23 +24,3 @@ proc imagehandler {element_text attribute_list} {
     return $d
 }
 
-#proc imagehandler {xmlDoc child} {
-#
-#    set newImgElement [$xmlDoc createElement img]
-#    foreach imgatt [$child attributes] {
-#        set attvalue [$child getAttribute $imgatt]
-#        switch $imgatt {
-#            src {
-#                set attvalue [makePictsPath $attvalue $::rivetweb::template_key]
-#            }
-#            default {
-#            
-#            }
-#        }
-#        $newImgElement setAttribute $imgatt $attvalue
-#    }
-#    [$child parentNode] replaceChild $newImgElement $child
-#    $child delete
-#
-#    return $xmlDoc
-#}

@@ -1,5 +1,5 @@
 <page id="index">
-    <ident>$Ident: Tue Mar 27, 2012 at 07:22 PM +0200
+    <ident>$Ident: Thu Nov 08, 2012 at 11:11 AM +0100
     </ident>
     <author>$Author: massimo.manghi $</author>
     <date>$Date: 2011-12-14 18:40:52 +0100 (Wed, 14 Dec 2011) $</date>
@@ -15,6 +15,7 @@
             based websites. The only required software packages you need are 
             the <externref href="http://httpd.apache.org/">Apache HTTP Webserver</externref>, 
             <externref href="http://tcl.apache.org/rivet/">Apache Rivet</externref> and (in 
+            <image src="141px-Borromean.png" align="left" />
             the current implementation) also 
             <externref href="http://tdom.github.com">tdom</externref> is used to 
             manipulate data and XHTML ouput.
