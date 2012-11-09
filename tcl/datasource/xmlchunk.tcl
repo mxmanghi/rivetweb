@@ -21,13 +21,13 @@ package require rwpmodel
 #
 
 namespace eval ::XMLBase {
-    variable sitemap        
-    variable timestamp      0
+    variable sitemap            sitemap
+    variable timestamp          0
     variable sitemap_stat   
     variable xmlpath
 
 #   proc init {xmldata xmlsitemap} 
-    proc init {xmlsitemap} {
+    proc init {args} {
         variable xmlpath
         variable sitemap
         variable sitemap_stat   
@@ -35,21 +35,53 @@ namespace eval ::XMLBase {
 # we first set up the variables controlling the sitemap
 
         array set sitemap_stat {}
-        set sitemap [file normalize [file join $::rivetweb::site_base $xmlsitemap]]
+
+# let's rewrite the patg to the sitemap
+
+        set sitemap [file normalize [file join $::rivetweb::site_base $sitemap]]
 
         if {![file isdirectory $sitemap]} {
             
-            $::rivetweb::logger log "Wrong path for sitemap ($sitemap)"
+            $::rivetweb::logger log notice "Wrong path for sitemap ($sitemap)"
 
             return -code error  -error_code invalid_path            \
                                 -errorinfo  "Wrong path $sitemap"   \
                                             "Wrong path $sitemap"
+        } else {
+            $::rivetweb::logger log notice "setting sitemap path as $sitemap"
         }
         
 # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
     }
+
+#
+# -- willHandle
+#
+# fundamental method that has to return a string to work as a unique 
+# key in the website database.
+# If the datasource is not to handle the request the procedure has
+# to return with a -status continue
+#
+
+proc willHandle {arglist keyvar} {
+    upvar $keyvar key 
+    set retcode break
+    set errorcode rw_ok
+    set key     index
+
+    if {[dict exists $arglist show]} {
+        set key [dict get $arglist show]
+    }
+
+    $::rivetweb::logger log info "mapping key $key for processing"
+
+    return -code $retcode -errorcode $errorcode 
+
+}
+
+
 
 #
 # -- buildPageEntry
@@ -421,7 +453,9 @@ namespace eval ::XMLBase {
 
     }
 
-    namespace export loadsitemap init has_updates
+    proc class {key} { return "static" }
+
+    namespace export loadsitemap init has_updates class willHandle
     namespace export init fetchData synchData time_reference is_stale
     namespace ensemble create
 }

@@ -81,8 +81,16 @@ if {[var exists lang]} {
 # the central point is exactly here: we determine which page we have to display
 #
 
-if {[var exists show]} {
-    set page_key [var get show]
+set argqs [dict create {*}[var_qs all]] 
+
+foreach ds $::rivetweb::datasources {
+
+    set ::rivetweb::datasource $ds
+    $ds willHandle $argqs page_key 
+
+}
+
+if {$page_key ne "index"} {
     $::rivetweb::logger log info "processing request for '$page_key'"
 
 # if we are using cached content and requested page is cached we simply

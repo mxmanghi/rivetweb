@@ -4,7 +4,7 @@
  Rivetweb is a minimum requirements Tcl based engine for creating template 
 based websites. The only mandatory software you need is the Apache HTTP 
 Webserver and Apache Rivet plus some additional packages when specific
-features are needed
+features are needed.
  
  Rivetweb relies on Apache Rivet (http://tcl.apache.org/rivet/) for doing 
 most of the work needed to create and manipulate content to be displayed in

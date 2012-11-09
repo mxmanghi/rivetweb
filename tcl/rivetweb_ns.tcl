@@ -18,14 +18,14 @@ namespace eval ::rivetweb {
     variable picts_path             picts
     variable css_path               templates
     variable base_templates         templates
-    variable sitemap_dir            sitemap
     variable site_scritps           tcl
     variable newsite_templates      rwtemplates
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable default_template       rwbase
     variable http_encoding          utf-8
-    variable datasource             {}
+    variable datasources            {}
+    variable datasource             ::XMLBase
     variable menusource             XMLMenu
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
@@ -170,10 +170,10 @@ namespace eval ::rivetweb {
         $logger log info "rivetweb_root set as $rivetweb_root"
     }
 
-    proc init {datasrc} {
+    proc init {dslist} {
         variable    scripts     
         variable    site_base
-        variable    datasource
+        variable    datasources
         variable    menusource
         variable    sitemap_dir
         variable    sitemap
@@ -181,14 +181,20 @@ namespace eval ::rivetweb {
         variable    lang
         variable    default_lang
 
-        package require $datasrc
-        set datasource  ::${datasrc}
-        set menusource  $datasource
+        set datasources $dslist
 
-        $menusource init $sitemap_dir
-        $sitemap create  $menusource
+        foreach ds $datasources {
 
+            package require $ds
+            lappend datasource_list ::${ds}
+
+            $ds init
+
+        }
+
+        $sitemap create  ::XMLBase
         $sitemap sitemap_reload
+
         $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }
 }

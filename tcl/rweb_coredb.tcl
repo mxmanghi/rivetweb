@@ -7,7 +7,6 @@
 package require tdom
 package require rwconf
 package require rwpmodel
-#package require XMLData
 
 namespace eval ::rwebdb {
 
@@ -167,12 +166,12 @@ namespace eval ::rwebdb {
 # something else went wrong, it's a rivetweb internal error
 
                 $::rivetweb::logger log err "Rivetweb internal error: $error_caught ($e)"
-                $::rivetweb::pmodel put_metadata pmodel                     \
-                                    [list   title       "Error creating page for key $key ($error_caught)" \
-                                            menu        [list left main]    \
+                $::rivetweb::pmodel put_metadata pmodel                                                     \
+                                    [list   title       "Error creating page for key $key ($error_caught)"  \
+                                            menu        [list left main]                                    \
                                             header      "Error creating page for key $key"]
 
-                $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang \
+                $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang                           \
                                                      "Error creating page for key $key<br /><pre>$e</pre>"
 
             }
@@ -181,7 +180,7 @@ namespace eval ::rwebdb {
 
 # page is stored in the in memory database
 
-            store $key $pmodel
+            store $key $pmodel [$::rivetweb::datasource class $key]
         }
 
         return $pmodel
