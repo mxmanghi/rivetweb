@@ -134,8 +134,8 @@ namespace eval ::rwsitemap {
             set parent [$sitemap_tree get $menu_group parent]
 
 #           if {[$sitemap exists $parent]} 
-
 #           puts "$group_id <- $parent"
+
             if {[string match $group_id $parent]} {
                 $sitemap_tree move $parent end $menu_group
                 $sitemap_tree unset $menu_group parent

@@ -10,7 +10,6 @@ namespace eval ::rivetweb {
     variable    scripts     
     variable    static_pages
     variable    local_pages	        docs
-    variable    sitemap_mtime       0
 
 # these paths are relative to the DocumentRoot, so we don't need
 # to normalize them
@@ -32,7 +31,6 @@ namespace eval ::rivetweb {
     variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
-    variable sitemap                ::rwsitemap
     variable htmlizer               ::htmlizer
 
     variable menu_default_pos       left
@@ -47,7 +45,6 @@ namespace eval ::rivetweb {
 
     variable default_lang           en
 
-#   variable sitemap_file           site_structure.xml
     variable site_defs              site_defs.xml
     variable language               $default_lang
 
@@ -157,15 +154,12 @@ namespace eval ::rivetweb {
         variable    rivetweb_root
         variable    site_base
         variable    static_pages
-        variable    sitemap_dir
-        variable    sitemap
         variable    logger
 
         set rivetweb_root       [file normalize $rweb_root]
         set scripts	            [file join $rivetweb_root tcl]
         set site_base           $website_root        
         set static_pages        [file normalize [file join $site_base pages]]
-        set sitemap_dir         [file normalize [file join $site_base sitemap]]
 
         $logger log info "rivetweb_root set as $rivetweb_root"
     }
@@ -175,8 +169,6 @@ namespace eval ::rivetweb {
         variable    site_base
         variable    datasources
         variable    menusource
-        variable    sitemap_dir
-        variable    sitemap
         variable    logger
         variable    lang
         variable    default_lang
@@ -192,8 +184,6 @@ namespace eval ::rivetweb {
 
         }
 
-        $sitemap create  ::XMLBase
-        $sitemap sitemap_reload
 
         $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }

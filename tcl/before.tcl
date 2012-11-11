@@ -14,7 +14,17 @@ namespace eval ::rivetweb {
 #   if {[file exists $template_defs]} { source $template_defs }
 
     apache_log_error notice "running tcl/before.tcl"
+
+    set rivet_before [file join $scripts rivet_before.tcl]
+    set rivet_page   [file join $scripts rivet_page.tcl]
+
+    if {![info exists rivet_before_mtime]} {
+        set rivet_before_mtime [file mtime $rivet_before]
+    }
+    if {![info exists rivet_page_mtime]} {
+        set rivet_page_mtime [file mtime $rivet_page]
+    }
+
     source [file join $scripts rivet_before.tcl]
     source [file join $scripts rivet_page.tcl]
-
 }

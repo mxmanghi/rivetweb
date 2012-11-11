@@ -5,6 +5,7 @@
     <date>$Date: 2011-12-14 18:40:52 +0100 (Wed, 14 Dec 2011) $</date>
     <title>Modello di Pagina</title>
     <headline>Modello di Pagina</headline>
+    <menu position="top">banner</menu>
     <menu position="left">main</menu>
     <content>
         <title>Rivetweb: easy HTML generation with Tcl</title>

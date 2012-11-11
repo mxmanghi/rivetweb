@@ -14,22 +14,24 @@ package require rwpmodel
 
 # temporary variable names
 #
-# - sitemap -> Path to sitemap dir
+# - sitemap_dir -> Path to sitemap dir
 # - timestamp -> saved timestamp of the sitemap dir
 # - sitemap_stat -> [file stat] info for sitemap dir
 # - xmlpath -> path to xml pages
 #
 
 namespace eval ::XMLBase {
-    variable sitemap            sitemap
+    variable sitemap            ::rwsitemap
+    variable sitemap_dir        sitemap
     variable timestamp          0
     variable sitemap_stat   
     variable xmlpath
+    variable current
 
-#   proc init {xmldata xmlsitemap} 
     proc init {args} {
         variable xmlpath
         variable sitemap
+        variable sitemap_dir
         variable sitemap_stat   
 
 # we first set up the variables controlling the sitemap
@@ -38,22 +40,25 @@ namespace eval ::XMLBase {
 
 # let's rewrite the patg to the sitemap
 
-        set sitemap [file normalize [file join $::rivetweb::site_base $sitemap]]
+        set sitemap_dir [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
 
-        if {![file isdirectory $sitemap]} {
+        if {![file isdirectory $sitemap_dir]} {
             
-            $::rivetweb::logger log notice "Wrong path for sitemap ($sitemap)"
+            $::rivetweb::logger log notice "Wrong path for sitemap ($sitemap_dir)"
 
             return -code error  -error_code invalid_path            \
-                                -errorinfo  "Wrong path $sitemap"   \
-                                            "Wrong path $sitemap"
+                                -errorinfo  "Wrong path $sitemap_dir"   \
+                                            "Wrong path $sitemap_dir"
         } else {
-            $::rivetweb::logger log notice "setting sitemap path as $sitemap"
+            $::rivetweb::logger log notice "setting sitemap path as $sitemap_dir"
         }
         
 # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
+
+        $sitemap create ::XMLBase
+        loadsitemap $sitemap
     }
 
 #
@@ -67,6 +72,7 @@ namespace eval ::XMLBase {
 
 proc willHandle {arglist keyvar} {
     upvar $keyvar key 
+
     set retcode break
     set errorcode rw_ok
     set key     index
@@ -78,10 +84,7 @@ proc willHandle {arglist keyvar} {
     $::rivetweb::logger log info "mapping key $key for processing"
 
     return -code $retcode -errorcode $errorcode 
-
 }
-
-
 
 #
 # -- buildPageEntry
@@ -129,9 +132,11 @@ proc willHandle {arglist keyvar} {
             }
         }
 
-        set newpage [$::rivetweb::pmodel create]
-        $::rivetweb::pmodel set_metadata newpage $metadata_l
+        set newpage [$::rivetweb::pmodel create $key]
+#       puts "<br/>[html $metadata_l b u]"
+#       $::rivetweb::pmodel set_metadata newpage $metadata_l
         $::rivetweb::pmodel put_metadata newpage $menu_d
+        $::rivetweb::pmodel add_metadata newpage datasource ::XMLBase
 
 # data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
 
@@ -151,6 +156,7 @@ proc willHandle {arglist keyvar} {
                 if {$node_name == "pagetext"} {
 
 # creiamo un nuovo dom
+
                     set cdom [dom parse [$c asXML]]
                     $::rivetweb::logger log info "Adding content for language $clang ($key)"
                     $::rivetweb::pmodel set_content newpage $clang pagetext $cdom
@@ -165,7 +171,6 @@ proc willHandle {arglist keyvar} {
 
         return $newpage
     }
-
 
 # -- time_reference 
 #
@@ -248,9 +253,9 @@ proc willHandle {arglist keyvar} {
 
     proc has_updates {} {
         variable timestamp
-        variable sitemap
+        variable sitemap_dir
 
-        file stat $sitemap sitemap_stat
+        file stat $sitemap_dir sitemap_stat
 
         $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
         if {($sitemap_stat(mtime) > $timestamp)} { 
@@ -297,7 +302,7 @@ proc willHandle {arglist keyvar} {
 
                 set menuobj [$menumodel create  [$menu getAttribute id]     \
                                                 $parent                     \
-                                                $visibility                     ]
+                                                $visibility                 ]
 
     # Elements within 'menu' are <title lang="..">...</title> and
     # one or more <link>....</link>
@@ -326,7 +331,6 @@ proc willHandle {arglist keyvar} {
                     set ltext [dict create]
                     set attributes {}
                     foreach linkdata [$l childNodes] {
-
 
         # In order not to replicate the same snippet of code
         # we anyway try to determine the language of the link, 
@@ -364,7 +368,6 @@ proc willHandle {arglist keyvar} {
                     $lm set_attribute linkobj $attributes
                     
                     $menumodel add_link menuobj $linkobj
-
                 }
             }
             lappend group_menu_list $menuobj
@@ -375,19 +378,18 @@ proc willHandle {arglist keyvar} {
 # -- loadsitemap
 #
 # Must call the sitemap manager methods to build (update) a sitemap 
-# This method knows how to load the sitemap depending from the context
 #
 #
 
     proc loadsitemap {sitemap_mgr {ctx ""}} {
-        variable sitemap
+        variable sitemap_dir
         variable sitemap_stat
         variable timestamp
 
         set logger $::rivetweb::logger
         $logger log info "recreating sitemap"
 
-        file stat $sitemap  sitemap_stat
+        file stat $sitemap_dir  sitemap_stat
         set timestamp $sitemap_stat(mtime) 
 
         array unset xmlmenu
@@ -395,7 +397,7 @@ proc willHandle {arglist keyvar} {
 # This object assumes the files to be in the 'sitemap' directory
 # (its existence has been already checked in 'init')
 
-        set xmlmenus [glob [file join $sitemap *.xml]]
+        set xmlmenus [glob [file join $sitemap_dir *.xml]]
 
         foreach xmlfile $xmlmenus {
             $logger log info "reading $xmlfile...."
@@ -450,13 +452,37 @@ proc willHandle {arglist keyvar} {
                 }
             }
         }
-
     }
 
-    proc class {key} { return "static" }
+    proc class {} { return "static" }
 
-    namespace export loadsitemap init has_updates class willHandle
+    proc menu_list {page} {
+        variable sitemap 
+
+#       puts "<br/><b>pmodel</b>: $page"
+#       puts "<br/><b>ds</b>: [$::rivetweb::pmodel metadata $page datasource]"
+        if {[$::rivetweb::pmodel metadata $page datasource] == "::XMLBase"} {
+            set menul [$::rivetweb::pmodel metadata $page menu]
+        } else {
+            set menul [dict create left main]
+        }
+
+        set menudb [dict create]
+        foreach {group menuid} $menul {
+
+            dict set menudb $group [$sitemap menu_list $menuid]
+
+        }
+
+#       puts "<br/>$menul<br/>"
+#       puts "<br/>$menudb<br/>"
+
+        return $menudb
+    }
+
     namespace export init fetchData synchData time_reference is_stale
+    namespace export loadsitemap init has_updates class willHandle
+    namespace export menu_list class
     namespace ensemble create
 }
 

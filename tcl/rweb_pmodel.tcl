@@ -23,9 +23,18 @@ namespace eval ::rwpmodel {
 # a page model is stored in a Tcl dictionary
 #
 
-    proc create {} {
-        return [dict create]
+    proc create {key} {
+
+        return [dict create key $key]
+
     }
+
+
+# -- key
+#
+#
+
+    proc key {pmodel} { return [dict get key] }
 
 # -- add_metadata 
 #
