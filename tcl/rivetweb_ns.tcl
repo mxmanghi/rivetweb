@@ -176,14 +176,11 @@ namespace eval ::rivetweb {
         set datasources $dslist
 
         foreach ds $datasources {
-
             package require $ds
             lappend datasource_list ::${ds}
 
             $ds init
-
         }
-
 
         $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }

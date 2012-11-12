@@ -56,9 +56,9 @@ namespace eval ::rwebdb {
         variable sitepages
 
         if {![check $key]} { return true }
-        set ds      [dict get $sitepages $key datasource]
-        set dsclass [$ds class]
-        if {$dsclass ne "static"} { return true }
+#       set ds      [dict get $sitepages $key datasource]
+#       set dsclass [$ds class]
+#       if {$dsclass ne "static"} { return true }
 
         set ts [dict get $sitepages $key timestamp]
         return [$::rivetweb::datasource is_stale $key $ts]
@@ -149,7 +149,7 @@ namespace eval ::rwebdb {
 
             set error_caught $::errorCode
 
-            set pmodel [$::rivetweb::pmodel create]
+            set pmodel [$::rivetweb::pmodel create $key]
             if {$error_caught == "not_existing"} {
 
 # let's return a conventional page (to be preloaded in the database)

@@ -23,9 +23,9 @@ namespace eval ::rwpmodel {
 # a page model is stored in a Tcl dictionary
 #
 
-    proc create {key} {
+    proc create {key {class static}} {
 
-        return [dict create key $key]
+        return [dict create key $key class $class]
 
     }
 
@@ -377,7 +377,6 @@ namespace eval ::rwpmodel {
             }
         }
     }
-
 
     namespace export *
     namespace ensemble create

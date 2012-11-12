@@ -11,6 +11,7 @@ package require rwconf
 package require rwlogger
 package require rwsitemap
 package require rwpmodel
+package require rwsitemap
 
 # temporary variable names
 #
@@ -21,7 +22,7 @@ package require rwpmodel
 #
 
 namespace eval ::XMLBase {
-    variable sitemap            ::rwsitemap
+    variable sitemap
     variable sitemap_dir        sitemap
     variable timestamp          0
     variable sitemap_stat   
@@ -57,8 +58,8 @@ namespace eval ::XMLBase {
 
         set xmlpath [file join $::rivetweb::site_base pages]
 
-        $sitemap create ::XMLBase
-        loadsitemap $sitemap
+        set sitemap [::rwsitemap::create ::XMLBase]
+        $sitemap sitemap_reload
     }
 
 #
@@ -70,21 +71,21 @@ namespace eval ::XMLBase {
 # to return with a -status continue
 #
 
-proc willHandle {arglist keyvar} {
-    upvar $keyvar key 
+    proc willHandle {arglist keyvar} {
+        upvar $keyvar key 
 
-    set retcode break
-    set errorcode rw_ok
-    set key     index
+        set retcode break
+        set errorcode rw_ok
+        set key     index
 
-    if {[dict exists $arglist show]} {
-        set key [dict get $arglist show]
+        if {[dict exists $arglist show]} {
+            set key [dict get $arglist show]
+        }
+
+        $::rivetweb::logger log info "mapping key $key for processing"
+
+        return -code $retcode -errorcode $errorcode 
     }
-
-    $::rivetweb::logger log info "mapping key $key for processing"
-
-    return -code $retcode -errorcode $errorcode 
-}
 
 #
 # -- buildPageEntry
@@ -394,7 +395,7 @@ proc willHandle {arglist keyvar} {
 
         array unset xmlmenu
 
-# This object assumes the files to be in the 'sitemap' directory
+# This object assumes the files to be in the 'sitemap_dir' directory
 # (its existence has been already checked in 'init')
 
         set xmlmenus [glob [file join $sitemap_dir *.xml]]
@@ -454,8 +455,6 @@ proc willHandle {arglist keyvar} {
         }
     }
 
-    proc class {} { return "static" }
-
     proc menu_list {page} {
         variable sitemap 
 
@@ -481,8 +480,8 @@ proc willHandle {arglist keyvar} {
     }
 
     namespace export init fetchData synchData time_reference is_stale
-    namespace export loadsitemap init has_updates class willHandle
-    namespace export menu_list class
+    namespace export loadsitemap init has_updates willHandle
+    namespace export menu_list
     namespace ensemble create
 }
 

@@ -4,6 +4,7 @@
 # build and maintain a tree of menus. 
 #
 
+package require Itcl
 package require struct::tree
 package require struct::stack
 
@@ -14,42 +15,39 @@ namespace eval ::rwsitemap {
 # definitions. 'sitemap' is a tree of menu models implemented 
 # by ::rivetweb::menumodel
 #
+    ::itcl::class RWSitemap {
+        private variable disconnected       
+        private variable sitemap_tree 
+        private variable datasource
+        private variable cnt
 
-    variable sitemap_tree
-    variable disconnected
-    variable datasource
-    variable cnt	    0
-
-    proc create { ds } {
-        variable sitemap_tree 
-        variable disconnected       
-        variable datasource
-
-        set datasource $ds
-
+        constructor {ds} {
+            set cnt         0
+            set datasource  $ds
 # The sitemap structure is implemented by a ::struct::tree Tcl
 # structure
 
-        set sitemap_tree [::struct::tree sitemap]
+            set sitemap_tree [::struct::tree sitemap]
 
 # After the sitemap build-up process has completed the 'disconnected' 
 # branch should be empty. We will use this assumption as a check for
 # a consistent definition of the website structure
 #
+            $sitemap_tree insert root end disconnected
+        }
 
-        $sitemap_tree insert root end disconnected
-
-        return $sitemap_tree
+        public method recreate  {}
+        public method has_updates {{data_source_l "*"} {ood out_of_date}} 
+        public method sitemap_reload {} 
+        public method add_menu_group {parent_id group_id menuobjs} 
+        public method menu_list {group_id} 
     }
 
 # -- recreate
 # 
 # 
 
-    proc recreate {} {
-        variable sitemap_tree 
-        variable disconnected       
-        variable datasource
+    ::itcl::body RWSitemap::recreate {} {
 
 # 21-03-2012: shouldn't we destroy every single menu object???
 
@@ -57,7 +55,6 @@ namespace eval ::rwsitemap {
         set sitemap_tree [::struct::tree sitemap_tree]
         $sitemap_tree insert root end disconnected
 
-        return $sitemap_tree
     }
 
 # -- has_updates
@@ -67,9 +64,8 @@ namespace eval ::rwsitemap {
 # and returns in the ood variable a list of datasources that have
 # updates
 
-    proc has_updates {{data_source_l "*"} {ood out_of_date}} {
+    ::itcl::body RWSitemap::has_updates {{data_source_l "*"} {ood out_of_date}} {
         upvar $ood need_update_l
-        variable datasource
 
         set need_update_ds {}
         return [$datasource has_updates]
@@ -81,14 +77,14 @@ namespace eval ::rwsitemap {
 # ensemble is the sitemap manager he has to talk to.
 #
 
-    proc sitemap_reload {} {
-        variable datasource
+    ::itcl::body RWSitemap::sitemap_reload {} {
 
-        $datasource loadsitemap $::rivetweb::sitemap   
+        $datasource loadsitemap $this
     }
 
-    proc add_menu_group {parent_id group_id menuobjs} {
-        variable sitemap_tree
+# -- add_menu_group 
+
+    ::itcl::body RWSitemap::add_menu_group {parent_id group_id menuobjs} {
 
         set mm $::rivetweb::menumodel
 
@@ -148,9 +144,7 @@ namespace eval ::rwsitemap {
 # starting with the sought menu up to the root, skipping all the menus
 # marked as leaves.
 
-    proc menu_list {group_id} {
-        variable sitemap_tree
-        variable cnt
+    ::itcl::body RWSitemap::menu_list {group_id} {
 
         set menu_s [::struct::stack menu_stack[incr cnt]]
 
@@ -178,8 +172,11 @@ namespace eval ::rwsitemap {
                     }
                 }
             }
+
         } else {
+
             $::rivetweb::logger log err "No menu group $group_id"
+
         }
 
 # let's revert the list of menu by extracting them from the stack
@@ -193,7 +190,10 @@ namespace eval ::rwsitemap {
         return $menuobjs
     }
 
-    namespace export create recreate add_menu_group menu_list has_updates sitemap_reload
+    proc create { ds } {
+        return [RWSitemap ::#auto $ds]
+    }
+    namespace export create 
     namespace ensemble create
 }
 
