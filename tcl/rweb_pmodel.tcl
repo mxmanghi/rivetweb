@@ -2,12 +2,11 @@
 #
 # page model implementation. A page model handles 2 classes of data: 
 #
-#   1) the content of a page, a dictionary or other structured data 
+#   *) the content of a page, a dictionary or other structured data 
 # container capable of storing the content of a page in different 
 # languages
-#
-#   2) The metadata of a page, an association between
-# keywords and application defined data.
+#   *) The metadata of a page, an association between keywords and 
+# application defined data.
 #
 #
 
@@ -302,7 +301,7 @@ namespace eval ::rwpmodel {
 # elements of a page. It should be general enough to hide 
 # the page internal implementation.
 #
-# When a transformation actually tooks place a hook should return a dictionary 
+# When a transformation actually takes place a hook should return a dictionary 
 # storing a new tag name (key: tagname), a list of transformed attributes 
 # (key: attributes) and the new text within the element, if any (key: text).
 # Otherwise the processor will return an empty string. 
@@ -321,7 +320,7 @@ namespace eval ::rwpmodel {
 # xmlpp is a subdictionary for hooks of 'hooks_class'
 # the keys of the dictionary are the tag names to be manipulated
 
-            set xmlpp [dict get $::rivetweb::hooks $hooks_class]
+            set xmlpp [dict get $hooks_d $hooks_class]
 
             foreach hk [dict keys $xmlpp] {
 

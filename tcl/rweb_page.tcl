@@ -29,6 +29,8 @@ namespace eval ::rwpage {
         public method languages { } 
         public method metadata {{key ""}}
         public method dispose { }
+        public method postproc_hooks { hooks_d hooks_class {language ""}}
+        public method metadata_hooks { pageobj hooks_d } 
     }
 
 # -- add_metadata 
@@ -127,8 +129,111 @@ namespace eval ::rwpage {
 # releases objects which may hold data stored in the pool (e.g.
 # tdom objects). Abstract method for this class
 
-    proc dispose { } {
+    ::itcl::body RWPage::dispose { } {
 
+    }
+
+# -- postproc_hooks
+#
+# general purpose method to call specific code for handling 
+# elements of a page. It should be general enough to hide 
+# the page internal implementation.
+#
+# When a transformation actually takes place a hook should return a dictionary 
+# storing a new tag name (key: tagname), a list of transformed attributes 
+# (key: attributes) and the new text within the element, if any (key: text).
+# Otherwise the processor will return an empty string. 
+#
+#       <processor_name> { element_text attributes }
+#
+
+    ::itcl::body RWPage::postproc_hooks { hooks_d hooks_class {language ""}} {
+
+        if {[dict exists $hooks_d $hooks_class]} {
+
+            if {[string length $language] == 0} { 
+                set language $::rivetweb::default_lang 
+            }
+
+# xmlpp is a subdictionary for hooks of 'hooks_class'
+# the keys of the dictionary are the tag names to be manipulated
+
+            set xmlpp [dict get $hooks_d $hooks_class]
+
+            foreach hk [dict keys $xmlpp] {
+
+                apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
+                set processor [dict get $xmlpp $hk function]
+                set text_mode "text"
+                if {[dict exists $xmlpp $hk textmode]} {
+                    set text_mode [dict get $xmlpp $hk textmode]
+                }
+
+# we must fetch the content for a specific language and get the 
+# elements whose tag name is $hk. Tagname and attributes are then
+# passed as arguments to the hook, which returns a new tag name
+# and a new list of attributes which are to replace the element
+
+                set page_content [[namespace current]::content $pageobj $language -reference]
+                set page_xml [dict get $page_content pagetext]
+                foreach el2xform [$page_xml getElementsByTagName $hk] {
+                    
+                    set attribute_list {}
+                    foreach attr [$el2xform attributes] { 
+                        lappend attribute_list $attr [$el2xform getAttribute $attr]
+                    }
+    
+                    if {[string tolower $text_mode] == "xml"} {
+                        set new_element_d [::rivetweb::$processor [$el2xform asXML -indent 2] $attribute_list]
+                    } else {
+                        set new_element_d [::rivetweb::$processor [$el2xform text] $attribute_list]
+                    }
+#                   apache_log_error debug $new_element_d
+                    if {[string length $new_element_d]} {
+                        set new_tag     [dict get $new_element_d tagname]
+                        set attributes  [dict get $new_element_d attributes]
+
+                        set new_element [$page_xml createElement $new_tag]
+
+                        foreach {attrib attrib_value} $attributes {
+                            $new_element setAttribute $attrib $attrib_value
+                        }
+
+                        [$el2xform parentNode] replaceChild $new_element $el2xform
+                        if {[dict exists $new_element_d text]} {
+                            set elem_text   [dict get $new_element_d text]
+                            $page_xml createTextNode $elem_text new_element_text
+
+                            $new_element appendChild $new_element_text
+                        }
+                        if {[dict exists $new_element_d expansion]} {
+                            $new_element appendXML [dict get $new_element_d expansion]
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+# -- metadata_hooks
+#
+# metadata hooks are processed in a similar wayto xml postproc hooks, 
+# but they apply in slightly different manner
+#
+
+    ::itcl::body RWPage::metadata_hooks { hooks_d } {
+
+        if {[dict exists $hooks_d metadata]} {
+            set ppp [dict get $hooks_d metadata]
+            foreach hk [dict keys $ppp] {
+                $::rivetweb::logger log info "processing hook: [dict get $ppp $hk descrip]"
+                set processor [dict get $ppp $hk function]
+                
+                ::rivetweb::$processor $pageobj 
+
+            }
+        }
     }
 
 
