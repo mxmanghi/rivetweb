@@ -1,5 +1,5 @@
 #
-# -- xmldynamic.tcl
+# -- rwscripted.tcl
 #
 #
 #
@@ -10,7 +10,7 @@ package require rwlogger
 package require rwsitemap
 package require rwpmodel
 
-namespace eval ::XMLScripted {
+namespace eval ::RwScripted {
     variable sitemap
     variable script_path tcl
 
@@ -20,7 +20,7 @@ namespace eval ::XMLScripted {
         variable script_path
         variable ensemble
 
-        set sitemap         ::XMLScripted
+        set sitemap         [::rwsitemap::create ::RwScripted]
         set script_path     [file normalize [file join $:rivetweb::site_base $script_path]
 
 # to speed up the development I just load the whole directory of scripts

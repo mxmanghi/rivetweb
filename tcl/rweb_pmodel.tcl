@@ -34,7 +34,7 @@ namespace eval ::rwpmodel {
 #
 #
 
-    proc key {pmodel} { return [dict get key] }
+    proc key {pageobj} { return [dict get $pageobj key] }
 
 # -- add_metadata 
 #
@@ -115,7 +115,7 @@ namespace eval ::rwpmodel {
 # in one of four possible formats: 
 #
 #   1) '-xml': XML representation
-#   2) '-text': Markup language is removed and text in it returned
+#   2) '-text': Markup language is removed and text returned
 #   3) '-html': HTML representation (thus not 'well formed')
 #   4) '-reference': reference to internal object representation
 #   
