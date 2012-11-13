@@ -108,6 +108,8 @@ if {[catch {
 
     set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
 
+    puts "<b>$::rivetweb::current_pmodel</b>"
+
 } e]} {
 
     $::rivetweb::logger log err "Error processing data for page ($e)"
