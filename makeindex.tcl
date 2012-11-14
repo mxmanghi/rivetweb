@@ -3,7 +3,7 @@
 # -- makeIndex.tcl
 #
 #
-# Rivetweb pkgIndex.tcl builder
+# Rivetweb core pkgIndex.tcl builder
 #
 
 pkg_mkIndex -verbose .  tcl/rivetweb.tcl        \
