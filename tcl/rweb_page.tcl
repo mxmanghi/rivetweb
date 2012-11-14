@@ -28,6 +28,7 @@ namespace eval ::rwpage {
         public method postproc_hooks { hooks_d hooks_class {language ""}}
         public method metadata_hooks { pageobj hooks_d } 
         public method print_content {language}
+        public method destroy {}
     }
 
 # -- add_metadata 
@@ -102,7 +103,7 @@ namespace eval ::rwpage {
 # tdom objects). Abstract method for this class
 
     ::itcl::body RWPage::destroy { } {
-	::itcl::delete object $this
+	    ::itcl::delete object $this
     }
 
 # -- postproc_hooks
@@ -147,7 +148,7 @@ namespace eval ::rwpage {
     ::itcl::body RWPage::print_content {language} { }
 
     proc create {key {class RWStatic}} {
-	return [$class ::#auto $key]
+	    return [$class ::#auto $key]
     }
 
     namespace export create

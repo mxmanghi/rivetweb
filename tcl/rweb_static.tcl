@@ -23,8 +23,8 @@ namespace eval ::rwpage {
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {field value} 
         public method postproc_hooks { hooks_d hooks_class {language ""}}
-	public method print_content {language}
-	public method languages { }
+        public method print_content {language}
+        public method languages { }
     }
 
 # -- set_pagetext
@@ -62,7 +62,7 @@ namespace eval ::rwpage {
 # postprocessing hooks (if applicable) must run beforehand
 
     
-    ::itcl::body RWStatic::content { pageobj language {fmt -reference}} {
+    ::itcl::body RWStatic::content { language {fmt -reference}} {
 
     }
 
@@ -248,8 +248,7 @@ namespace eval ::rwpage {
 #
 #
     ::itcl::body RWPage::languages { } {
-	return [dict keys $content]
+	    return [dict keys $content]
     }
-
 }
 package provide rwstatic 0.1

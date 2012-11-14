@@ -56,9 +56,6 @@ namespace eval ::rwebdb {
         variable sitepages
 
         if {![check $key]} { return true }
-#       set ds      [dict get $sitepages $key datasource]
-#       set dsclass [$ds class]
-#       if {$dsclass ne "static"} { return true }
 
         set ts [dict get $sitepages $key timestamp]
         return [$::rivetweb::datasource is_stale $key $ts]

@@ -90,25 +90,24 @@ apache_log_error debug "=====> menus: [array names html_menu]"
 
 if {[catch {
 
-    $::rivetweb::pmodel postproc_hooks  $::rivetweb::current_pmodel \
-                                        $::rivetweb::hooks          \
-                                        xmlpostproc                 \
-                                        $language
+    $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks          \
+                                                xmlpostproc                 \
+                                                $language
 
 # we finally create HTML out of the xml page so far handled.
 
-# content and language had been already selected within the 
-# ::rivetweb::pmodel page model manager
+## content and language had been already selected within the 
+## ::rivetweb::pmodel page model manager
 
-    set page_vars [$::rivetweb::pmodel content $::rivetweb::current_pmodel $language -xml]
-
-    set page_title          [dict get $page_vars title]
-    set page_headline       [dict get $page_vars headline]
-    set page_content_html   [dict get $page_vars pagetext]
-
-    set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
-
-    puts "<b>$::rivetweb::current_pmodel</b>"
+##    set page_vars [$::rivetweb::current_pmodel content $language -xml]
+##
+##    set page_title          [dict get $page_vars title]
+##    set page_headline       [dict get $page_vars headline]
+##    set page_content_html   [dict get $page_vars pagetext]
+##
+##   set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
+##
+##    puts "<b>$::rivetweb::current_pmodel</b>"
 
 } e]} {
 
