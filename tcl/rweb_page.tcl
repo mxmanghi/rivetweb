@@ -12,20 +12,16 @@ namespace eval ::rwpage {
     ::itcl::class RWPage {
         private variable metadata
         private variable key
-        protected variable content
 
         constructor {pagekey} {
             set key $pagekey
             set metadata [dict create]
-            set content [dict create]
         }
 
         public method key {} { return $key }
         public method add_metadata {field value} 
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
-        public method set_content {field value} 
-        public method content {language {fmt -reference}} 
         public method languages { } 
         public method metadata {{key ""}}
         public method dispose { }
@@ -64,32 +60,6 @@ namespace eval ::rwpage {
  
         set metadata $dictionary       
     }
-
-
-# -- set_content
-#
-# set the content branch of the page object for a specific content type and
-# language. Meaningful content types are 'pagetext', 'header', 'title'
-
-    ::itcl::body RWPage::set_content {language field value} {
-
-        dict set content $language $field $value
-        if {![dict exists $content $::rivetweb::default_lang $field]} {
-            dict set content $::rivetweb::default_lang $field $value
-        }
-    }
-
-# -- content
-#
-# crucial method printing to stdout the content for a specific language
-# (when existing). This method prints output for the client, preprocessing
-# postprocessing hooks (if applicable) must run beforehand
-
-    
-    ::itcl::body RWPage::content { pageobj language {fmt -reference}} {
-
-    }
-
 
 # -- languages
 #
@@ -147,74 +117,7 @@ namespace eval ::rwpage {
 #       <processor_name> { element_text attributes }
 #
 
-    ::itcl::body RWPage::postproc_hooks { hooks_d hooks_class {language ""}} {
-
-        if {[dict exists $hooks_d $hooks_class]} {
-
-            if {[string length $language] == 0} { 
-                set language $::rivetweb::default_lang 
-            }
-
-# xmlpp is a subdictionary for hooks of 'hooks_class'
-# the keys of the dictionary are the tag names to be manipulated
-
-            set xmlpp [dict get $hooks_d $hooks_class]
-
-            foreach hk [dict keys $xmlpp] {
-
-                apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
-                set processor [dict get $xmlpp $hk function]
-                set text_mode "text"
-                if {[dict exists $xmlpp $hk textmode]} {
-                    set text_mode [dict get $xmlpp $hk textmode]
-                }
-
-# we must fetch the content for a specific language and get the 
-# elements whose tag name is $hk. Tagname and attributes are then
-# passed as arguments to the hook, which returns a new tag name
-# and a new list of attributes which are to replace the element
-
-                set page_content [[namespace current]::content $pageobj $language -reference]
-                set page_xml [dict get $page_content pagetext]
-                foreach el2xform [$page_xml getElementsByTagName $hk] {
-                    
-                    set attribute_list {}
-                    foreach attr [$el2xform attributes] { 
-                        lappend attribute_list $attr [$el2xform getAttribute $attr]
-                    }
-    
-                    if {[string tolower $text_mode] == "xml"} {
-                        set new_element_d [::rivetweb::$processor [$el2xform asXML -indent 2] $attribute_list]
-                    } else {
-                        set new_element_d [::rivetweb::$processor [$el2xform text] $attribute_list]
-                    }
-#                   apache_log_error debug $new_element_d
-                    if {[string length $new_element_d]} {
-                        set new_tag     [dict get $new_element_d tagname]
-                        set attributes  [dict get $new_element_d attributes]
-
-                        set new_element [$page_xml createElement $new_tag]
-
-                        foreach {attrib attrib_value} $attributes {
-                            $new_element setAttribute $attrib $attrib_value
-                        }
-
-                        [$el2xform parentNode] replaceChild $new_element $el2xform
-                        if {[dict exists $new_element_d text]} {
-                            set elem_text   [dict get $new_element_d text]
-                            $page_xml createTextNode $elem_text new_element_text
-
-                            $new_element appendChild $new_element_text
-                        }
-                        if {[dict exists $new_element_d expansion]} {
-                            $new_element appendXML [dict get $new_element_d expansion]
-                        }
-                    }
-                }
-            }
-        }
-
-    }
+    ::itcl::body RWPage::postproc_hooks { hooks_d hooks_class {language ""}} { }
 
 # -- metadata_hooks
 #
@@ -236,7 +139,7 @@ namespace eval ::rwpage {
         }
     }
 
-# -- content
+# -- print_content
 # 
 # 
     ::itcl::body RWPage::print_content {language} { }
