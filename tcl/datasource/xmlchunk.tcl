@@ -10,7 +10,7 @@ package require tdom
 package require rwconf
 package require rwlogger
 package require rwsitemap
-package require rwpmodel
+package require rwstatic
 package require rwsitemap
 
 # temporary variable names
@@ -133,11 +133,11 @@ namespace eval ::XMLBase {
             }
         }
 
-        set newpage [$::rivetweb::pmodel create $key]
+        set newpage [RWStatic ::#auto $key]
 #       puts "<br/>[html $metadata_l b u]"
 #       $::rivetweb::pmodel set_metadata newpage $metadata_l
-        $::rivetweb::pmodel put_metadata newpage $menu_d
-        $::rivetweb::pmodel add_metadata newpage datasource ::XMLBase
+        $newpage put_metadata $menu_d
+        $newpage add_metadata datasource ::XMLBase
 
 # data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
 
@@ -160,11 +160,11 @@ namespace eval ::XMLBase {
 
                     set cdom [dom parse [$c asXML]]
                     $::rivetweb::logger log info "Adding content for language $clang ($key)"
-                    $::rivetweb::pmodel set_content newpage $clang pagetext $cdom
+                    $newpage set_content $clang pagetext $cdom
 
                 } else {
 
-                    $::rivetweb::pmodel set_content newpage $clang $node_name [$c text]
+                    $newpage set_content $clang $node_name [$c text]
 
                 }
             }

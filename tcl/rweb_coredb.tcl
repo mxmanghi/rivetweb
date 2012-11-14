@@ -109,7 +109,7 @@ namespace eval ::rwebdb {
         if {[check $key]} {
             set pmodel [dict get $sitepages $key object]
 
-            $::rivetweb::pmodel dispose $pmodel 
+            $pmodel destroy
 
             dict unset sitepages $key
         }
@@ -130,7 +130,7 @@ namespace eval ::rwebdb {
         foreach k [dict keys $sitepages] {
             set pmodel [dict get $sitepages $k object]
 
-            $::rivetweb::pmodel dispose $pmodel
+            $pmodel dispose
         }
         
         set sitepages [dict create]

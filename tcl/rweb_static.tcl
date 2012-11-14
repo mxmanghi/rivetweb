@@ -7,6 +7,7 @@
 
 package require Itcl
 package require tdom
+package require rwpage
 
 namespace eval ::rwpage {
 
