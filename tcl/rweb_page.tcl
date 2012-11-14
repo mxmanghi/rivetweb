@@ -10,9 +10,9 @@ package require Itcl
 namespace eval ::rwpage {
 
     ::itcl::class RWPage {
-        private variable content
         private variable metadata
         private variable key
+        protected variable content
 
         constructor {pagekey} {
             set key $pagekey
@@ -24,13 +24,14 @@ namespace eval ::rwpage {
         public method add_metadata {field value} 
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
-        public method set_content {language field value} 
+        public method set_content {field value} 
         public method content {language {fmt -reference}} 
         public method languages { } 
         public method metadata {{key ""}}
         public method dispose { }
         public method postproc_hooks { hooks_d hooks_class {language ""}}
         public method metadata_hooks { pageobj hooks_d } 
+        public method print_content {language}
     }
 
 # -- add_metadata 
@@ -77,7 +78,6 @@ namespace eval ::rwpage {
             dict set content $::rivetweb::default_lang $field $value
         }
     }
-
 
 # -- content
 #
@@ -236,6 +236,10 @@ namespace eval ::rwpage {
         }
     }
 
+# -- content
+# 
+# 
+    ::itcl::body RWPage::print_content {language} { }
 
     proc create {key {class static}} {
 
