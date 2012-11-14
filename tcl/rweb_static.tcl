@@ -22,6 +22,8 @@ namespace eval ::rwpage {
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {field value} 
         public method postproc_hooks { hooks_d hooks_class {language ""}}
+	public method print_content {language}
+	public method languages { }
     }
 
 # -- set_pagetext
@@ -49,6 +51,7 @@ namespace eval ::rwpage {
         if {![dict exists $content $::rivetweb::default_lang $field]} {
             dict set content $::rivetweb::default_lang $field $value
         }
+
     }
 
 # -- content
@@ -232,9 +235,20 @@ namespace eval ::rwpage {
                 }
             }
         }
-
     }
 
+# -- print_content
+# 
+# 
+
+    ::itcl::body RWPage::print_content {language} { } 
+
+# -- languages
+#
+#
+    ::itcl::body RWPage::languages { } {
+	return [dict keys $content]
+    }
 
 }
 package provide rwstatic 0.1

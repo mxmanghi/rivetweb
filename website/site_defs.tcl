@@ -4,5 +4,4 @@ namespace eval ::rivetweb {
 #   set menusource      XMLMenu
     set rivetlib        [list   /usr/local/lib/rivet2.1 \
                                 /usr/local/lib/rivet2.1/rivet-tcl]
-
 }
