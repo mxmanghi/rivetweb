@@ -248,3 +248,6 @@ namespace eval ::rwpage {
     namespace export create
     namespace ensemble create
 }
+
+package provide rwpage 0.1
+

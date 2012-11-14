@@ -10,6 +10,7 @@ package require Itcl
 namespace eval ::rwpage {
 
     ::itcl::class RWStatic {
+        inherit RWPage
 
         constructor {pagekey} {RWPage::constructor $pagekey} {
 
@@ -33,3 +34,4 @@ namespace eval ::rwpage {
     }
 
 }
+package provide rwstatic 0.1

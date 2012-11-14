@@ -21,3 +21,6 @@ package ifneeded rwmenu 1.0 [list source [file join $dir tcl/rweb_menumodel.tcl]
 package ifneeded rwpmodel 0.1 [list source [file join $dir tcl/rweb_pmodel.tcl]]
 package ifneeded rwsitemap 1.0 [list source [file join $dir tcl/sitemap.tcl]]
 package ifneeded rwterm 0.1 [list source [file join $dir tcl/terminal.tcl]]
+package ifneeded rwpage 0.1 [list source [file join $dir tcl/rweb_page.tcl]]
+package ifneeded rwstatic 0.1 [list source [file join $dir tcl/rweb_static.tcl]]
+
