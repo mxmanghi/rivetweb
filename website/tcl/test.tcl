@@ -6,7 +6,7 @@
 #
 #
 
-namespace eval ::Test {
+namespace eval Test {
     variable timestamp
 
     proc prepare {args} {

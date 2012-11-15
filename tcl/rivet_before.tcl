@@ -84,7 +84,6 @@ if {[var exists lang]} {
 #
 
 set argqs [dict create {*}[var_qs all]] 
-
 foreach ds $::rivetweb::datasources {
 
     set ::rivetweb::datasource $ds

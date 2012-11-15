@@ -44,7 +44,7 @@ namespace eval ::RwScripted {
         if {[dict exists $arglist fun]} {
             set key [dict get $arglist fun]
             set script_ns [string totitle $key]
-            set ensemble ::XMLScripted::$key
+            set ensemble [namespace current]::$key
             if {[namespace exists $ensemble]} {
                 $::rivetweb::logger log info "mapping fun $key ($script_ns) for processing"
                 return -code break -errorcode rw_ok
@@ -60,6 +60,7 @@ namespace eval ::RwScripted {
     proc fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
 
+        set rkey $key
         $ensemble prepare {*}[var all]
     }
 

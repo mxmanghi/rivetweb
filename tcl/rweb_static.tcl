@@ -23,11 +23,12 @@ namespace eval ::rwpage {
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {language field value} 
         public method postproc_hooks { hooks_d hooks_class {language ""}}
-        public method print_content {language}
-        public method languages { }
-        public method content { language {fmt -reference}}
+#       public method print_content {language}
+        public method languages {}
+        public method content {language {fmt -reference}}
         public method to_string {}
         public method title {language}
+        public method headline {language}
     }
 
 # -- set_pagetext
@@ -67,21 +68,6 @@ namespace eval ::rwpage {
     
     ::itcl::body RWStatic::content { language {fmt -reference}} {
 
-    }
-
-# -- content
-#
-# returns the content of <pageobj> for <language> and
-# in one of four possible formats: 
-#
-#   1) '-xml': XML representation
-#   2) '-text': Markup language is removed and text returned
-#   3) '-html': HTML representation (thus not 'well formed')
-#   4) '-reference': reference to internal object representation
-#   
-
-    proc content {language {fmt -reference}} {
-
         if {[dict exists $content $language]} {
             set page_content [dict get $content $language]
         } elseif {[dict exists $content $::rivetweb::default_lang]} {
@@ -105,76 +91,37 @@ namespace eval ::rwpage {
                 set method asHTML
             }
             default {
-                set method ""
+                return [dict get $content $language]
             }
         }
 
-# we prepare the data for display in another dictionary
-# title and headline are choosen from more to less specific, with
-# headline falling back to title if not resolvable
-
-        set page_data [dict create]
-
-        foreach {key field} $page_content {
-
-            switch $key {
-
-                title - 
-                headline {
-                    dict set page_data $key $field
-                }
-
-                pagetext {
-                    if {[string length $method] == 0} {
-
-                        dict set page_data $key $field
-
-                    } else {
-
-                        set output_buffer ""
-                        set xmlnode_pt [$field documentElement]
-                        if {[string match [$xmlnode_pt nodeName] pagetext]} {
-
-                            foreach el [$xmlnode_pt childNodes] {
-                                append output_buffer "[$el $method]\n"
-                            }
-
-                            dict set page_data pagetext $output_buffer
-                        } else {
-                            set errormsg "Inconsistent model: Missing 'pagetext' tag for language $language"
-
-                            $::rivetweb::logger log emerg "inconsistent model: $pageobj"
-                            return -code error  -errorcode missing_default_content  \
-                                                -errorinfo $errormsg $errormsg
-                        }
-                    }
-                }
-            }
-
+        if {[dict exists $content $language pagetext]} {
+            set pagedom [dict get $content $language pagetext]
+        } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
+            set pagedom [dict get $content $default_lang pagetext]
         }
 
+        if {[info exists pagedom]} {
+            set xmlnode_pt [$pagedom documentElement]
 
-        if {![dict exists $page_data headline]} {
-            if {[dict exists $pageobj metadata headline]} {
-                dict set page_data headline [dict get $pageobj metadata headline]
-            } elseif {[dict exists $page_data title]} {
-                dict set page_data headline [dict get $page_data title]
-            } elseif {[dict exists $pageobj metadata title]} {
-                dict set page_data headline [dict get $pageobj metadata title]
-            }
-        } 
+            if {[string match [$xmlnode_pt nodeName] pagetext]} {
 
-        if {![dict exists $page_data title]} {
-            if {[dict exists $pageobj metadata title]} {
-                dict set page_data title [dict get $pageobj metadata title]
+                foreach el [$xmlnode_pt childNodes] {
+                    append output_buffer "[$el $method]\n"
+                }
+
             } else {
-                dict set page_data title ""
+                set errormsg "Inconsistent model: Missing 'pagetext' tag for language $language"
+
+                $::rivetweb::logger log emerg "inconsistent model: $pageobj"
+                return -code error  -errorcode missing_default_content  \
+                                    -errorinfo $errormsg $errormsg
             }
+        } else {
+            set output_buffer "No Data"
         }
-
-        return $page_data
+        return $output_buffer
     }
-
 
     ::itcl::body RWStatic::postproc_hooks { hooks_d hooks_class {language ""}} {
 
@@ -211,7 +158,7 @@ namespace eval ::rwpage {
                     foreach attr [$el2xform attributes] { 
                         lappend attribute_list $attr [$el2xform getAttribute $attr]
                     }
-    
+
                     if {[string tolower $text_mode] == "xml"} {
                         set new_element_d [::rivetweb::$processor [$el2xform asXML -indent 2] $attribute_list]
                     } else {
@@ -244,11 +191,11 @@ namespace eval ::rwpage {
         }
     }
 
-# -- print_content
-# 
-# 
-
-    ::itcl::body RWStatic::print_content {language} { } 
+## -- print_content
+## 
+## 
+#
+#   ::itcl::body RWStatic::print_content {language} { } 
 
 # -- languages
 #
@@ -274,8 +221,23 @@ namespace eval ::rwpage {
 #
 
     ::itcl::body RWStatic::title {language} {
-
+        if {[dict exists $content $language title]} {
+            return [dict get $content $language title]
+        } else {
+            return [$this metadata title]
+        }
     }
 
+# -- headline
+#
+#
+
+    ::itcl::body RWStatic::headline {language} {
+        if {[dict exists $content $language headline]} {
+            return [dict get $content $language headline]
+        } else {
+            return [$this title $language]
+        }
+    }
 }
 package provide rwstatic 0.1
