@@ -50,8 +50,8 @@
                     <!-- li>
                         <h2>23 Dec 2011</h2>
                         <p> <a href="<? puts -nonewline [::rivetweb::makeUrl dec23] ?>">Rivetweb website</a></p>
-                    </li --> 
-                <?
+                    </li -->
+                <?               
                 } 
                 if {[info exists ::rivetweb::html_menu(left)]} { puts $::rivetweb::html_menu(left) } 
 
@@ -70,7 +70,8 @@
                         if {[string equal $::rivetweb::page_content index] == 1} {
                             ?><!--img src="<? puts -nonewline [::rivetweb::makePictsPath Rivetweb_tiny.png $::rivetweb::running_template] ?>" class="floatright" /--><?
                         }
-                        puts $::rivetweb::page_content_html 
+                        puts [$::rivetweb::current_pmodel to_string]
+                        $::rivetweb::current_pmodel print_content $::rivetweb::language
                     ?>
                 </div>
             </div>

@@ -26,9 +26,11 @@ namespace eval ::rwpage {
         public method metadata {{key ""}}
         public method dispose { }
         public method postproc_hooks { hooks_d hooks_class {language ""}}
-        public method metadata_hooks { pageobj hooks_d } 
+        public method metadata_hooks { hooks_d } 
         public method print_content {language}
         public method destroy {}
+        public method to_string {}
+        public method title {language}
     }
 
 # -- add_metadata 
@@ -62,6 +64,7 @@ namespace eval ::rwpage {
     ::itcl::body RWPage::put_metadata {dictionary} {
  
         set metadata $dictionary       
+
     }
 
 # -- languages
@@ -136,7 +139,7 @@ namespace eval ::rwpage {
                 $::rivetweb::logger log info "processing hook: [dict get $ppp $hk descrip]"
                 set processor [dict get $ppp $hk function]
                 
-                ::rivetweb::$processor $pageobj 
+                ::rivetweb::$processor $this
 
             }
         }
@@ -145,11 +148,27 @@ namespace eval ::rwpage {
 # -- print_content
 # 
 # 
-    ::itcl::body RWPage::print_content {language} { }
+    ::itcl::body RWPage::print_content {language} { 
+        puts -nonewline [$this content $language -xml]
+    }
 
     proc create {key {class RWStatic}} {
 	    return [$class ::#auto $key]
     }
+
+# -- to_string 
+#
+
+    ::itcl::body RWPage::to_string {} { return $metadata }
+
+# -- title
+#
+# A method for getting the page title goes in the base RWPage class
+# because <title>...</title> is an element that goes in the <head>...</head>
+# section of a page and it's part of the standard HTML ever since
+#
+
+    ::itcl::body RWPage::title {language} { return "" }
 
     namespace export create
     namespace ensemble create

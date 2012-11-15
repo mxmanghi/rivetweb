@@ -21,10 +21,13 @@ namespace eval ::rwpage {
         }
 
         public method set_pagetext {language page_text {rootel "p"}} 
-        public method set_content {field value} 
+        public method set_content {language field value} 
         public method postproc_hooks { hooks_d hooks_class {language ""}}
         public method print_content {language}
         public method languages { }
+        public method content { language {fmt -reference}}
+        public method to_string {}
+        public method title {language}
     }
 
 # -- set_pagetext
@@ -123,7 +126,9 @@ namespace eval ::rwpage {
 
                 pagetext {
                     if {[string length $method] == 0} {
+
                         dict set page_data $key $field
+
                     } else {
 
                         set output_buffer ""
@@ -145,6 +150,7 @@ namespace eval ::rwpage {
                     }
                 }
             }
+
         }
 
 
@@ -242,13 +248,34 @@ namespace eval ::rwpage {
 # 
 # 
 
-    ::itcl::body RWPage::print_content {language} { } 
+    ::itcl::body RWStatic::print_content {language} { } 
 
 # -- languages
 #
 #
-    ::itcl::body RWPage::languages { } {
+    ::itcl::body RWStatic::languages { } {
 	    return [dict keys $content]
     }
+
+# -- to_string 
+#
+
+    ::itcl::body RWStatic::to_string {} { 
+        set buffer [chain]
+
+        append buffer $content
+        return $buffer
+    }
+
+# -- title
+#
+# concrete implementation that fetches the page title
+# from the 'content' of a static page
+#
+
+    ::itcl::body RWStatic::title {language} {
+
+    }
+
 }
 package provide rwstatic 0.1

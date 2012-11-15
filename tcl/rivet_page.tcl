@@ -22,7 +22,7 @@
 # we run metadata hooks for variable that have to be extracted to control the
 # display of our template
 
-$::rivetweb::pmodel metadata_hooks $::rivetweb::current_pmodel $::rivetweb::hooks
+$::rivetweb::current_pmodel metadata_hooks $::rivetweb::hooks
 
 if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
@@ -66,8 +66,8 @@ foreach ds $::rivetweb::datasources {
 array unset html_menu
 foreach pos [dict keys $menu_d] {
     array unset menu_a {}
-#   set menus [$::rivetweb::sitemap menu_list [dict get $menu_d $pos]]
 
+#   set menus [$::rivetweb::sitemap menu_list [dict get $menu_d $pos]]
 #   puts "<pre>--->$pos [dict get $menu_d $pos]</pre>"
 #   puts "<pre>$menus</pre>"
 
@@ -90,8 +90,9 @@ apache_log_error debug "=====> menus: [array names html_menu]"
 
 if {[catch {
 
-    $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks          \
-                                                xmlpostproc                 \
+#  puts "<b>$::rivetweb::current_pmodel</b><br/>"
+   $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks  \
+                                                xmlpostproc         \
                                                 $language
 
 # we finally create HTML out of the xml page so far handled.
@@ -113,24 +114,22 @@ if {[catch {
 
     $::rivetweb::logger log err "Error processing data for page ($e)"
 
-    set pobj [$::rivetweb::pmodel create]
-    $::rivetweb::pmodel put_metadata pobj                       \
-                [list   title   "Error processing XHTML data "  \
-                        menu    [list left main]                \
-                        header  "Error processing XHTML data "]
-
-    $::rivetweb::pmodel set_pagetext pobj $::rivetweb::default_lang "Error creating page<br/><pre>$e</pre>"
+#    set pobj [$::rivetweb::pmodel create postprocerror]
+#    $::rivetweb::pmodel put_metadata pobj                       \
+#                [list   title   "Error processing XHTML data "  \
+#                        menu    [list left main]                \
+#                        header  "Error processing XHTML data "]
+#
+#    $::rivetweb::pmodel set_pagetext pobj $::rivetweb::default_lang "Error creating page<br/><pre>$e</pre>"
 
 # we must assume this is going to be ok...
-
-    set page_vars [$::rivetweb::pmodel content $pobj $language -xml]
-
-    set page_title          [dict get $page_vars title]
-    set page_headline       [dict get $page_vars headline]
-    set page_content_html   [dict get $page_vars pagetext]
-
-    set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
 }
+    
+#set page_vars           [$::rivetweb::pmodel content $pobj $language -xml]
+#set page_title          [dict get $page_vars title]
+#set page_headline       [dict get $page_vars headline]
+#set page_content_html   [dict get $page_vars pagetext]
+#set page_authors [$::rivetweb::current_pmodel metadata author]
 
 headers type "text/html; charset=$::rivetweb::http_encoding"
 

@@ -13,7 +13,7 @@ set hook_descriptor(stage)      metadata
 
 proc extract_ident {pmodel} {
 
-    set ident [$::rivetweb::pmodel metadata $pmodel ident]
+    set ident [$pmodel metadata ident]
 
     if {[regexp {\$Id:\s+[-\w]+\.xml\s+\d*\s+(.*Z)\s+([\.\w]*)\s+\$} $ident match last_modified committer]} {
 
@@ -29,7 +29,6 @@ proc extract_ident {pmodel} {
 # element in a ::rivetweb::ident variable anyway
 
         set ::rivetweb::ident $ident
-
     }
 
     return $pmodel

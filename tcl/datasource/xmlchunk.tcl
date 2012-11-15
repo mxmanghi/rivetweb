@@ -133,9 +133,10 @@ namespace eval ::XMLBase {
             }
         }
 
-        set newpage [RWStatic ::#auto $key]
+        set newpage [::rwpage::RWStatic ::#auto $key]
 #       puts "<br/>[html $metadata_l b u]"
 #       $::rivetweb::pmodel set_metadata newpage $metadata_l
+        dict append menu_d $metadata_l
         $newpage put_metadata $menu_d
         $newpage add_metadata datasource ::XMLBase
 
@@ -195,7 +196,7 @@ namespace eval ::XMLBase {
 #
     proc is_stale {key timereference } {
         
-        set current_timeref [$::rivetweb::datasource time_reference $key]
+        set current_timeref [time_reference $key]
         return [expr $timereference < $current_timeref]
     }
 
@@ -459,9 +460,9 @@ namespace eval ::XMLBase {
         variable sitemap 
 
 #       puts "<br/><b>pmodel</b>: $page"
-#       puts "<br/><b>ds</b>: [$::rivetweb::pmodel metadata $page datasource]"
-        if {[$::rivetweb::pmodel metadata $page datasource] == "::XMLBase"} {
-            set menul [$::rivetweb::pmodel metadata $page menu]
+#       puts "<br/><b>ds</b>: [$page metadata datasource]"
+        if {[$page metadata datasource] == "::XMLBase"} {
+            set menul [$page metadata menu]
         } else {
             set menul [dict create left main]
         }

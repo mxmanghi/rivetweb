@@ -73,6 +73,8 @@ if {[var exists staticroot]} {
 
 if {[var exists lang]} {
     set language [var get lang]
+} elseif {[var exists language]} {
+    set language [var get language]
 } else {
     set language $::rivetweb::default_lang
 }
@@ -97,12 +99,12 @@ if {$page_key ne "index"} {
 # store in ::rivetweb::page_content
 
     set ::rivetweb::page_content $page_key
-    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
+#   set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
 
-#   if {[$::rivetweb::rwebdb is_stale $page_key]} { 
-#       $::rivetweb::logger log info "page $page_key stale: fetching from ds"
-#       set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
-#   }
+    if {[$::rivetweb::rwebdb is_stale $page_key]} { 
+        $::rivetweb::logger log info "page $page_key stale: fetching from ds"
+        set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
+    }
 
     $::rivetweb::logger log info "page_content: $::rivetweb::page_content"
 

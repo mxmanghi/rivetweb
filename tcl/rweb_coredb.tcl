@@ -1,7 +1,9 @@
 # -- rweb_coredb.tcl
 #
 # Rivetweb core db management.
-#
+# Every page reference is stored in a dictionary whose root key is the
+# reference to the page. Each key refers to a second level dictionary
+# bearing information
 #
 
 package require tdom
@@ -58,7 +60,8 @@ namespace eval ::rwebdb {
         if {![check $key]} { return true }
 
         set ts [dict get $sitepages $key timestamp]
-        return [$::rivetweb::datasource is_stale $key $ts]
+        set ds [dict get $sitepages $key datasource]
+        return [$ds is_stale $key $ts]
 
     }
     namespace export is_stale
