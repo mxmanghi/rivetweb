@@ -8,7 +8,7 @@
 
 package require tdom
 package require rwconf
-package require rwpmodel
+package require rwpage
 
 namespace eval ::rwebdb {
 
@@ -166,8 +166,9 @@ namespace eval ::rwebdb {
 
 # something else went wrong, it's a rivetweb internal error
 
-                $::rivetweb::logger log err "Rivetweb internal error: $error_caught ($e)"
-                $::rivetweb::pmodel put_metadata pmodel                                                     \
+                $::rivetweb::logger log err \
+                                    "Rivetweb internal error: $error_caught ($e)"
+                $::rivetweb::pmodel put_metadata pmodel                     \
                                     [list   title       "Error creating page for key $key ($error_caught)"  \
                                             menu        [list left main]                                    \
                                             header      "Error creating page for key $key"]

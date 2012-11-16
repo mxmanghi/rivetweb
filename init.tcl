@@ -18,6 +18,7 @@ apache_log_error notice "auto_path: $auto_path"
 
 source [file join $::rivetweb::site_base site_defs.tcl]
  
+::rivetweb::init Scripted
 ::rivetweb::init XMLBase
 
 cd $website_root

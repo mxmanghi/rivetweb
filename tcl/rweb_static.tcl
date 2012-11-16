@@ -22,8 +22,8 @@ namespace eval ::rwpage {
 
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {language field value} 
-        public method postproc_hooks { hooks_d hooks_class {language ""}}
-#       public method print_content {language}
+        public method postproc_hooks {hooks_d hooks_class {language ""}}
+        public method print_content {language}
         public method languages {}
         public method content {language {fmt -reference}}
         public method to_string {}
@@ -191,11 +191,13 @@ namespace eval ::rwpage {
         }
     }
 
-## -- print_content
-## 
-## 
-#
-#   ::itcl::body RWStatic::print_content {language} { } 
+# -- print_content
+# 
+# 
+
+    ::itcl::body RWStatic::print_content {language} {
+        puts -nonewline [$this content $language -xml]
+    } 
 
 # -- languages
 #
@@ -208,10 +210,7 @@ namespace eval ::rwpage {
 #
 
     ::itcl::body RWStatic::to_string {} { 
-        set buffer [chain]
-
-        append buffer $content
-        return $buffer
+        return [dict merge [chain] $content]
     }
 
 # -- title

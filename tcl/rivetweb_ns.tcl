@@ -164,24 +164,16 @@ namespace eval ::rivetweb {
         $logger log info "rivetweb_root set as $rivetweb_root"
     }
 
-    proc init {dslist} {
-        variable    scripts     
+    proc init {ds} {
         variable    site_base
         variable    datasources
-        variable    menusource
         variable    logger
-        variable    lang
         variable    default_lang
 
-        set datasources $dslist
+        package require $ds
+        lappend datasources ::${ds} 
 
-        foreach ds $datasources {
-            package require $ds
-            lappend datasource_list ::${ds}
-
-            $ds init
-        }
-
+        $ds init
         $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }
 }

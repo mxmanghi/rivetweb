@@ -11,6 +11,7 @@
 package ifneeded XMLData 0.1 [list source [file join $dir tcl/datasource/xmldata.tcl]]
 package ifneeded XMLMenu 1.0 [list source [file join $dir tcl/datasource/xmlmenu.tcl]]
 package ifneeded XMLBase 1.0 [list source [file join $dir tcl/datasource/xmlchunk.tcl]]
+package ifneeded Scripted 1.0 [list source [file join $dir tcl/datasource/rwscripted.tcl]]
 package ifneeded htmlizer 1.0 [list source [file join $dir tcl/htmlizer.tcl]]
 package ifneeded rivetweb 2.0 [list source [file join $dir tcl/rivetweb.tcl]]
 package ifneeded rwconf 2.0 [list source [file join $dir tcl/rivetweb_ns.tcl]]
@@ -23,4 +24,5 @@ package ifneeded rwsitemap 1.0 [list source [file join $dir tcl/sitemap.tcl]]
 package ifneeded rwterm 0.1 [list source [file join $dir tcl/terminal.tcl]]
 package ifneeded rwpage 0.1 [list source [file join $dir tcl/rweb_page.tcl]]
 package ifneeded rwstatic 0.1 [list source [file join $dir tcl/rweb_static.tcl]]
+package ifneeded rwscripted 0.1 [list source [file join $dir tcl/rweb_scripted.tcl]]
 

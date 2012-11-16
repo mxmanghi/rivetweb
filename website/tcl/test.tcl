@@ -7,12 +7,40 @@
 #
 
 namespace eval Test {
-    variable timestamp
+    variable setup_timestamp
+    variable stored_vars
 
-    proc prepare {args} {
-        variable timestamp
+# -- setup
+#
+# this procedure is called when the scripting method is first setup by
+# the framework
 
-        set timestamp [clock format [clock seconds]]
+    proc setup {argsdict} {
+        variable setup_timestamp
+        variable stored_vars
+
+        set stored_vars $argsdict
+        set setup_timestamp [clock seconds]
+    }
+
+# -- prepare
+#
+
+    proc prepare {} {
+        variable stored_vars
+
+        return true       
+    }
+
+
+# -- run
+#
+#
+    proc run {} {
+        variable setup_timestamp
+
+        puts [html "running at [clock format [clock seconds]]" div b]
+        puts [html "created at [clock format $setup_timestamp]" div h4]
     }
 
     namespace export *

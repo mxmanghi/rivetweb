@@ -83,6 +83,7 @@ if {[var exists lang]} {
 # the central point is exactly here: we determine which page we have to display
 #
 
+$::rivetweb::logger log info "datasources: $::rivetweb::datasources"
 set argqs [dict create {*}[var_qs all]] 
 foreach ds $::rivetweb::datasources {
 
@@ -98,12 +99,12 @@ if {$page_key ne "index"} {
 # store in ::rivetweb::page_content
 
     set ::rivetweb::page_content $page_key
-#   set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
+    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
 
-    if {[$::rivetweb::rwebdb is_stale $page_key]} { 
-        $::rivetweb::logger log info "page $page_key stale: fetching from ds"
-        set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
-    }
+#    if {[$::rivetweb::rwebdb is_stale $page_key]} { 
+#        $::rivetweb::logger log info "page $page_key stale: fetching from ds"
+#        set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
+#    }
 
     $::rivetweb::logger log info "page_content: $::rivetweb::page_content"
 

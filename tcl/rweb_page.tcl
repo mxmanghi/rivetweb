@@ -1,4 +1,3 @@
-#
 # -- rweb_page.tcl
 #
 # base class for every page model providing for base
@@ -31,6 +30,7 @@ namespace eval ::rwpage {
         public method destroy {}
         public method to_string {}
         public method title {language}
+        public method headline {language}
     }
 
 # -- add_metadata 
@@ -73,7 +73,7 @@ namespace eval ::rwpage {
 # to always have length > 0 as the default language has to be present
 #
 
-    proc languages { } {
+    ::itcl::body RWPage::languages { } {
         return $::rivetweb::default_lang
     }
 
@@ -149,7 +149,6 @@ namespace eval ::rwpage {
 # 
 # 
     ::itcl::body RWPage::print_content {language} { 
-        puts -nonewline [$this content $language -xml]
     }
 
     proc create {key {class RWStatic}} {
@@ -169,6 +168,14 @@ namespace eval ::rwpage {
 #
 
     ::itcl::body RWPage::title {language} { return "" }
+
+# -- headline
+#
+# I add a 'headline' method for sake of simplicity, but there is
+# no reason to make this a base class method. Better if I imagine
+# a way to add dynamically this rather specific resources
+
+    ::itcl::body RWPage::headline {language} { return "" }
 
     namespace export create
     namespace ensemble create

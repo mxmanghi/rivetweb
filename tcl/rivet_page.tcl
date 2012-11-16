@@ -39,6 +39,7 @@ foreach ds $::rivetweb::datasources {
         dict append menu_d $k [dict get $dsmenu $k]
     }
 }
+
 #puts "<br><b>$menu_d</b>"
 #### set menu_d [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel menu]
 

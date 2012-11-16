@@ -136,7 +136,7 @@ namespace eval ::XMLBase {
         set newpage [::rwpage::RWStatic ::#auto $key]
 #       puts "<br/>[html $metadata_l b u]"
 #       $::rivetweb::pmodel set_metadata newpage $metadata_l
-        dict append menu_d $metadata_l
+        set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
         $newpage put_metadata $menu_d
         $newpage add_metadata datasource ::XMLBase
 

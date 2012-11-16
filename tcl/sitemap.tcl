@@ -20,6 +20,7 @@ namespace eval ::rwsitemap {
         private variable sitemap_tree 
         private variable datasource
         private variable cnt
+        private common   smcnt              0
 
         constructor {ds} {
             set cnt         0
@@ -27,7 +28,7 @@ namespace eval ::rwsitemap {
 # The sitemap structure is implemented by a ::struct::tree Tcl
 # structure
 
-            set sitemap_tree [::struct::tree sitemap]
+            set sitemap_tree [::struct::tree sitemap[incr smcnt]]
 
 # After the sitemap build-up process has completed the 'disconnected' 
 # branch should be empty. We will use this assumption as a check for
