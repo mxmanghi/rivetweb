@@ -38,7 +38,7 @@ namespace eval Test {
 #
     proc run {} {
         variable setup_timestamp
-
+        puts [html [pid] div]
         puts [html "running at [clock format [clock seconds]]" div b]
         puts [html "created at [clock format $setup_timestamp]" div h4]
     }

@@ -25,7 +25,6 @@ namespace eval ::rivetweb {
     variable http_encoding          utf-8
     variable datasources            {}
     variable datasource             ::XMLBase
-    variable menusource             XMLMenu
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
     variable pmodel                 ::rwpmodel

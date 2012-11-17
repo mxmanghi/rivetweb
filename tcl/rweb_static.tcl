@@ -42,7 +42,9 @@ namespace eval ::rwpage {
 
         $page_o appendXML "<${rootel}>$page_text</${rootel}>"
 
-        dict set content $language pagetext $page_dom
+#       dict set content $language pagetext $page_dom
+        $this set_content $language pagetext $page_dom
+
     }
 
 # -- set_content

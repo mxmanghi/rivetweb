@@ -16,7 +16,7 @@ namespace eval ::rwebdb {
 
 # -- check
 #
-# nothing else that checkin if the page associated to the key
+# Checking if the page associated to the key
 # is already in the database
 #
 

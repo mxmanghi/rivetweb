@@ -92,7 +92,7 @@ apache_log_error debug "=====> menus: [array names html_menu]"
 if {[catch {
 
 #  puts "<b>$::rivetweb::current_pmodel</b><br/>"
-   $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks  \
+   $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks   \
                                                 xmlpostproc         \
                                                 $language
 
@@ -115,22 +115,20 @@ if {[catch {
 
     $::rivetweb::logger log err "Error processing data for page ($e)"
 
-#    set pobj [$::rivetweb::pmodel create postprocerror]
-#    $::rivetweb::pmodel put_metadata pobj                       \
-#                [list   title   "Error processing XHTML data "  \
-#                        menu    [list left main]                \
-#                        header  "Error processing XHTML data "]
-#
-#    $::rivetweb::pmodel set_pagetext pobj $::rivetweb::default_lang "Error creating page<br/><pre>$e</pre>"
 
-# we must assume this is going to be ok...
+    if {![$::rivetweb::rwebdb check $rwebdb]} {
+        set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
+        $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
+        $pobj add_metadata header "Postprocessing error"
+        $pobj add_metadata title  "Postprocessing error"
+        $::rivetweb::rwebdb store postproc_hook_error $pobj ""
+    } else {
+
+        set pobj [$::rivetweb::rwebdb fetch postproc_hook_error]
+        set ::rivetweb::current_pmodel $pobj
+
+    }
 }
-    
-#set page_vars           [$::rivetweb::pmodel content $pobj $language -xml]
-#set page_title          [dict get $page_vars title]
-#set page_headline       [dict get $page_vars headline]
-#set page_content_html   [dict get $page_vars pagetext]
-#set page_authors [$::rivetweb::current_pmodel metadata author]
 
 headers type "text/html; charset=$::rivetweb::http_encoding"
 
