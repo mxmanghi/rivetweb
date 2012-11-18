@@ -149,35 +149,43 @@ namespace eval ::rwebdb {
 
             set error_caught $::errorCode
 
-            set pmodel [$::rivetweb::pmodel create $key]
             if {$error_caught == "not_existing"} {
 
 # let's return a conventional page (to be preloaded in the database)
 
-                $::rivetweb::pmodel put_metadata pmodel                     \
-                                    [list   title    "Content not found"    \
-                                            menu     [list left main]       \
-                                            header   "Rivetweb error: content not found"]
-
-                $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang \
-                                                        "Content for $key not found"
-
+                if {[$::rivetweb::rwebdb check not_existing]} {
+                    set pobj [$::rivetweb::rwebdb fetch not_existing]
+                } else {
+                    set pobj [::rwpage::RWStatic ::#auto not_existing]
+                    $pobj add_metadata title    "Content not found"
+                    $pobj add_metadata header   "Rivetweb error: content not found"
+                }
+                
+                $pobj set_pagetext $::rivetweb::default_lang \
+                                                "Content for $key not found"
             } else {
 
 # something else went wrong, it's a rivetweb internal error
 
                 $::rivetweb::logger log err \
                                     "Rivetweb internal error: $error_caught ($e)"
-                $::rivetweb::pmodel put_metadata pmodel                     \
-                                    [list   title       "Error creating page for key $key ($error_caught)"  \
-                                            menu        [list left main]                                    \
-                                            header      "Error creating page for key $key"]
 
-                $::rivetweb::pmodel set_pagetext pmodel $::rivetweb::default_lang                           \
-                                                     "Error creating page for key $key<br /><pre>$e</pre>"
+                if {[$::rivetweb::rwebdb check internal_error]} {
+
+                    set pobj [$::rivetweb::rwebdb fetch internal_error]
+
+                } else {
+
+                    set pobj [::rwpage::RWStatic ::#auto internal_error]
+
+                }
+                $pobj add_metadata title    "Error creating page for key $key ($error_caught)"  \
+                $pobj add_metadata header   "Error creating page for key $key"]
+                $pobj set_pagetext ::rivetweb::default_lang   \
+                                            "Error creating page for key $key<br /><pre>$e</pre>"
 
             }
-
+            set pmodel $pobj
         } else {
 
 # page is stored in the in memory database

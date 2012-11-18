@@ -1,3 +1,4 @@
+#
 # -- rweb_scripted
 #
 # page model for a generic scripted page

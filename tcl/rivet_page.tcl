@@ -116,7 +116,7 @@ if {[catch {
     $::rivetweb::logger log err "Error processing data for page ($e)"
 
 
-    if {![$::rivetweb::rwebdb check $rwebdb]} {
+    if {![$::rivetweb::rwebdb check postproc_hook_error]} {
         set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
         $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
         $pobj add_metadata header "Postprocessing error"

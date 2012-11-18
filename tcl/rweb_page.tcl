@@ -52,7 +52,11 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::set_metadata {mdlist} {
 
-        dict set metadata [eval dict create $mdlist]
+        while {[llength $mdlist] > 1} {
+
+            set mdlist [lassign $mdlist key value]
+            dict set metadata $key $value
+        }
 
     }
 
