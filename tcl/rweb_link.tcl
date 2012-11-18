@@ -34,7 +34,7 @@ namespace eval ::rwlink {
 #
 # add text and optionally an info for a given language. This method 
 # guarantees the default language has a definition (hopefully the
-# right one.
+# right one).
 #
 #
 
