@@ -1,0 +1,12 @@
+
+    <table>
+	<?
+	    foreach k [dict keys $::rwebdb::sitepages] {
+		set p [dict get $::rwebdb::sitepages $k]
+		foreach f [dict keys $p] {
+		    puts "<tr><td>$k</td><td>$f</td><td>[dict get $::rwebdb::sitepages $k $f]</td></tr>"
+		}
+	    }
+
+	?>
+    </table>

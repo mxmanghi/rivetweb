@@ -15,11 +15,13 @@ namespace eval ::rwpage {
 
         private variable script
         private variable tclpackage
+	private variable method
 
-        constructor {pagekey scriptcmd {pkg ""}} {RWPage::constructor $pagekey} {
+        constructor {pagekey scriptcmd pmethod {pkg ""}} {RWPage::constructor $pagekey} {
 
             set script      $scriptcmd
             set tclpackage  $pkg
+	    set method	    $pmethod
         }
 
         public method print_content {l}
@@ -27,7 +29,11 @@ namespace eval ::rwpage {
 
     ::itcl::body RWScripted::print_content {language} {
         
-        {*}$script run
+	if {[var exists rvt]} {
+	    $script template [var get rvt]
+	} else {
+	    $script $method
+	}
         
     }
 }

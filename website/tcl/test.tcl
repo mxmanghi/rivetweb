@@ -6,43 +6,33 @@
 #
 #
 
-namespace eval Test {
-    variable setup_timestamp
-    variable stored_vars
+package require Itcl
+package require ScriptBase
 
-# -- setup
-#
-# this procedure is called when the scripting method is first setup by
-# the framework
+::itcl::class Test {
+    inherit ScriptBase
 
-    proc setup {argsdict} {
-        variable setup_timestamp
-        variable stored_vars
+    public method run {}
+    public method dump {}
 
-        set stored_vars $argsdict
-        set setup_timestamp [clock seconds]
-    }
-
-# -- prepare
-#
-
-    proc prepare {} {
-        variable stored_vars
-
-        return true       
-    }
-
+}
 
 # -- run
 #
 #
-    proc run {} {
-        variable setup_timestamp
-        puts [html [pid] div]
-        puts [html "running at [clock format [clock seconds]]" div b]
-        puts [html "created at [clock format $setup_timestamp]" div h4]
-    }
+::itcl::body Test::run {} {
 
-    namespace export *
-    namespace ensemble create
-} 
+    puts [html [pid] div]
+    puts [html "running at [clock format [clock seconds]]" div b]
+    puts [html "created at [clock format $setup_timestamp]" div h4]
+
+}
+
+# -- dump
+#
+#
+
+::itcl::body Test::dump {} {
+    puts "pwd: [pwd]"
+}
+

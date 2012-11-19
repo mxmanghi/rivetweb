@@ -11,18 +11,25 @@ package require rwconf
 package require rwlogger
 package require rwsitemap
 package require rwscripted
+package require ScriptBase
 
 namespace eval ::Scripted {
     variable sitemap
     variable script_path tcl
     variable varsqs
+    variable scriptsdb
 
+# -- init
+#
+#
     proc init {args} {
         variable sitemap
         variable script_path
+	variable scriptsdb
 
         set sitemap     [::rwsitemap::create [namespace current]]
         set script_path [file normalize [file join $::rivetweb::site_base $script_path]]
+	set scriptsdb	[dict create]
 
 # to speed up the development I just load the whole directory of scripts
 # We need to pass to auto loading as soon as the mechanics has been set
@@ -33,14 +40,13 @@ namespace eval ::Scripted {
         foreach script $tclfiles {
             $::rivetweb::logger log notice "sourcing $script"
             source $script
+
+	    set cmdname	    [file rootname [file tail $script]]
+	    set classname   "[namespace current]::[string totitle $cmdname]"
+
+	    dict set scriptsdb $cmdname class	$classname 
+	    dict set scriptsdb $cmdname object	[$classname ::#auto]
         }
-    }
-
-# -- script_ensemble
-
-    proc script_ensemble {key} { 
-        set script_ns [string totitle $key]
-        return "[namespace current]::$script_ns" 
     }
 
 # -- willHandle
@@ -49,6 +55,8 @@ namespace eval ::Scripted {
     proc willHandle {arglist keyvar} {
         variable varsqs
         variable script_path
+	variable scriptsdb
+
         upvar $keyvar key 
 
         set varsqs      [dict create {*}$arglist]
@@ -57,12 +65,13 @@ namespace eval ::Scripted {
 
         if {[dict exists $varsqs f]} {
             set key [dict get $varsqs f]
-            set ensemble [script_ensemble $key]
-            if {[namespace exists $ensemble]} {
+	    if {[dict exists $scriptsdb $key]} {
+
                 $::rivetweb::logger log info    \
-                                    "mapping fun $key ($ensemble) for processing"
+                                    "mapping fun $key ([dict get $scriptsdb $key]) for processing"
                 return -code break -errorcode rw_ok
-            } else {
+
+	    } else {
                 $::rivetweb::logger log err \
                                     "$ensemble namespace not existing"
 
@@ -79,13 +88,23 @@ namespace eval ::Scripted {
 
     proc fetchData {key reassigned_key} {
         variable varsqs
+	variable scriptsdb
+
         upvar $reassigned_key rkey
 
         set rkey $key
+	if {[var exists cmd]} {
+	    set method [var get cmd]
+	} else {
+	    set method "run"
+	}
 
-        set newpage [::rwpage::RWScripted ::#auto $key [script_ensemble $key]]
+	set scriptobj [dict get $scriptsdb $rkey object]
+        $scriptobj setup $varsqs
+
+        set newpage [::rwpage::RWScripted ::#auto $key $scriptobj $method]
         $newpage put_metadata $varsqs
-        [script_ensemble $key] setup $varsqs
+
         return $newpage
     }
 

@@ -13,7 +13,8 @@ $::rivetweb::rwebdb fetch index
 # costruiamo il database in memoria dei template disponibili
 apache_log_error notice "Initializing Apache child [pid], [pwd]"
 
-set templates_dir_list [glob -directory $::rivetweb::base_templates *]
+set templates_dir [file join $::rivetweb::site_base $::rivetweb::base_templates]
+set templates_dir_list [glob -directory $templates_dir *]
 
 foreach template $templates_dir_list {
 

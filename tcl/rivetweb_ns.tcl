@@ -5,11 +5,12 @@
 namespace eval ::rivetweb {
 
 # this must be the local path to the site's document root
-    variable    site_base
-    variable    rivetweb_root
-    variable    scripts     
-    variable    static_pages
-    variable    local_pages	        docs
+    variable site_base
+    variable rivetweb_root
+    variable scripts     
+    variable static_pages
+    variable local_pages	    docs
+    variable website_init	    rivetweb.tcl
 
 # these paths are relative to the DocumentRoot, so we don't need
 # to normalize them
@@ -135,13 +136,13 @@ namespace eval ::rivetweb {
 
 # variable controlling metadata for a new static page creation 
 
-    set metadatatags		        {date author ident keywords}
+    set metadatatags		    {date author ident keywords}
 
 # if any RCS system it should be set here. 
 # Possible values are 'svn' and 'git' or 'none'. Any other string
 # falls back on 'none'
 
-    set versioning_system	        none
+    set versioning_system	    none
 
 # parameters for downloading binary files
 
