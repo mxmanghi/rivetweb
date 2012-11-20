@@ -100,12 +100,11 @@ if {$page_key ne "index"} {
 
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
-    $::rivetweb::current_pmodel prepare $::rivetweb::language [dict create {*}[var_qs all]]
 
-#    if {[$::rivetweb::rwebdb is_stale $page_key]} { 
+#   if {[$::rivetweb::rwebdb is_stale $page_key]} { 
 #        $::rivetweb::logger log info "page $page_key stale: fetching from ds"
 #        set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
-#    }
+#   }
 
     $::rivetweb::logger log info "page_content: $::rivetweb::page_content"
 
@@ -116,5 +115,7 @@ if {$page_key ne "index"} {
     set ::rivetweb::page_content    $::rivetweb::index
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::index]
 }
+
+$::rivetweb::current_pmodel prepare $::rivetweb::language [dict create {*}[var_qs all]]
 
 # vi:shiftwidth=4:softtabstop=4:

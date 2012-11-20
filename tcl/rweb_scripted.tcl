@@ -35,7 +35,7 @@ namespace eval ::rwpage {
             set method "run"
         }
 
-        put_metadata $argsqs
+        $this put_metadata $argsqs
 
     }
 

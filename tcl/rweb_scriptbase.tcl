@@ -11,8 +11,8 @@ package require Itcl
     protected variable stored_vars
 
     constructor {} {
-	set stored_vars		{}
-	set setup_timestamp	[clock seconds]
+        set stored_vars		{}
+        set setup_timestamp	[clock seconds]
     }
     
     public method setup {argsdict} { set stored_vars $argsdict }
