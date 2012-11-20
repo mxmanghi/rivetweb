@@ -25,11 +25,11 @@ namespace eval ::Scripted {
     proc init {args} {
         variable sitemap
         variable script_path
-	variable scriptsdb
+	    variable scriptsdb
 
         set sitemap     [::rwsitemap::create [namespace current]]
         set script_path [file normalize [file join $::rivetweb::site_base $script_path]]
-	set scriptsdb	[dict create]
+	    set scriptsdb	[dict create]
 
 # to speed up the development I just load the whole directory of scripts
 # We need to pass to auto loading as soon as the mechanics has been set
@@ -41,11 +41,11 @@ namespace eval ::Scripted {
             $::rivetweb::logger log notice "sourcing $script"
             source $script
 
-	    set cmdname	    [file rootname [file tail $script]]
-	    set classname   "[namespace current]::[string totitle $cmdname]"
+	        set cmdname	    [file rootname [file tail $script]]
+	        set classname   "[namespace current]::[string totitle $cmdname]"
 
-	    dict set scriptsdb $cmdname class	$classname 
-	    dict set scriptsdb $cmdname object	[$classname ::#auto]
+	        dict set scriptsdb $cmdname class	$classname 
+	        dict set scriptsdb $cmdname object	[$classname ::#auto]
         }
     }
 
@@ -55,7 +55,7 @@ namespace eval ::Scripted {
     proc willHandle {arglist keyvar} {
         variable varsqs
         variable script_path
-	variable scriptsdb
+	    variable scriptsdb
 
         upvar $keyvar key 
 
@@ -65,15 +65,15 @@ namespace eval ::Scripted {
 
         if {[dict exists $varsqs f]} {
             set key [dict get $varsqs f]
-	    if {[dict exists $scriptsdb $key]} {
+            if {[dict exists $scriptsdb $key]} {
 
                 $::rivetweb::logger log info    \
                                     "mapping fun $key ([dict get $scriptsdb $key]) for processing"
                 return -code break -errorcode rw_ok
 
-	    } else {
+            } else {
                 $::rivetweb::logger log err \
-                                    "$ensemble namespace not existing"
+                                    "'$key' function not existing"
 
             } 
         } 
@@ -88,29 +88,21 @@ namespace eval ::Scripted {
 
     proc fetchData {key reassigned_key} {
         variable varsqs
-	variable scriptsdb
+	    variable scriptsdb
 
         upvar $reassigned_key rkey
 
         set rkey $key
-	if {[var exists cmd]} {
-	    set method [var get cmd]
-	} else {
-	    set method "run"
-	}
-
-	set scriptobj [dict get $scriptsdb $rkey object]
+	    set scriptobj [dict get $scriptsdb $rkey object]
         $scriptobj setup $varsqs
 
-        set newpage [::rwpage::RWScripted ::#auto $key $scriptobj $method]
+        set newpage [::rwpage::RWScripted ::#auto $key $scriptobj]
         $newpage put_metadata $varsqs
 
         return $newpage
     }
 
-    proc is_stale {key timereference } {
-        return false
-    }
+    proc is_stale {key timereference } { return false }
 
     proc menu_list {page} {}
 

@@ -100,6 +100,7 @@ if {$page_key ne "index"} {
 
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
+    $::rivetweb::current_pmodel prepare $::rivetweb::language [dict create {*}[var_qs all]]
 
 #    if {[$::rivetweb::rwebdb is_stale $page_key]} { 
 #        $::rivetweb::logger log info "page $page_key stale: fetching from ds"

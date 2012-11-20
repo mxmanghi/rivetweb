@@ -10,7 +10,7 @@ package require rwlogger
 package require rivetweb
 
 apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
-apache_log_error notice "auto_path: $auto_path"
+#apache_log_error notice "auto_path: $auto_path"
 
 ::rivetweb::setup $rweb_root $website_root 
 

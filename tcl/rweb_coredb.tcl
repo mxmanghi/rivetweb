@@ -79,13 +79,17 @@ namespace eval ::rwebdb {
         if {[check $key]} {
 
 # page was in the database, we hand it on to the client
+
             if {[is_stale $key]} {
+
                 $::rivetweb::logger log info \
                         "page for key '$key' is stale, fetching it"
-
                 set pmodel [fetch_from_source $key]
+
             } else {
+
                 set pmodel [dict get $sitepages $key object]
+
             }
 
         } else {
@@ -93,6 +97,7 @@ namespace eval ::rwebdb {
             set pmodel [fetch_from_source $key]
 
         }
+
         return $pmodel
     }
     namespace export fetch

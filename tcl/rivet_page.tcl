@@ -11,14 +11,6 @@
 # fully qualify variables so to make explicit their role of status variables
 # in the request processing
 
-#if {[$::rivetweb::sitemap has_updates]} {
-#
-#    $::rivetweb::logger log notice "Recreating sitemap from menu data source"
-#    $::rivetweb::sitemap recreate
-#    $::rivetweb::sitemap sitemap_reload
-#
-#}
-
 # we run metadata hooks for variable that have to be extracted to control the
 # display of our template
 
@@ -40,37 +32,13 @@ foreach ds $::rivetweb::datasources {
     }
 }
 
-#puts "<br><b>$menu_d</b>"
-#### set menu_d [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel menu]
-
-# menu_d is actually a dictionary, but a simple one which lists
-# pairs of (position-menu_id)
-
-#array unset page_menu
-#while {[llength $menu_d]} {
-#    set menu_d [lassign $menu_d pos menuid]
-#    lappend page_menu($pos) $menuid
-#    puts $menu_d
-##}
-
-#foreach {pos menuid} $menu_d {
-#    lappend page_menu($pos) [dict get $menu_d $pos]
-#}
-
-#parray page_menu
-
 # html for the menus will go in this array
-
 
 #apache_log_error info "menus for '$page_key': $menu_d"
 
 array unset html_menu
 foreach pos [dict keys $menu_d] {
     array unset menu_a {}
-
-#   set menus [$::rivetweb::sitemap menu_list [dict get $menu_d $pos]]
-#   puts "<pre>--->$pos [dict get $menu_d $pos]</pre>"
-#   puts "<pre>$menus</pre>"
 
     set menus [dict get $menu_d $pos]
     foreach menuobj $menus {
@@ -84,7 +52,6 @@ foreach pos [dict keys $menu_d] {
     }
 
 #   puts "<pre>[escape_sgml_chars $html_menu($pos)]</pre>"
-
 }
 
 apache_log_error debug "=====> menus: [array names html_menu]" 

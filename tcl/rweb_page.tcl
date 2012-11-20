@@ -21,6 +21,7 @@ namespace eval ::rwpage {
         public method add_metadata {field value} 
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
+        public method prepare {language args}
         public method languages { } 
         public method metadata {{key ""}}
         public method dispose { }
@@ -70,6 +71,12 @@ namespace eval ::rwpage {
         set metadata $dictionary       
 
     }
+
+# -- prepare
+#
+#
+# 
+    ::itcl::body RWPage::prepare {language args} { }
 
 # -- languages
 #
