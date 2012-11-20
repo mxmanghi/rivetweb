@@ -19,42 +19,43 @@ $::rivetweb::current_pmodel metadata_hooks $::rivetweb::hooks
 if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
 apache_log_error notice "-> $::rivetweb::current_pmodel"
-catch {unset menu_d}
-set menu_d [dict create]
+
+
+catch {unset ::rivetweb::pagemenus}
+set ::rivetweb::pagemenus [dict create]
 
 foreach ds $::rivetweb::datasources {
 
-#   lappend menu_d [$ds menu_list $::rivetweb::current_pmodel]
+#   lappend ::rivetweb::pagemenus [$ds menu_list $::rivetweb::current_pmodel]
 
     set dsmenu [$ds menu_list $::rivetweb::current_pmodel]
     foreach k [dict keys $dsmenu] {
-        dict append menu_d $k [dict get $dsmenu $k]
+        dict append ::rivetweb::pagemenus $k [dict get $dsmenu $k]
     }
 }
 
 # html for the menus will go in this array
 
-#apache_log_error info "menus for '$page_key': $menu_d"
+#apache_log_error info "menus for '$page_key': $::rivetweb::pagemenus"
 
-array unset html_menu
-foreach pos [dict keys $menu_d] {
-    array unset menu_a {}
-
-    set menus [dict get $menu_d $pos]
-    foreach menuobj $menus {
-
-        append html_menu($pos)                          \
-            [$::rivetweb::htmlizer  html_menu           \
-                                    $menuobj            \
-                                    $language           \
-                                    [dict get $::rivetweb::templates_db $template_key]]
-
-    }
-
+#array unset html_menu
+#foreach pos [dict keys $::rivetweb::pagemenus] {
+#
+#    set menus [dict get $::rivetweb::pagemenus $pos]
+#    foreach menuobj $menus {
+#
+#        append html_menu($pos)                          \
+#            [$::rivetweb::htmlizer  html_menu           \
+#                                    $menuobj            \
+#                                    $language           \
+#                                    [dict get $::rivetweb::templates_db $template_key]]
+#
+#    }
+#
 #   puts "<pre>[escape_sgml_chars $html_menu($pos)]</pre>"
-}
-
-apache_log_error debug "=====> menus: [array names html_menu]" 
+#}
+#
+#apache_log_error debug "=====> menus: [array names html_menu]" 
 
 if {[catch {
 

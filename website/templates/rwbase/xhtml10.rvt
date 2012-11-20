@@ -44,16 +44,17 @@
 
             <div id="sidebar">
                 <ul>
-                    <? if {[string equal $::rivetweb::page_content index] == 1} {
-                     ?>
-                        <!-- li>
-                            <h2>23 Dec 2011</h2>
-                            <p> <a href="<? puts -nonewline [::rivetweb::makeUrl dec23] ?>">Rivetweb website</a></p>
-                        </li -->
-                    <?               
-                    } 
-                    if {[info exists ::rivetweb::html_menu(left)]} { puts $::rivetweb::html_menu(left) } 
-
+                    <? 
+                    if {[dict exists $::rivetweb::pagemenus left]} {
+                        set menus [dict get $::rivetweb::pagemenus left]
+                        foreach menuobj $menus {
+                            puts [$::rivetweb::htmlizer html_menu   \
+                                                        $menuobj    \
+                                                        $::rivetweb::language   \
+                                                        [dict get $::rivetweb::templates_db $::rivetweb::template_key]]
+                        }
+                    }
+                    
                     ?>
                 </ul>
             </div>

@@ -9,8 +9,9 @@ namespace eval ::rivetweb {
     variable rivetweb_root
     variable scripts     
     variable static_pages
-    variable local_pages	    docs
-    variable website_init	    rivetweb.tcl
+    variable local_pages	        docs
+    variable website_init	        rivetweb.tcl
+    variable pagemenus
 
 # these paths are relative to the DocumentRoot, so we don't need
 # to normalize them
