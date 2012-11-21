@@ -54,4 +54,23 @@
             <target>tclwiki</target>
         </link>
     </menu>
+    <menu id="scripts" type="leaf">
+        <title>Scripts</title>
+        <link>
+            <type>scripted</type>
+            <text>Test Script<info>Testing basic scripting in Rivetweb</info></text>
+            <args>
+                <param value="test">f</param>
+            </args>
+        </link>
+        <link>
+            <type>scripted</type>
+            <text>Dump Database<info>Testing basic scripting in Rivetweb</info></text>
+            <args>
+                <param value="test">f</param>
+                <param value="dump">cmd</param>
+                <param value="dump">rvt</param>
+            </args>
+        </link>
+    </menu>
 </sitemenus>

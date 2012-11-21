@@ -125,6 +125,10 @@ namespace eval ::rwpage {
         return $output_buffer
     }
 
+# -- postproc_hook
+#
+#
+
     ::itcl::body RWStatic::postproc_hooks { hooks_d hooks_class {language ""}} {
 
         if {[dict exists $hooks_d $hooks_class]} {

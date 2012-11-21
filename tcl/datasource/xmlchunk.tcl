@@ -331,6 +331,7 @@ namespace eval ::XMLBase {
                     set lref  index
                     set linfo [dict create]
                     set ltext [dict create]
+                    set largs [dict create]
                     set attributes {}
                     foreach linkdata [$l childNodes] {
 
@@ -357,7 +358,14 @@ namespace eval ::XMLBase {
                             }
                             url -
                             reference {
-                                set lref   [$linkdata text]
+                                set lref [$linkdata text]
+                            }
+                            args {
+                                foreach argument [$linkdata getElementsByTagName param] {
+                                    if {[$argument hasAttribute value]} {
+                                        dict set largs [$argument text] [$argument getAttribute value]
+                                    }
+                                }
                             }
                             default {
                                 lappend attributes $tagname [$linkdata text]
@@ -366,7 +374,7 @@ namespace eval ::XMLBase {
                     }
 #                   puts "-> $ltext $linfo"
 
-                    set linkobj [$lm create $ltype $lref $ltext $linfo]
+                    set linkobj [$lm create $ltype $lref $ltext $largs $linfo]
                     $lm set_attribute linkobj $attributes
                     
                     $menumodel add_link menuobj $linkobj

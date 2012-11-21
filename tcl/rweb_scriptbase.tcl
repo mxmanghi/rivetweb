@@ -17,15 +17,15 @@ package require Itcl
     
     public method setup {argsdict} { set stored_vars $argsdict }
     public method prepare {} { return true } 
-    public method template {rvtname}
-    public method run {}
+    public method template {pageobj rvtname}
+    public method run {pageobj}
 }
 
 # -- template
 #
 #
 
-::itcl::body ScriptBase::template {rvtname} {
+::itcl::body ScriptBase::template {pageobj rvtname} {
 
     parse [file join $::rivetweb::site_base rvt "${rvtname}.rvt"]
 
@@ -34,7 +34,7 @@ package require Itcl
 # -- run
 #
 #
-::itcl::body ScriptBase::run {} {
+::itcl::body ScriptBase::run {pageobj} {
     puts "<b>[namespace current]</b>"
 }
 

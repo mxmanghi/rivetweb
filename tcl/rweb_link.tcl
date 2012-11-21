@@ -1,8 +1,7 @@
 #
 # -- rweb_link.tcl
 #
-# Model for a hypertext link. The model accepts
-# any number 
+# Model for a hypertext link. 
 #
 
 package require rwconf
@@ -20,13 +19,18 @@ namespace eval ::rwlink {
 #  .... 
 #
 
-    proc create {link_type reference link_text {link_info ""}} {
+    proc create {link_type reference link_text link_args {link_info ""}} {
         set link_d [dict create type $link_type reference $reference]
 
         dict set link_d text $link_text
         if {[string length $link_info]} {
             dict set link_d info $link_info
-        } 
+        }
+
+# setting arguments dictionary for scripted links
+
+        dict set link_d arguments $link_args
+
         return $link_d
     }
 
@@ -58,6 +62,7 @@ namespace eval ::rwlink {
         }
 
     }
+    namespace export create add_text 
 
 # -- set_attribute, get_attribute: accessors to generic piece
 # of information that other components of Rivetweb might need to
@@ -70,6 +75,7 @@ namespace eval ::rwlink {
             dict set link_o attributes $attribute $attrvalue
         }
     }
+    namespace export set_attribute
 
     proc get_attribute {linkobj attribute} {
 
@@ -80,6 +86,7 @@ namespace eval ::rwlink {
         }
 
     }
+    namespace export get_attribute
 
 # -- link_text. accessor for the text to become the
 # active part of the link. If 'language' is not specified
@@ -93,8 +100,7 @@ namespace eval ::rwlink {
 
         return [dict get $linkmodel text $language]
     }
-
-
+    namespace export link_text
 
 ## -- link_info. The link info is the text to be stored
 # in an attribute 'title'. It will show up as popup when
@@ -114,13 +120,15 @@ namespace eval ::rwlink {
             return ""
         }
     }
+    namespace export link_info
 
-# -- type. Accessor which returs the link type. Possible
+# -- type. Accessor which returns the link type. Possible
 # values are 'internal','external' and 'local'
 
     proc type {linkmodel} {
         return [dict get $linkmodel type]
     }
+    namespace export type
 
 # -- reference. Accessor which returs the hypetext reference
 # the link points to. This parameter is set through the 
@@ -129,9 +137,16 @@ namespace eval ::rwlink {
     proc reference {linkobj} {
         return [dict get $linkobj reference]
     }
+    namespace export reference
 
-    namespace export create add link_text link_info reference type \
-                     set_attribute get_attribute 
+# -- arguments. Returns the arguments dictionary
+#
+
+    proc arguments {linkobj} {
+        return [dict get $linkobj arguments]
+    }
+    namespace export arguments
+
     namespace ensemble create
 }
 

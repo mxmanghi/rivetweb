@@ -15,34 +15,32 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
-
 # -- makeUrl
 #
 # Central method for generating hypetext links pointing to other pages of the 
 # site.
 #
-# References are built accordingly with the mode we are generating a page
+# References are built accordingly to the mode we are generating a page
 # (either static or dynamic). In case the 'lang' or 'reset' parameters are 
 # passed in their values are appended to the local path
-#
 #
 # Arguments:
 #
 #   reference:  a string that works as a key to the page to be generated. 
-#  		A value
-#               'key' maps to 'index.rvt?show=<key>....' in dynamic mode or
-#               to '/static/<key>.html' in static mode. 
 #
 # Returned value:
 #
 #   the URL to the page in relative form.
 #
 
+# 21-11-2012 Rivetweb has gone dynamic. Supporting static links requires every datasource to
+# provide a one-to-one map between keys and set of parameters. 
+
     proc makeUrl {reference} {
 #       puts "generate reference for '$reference' (static = $::rivetweb::static_links)"
 
         if {$::rivetweb::static_links} {
-#           apache_log_error err "static_links flag $::rivetweb::static_links"
+
             if {([string length $reference] == 0) || \
                  [string equal $reference index]}  {
                 if {$::rivetweb::is_homepage} {
@@ -57,6 +55,7 @@ namespace eval ::rivetweb {
                     return ${reference}.html
                 }
             }
+
         } else {
 
             if {[string length $reference] == 0} {
@@ -85,7 +84,6 @@ namespace eval ::rivetweb {
             return $local_ref
         }
     }
-
     namespace export makeUrl
 
 

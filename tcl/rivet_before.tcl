@@ -92,29 +92,9 @@ foreach ds $::rivetweb::datasources {
 
 }
 
-if {$page_key ne "index"} {
-    $::rivetweb::logger log info "processing request for '$page_key'"
-
-# if we are using cached content and requested page is cached we simply
-# store in ::rivetweb::page_content
-
-    set ::rivetweb::page_content $page_key
-    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
-
-#   if {[$::rivetweb::rwebdb is_stale $page_key]} { 
-#        $::rivetweb::logger log info "page $page_key stale: fetching from ds"
-#        set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $page_key]
-#   }
-
-    $::rivetweb::logger log info "page_content: $::rivetweb::page_content"
-
-} else {
-
-# Rivetweb assumes the default page is defined in the ::rivetweb::index variable
-
-    set ::rivetweb::page_content    $::rivetweb::index
-    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::index]
-}
+$::rivetweb::logger log info "processing request for '$page_key'"
+set ::rivetweb::page_content $page_key
+set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
 
 $::rivetweb::current_pmodel prepare $::rivetweb::language [dict create {*}[var_qs all]]
 

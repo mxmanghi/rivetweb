@@ -21,10 +21,13 @@ namespace eval ::rwpage {
 
             set script      $scriptcmd
             set tclpackage  $pkg
+
         }
 
         public method print_content {l}
         public method prepare {language argsqs} 
+        public method title {language}
+        public method headline {language}
     }
 
     ::itcl::body RWScripted::prepare {language argsqs} {
@@ -36,17 +39,34 @@ namespace eval ::rwpage {
         }
 
         $this put_metadata $argsqs
-
+        set do_method "do[string totitle $method]"
+#       puts "do_method -> $do_method"
+        
+        $script $do_method $language $this
     }
 
     ::itcl::body RWScripted::print_content {language} {
         
         if {[var exists rvt]} {
-            $script template [var get rvt]
+            $script template $this [var get rvt]
         } else {
-            $script $method
+            $script $method $this
         }
         
+    }
+
+    ::itcl::body RWScripted::title {language} {
+        return [$this metadata title]
+    }
+
+    ::itcl::body RWScripted::headline {language} {
+
+        set headline [$this metadata headline]
+        if {$headline == ""} {
+            set headline [$this title $language]
+        }
+        return $headline
+
     }
 }
 

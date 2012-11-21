@@ -137,22 +137,31 @@ namespace eval ::htmlizer {
                 $link_o setAttribute target $link_target
             }
 
+            set hrefvalue "#"
             switch [$linkmodel type $link] {
     
                 internal {
-                    $link_o setAttribute \
-                        href [::rivetweb::makeUrl $link_ref]
+                    set hrefvalue [::rivetweb::makeUrl $link_ref]
+                }
+                scripted {
+                    set arguments ""
+                    foreach {param value} [$linkmodel arguments $link] {
+                        lappend arguments "$param=[escape_string $value]" 
+                    }
+                    
+                    set hrefvalue "index.rvt?[join $arguments &]"
                 }
                 external {
-                    $link_o setAttribute href $link_ref
+                    set hrefvalue $link_ref
                 }
                 local {
-                    $link_o setAttribute href \
+                    set hrefvalue  \
                         [file join / $::rivetweb::local_pages $link_ref]
                     
                 }
-
             }
+            
+            $link_o setAttribute href $hrefvalue
         }
 
         set htmlMenu [$menudom asXML]

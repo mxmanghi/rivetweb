@@ -57,6 +57,7 @@ namespace eval ::rwpage {
 
             set mdlist [lassign $mdlist key value]
             dict set metadata $key $value
+
         }
 
     }
@@ -85,7 +86,9 @@ namespace eval ::rwpage {
 #
 
     ::itcl::body RWPage::languages { } {
+
         return $::rivetweb::default_lang
+
     }
 
 
@@ -98,6 +101,7 @@ namespace eval ::rwpage {
 # 
 
     ::itcl::body RWPage::metadata {{key ""}} {
+
         if {$key == "" } {
             return $metadata
         } else {
@@ -109,6 +113,7 @@ namespace eval ::rwpage {
             }
 
         }
+
     }
 
 # -- dispose

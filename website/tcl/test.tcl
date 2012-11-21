@@ -12,15 +12,15 @@ package require ScriptBase
 ::itcl::class Test {
     inherit ScriptBase
 
-    public method run {}
-    public method dump {}
-
+    public method run {pageobj}
+    public method doDump {language pageobj}
+    public method doRun {language pageobj} 
 }
 
 # -- run
 #
 #
-::itcl::body Test::run {} {
+::itcl::body Test::run {pobj} {
 
     puts [html [pid] div]
     puts [html "running at [clock format [clock seconds]]" div b]
@@ -32,7 +32,19 @@ package require ScriptBase
 #
 #
 
-::itcl::body Test::dump {} {
-    puts "pwd: [pwd]"
+::itcl::body Test::doDump {language pageobj} {
+    $pageobj add_metadata title "Running method doDump"
+}
+
+# -- doRun
+#
+#
+
+::itcl::body Test::doRun {language pageobj} {
+
+    if {[catch {$pageobj add_metadata title "Running method doRun"} e]} {
+        puts $e
+    }
+
 }
 
