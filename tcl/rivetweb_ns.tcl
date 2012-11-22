@@ -157,10 +157,10 @@ namespace eval ::rivetweb {
         variable    static_pages
         variable    logger
 
-        set rivetweb_root       [file normalize $rweb_root]
+        set rivetweb_root   [file normalize $rweb_root]
         set scripts	        [file join $rivetweb_root tcl]
-        set site_base           $website_root        
-        set static_pages        [file normalize [file join $site_base pages]]
+        set site_base       $website_root        
+        set static_pages    [file normalize [file join $site_base pages]]
 
         $logger log info "rivetweb_root set as $rivetweb_root"
     }

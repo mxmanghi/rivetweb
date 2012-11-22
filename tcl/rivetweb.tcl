@@ -173,7 +173,7 @@ namespace eval ::rivetweb {
 
     proc makePictsPath {picts_file {style_dir ""}} {
 
-        apache_log_error debug "style $style_dir $::rivetweb::running_picts_path [pwd]"
+        apache_log_error debug "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
 
 # search list for a picts file. 
 #    - We first try in the template's specific dir
@@ -196,11 +196,21 @@ namespace eval ::rivetweb {
         }
 
         set fn [file join   $::rivetweb::site_base  \
-                            $::rivetweb::picts_path \
+                            $::rivetweb::base_templates \
                             $style_dir              \
                             $picts_file]
 
         apache_log_error debug "1 pict file: >$fn<"
+        if {[file exists $fn]} {
+            return [file join $::rivetweb::base_templates $style_dir $picts_file]
+        } 
+
+        set fn [file join   $::rivetweb::site_base  \
+                            $::rivetweb::picts_path \
+                            $style_dir              \
+                            $picts_file]
+
+        apache_log_error debug "2 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::running_picts_path $style_dir $picts_file]
         } 
@@ -209,7 +219,7 @@ namespace eval ::rivetweb {
                             $::rivetweb::picts_path   \
                             $picts_file]
 
-        apache_log_error debug "2 pict file: >$fn<"
+        apache_log_error debug "3 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::running_picts_path $picts_file]
         } 
@@ -219,7 +229,7 @@ namespace eval ::rivetweb {
                             $::rivetweb::default_template   \
                             $picts_file]
 
-        apache_log_error debug "3 pict file: >$fn<"
+        apache_log_error debug "4 pict file: >$fn<"
         return [file join   $::rivetweb::running_picts_path   \
                             $::rivetweb::default_template     \
                             $picts_file]
@@ -300,6 +310,26 @@ namespace eval ::rivetweb {
     }
     namespace export searchPath
 
+# -- build_html_menu 
+#
+#
+
+    proc build_html_menu { pagemenus template_key position } {
+
+        set htmldefs [dict get $::rivetweb::templates_db $template_key]
+        set htmltext ""
+        if {[dict exists $pagemenus $position]} {
+            set menus [dict get $pagemenus $position]
+            foreach menuobj $menus {    
+                append htmltext [$::rivetweb::htmlizer html_menu   \
+                                                    $menuobj    \
+                                                    $::rivetweb::language   \
+                                                    $htmldefs]
+            }
+        }
+        return $htmltext
+    }
+    namespace export build_html_menu
 }
 
 package provide rivetweb 2.0

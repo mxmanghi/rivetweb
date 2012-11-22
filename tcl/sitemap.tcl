@@ -42,6 +42,7 @@ namespace eval ::rwsitemap {
         public method sitemap_reload {} 
         public method add_menu_group {parent_id group_id menuobjs} 
         public method menu_list {group_id} 
+        public method to_string {}
     }
 
 # -- recreate
@@ -86,14 +87,6 @@ namespace eval ::rwsitemap {
 # -- add_menu_group 
 
     ::itcl::body RWSitemap::add_menu_group {parent_id group_id menuobjs} {
-
-        set mm $::rivetweb::menumodel
-
-# we get the menuid from the model so to use it as the node name
-
-#       set menuid      [$mm id $menuobj]
-#       set menuparent  [$mm parent $menuobj]
-#       set index       [$mm index $menuobj]
 
         if {[$sitemap_tree exists $parent_id]} {
 
@@ -190,6 +183,11 @@ namespace eval ::rwsitemap {
         $menu_s destroy
         return $menuobjs
     }
+
+    ::itcl::body RWSitemap::to_string {} {
+        return $sitemap_tree
+    }
+
 
     proc create { ds } {
         return [RWSitemap ::#auto $ds]

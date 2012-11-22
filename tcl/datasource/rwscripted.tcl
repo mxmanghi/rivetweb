@@ -36,7 +36,7 @@ namespace eval ::Scripted {
 # to work
 
         $::rivetweb::logger log notice "loading scripts from $script_path"        
-        set tclfiles [glob -directory $script_path *.tcl]
+        set tclfiles [glob -nocomplain -directory $script_path *.tcl]
         foreach script $tclfiles {
             $::rivetweb::logger log notice "sourcing $script"
             source $script

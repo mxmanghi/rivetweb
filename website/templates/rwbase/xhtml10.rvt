@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<? puts [::rivetweb::contentType] ?>
+    <?= [::rivetweb::contentType] ?>
 
-<title><?= [$::rivetweb::current_pmodel title $::rivetweb::language] ?></title>
-<meta name="keywords" content="" />
-<meta name="description" content="" />
-<link href="<? puts -nonewline $::rivetweb::running_css ?>" rel="stylesheet" type="text/css" media="screen" />
+    <title><?= [$::rivetweb::current_pmodel title $::rivetweb::language] ?></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link href="<?= $::rivetweb::running_css ?>" rel="stylesheet" type="text/css" media="screen" />
 </head>
 <body>
     <div id="wrapper">
@@ -45,17 +45,9 @@
             <div id="sidebar">
                 <ul>
                     <? 
-                    if {[dict exists $::rivetweb::pagemenus left]} {
-                        set menus [dict get $::rivetweb::pagemenus left]
-                        foreach menuobj $menus {
-                            puts [$::rivetweb::htmlizer html_menu   \
-                                                        $menuobj    \
-                                                        $::rivetweb::language   \
-                                                        [dict get $::rivetweb::templates_db $::rivetweb::template_key]]
-                        }
-                    }
-                    
+                        puts [dict keys $::rivetweb::pagemenus]
                     ?>
+                    <?= [::rivetweb::build_html_menu $::rivetweb::pagemenus $::rivetweb::template_key left] ?>
                 </ul>
             </div>
                 <!-- end #sidebar -->
@@ -67,8 +59,7 @@
                     <div class="entry">
                         <?
 
-                            if {[string equal $::rivetweb::page_content index] == 1} {
-                            }
+                            if {[string equal $::rivetweb::page_content index] == 1} { }
                             $::rivetweb::current_pmodel print_content $::rivetweb::language
                             set page_d [$::rivetweb::current_pmodel to_string]
                             puts [html $::rivetweb::current_pmodel div b]

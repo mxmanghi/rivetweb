@@ -21,12 +21,13 @@ source [file join $::rivetweb::site_base site_defs.tcl]
 ::rivetweb::init Scripted
 ::rivetweb::init XMLBase
 
-source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $website_init]} {
     apache_log_error notice "running website specific initialization $website_init"
     source $website_init
 }
+
+source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
 cd $website_root

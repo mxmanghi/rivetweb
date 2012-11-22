@@ -277,11 +277,9 @@ namespace eval ::XMLBase {
         set group_menu_list {}
 
         foreach menu [$sm getElementsByTagName menu] {
-            if {$::rivetweb::debug} {
-                foreach cn [$menu childNodes] {
-                    $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
-                }                            
-            }
+            foreach cn [$menu childNodes] {
+                $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
+            }                            
 
             if {[$menu hasAttribute id]} {
 
@@ -382,6 +380,7 @@ namespace eval ::XMLBase {
             }
             lappend group_menu_list $menuobj
         }
+
         return $group_menu_list
     }
 
@@ -410,20 +409,20 @@ namespace eval ::XMLBase {
         set xmlmenus [glob [file join $sitemap_dir *.xml]]
 
         foreach xmlfile $xmlmenus {
-            $logger log info "reading $xmlfile...."
+            $logger log notice "reading $xmlfile..."
 
             set xml [read_file $xmlfile]
-
             set map [file tail $xmlfile]
             if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
-                $logger log alert "could not parse map $map: $e"
+                $logger log emerg "could not parse map $map: $e"
             }
         }
 
         foreach mdoc [array names xmlmenu] {
-            set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             
             $logger log info "analyzing data for $mdoc...."
+
+            set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             foreach sm $sitemenus {
 
                 if {[$sm hasAttribute id]} {
@@ -433,7 +432,7 @@ namespace eval ::XMLBase {
                     } else {
                         set group_parent    root
                     }
-                    $logger log debug "group parent set as $group_parent"
+                    $logger log notice "group parent for $group_menu_id set as $group_parent"
 
                     switch [$sm hasAttribute class] {
 
@@ -454,12 +453,15 @@ namespace eval ::XMLBase {
                                                     [listStaticMenus $sm $group_parent]
                         }
                     }
+                    
+                    $logger log notice "adding $group_menu_id to $group_parent"
 
                 } else {
 
                     $logger log alert "skipping data from $mdoc, missing menu id"
 
                 }
+                puts stderr [$sitemap_mgr to_string]
             }
         }
     }
