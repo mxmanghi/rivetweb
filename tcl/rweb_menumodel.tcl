@@ -5,28 +5,70 @@
 #
 #
 
+package require Itcl
 package require rwconf
 package require rwlogger
 package require rwlink
 
 namespace eval ::rwmenu {
 
-# -- create <id> ?<parent> none? ?<visibility> normal?
-#
-# 
+    ::itcl::class RWMenu {
+        private variable    menuid
+        private variable    parent
+        private variable    visibility
+        private variable    title
+        private variable    links
+        private variable    attributes
+        private variable    index
 
-    proc create { id {parent none} {visibility normal} } {
+        constructor {id {parent_menu none} {menu_visibility normal}} {
+            set menuid      $id
+            set parent      $parent_menu
+            set visibility  $menu_visibility
+            set title       [dict create]
+            set links       {}
+            set attributes  {}
+            set index       end
+        }
 
-        return  [dict create menuid         $id           \
-                             parent         $parent       \
-                             visibility     $visibility   \
-                             title          [dict create] \
-                             links          {}            \
-                             attributes     {}      \
-                             index          end     \
-                ]
+        private method get_title {language}
+        private method set_title {testo {language ""}}
+
+        public method title {{language ""} {testo ""}}
+        public method parent {}
+        public method index {} 
+        public method attributes {} 
+        public method peek {param} 
+        public method assign {param pvalue args}
+        public method add_link {linkmodel {pos ""}}
+        public method links {}
+        public method id {}
+    }
+
+    ::itcl::body RWMenu::get_title {language} {
+        if {[string length $language] == 0} {
+            set language $::rivetweb::default_lang
+        }
+
+        if {[dict exists $title $language]} {
+            return [dict get $title $language]
+        } else {
+            return [dict get $title $::rivetweb::default_lang]
+        }
+    }
+
+    ::itcl::body RWMenu::set_title {testo {language ""}} {
+        if {[string length $language] == 0} {
+            set language $::rivetweb::default_lang
+        }
+
+        dict set $title $language $testo
+        if {![dict exists $title $::rivetweb::default_lang]} {
+            dict set title $::rivetweb::default_lang $testo
+        }
 
     }
+
 
 # -- title <menuobj> ?language?. 
 #
@@ -34,16 +76,14 @@ namespace eval ::rwmenu {
 # no ?language? parameter is passed then the title
 # for the default language is returned
 
-    proc title {menuobj {language ""}} {
-        if {[string length $language] == 0} {
-            set language $::rivetweb::default_lang
+    ::itcl::body RWMenu::title {{language ""} {testo ""}} {
+
+        if {$testo == ""} { 
+            return [$this get_title $language] 
+        } else {
+            $this set_title $testo $language
         }
 
-        if {[dict exists $menuobj title $language]} {
-            return [dict get $menuobj title $language]
-        } else {
-            return [dict get $menuobj title $::rivetweb::default_lang]
-        }
     }
 
 # -- parent, index, attributes
@@ -57,50 +97,36 @@ namespace eval ::rwmenu {
 #      list of HTML attribute-value pairs.
 #
 
-    proc parent {menumodel} {
-        return [dict get $menumodel parent]
-    }
-
-    proc index {menumodel} {
-        return [dict get $menumodel index]
-    }
-
-    proc attributes {menumodel} {
-        return [dict get $menumodel attributes]
-    }
+    ::itcl::body RWMenu::parent {} { return $parent }
+    ::itcl::body RWMenu::index {} { return $index }
+    ::itcl::body RWMenu::attributes {} { return $attributes }
 
 # -- peek: generic accessor for a custom parameter
 # associated to the menuobj. if the attribute 'param'
 # is not existing in the object an error is raised
 
-    proc peek {menuobj param} {
-        return [dict get $menuobj $param]
+    ::itcl::body RWMenu::peek {param} {
+        return [set $param]
     }
 
 # -- assign: multipurpose method to assign various parameters
 #
 
-    proc assign {parameter menuobj pvalue args} {
-        upvar $menuobj menu_o
+    ::itcl::body RWMenu::assign {parameter pvalue args} {
 
         switch $parameter {
 
             attributes {
-                dict set menu_o attributes $pvalue
+                set attributes $pvalue
             }
             parent {
-                dict set menu_o parent $pvalue
+                set parent $pvalue
             }
             title {
-                set language [lindex $args 0]
+                lassign $args language
 
 # the 'title' parameter expects the argument to be a dictionary
-
-                dict set menu_o title $language $pvalue
-                
-                if {![dict exists $menu_o title $::rivetweb::default_lang]} {
-                    dict set menu_o title $::rivetweb::default_lang $pvalue
-                }
+                set_title $pvalue $language
             }
             index {
                 set index $pvalue             
@@ -111,7 +137,6 @@ namespace eval ::rwmenu {
                 } elseif {[string is integer $index] && ($index < 0)} {
                     set index "end-${index}"
                 }
-                dict set menu_o index $index
             }
             default {
                 $::rivetweb::logger log err "unmanaged parameter $parameter"
@@ -125,29 +150,34 @@ namespace eval ::rwmenu {
 # Adds a link object to the menu
 #
 
-    proc add_link {menuobj linkmodel {position ""}} {
-        upvar $menuobj  menu_o
+    ::itcl::body RWMenu::add_link {linkmodel {position ""}} {
 
-        set     link_list [dict get $menu_o links]
-        lappend link_list $linkmodel
-        dict set menu_o links $link_list
+        lappend links $linkmodel
     }
 
 # -- links
 #
 #
-    proc links {menuobj} {
-        return [dict get $menuobj links]
+    ::itcl::body RWMenu::links {} {
+        return $links 
     }
 
 # -- id 
 #
 #
-    proc id {menuobj} {
-        return [dict get $menuobj menuid]
+    ::itcl::body RWMenu::id {} {
+        return $menuid
     }
 
-    namespace export   *
+
+# -- create <id> ?<parent> none? ?<visibility> normal?
+#
+# 
+    proc create_menu { id {parent none} {visibility normal} } {
+        return [RWMenu ::#auto $id $parent $visibility]
+    }
+
+    namespace export create_menu
     namespace ensemble create
 }
 

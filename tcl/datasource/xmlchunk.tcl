@@ -12,6 +12,8 @@ package require rwlogger
 package require rwsitemap
 package require rwstatic
 package require rwsitemap
+package require rwmenu
+package require struct::stack
 
 # temporary variable names
 #
@@ -59,8 +61,9 @@ namespace eval ::XMLBase {
         set xmlpath [file join $::rivetweb::site_base pages]
 
         set sitemap [::rwsitemap::create ::XMLBase]
-        $sitemap sitemap_reload
+        load_sitemap $sitemap
     }
+    namespace export init
 
 #
 # -- willHandle
@@ -86,6 +89,7 @@ namespace eval ::XMLBase {
 
         return -code $retcode -errorcode $errorcode 
     }
+    namespace export  willHandle
 
 #
 # -- buildPageEntry
@@ -188,6 +192,7 @@ namespace eval ::XMLBase {
         return $file_stat(mtime)
 
     }
+    namespace export time_reference 
 
 # -- is_stale
 #
@@ -199,6 +204,8 @@ namespace eval ::XMLBase {
         set current_timeref [time_reference $key]
         return [expr $timereference < $current_timeref]
     }
+    namespace export is_stale
+
 
 # -- fetchData 
 #
@@ -240,6 +247,8 @@ namespace eval ::XMLBase {
         }
     }
 
+    namespace export fetchData 
+
 # -- synchData
 #
 # I should do something with this and make Rivetweb capable of storing new content
@@ -248,6 +257,7 @@ namespace eval ::XMLBase {
     proc synchData {key data_dict} {
 
     }
+    namespace export synchData 
 
     proc dispose {key} {
 
@@ -260,17 +270,18 @@ namespace eval ::XMLBase {
         file stat $sitemap_dir sitemap_stat
 
         $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
-        if {($sitemap_stat(mtime) > $timestamp)} { 
+        if {($sitemap_stat(mtime) < $timestamp)} { 
 
             return true
         }
 
         return false
     }
+    namespace export has_updates
 
 # -- listStaticMenus
 #
-
+#
     proc listStaticMenus {sm parent_mg} {
         
         set menumodel $::rivetweb::menumodel
@@ -300,9 +311,9 @@ namespace eval ::XMLBase {
                     }
                 }
 
-                set menuobj [$menumodel create  [$menu getAttribute id]     \
-                                                $parent                     \
-                                                $visibility                 ]
+                set menuobj [$menumodel create_menu [$menu getAttribute id]  \
+                                                     $parent                 \
+                                                     $visibility]
 
     # Elements within 'menu' are <title lang="..">...</title> and
     # one or more <link>....</link>
@@ -316,13 +327,13 @@ namespace eval ::XMLBase {
                         set language $::rivetweb::default_lang
                     }
 
-                    $menumodel assign title menuobj [$title text] $language
+                    $menuobj assign title [$title text] $language
                 }
 
-                $menumodel assign parent menuobj $parent_mg
+                $menuobj assign parent $parent_mg
 
                 set links [$menu getElementsByTagName link]
-                set lm    $::rivetweb::linkmodel         
+                set lm    $::rivetweb::linkmodel
                 foreach l $links {
 
                     set ltype internal
@@ -375,7 +386,7 @@ namespace eval ::XMLBase {
                     set linkobj [$lm create $ltype $lref $ltext $largs $linfo]
                     $lm set_attribute linkobj $attributes
                     
-                    $menumodel add_link menuobj $linkobj
+                    $menuobj add_link $linkobj
                 }
             }
             lappend group_menu_list $menuobj
@@ -384,13 +395,13 @@ namespace eval ::XMLBase {
         return $group_menu_list
     }
 
-# -- loadsitemap
+# -- load_sitemap
 #
 # Must call the sitemap manager methods to build (update) a sitemap 
 #
 #
 
-    proc loadsitemap {sitemap_mgr {ctx ""}} {
+    proc load_sitemap {sitemap_mgr {ctx ""}} {
         variable sitemap_dir
         variable sitemap_stat
         variable timestamp
@@ -422,37 +433,19 @@ namespace eval ::XMLBase {
             
             $logger log info "analyzing data for $mdoc...."
 
-            set sitemenus   [$xmlmenu($mdoc) getElementsByTagName sitemenus]
+            set sitemenus [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             foreach sm $sitemenus {
 
                 if {[$sm hasAttribute id]} {
+
                     set group_menu_id       [$sm getAttribute id]
                     if {[$sm hasAttribute parent]} {
                         set group_parent    [$sm getAttribute parent]
                     } else {
                         set group_parent    root
                     }
-                    $logger log notice "group parent for $group_menu_id set as $group_parent"
-
-                    switch [$sm hasAttribute class] {
-
-                        dynamic {
-                            set functor [lindex [$sm getElementsByTagName functor] 0]
-                            set functor [$functor text]
-
-                            if {[catch {
-                                $sitemap_mgr add_menu_group $group_parent $group_menu_id \
-                                                            [${functor}::loadSiteMap $sm $group_parent]
-                            } e]} {
-                                $logger log err "dynamic menu error for functor $functor: $e"
-                            } 
-                        }                       
-
-                        default {
-                            $sitemap_mgr add_menu_group $group_parent $group_menu_id \
+                    $sitemap_mgr add_menu_group $group_parent $group_menu_id \
                                                     [listStaticMenus $sm $group_parent]
-                        }
-                    }
                     
                     $logger log notice "adding $group_menu_id to $group_parent"
 
@@ -461,16 +454,21 @@ namespace eval ::XMLBase {
                     $logger log alert "skipping data from $mdoc, missing menu id"
 
                 }
-                puts stderr [$sitemap_mgr to_string]
             }
         }
     }
+    namespace export load_sitemap
+
+# -- menu_list
+#
+#
 
     proc menu_list {page} {
         variable sitemap 
 
 #       puts "<br/><b>pmodel</b>: $page"
 #       puts "<br/><b>ds</b>: [$page metadata datasource]"
+
         if {[$page metadata datasource] == "::XMLBase"} {
             set menul [$page metadata menu]
         } else {
@@ -489,10 +487,8 @@ namespace eval ::XMLBase {
 
         return $menudb
     }
-
-    namespace export init fetchData synchData time_reference is_stale
-    namespace export loadsitemap init has_updates willHandle
     namespace export menu_list
+
     namespace ensemble create
 }
 

@@ -20,7 +20,6 @@ if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
 apache_log_error notice "-> $::rivetweb::current_pmodel"
 
-
 catch {unset ::rivetweb::pagemenus}
 set ::rivetweb::pagemenus [dict create]
 
@@ -35,9 +34,8 @@ foreach ds $::rivetweb::datasources {
 }
 
 # html for the menus will go in this array
-
+#
 #apache_log_error info "menus for '$page_key': $::rivetweb::pagemenus"
-
 #array unset html_menu
 #foreach pos [dict keys $::rivetweb::pagemenus] {
 #

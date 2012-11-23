@@ -73,7 +73,6 @@ namespace eval ::htmlizer {
         set item_tag        [lindex $item_html 0]
         set item_class      [lindex $item_html 1]
 
-        set menumodel   $::rivetweb::menumodel
         set linkmodel   $::rivetweb::linkmodel
 
 # we create the HTML menu dom
@@ -81,7 +80,7 @@ namespace eval ::htmlizer {
         set menudom [dom createDocument $menu_tag]
         set htmlmenu_o [$menudom documentElement]
 
-        eval $htmlmenu_o setAttribute id [$menumodel id $menuobj]       
+        eval $htmlmenu_o setAttribute id [$menuobj id]       
         if {[string length $menu_class]} { 
             eval $htmlmenu_o setAttribute class $menu_class 
         }
@@ -90,7 +89,7 @@ namespace eval ::htmlizer {
 
 # let's get the title to be printed as header for the menu
 
-        set menu_title [$menumodel title $menuobj $language]
+        set menu_title [$menuobj title $language]
         if {[string length $menu_title] > 0} {
             set title_dom [$menudom createElement $title_tag]
             if {[string length $title_class]} {
@@ -111,7 +110,8 @@ namespace eval ::htmlizer {
 
 # and finally we create a node for each link in the menu
         
-        set links [$menumodel links $menuobj]
+        set links [$menuobj links]
+
         foreach link $links {
             set item_o [$menudom createElement $item_tag]
             if {[string length $link_class]} {
