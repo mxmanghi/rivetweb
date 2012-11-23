@@ -11,6 +11,8 @@ namespace eval ::rivetweb {
     variable static_pages
     variable local_pages	        docs
     variable website_init	        rivetweb.tcl
+    variable site_before_script     ""
+    variable default_menu           main
     variable pagemenus
 
 # these paths are relative to the DocumentRoot, so we don't need
@@ -156,11 +158,17 @@ namespace eval ::rivetweb {
         variable    site_base
         variable    static_pages
         variable    logger
+        variable    site_before_script
 
         set rivetweb_root   [file normalize $rweb_root]
         set scripts	        [file join $rivetweb_root tcl]
         set site_base       $website_root        
         set static_pages    [file normalize [file join $site_base pages]]
+        
+        set site_before_script [file normalize [file join $site_base before.tcl]]
+        if {![file exists $site_before_script]} {
+            set site_before_script ""
+        }
 
         $logger log info "rivetweb_root set as $rivetweb_root"
     }

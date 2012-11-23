@@ -4,14 +4,13 @@
 #
 
 package require Itcl
+package require rwmenu
 
 ::itcl::class ScriptBase {
     
     protected variable setup_timestamp
-    protected variable stored_vars
 
     constructor {} {
-        set stored_vars		{}
         set setup_timestamp	[clock seconds]
     }
     
@@ -19,6 +18,7 @@ package require Itcl
     public method prepare {} { return true } 
     public method template {pageobj rvtname}
     public method run {pageobj}
+    public method menu_list {page} { return {} }
 }
 
 # -- template
@@ -26,9 +26,7 @@ package require Itcl
 #
 
 ::itcl::body ScriptBase::template {pageobj rvtname} {
-
     parse [file join $::rivetweb::site_base rvt "${rvtname}.rvt"]
-
 }
 
 # -- run

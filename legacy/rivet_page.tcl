@@ -33,49 +33,11 @@ foreach ds $::rivetweb::datasources {
     }
 }
 
-# html for the menus will go in this array
-#
-#apache_log_error info "menus for '$page_key': $::rivetweb::pagemenus"
-#array unset html_menu
-#foreach pos [dict keys $::rivetweb::pagemenus] {
-#
-#    set menus [dict get $::rivetweb::pagemenus $pos]
-#    foreach menuobj $menus {
-#
-#        append html_menu($pos)                          \
-#            [$::rivetweb::htmlizer  html_menu           \
-#                                    $menuobj            \
-#                                    $language           \
-#                                    [dict get $::rivetweb::templates_db $template_key]]
-#
-#    }
-#
-#   puts "<pre>[escape_sgml_chars $html_menu($pos)]</pre>"
-#}
-#
-#apache_log_error debug "=====> menus: [array names html_menu]" 
-
 if {[catch {
 
-#  puts "<b>$::rivetweb::current_pmodel</b><br/>"
    $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks   \
                                                 xmlpostproc         \
                                                 $language
-
-# we finally create HTML out of the xml page so far handled.
-
-## content and language had been already selected within the 
-## ::rivetweb::pmodel page model manager
-
-##    set page_vars [$::rivetweb::current_pmodel content $language -xml]
-##
-##    set page_title          [dict get $page_vars title]
-##    set page_headline       [dict get $page_vars headline]
-##    set page_content_html   [dict get $page_vars pagetext]
-##
-##   set page_authors [$::rivetweb::pmodel metadata $::rivetweb::current_pmodel author]
-##
-##    puts "<b>$::rivetweb::current_pmodel</b>"
 
 } e]} {
 

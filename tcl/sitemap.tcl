@@ -117,7 +117,6 @@ namespace eval ::rwsitemap {
 
         set disconnected [$sitemap_tree children disconnected]
         foreach dmenu $disconnected {
-#           set dmenu [eval set dmenu]
             $::rivetweb::logger log debug "$i: $group_id $dmenu"
 #           set menu_group [$sitemap get disconnected $dmenu]
             set menu_group $dmenu
@@ -128,6 +127,8 @@ namespace eval ::rwsitemap {
                 $sitemap_tree unset $menu_group parent
             }
         }
+
+#       apache_log_error notice "sitemap ---> [$sitemap_tree nodes]"
     }
 
 # -- menu_list: walks the tree of menus and returns a list of menu objs

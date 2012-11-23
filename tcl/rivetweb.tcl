@@ -86,6 +86,21 @@ namespace eval ::rivetweb {
     }
     namespace export makeUrl
 
+# -- composeUrl
+#
+#
+    proc composeUrl {args} {
+
+        set arglist $args
+        set urlargs {}
+        while {[llength $arglist]} {
+            set arglist [lassign $arglist param value]
+            lappend urlargs "$param=[escape_string $value]"
+        }
+        return "[env SCRIPT_NAME]?[join $urlargs "&"]"
+    }
+    namespace export composeUrl
+
 
 # -- buildSimplePage 
 #

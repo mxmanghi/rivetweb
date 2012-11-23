@@ -34,6 +34,7 @@ namespace eval ::rwmenu {
         private method get_title {language}
         private method set_title {testo {language ""}}
 
+        public method destroy {} { ::itcl::delete object $this }
         public method title {{language ""} {testo ""}}
         public method parent {}
         public method index {} 
@@ -68,7 +69,6 @@ namespace eval ::rwmenu {
         }
 
     }
-
 
 # -- title <menuobj> ?language?. 
 #
@@ -151,7 +151,6 @@ namespace eval ::rwmenu {
 #
 
     ::itcl::body RWMenu::add_link {linkmodel {position ""}} {
-
         lappend links $linkmodel
     }
 

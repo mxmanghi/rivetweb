@@ -84,11 +84,11 @@ if {[var exists lang]} {
 #
 
 $::rivetweb::logger log info "datasources: $::rivetweb::datasources"
-set argqs [dict create {*}[var_qs all]] 
+set argsqs [dict create {*}[var_qs all]] 
 foreach ds $::rivetweb::datasources {
 
     set ::rivetweb::datasource $ds
-    $ds willHandle $argqs page_key 
+    $ds willHandle $argsqs page_key 
 
 }
 
@@ -96,6 +96,6 @@ $::rivetweb::logger log info "processing request for '$page_key'"
 set ::rivetweb::page_content $page_key
 set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
 
-$::rivetweb::current_pmodel prepare $::rivetweb::language [dict create {*}[var_qs all]]
+$::rivetweb::current_pmodel prepare $::rivetweb::language $argsqs
 
 # vi:shiftwidth=4:softtabstop=4:

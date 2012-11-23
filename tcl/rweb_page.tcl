@@ -11,10 +11,12 @@ namespace eval ::rwpage {
     ::itcl::class RWPage {
         private variable metadata
         private variable key
+        private variable stored_vars
 
         constructor {pagekey} {
             set key $pagekey
             set metadata [dict create]
+            set stored_vars [dict create]
         }
 
         public method key {} { return $key }
@@ -32,6 +34,18 @@ namespace eval ::rwpage {
         public method to_string {}
         public method title {language}
         public method headline {language}
+        public method store {var value} { dict set stored_vars $var $value }
+        public method recall {var {defvar value}} {
+            upvar 1 $defvar retvalue
+ 
+            if {[dict exists $stored_vars $var]} {
+                set retvalue [dict get $stored_vars $var]
+                return true
+            } else {
+                set retvalue ""
+                return false
+            }
+        }
     }
 
 # -- add_metadata 
@@ -77,7 +91,7 @@ namespace eval ::rwpage {
 #
 #
 # 
-    ::itcl::body RWPage::prepare {language args} { }
+    ::itcl::body RWPage::prepare {language argsqs} { set stored_vars $argsqs }
 
 # -- languages
 #

@@ -11,6 +11,7 @@ package require rwconf
 package require rwlogger
 package require rwsitemap
 package require rwscripted
+package require rwmenu
 package require ScriptBase
 
 namespace eval ::Scripted {
@@ -104,7 +105,18 @@ namespace eval ::Scripted {
 
     proc is_stale {key timereference } { return false }
 
-    proc menu_list {page} {}
+    proc menu_list {page} { 
+        variable scriptsdb
+
+        set menudb [dict create]
+        foreach script [dict keys $scriptsdb] {
+            set scriptobj [dict get $scriptsdb $script object]
+            set menul [$scriptobj menu_list $page]
+            if {[llength $menul]} { dict set menudb {*}$menul }
+        }
+
+        return $menudb
+    }
 
     namespace export *
     namespace ensemble create

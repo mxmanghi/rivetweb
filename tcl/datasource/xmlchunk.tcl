@@ -472,7 +472,7 @@ namespace eval ::XMLBase {
         if {[$page metadata datasource] == "::XMLBase"} {
             set menul [$page metadata menu]
         } else {
-            set menul [dict create left main]
+            set menul [dict create left $::rivetweb::default_menu]
         }
 
         set menudb [dict create]

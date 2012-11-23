@@ -15,7 +15,7 @@ namespace eval ::rwpage {
 
         private variable script
         private variable tclpackage
-        private variable method
+        private variable do_method
 
         constructor {pagekey scriptcmd {pkg ""}} {RWPage::constructor $pagekey} {
 
@@ -26,37 +26,43 @@ namespace eval ::rwpage {
 
         public method print_content {l}
         public method prepare {language argsqs} 
-        public method title {language}
+        public method title {language {titletxt ""}}
         public method headline {language}
     }
 
     ::itcl::body RWScripted::prepare {language argsqs} {
+        RWPage::prepare $language $argsqs
 
-        if {[var exists cmd]} {
-            set method [var get cmd]
+        if {[$this recall cmd cmd]} {
+            set method $cmd
         } else {
             set method "run"
         }
 
-        $this put_metadata $argsqs
         set do_method "do[string totitle $method]"
-#       puts "do_method -> $do_method"
+        puts "<div style=\"background: #aaf\">do_method -> $do_method</div>"
         
         $script $do_method $language $this
     }
 
     ::itcl::body RWScripted::print_content {language} {
         
-        if {[var exists rvt]} {
-            $script template $this [var get rvt]
-        } else {
-            $script $method $this
+        if {[$this recall rvt rvtfile]} {
+            $script template $this $rvtfile
+        } elseif {[$this recall tcl method]} {
+            $script $method $language $this
         }
         
     }
 
-    ::itcl::body RWScripted::title {language} {
-        return [$this metadata title]
+    ::itcl::body RWScripted::title {language {titletxt ""}} {
+
+        if {$titletxt == ""} {
+            return [$this metadata title]
+        } else {
+            $this add_metadata title $titletxt
+        }
+
     }
 
     ::itcl::body RWScripted::headline {language} {

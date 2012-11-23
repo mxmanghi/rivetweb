@@ -44,9 +44,6 @@
 
             <div id="sidebar">
                 <ul>
-                    <? 
-                        puts [dict keys $::rivetweb::pagemenus]
-                    ?>
                     <?= [::rivetweb::build_html_menu $::rivetweb::pagemenus $::rivetweb::template_key left] ?>
                 </ul>
             </div>
