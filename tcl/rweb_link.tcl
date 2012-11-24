@@ -22,7 +22,7 @@ namespace eval ::rwlink {
     proc create {link_type reference link_text link_args {link_info ""}} {
         set link_d [dict create type $link_type reference $reference]
 
-        dict set link_d text $link_text
+        dict set link_d text $::rivetweb::default_lang $link_text 
         if {[string length $link_info]} {
             dict set link_d info $link_info
         }

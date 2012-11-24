@@ -143,13 +143,23 @@ namespace eval ::rivetweb {
 
     foreach ds $::rivetweb::datasources {
 
-#   lappend ::rivetweb::pagemenus [$ds menu_list $::rivetweb::current_pmodel]
-        apache_log_error notice "getting menus from $ds"
+#       lappend ::rivetweb::pagemenus [$ds menu_list $::rivetweb::current_pmodel]
         set dsmenu [$ds menu_list $::rivetweb::current_pmodel]
+        apache_log_error notice "got $dsmenu from $ds"
         foreach k [dict keys $dsmenu] {
-            dict append ::rivetweb::pagemenus $k [dict get $dsmenu $k]
+
+            if {[dict exists $::rivetweb::pagemenus $k]} {
+                set m [concat [dict get $::rivetweb::pagemenus $k] [dict get $dsmenu $k]]
+            } else {
+                set m [dict get $dsmenu $k]
+            }
+
+            dict set ::rivetweb::pagemenus $k $m
         }
+
     }
+
+    apache_log_error notice "menu database $::rivetweb::pagemenus"
 
     if {[catch {
 
