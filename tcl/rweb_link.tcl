@@ -22,10 +22,18 @@ namespace eval ::rwlink {
     proc create {link_type reference link_text link_args {link_info ""}} {
         set link_d [dict create type $link_type reference $reference]
 
-        dict set link_d text $::rivetweb::default_lang $link_text 
-        if {[string length $link_info]} {
-            dict set link_d info $link_info
+        apache_log_error notice "<--- $link_text - ($link_info)<br/>"
+
+        foreach l [dict keys $link_text] {
+            set l_info ""
+            if {$link_info != ""} {
+                if {[dict exists $link_info $l]} {
+                    set l_info [dict get $link_info $l]
+                } 
+            }
+            add_text link_d $l [dict get $link_text $l] $l_info
         }
+
 
 # setting arguments dictionary for scripted links
 

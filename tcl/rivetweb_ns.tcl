@@ -168,9 +168,11 @@ namespace eval ::rivetweb {
         set site_before_script [file normalize [file join $site_base before.tcl]]
         if {![file exists $site_before_script]} {
             set site_before_script ""
+        } else {
+            apache_log_error notice "website specific request script $site_before_script"
         }
 
-        $logger log info "rivetweb_root set as $rivetweb_root"
+        apache_log_error notice "rivetweb_root set as $rivetweb_root"
     }
 
     proc init {ds} {

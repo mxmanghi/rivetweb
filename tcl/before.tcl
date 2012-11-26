@@ -108,6 +108,13 @@ namespace eval ::rivetweb {
 
     }
 
+# specific 'before' script
+
+    apache_log_error notice "running specific 'before' script >$::rivetweb::site_before_script<"
+    if {$::rivetweb::site_before_script != ""} { 
+        source $::rivetweb::site_before_script
+    }
+
     $::rivetweb::logger log info "processing request for '$page_key'"
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
@@ -185,11 +192,5 @@ namespace eval ::rivetweb {
     }
 
     headers type "text/html; charset=$::rivetweb::http_encoding"
-    
-    if {$::rivetweb::site_before_script != ""} { 
-        
-        source $site_before_script
-
-    }
 
 }
