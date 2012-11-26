@@ -43,13 +43,14 @@ namespace eval ::Scripted {
             catch {array unset rwdescriptor}
             source $script
 
-            set cmdname	[file rootname [file tail $script]]
             if {[info exists rwdescriptor(classname)]} { 
-                set classname "[namespace current]::$rwdescriptor(classname)"
+                set cmdname $rwdescriptor(classname)
             } else {
-                set classname "[namespace current]::[string totitle $cmdname]"
+                set cmdname	[file rootname [file tail $script]]
             }
-	        dict set scriptsdb $cmdname class	$classname 
+            set classname "[namespace current]::[string totitle $cmdname]"
+	        
+            dict set scriptsdb $cmdname class	$classname 
 	        dict set scriptsdb $cmdname object	[$classname ::#auto]
         }
     }

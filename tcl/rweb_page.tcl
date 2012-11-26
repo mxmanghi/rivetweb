@@ -37,7 +37,7 @@ namespace eval ::rwpage {
         public method store {var value} { dict set stored_vars $var $value }
         public method recall {var {defvar value}} {
             upvar 1 $defvar retvalue
- 
+            # puts "--> $stored_vars<br/>"
             if {[dict exists $stored_vars $var]} {
                 set retvalue [dict get $stored_vars $var]
                 return true

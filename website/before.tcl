@@ -7,6 +7,5 @@
 
 ### custom request preprocessing has appear here below
 
-set page_title [$::rivetweb::current_pmodel title $::rivetweb::language]
 
 
