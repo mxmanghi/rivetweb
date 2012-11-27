@@ -91,7 +91,10 @@ namespace eval ::rwpage {
 #
 #
 # 
-    ::itcl::body RWPage::prepare {language argsqs} { set stored_vars $argsqs }
+    ::itcl::body RWPage::prepare {language argsqs} { 
+        set stored_vars $argsqs 
+        return $this
+    }
 
 # -- languages
 #

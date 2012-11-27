@@ -119,7 +119,7 @@ namespace eval ::rivetweb {
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
 
-    $::rivetweb::current_pmodel prepare $::rivetweb::language $argsqs
+    set ::rivetweb::current_pmodel [$::rivetweb::current_pmodel prepare $::rivetweb::language $argsqs]
 
 # vi:shiftwidth=4:softtabstop=4:
 
