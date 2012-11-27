@@ -39,7 +39,9 @@ package require rwmenu
 #
 #
 ::itcl::body ScriptBase::error_descriptor {code args} {
-    set d [dict create -errorcode $code {*}args]
+    set d [dict create -errorcode $code]
+
+    foreach {par val} $args { dict set d $par $val }
 
     return $d
 }

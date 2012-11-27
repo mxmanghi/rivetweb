@@ -50,7 +50,7 @@ namespace eval ::rwpage {
                 $pobj set_pagetext $::rivetweb::default_lang "$e: $opts"
                 $pobj add_metadata header "[string range $e 0 20]..."
                 $pobj add_metadata title  "[string range $e 0 20]..."
-                $::rivetweb::rwebdb store $errorCode $pobj ""
+                $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
 
             } else {
 

@@ -19,7 +19,7 @@ source [file join $::rivetweb::site_base site_defs.tcl]
  
 ::rivetweb::init Scripted
 ::rivetweb::init XMLBase
-
+::rivetweb::init RWDummy
 
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $website_init]} {

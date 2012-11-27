@@ -117,7 +117,7 @@ namespace eval ::Scripted {
         foreach script [dict keys $scriptsdb] {
             set scriptobj [dict get $scriptsdb $script object]
             set menul [$scriptobj menu_list $page]
-            if {[llength $menul]} { dict append menudb {*}$menul }
+            if {[llength $menul]} { dict lappend menudb {*}$menul }
         }
 
         puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"

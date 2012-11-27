@@ -42,7 +42,10 @@ namespace eval ::rwpage {
 
         $page_o appendXML "<${rootel}>$page_text</${rootel}>"
 
-#       dict set content $language pagetext $page_dom
+        if {![catch {set pageref [$this content $language]} e]} {
+            [dict get $pageref pagetext] delete
+        }
+
         $this set_content $language pagetext $page_dom
 
     }

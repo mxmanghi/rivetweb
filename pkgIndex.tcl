@@ -26,5 +26,5 @@ package ifneeded rwpage 0.1 [list source [file join $dir tcl/rweb_page.tcl]]
 package ifneeded rwstatic 0.1 [list source [file join $dir tcl/rweb_static.tcl]]
 package ifneeded rwscripted 0.1 [list source [file join $dir tcl/rweb_scripted.tcl]]
 package ifneeded ScriptBase 0.1 [list source [file join $dir tcl/rweb_scriptbase.tcl]]
-
+package ifneeded RWDummy 1.0 [list source [file join $dir tcl/datasource/dummy.tcl]]
 
