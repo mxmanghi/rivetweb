@@ -15,6 +15,7 @@ package require ScriptBase
     public method run {pageobj}
     public method doDump {language pageobj}
     public method doRun {language pageobj} 
+    public method doError {language pageobj}
 }
 
 # -- run
@@ -45,6 +46,20 @@ package require ScriptBase
     if {[catch {$pageobj add_metadata title "Running method doRun"} e]} {
         puts $e
     }
+
+}
+
+# -- doError
+#
+# testing error from page elaboration
+#
+
+::itcl::body Test::doError {language pageobj} {
+    
+    return  -code error -options    [$this error_descriptor errore_generico \
+                        -par1       "param 1"   \
+                        -par2       "param 2"   \
+                        -par3       "param 3"] "error message"
 
 }
 

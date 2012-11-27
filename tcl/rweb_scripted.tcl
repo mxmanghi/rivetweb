@@ -42,21 +42,22 @@ namespace eval ::rwpage {
         set do_method "do[string totitle $method]"
         puts "<div style=\"background: #aaf\">do_method -> $do_method</div>"
         
-        if {[catch {$script $do_method $language $this} e]} {
+        if {[catch {$script $do_method $language $this} e opts]} {
+            set errorCode [dict get $opts -errorcode]
             if {![$::rivetweb::rwebdb check $errorCode]} {
 
                 set pobj [::rwpage::RWStatic ::#auto $errorCode]
-                $pobj set_pagetext $::rivetweb::default_lang $errorInfo
-                $pobj add_metadata header "[string range $errorInfo 0 20]..."
-                $pobj add_metadata title  "[string range $errorInfo 0 20]..."
+                $pobj set_pagetext $::rivetweb::default_lang "$e: $opts"
+                $pobj add_metadata header "[string range $e 0 20]..."
+                $pobj add_metadata title  "[string range $e 0 20]..."
                 $::rivetweb::rwebdb store $errorCode $pobj ""
 
             } else {
 
                 set pobj [$::rivetweb::rwebdb fetch $errorCode]
-                $pobj set_pagetext $::rivetweb::default_lang $errorInfo
-                $pobj add_metadata header "[string range $errorInfo 0 20]..."
-                $pobj add_metadata title  "[string range $errorInfo 0 20]..."
+                $pobj set_pagetext $::rivetweb::default_lang "$e $opts"
+                $pobj add_metadata header "[string range $e 0 20]..."
+                $pobj add_metadata title  "[string range $e 0 20]..."
 
             }
 

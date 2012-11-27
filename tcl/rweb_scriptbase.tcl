@@ -13,7 +13,7 @@ package require rwmenu
     constructor {} {
         set setup_timestamp	[clock seconds]
     }
-    
+    protected method error_descriptor {code args}
     public method setup {argsdict} { set stored_vars $argsdict }
     public method prepare {} { return true } 
     public method template {pageobj rvtname}
@@ -24,7 +24,6 @@ package require rwmenu
 # -- template
 #
 #
-
 ::itcl::body ScriptBase::template {pageobj rvtname} {
     parse [file join $::rivetweb::site_base rvt "${rvtname}.rvt"]
 }
@@ -34,6 +33,15 @@ package require rwmenu
 #
 ::itcl::body ScriptBase::run {pageobj} {
     puts "<b>[namespace current]</b>"
+}
+
+# -- error_descriptor
+#
+#
+::itcl::body ScriptBase::error_descriptor {code args} {
+    set d [dict create -errorcode $code {*}args]
+
+    return $d
 }
 
 package provide ScriptBase 0.1
