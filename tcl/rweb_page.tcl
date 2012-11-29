@@ -35,6 +35,7 @@ namespace eval ::rwpage {
         public method title {language}
         public method headline {language}
         public method store {var value} { dict set stored_vars $var $value }
+        public method lappend {var value} { dict lappend stored_vars $var $value }
         public method recall {var {defvar value}} {
             upvar 1 $defvar retvalue
             # puts "--> $stored_vars<br/>"
