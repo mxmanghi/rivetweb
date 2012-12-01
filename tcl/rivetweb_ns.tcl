@@ -36,7 +36,7 @@ namespace eval ::rivetweb {
     variable menumodel              ::rwmenu
     variable htmlizer               ::htmlizer
 
-    variable menu_default_pos       left
+    variable default_menu_pos       left
     variable template_key           ""
 
 # the procedure should quite easly evolve to have 
