@@ -120,7 +120,7 @@ namespace eval ::Scripted {
             if {[llength $menul]} { dict lappend menudb {*}$menul }
         }
 
-        puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
+#       puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
 
         return $menudb
     }
