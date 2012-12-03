@@ -165,7 +165,7 @@ namespace eval ::rwpage {
                     
                     set attribute_list {}
                     foreach attr [$el2xform attributes] { 
-                        lappend attribute_list $attr [$el2xform getAttribute $attr]
+                        ::lappend attribute_list $attr [$el2xform getAttribute $attr]
                     }
 
                     if {[string tolower $text_mode] == "xml"} {
