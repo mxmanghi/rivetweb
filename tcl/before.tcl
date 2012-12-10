@@ -177,12 +177,13 @@ namespace eval ::rivetweb {
     } e]} {
 
         $::rivetweb::logger log err "Error processing data for page ($e)"
+        $::rivetweb::logger log err "$errorInfo"
         if {![$::rivetweb::rwebdb check postproc_hook_error]} {
             set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
             $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
             $pobj add_metadata header "Postprocessing error"
             $pobj add_metadata title  "Postprocessing error"
-            $::rivetweb::rwebdb store postproc_hook_error $pobj ""
+            $::rivetweb::rwebdb store postproc_hook_error $pobj ::RWDummy
         } else {
 
             set pobj [$::rivetweb::rwebdb fetch postproc_hook_error]
