@@ -33,6 +33,32 @@ namespace eval ::rwpage {
     ::itcl::body RWScripted::prepare {language argsqs} {
         RWPage::prepare $language $argsqs
 
+
+# before we check for specific methods to be run we run a generic
+# 'init' method with common initialization for all methods.
+
+        if {[catch {$script init $language $this} e opts]} {
+            set errorCode [dict get $opts -errorcode]
+            if {![$::rivetweb::rwebdb check $errorCode]} {
+
+                set pobj [::rwpage::RWStatic ::#auto $errorCode]
+                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b>: $opts"
+                $pobj add_metadata header "[string range $e 0 20]..."
+                $pobj add_metadata title  "[string range $e 0 20]..."
+                $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
+
+            } else {
+
+                set pobj [$::rivetweb::rwebdb fetch $errorCode]
+                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b>: $opts"
+                $pobj add_metadata header "[string range $e 0 20]..."
+                $pobj add_metadata title  "[string range $e 0 20]..."
+
+            }
+
+            return $pobj
+        }
+
         if {[$this recall cmd cmd]} {
             set method $cmd
         } else {
@@ -42,7 +68,33 @@ namespace eval ::rwpage {
         set do_method "do[string totitle $method]"
         puts "<div style=\"background: #aaf\">do_method -> $do_method</div>"
         
-        $script $do_method $language $this
+        if {[catch {$script $do_method $language $this} e opts]} {
+            set errorCode [dict get $opts -errorcode]
+            if {![$::rivetweb::rwebdb check $errorCode]} {
+
+                set pobj [::rwpage::RWStatic ::#auto $errorCode]
+                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b>: $opts"
+                $pobj add_metadata header "[string range $e 0 20]..."
+                $pobj add_metadata title  "[string range $e 0 20]..."
+                $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
+
+            } else {
+
+                set pobj [$::rivetweb::rwebdb fetch $errorCode]
+                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> $opts"
+                $pobj add_metadata header "[string range $e 0 20]..."
+                $pobj add_metadata title  "[string range $e 0 20]..."
+
+            }
+
+            return $pobj
+
+        } else {
+
+            return $this
+
+        }
+
     }
 
     ::itcl::body RWScripted::print_content {language} {

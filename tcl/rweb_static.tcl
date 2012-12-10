@@ -42,7 +42,10 @@ namespace eval ::rwpage {
 
         $page_o appendXML "<${rootel}>$page_text</${rootel}>"
 
-#       dict set content $language pagetext $page_dom
+        if {![catch {set pageref [$this content $language]} e]} {
+            [dict get $pageref pagetext] delete
+        }
+
         $this set_content $language pagetext $page_dom
 
     }
@@ -125,8 +128,18 @@ namespace eval ::rwpage {
         return $output_buffer
     }
 
-# -- postproc_hook
+# -- postproc_hooks
 #
+# general purpose method to call specific code for handling 
+# elements of a page. It should be general enough to hide 
+# the page internal implementation.
+#
+# When a transformation actually takes place a hook should return a dictionary 
+# storing a new tag name (key: tagname), a list of transformed attributes 
+# (key: attributes) and the new text within the element, if any (key: text).
+# Otherwise the processor will return an empty string. 
+#
+#       <processor_name> { element_text attributes }
 #
 
     ::itcl::body RWStatic::postproc_hooks { hooks_d hooks_class {language ""}} {
@@ -162,7 +175,7 @@ namespace eval ::rwpage {
                     
                     set attribute_list {}
                     foreach attr [$el2xform attributes] { 
-                        lappend attribute_list $attr [$el2xform getAttribute $attr]
+                        ::lappend attribute_list $attr [$el2xform getAttribute $attr]
                     }
 
                     if {[string tolower $text_mode] == "xml"} {
@@ -170,8 +183,10 @@ namespace eval ::rwpage {
                     } else {
                         set new_element_d [::rivetweb::$processor [$el2xform text] $attribute_list]
                     }
+
 #                   apache_log_error debug $new_element_d
                     if {[string length $new_element_d]} {
+
                         set new_tag     [dict get $new_element_d tagname]
                         set attributes  [dict get $new_element_d attributes]
 
@@ -188,9 +203,11 @@ namespace eval ::rwpage {
 
                             $new_element appendChild $new_element_text
                         }
+
                         if {[dict exists $new_element_d expansion]} {
                             $new_element appendXML [dict get $new_element_d expansion]
                         }
+
                     }
                 }
             }
