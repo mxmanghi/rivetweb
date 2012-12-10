@@ -184,8 +184,8 @@ namespace eval ::rwebdb {
                     set pobj [::rwpage::RWStatic ::#auto internal_error]
 
                 }
-                $pobj add_metadata title    "Error creating page for key $key ($error_caught)"  \
-                $pobj add_metadata header   "Error creating page for key $key"]
+                $pobj add_metadata title    "Error creating page for key $key ($error_caught)"
+                $pobj add_metadata header   "Error creating page for key $key"
                 $pobj set_pagetext ::rivetweb::default_lang   \
                                             "Error creating page for key $key<br /><pre>$e</pre>"
 

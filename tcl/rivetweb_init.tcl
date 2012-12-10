@@ -2,7 +2,7 @@
 #
 #
 package require tdom
-package require Rivet
+catch { package require Rivet }
 
 # Some preliminary setup before the application is ready to serve pages
 
