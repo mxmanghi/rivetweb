@@ -15,6 +15,7 @@ package require rwmenu
     }
     public method setup {argsdict} { set stored_vars $argsdict }
     public method init {language pageobj} { }
+    public method handler {options}  { }
     public method prepare {} { return true } 
     public method template {pageobj rvtname}
     public method run {pageobj}
