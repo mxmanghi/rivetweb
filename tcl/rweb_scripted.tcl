@@ -28,7 +28,6 @@ namespace eval ::rwpage {
         public method prepare {language argsqs} 
         public method title {language {titletxt ""}}
         public method headline {language}
-        public method handler {options} {}
     }
 
     ::itcl::body RWScripted::prepare {language argsqs} {
