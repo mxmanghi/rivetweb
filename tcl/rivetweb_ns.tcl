@@ -175,14 +175,26 @@ namespace eval ::rivetweb {
         apache_log_error notice "rivetweb_root set as $rivetweb_root"
     }
 
-    proc init {ds} {
+# -- init
+#
+# init used to be the real initialization in Rivetweb 1.0. Most of it's assignements
+# have been devolved to other components (notably datasources). Its main duty now
+# is to register new datasources
+#
+
+    proc init {ds {position "last"}} {
         variable    site_base
         variable    datasources
         variable    logger
         variable    default_lang
 
         package require $ds
-        lappend datasources ::${ds} 
+
+        if {$position == "top"} {
+            set datasources [linsert $datasources 0 ::${ds}]
+        } else {
+            lappend datasources ::${ds} 
+        }
 
         $ds init
         $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"

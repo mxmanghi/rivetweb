@@ -49,7 +49,7 @@ namespace eval ::rwpage {
                 if {![$::rivetweb::rwebdb check $errorCode]} {
 
                     set pobj [::rwpage::RWStatic ::#auto $errorCode]
-                    $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> (code->$errorCode): $opts"
+                    $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> (code $errorCode): [escape_sgml_chars $opts]"
                     $pobj add_metadata header "[string range $e 0 20]..."
                     $pobj add_metadata title  "[string range $e 0 20]..."
                     $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
@@ -76,14 +76,14 @@ namespace eval ::rwpage {
         }
 
         set do_method "do[string totitle $method]"
-        puts "<div style=\"background: #aaf\">do_method -> $do_method</div>"
+        puts "<div style=\"background: #aaf\">do_method -&gt; $do_method</div>"
         
         if {[catch {$script $do_method $language $this} e opts]} {
             set errorCode [dict get $opts -errorcode]
             if {![$::rivetweb::rwebdb check $errorCode]} {
 
                 set pobj [::rwpage::RWStatic ::#auto $errorCode]
-                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> (code->$errorCode): $opts"
+                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> (code $errorCode): $opts"
                 $pobj add_metadata header "[string range $e 0 20]..."
                 $pobj add_metadata title  "[string range $e 0 20]..."
                 $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
