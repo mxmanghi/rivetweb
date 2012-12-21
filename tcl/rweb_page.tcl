@@ -26,7 +26,6 @@ namespace eval ::rwpage {
         public method prepare {language args}
         public method languages { } 
         public method metadata {{key ""}}
-        public method dispose { }
         public method postproc_hooks { hooks_d hooks_class {language ""}}
         public method metadata_hooks { hooks_d } 
         public method print_content {language}
@@ -139,7 +138,7 @@ namespace eval ::rwpage {
 
     }
 
-# -- dispose
+# -- destroy
 #
 # releases objects which may hold data stored in the pool (e.g.
 # tdom objects). Abstract method for this class
