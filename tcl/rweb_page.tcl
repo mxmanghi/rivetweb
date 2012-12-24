@@ -14,8 +14,8 @@ namespace eval ::rwpage {
         private variable stored_vars
 
         constructor {pagekey} {
-            set key $pagekey
-            set metadata [dict create]
+            set key         $pagekey
+            set metadata    [dict create]
             set stored_vars [dict create]
         }
 
@@ -51,6 +51,7 @@ namespace eval ::rwpage {
                 return false
             }
         }
+        public method clear_metadata { } { set metadata [dict create] }
     }
 
 # -- add_metadata 
