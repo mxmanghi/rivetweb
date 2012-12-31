@@ -104,7 +104,7 @@ namespace eval ::rivetweb {
     foreach ds $::rivetweb::datasources {
 
         set ::rivetweb::datasource $ds
-        $ds willHandle $argsqs page_key 
+        $ds willHandle $argsqs ::rivetweb::page_key 
 
     }
 

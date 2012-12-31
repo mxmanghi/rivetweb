@@ -1,3 +1,4 @@
+#
 # -- rweb_coredb.tcl
 #
 # Rivetweb core db management.
@@ -42,14 +43,18 @@ namespace eval ::rwebdb {
 
         if {[dict exists $sitepages $key]} {
             set pobj [dict get $sitepages $key object]
-            $pobj destroy
+            if {[catch {$pobj destroy} e]} {
+
+                apache_log_error crit "inconsistent core db entry for key $key"
+
+            }
         }
 
         dict set sitepages $key object      $page_model
         dict set sitepages $key timestamp   [clock seconds]
         dict set sitepages $key datasource  $datasource
     }
-    namespace export store
+#   namespace export store
 
 # -- is_stale 
 #
@@ -203,7 +208,9 @@ namespace eval ::rwebdb {
                                             "Error creating page for key $key<br /><pre>$e</pre>"
 
             }
+
             set pmodel $pobj
+
         } else {
 
 # page is stored in the in memory database

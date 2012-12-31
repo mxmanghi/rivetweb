@@ -6,7 +6,7 @@
 #-
 #
 
-# index page
+# prefetch index page
 
 #$::rivetweb::rwebdb fetch index 
 
