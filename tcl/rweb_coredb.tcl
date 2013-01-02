@@ -54,7 +54,7 @@ namespace eval ::rwebdb {
         dict set sitepages $key timestamp   [clock seconds]
         dict set sitepages $key datasource  $datasource
     }
-#   namespace export store
+    namespace export store
 
 # -- is_stale 
 #
