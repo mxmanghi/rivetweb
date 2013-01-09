@@ -76,7 +76,7 @@ namespace eval ::rwpage {
         }
 
         set do_method "do[string totitle $method]"
-        puts "<div style=\"background: #aaf\">do_method -&gt; $do_method</div>"
+        #puts "<div style=\"background: #aaf\">do_method -&gt; $do_method</div>"
         
         if {[catch {$script $do_method $language $this} e opts]} {
             set errorCode [dict get $opts -errorcode]
