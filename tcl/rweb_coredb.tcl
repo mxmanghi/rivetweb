@@ -1,3 +1,4 @@
+#
 # -- rweb_coredb.tcl
 #
 # Rivetweb core db management.
@@ -36,6 +37,18 @@ namespace eval ::rwebdb {
 
     proc store {key page_model datasource} {
         variable sitepages
+
+# if we are replacing the page object for the key
+# we destroy the one had been stored in the database
+
+        if {[dict exists $sitepages $key]} {
+            set pobj [dict get $sitepages $key object]
+            if {[catch {$pobj destroy} e]} {
+
+                apache_log_error crit "inconsistent core db entry for key $key"
+
+            }
+        }
 
         dict set sitepages $key object      $page_model
         dict set sitepages $key timestamp   [clock seconds]
@@ -178,8 +191,7 @@ namespace eval ::rwebdb {
 
 # something else went wrong, it's a rivetweb internal error
 
-                $::rivetweb::logger log err \
-                                    "Rivetweb internal error: $error_caught ($e)"
+                $::rivetweb::logger log err "Rivetweb internal error: $error_caught ($e)"
 
                 if {[$::rivetweb::rwebdb check internal_error]} {
 
@@ -196,7 +208,9 @@ namespace eval ::rwebdb {
                                             "Error creating page for key $key<br /><pre>$e</pre>"
 
             }
+
             set pmodel $pobj
+
         } else {
 
 # page is stored in the in memory database

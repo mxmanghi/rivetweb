@@ -36,6 +36,7 @@ namespace eval ::rwpage {
 # before we check for specific methods to be run we run a generic
 # 'init' method with common initialization for all methods.
 
+        $this clear_metadata
         if {[catch {$script init $language $this} e opts]} {
 
 

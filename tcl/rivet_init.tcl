@@ -6,9 +6,9 @@
 #-
 #
 
-# index page
+# prefetch index page
 
-$::rivetweb::rwebdb fetch index 
+#$::rivetweb::rwebdb fetch index 
 
 # costruiamo il database in memoria dei template disponibili
 apache_log_error notice "Initializing Apache child [pid], [pwd]"

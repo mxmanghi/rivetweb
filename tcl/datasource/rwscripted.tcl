@@ -40,7 +40,7 @@ namespace eval ::Scripted {
         set tclfiles [glob -nocomplain -directory $script_path *.tcl]
         foreach script $tclfiles {
             $::rivetweb::logger log notice "sourcing $script"
-            catch {array unset rwdescriptor}
+            catch { array unset rwdescriptor }
             source $script
 
             if {[info exists rwdescriptor(classname)]} { 
@@ -120,7 +120,7 @@ namespace eval ::Scripted {
             if {[llength $menul]} { dict lappend menudb {*}$menul }
         }
 
-#       puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
+        #puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
 
         return $menudb
     }

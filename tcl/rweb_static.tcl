@@ -1,9 +1,9 @@
 #
-# -- rweb_page.tcl
+# -- rweb_static.tcl
 #
-# base class for every page model providing for base
-# methods and common interface to every other page model
-#
+# Class for static pages whose content is represented 
+# as a tdom object instance
+# 
 
 package require Itcl
 package require tdom
@@ -20,6 +20,7 @@ namespace eval ::rwpage {
             set content [dict create]
         }
 
+        public method destroy {}
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {language field value} 
         public method postproc_hooks {hooks_d hooks_class {language ""}}
@@ -29,6 +30,16 @@ namespace eval ::rwpage {
         public method to_string {}
         public method title {language}
         public method headline {language}
+    }
+
+
+    ::itcl::body RWStatic::destroy { } {
+        foreach l [dict keys $content] {
+            set pagedom [dict get $content $l pagetext]
+            $pagedom delete
+        }
+        
+        RWPage::destroy
     }
 
 # -- set_pagetext
@@ -43,7 +54,7 @@ namespace eval ::rwpage {
         $page_o appendXML "<${rootel}>$page_text</${rootel}>"
 
         if {![catch {set pageref [$this content $language]} e]} {
-            [dict get $pageref pagetext] delete
+             $pageref delete
         }
 
         $this set_content $language pagetext $page_dom
@@ -66,9 +77,14 @@ namespace eval ::rwpage {
 
 # -- content
 #
-# crucial method printing to stdout the content for a specific language
-# (when existing). This method prints output for the client, preprocessing
-# postprocessing hooks (if applicable) must run beforehand
+# crucial method returning a the content for a specific language
+# (when existing). Depending on the value of argument fmt
+# 'content' returns the output as
+#
+#    -xml   well formed XML page
+#    -text  pure text stripped of the markup
+#    -html  HTML code as output of asHTML of tdom
+#    -reference (default) tdom object reference
 
     
     ::itcl::body RWStatic::content { language {fmt -reference}} {

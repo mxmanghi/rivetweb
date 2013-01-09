@@ -13,7 +13,7 @@ namespace eval ::rivetweb {
 #   set template_defs "[file rootname $env(DOCUMENT_NAME)].defs"
 #   if {[file exists $template_defs]} { source $template_defs }
 
-    apache_log_error notice "running tcl/before.tcl"
+    apache_log_error debug "running tcl/before.tcl"
 
 #
 # -- rivet_before.tcl
@@ -42,8 +42,10 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_picts_path  $::rivetweb::picts_path
     set ::rivetweb::running_css_path    $::rivetweb::css_path
     if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
-        set ::rivetweb::running_picts_path  [file join $::rivetweb::site_base $::rivetweb::picts_path]
-        set ::rivetweb::running_css_path    [file join $::rivetweb::site_base $::rivetweb::css_path]
+#       set ::rivetweb::running_picts_path  [file join $::rivetweb::site_base $::rivetweb::picts_path]
+#       set ::rivetweb::running_css_path    [file join $::rivetweb::site_base $::rivetweb::css_path]
+        set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
+        set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
     }
 
 # let's determine which template we are using. We set a couple of default
@@ -104,7 +106,7 @@ namespace eval ::rivetweb {
     foreach ds $::rivetweb::datasources {
 
         set ::rivetweb::datasource $ds
-        $ds willHandle $argsqs page_key 
+        $ds willHandle $argsqs ::rivetweb::page_key 
 
     }
 
