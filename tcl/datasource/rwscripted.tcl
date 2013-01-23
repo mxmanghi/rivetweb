@@ -110,6 +110,10 @@ namespace eval ::Scripted {
 
     proc is_stale {key timereference } { return false }
 
+# -- menu_list
+#
+#
+
     proc menu_list {page} { 
         variable scriptsdb
 
@@ -119,8 +123,6 @@ namespace eval ::Scripted {
             set menul [$scriptobj menu_list $page]
             if {[llength $menul]} { dict lappend menudb {*}$menul }
         }
-
-        #puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
 
         return $menudb
     }
