@@ -118,11 +118,23 @@ namespace eval ::Scripted {
         variable scriptsdb
 
         set menudb [dict create]
+        puts stderr "<div style=\"background: yellow;\">menudb created ($menudb)</div>"
+
         foreach script [dict keys $scriptsdb] {
             set scriptobj [dict get $scriptsdb $script object]
             set menul [$scriptobj menu_list $page]
-            if {[llength $menul]} { dict lappend menudb {*}$menul }
+
+    # the list returned by 'menu_list' should be structured like
+    #
+    # group1 menu_list1 group2 menu_list2
+    #
+
+            foreach {menu_group menulist} $menul {
+                dict lappend menudb $menu_group {*}$menulist
+            }
         }
+
+        puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
 
         return $menudb
     }
