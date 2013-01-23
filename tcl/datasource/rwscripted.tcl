@@ -118,7 +118,7 @@ namespace eval ::Scripted {
         variable scriptsdb
 
         set menudb [dict create]
-        puts stderr "<div style=\"background: yellow;\">menudb created ($menudb)</div>"
+        #puts stderr "<div style=\"background: yellow;\">menudb created ($menudb)</div>"
 
         foreach script [dict keys $scriptsdb] {
             set scriptobj [dict get $scriptsdb $script object]
@@ -134,7 +134,7 @@ namespace eval ::Scripted {
             }
         }
 
-        puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
+        #puts "<div style=\"background: yellow;\">rwscripted: $menudb</div>"
 
         return $menudb
     }
