@@ -2,6 +2,7 @@
 # $Id: before.tcl 2095 2011-12-14 17:40:52Z massimo.manghi $
 #
 #+
+# this file ships the BeforeScript code of a Rivetweb site.
 #-
 #
 
@@ -13,7 +14,7 @@ namespace eval ::rivetweb {
 #   set template_defs "[file rootname $env(DOCUMENT_NAME)].defs"
 #   if {[file exists $template_defs]} { source $template_defs }
 
-    apache_log_error notice "running tcl/before.tcl"
+    apache_log_error debug "running tcl/before.tcl"
 
 #
 # -- rivet_before.tcl
@@ -42,8 +43,10 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_picts_path  $::rivetweb::picts_path
     set ::rivetweb::running_css_path    $::rivetweb::css_path
     if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
-        set ::rivetweb::running_picts_path  [file join $::rivetweb::site_base $::rivetweb::picts_path]
-        set ::rivetweb::running_css_path    [file join $::rivetweb::site_base $::rivetweb::css_path]
+#       set ::rivetweb::running_picts_path  [file join $::rivetweb::site_base $::rivetweb::picts_path]
+#       set ::rivetweb::running_css_path    [file join $::rivetweb::site_base $::rivetweb::css_path]
+        set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
+        set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
     }
 
 # let's determine which template we are using. We set a couple of default
@@ -99,12 +102,12 @@ namespace eval ::rivetweb {
 #
     set argsqs [dict create {*}[var_qs all]]
 
-    $::rivetweb::logger log info "registered datasources: $::rivetweb::datasources"
+    $::rivetweb::logger log info  "registered datasources: $::rivetweb::datasources"
     $::rivetweb::logger log debug "argsqs: $argsqs"
     foreach ds $::rivetweb::datasources {
 
         set ::rivetweb::datasource $ds
-        $ds willHandle $argsqs page_key 
+        $ds willHandle $argsqs ::rivetweb::page_key 
 
     }
 
@@ -150,9 +153,10 @@ namespace eval ::rivetweb {
 
     foreach ds $::rivetweb::datasources {
 
-#       lappend ::rivetweb::pagemenus [$ds menu_list $::rivetweb::current_pmodel]
         set dsmenu [$ds menu_list $::rivetweb::current_pmodel]
         apache_log_error notice "got $dsmenu from $ds"
+        #puts "<pre>got $dsmenu from $ds</pre>"
+
         foreach k [dict keys $dsmenu] {
 
             if {[dict exists $::rivetweb::pagemenus $k]} {
@@ -177,7 +181,7 @@ namespace eval ::rivetweb {
     } e]} {
 
         $::rivetweb::logger log err "Error processing data for page ($e)"
-        $::rivetweb::logger log err "$errorInfo"
+        $::rivetweb::logger log err $errorInfo
         if {![$::rivetweb::rwebdb check postproc_hook_error]} {
             set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
             $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"

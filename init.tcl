@@ -4,7 +4,7 @@
 # clear way to make it site specific
 #
 
-lappend auto_path $rweb_root
+lappend auto_path $rweb_root $website_root
 
 package require rwlogger
 package require rivetweb

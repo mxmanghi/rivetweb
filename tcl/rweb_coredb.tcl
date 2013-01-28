@@ -1,3 +1,4 @@
+#
 # -- rweb_coredb.tcl
 #
 # Rivetweb core db management.
@@ -36,6 +37,18 @@ namespace eval ::rwebdb {
 
     proc store {key page_model datasource} {
         variable sitepages
+
+# if we are replacing the page object for the key
+# we destroy the one had been stored in the database
+
+        if {[dict exists $sitepages $key]} {
+            set pobj [dict get $sitepages $key object]
+            if {[catch {$pobj destroy} e]} {
+
+                apache_log_error crit "inconsistent core db entry for key $key"
+
+            }
+        }
 
         dict set sitepages $key object      $page_model
         dict set sitepages $key timestamp   [clock seconds]
@@ -158,22 +171,27 @@ namespace eval ::rwebdb {
 
 # let's return a conventional page (to be preloaded in the database)
 
-                if {[$::rivetweb::rwebdb check not_existing]} {
-                    set pobj [$::rivetweb::rwebdb fetch not_existing]
-                } else {
-                    set pobj [::rwpage::RWStatic ::#auto not_existing]
-                    $pobj add_metadata title    "Content not found"
-                    $pobj add_metadata header   "Rivetweb error: content not found"
-                }
-                
-                $pobj set_pagetext $::rivetweb::default_lang \
-                                                "Content for $key not found"
+#                if {[$::rivetweb::rwebdb check not_existing]} {
+#                    set pobj [$::rivetweb::rwebdb fetch not_existing]
+#                } else {
+#                    set pobj [::rwpage::RWStatic ::#auto not_existing]
+#                    $pobj add_metadata title    "Content not found"
+#                    $pobj add_metadata header   "Rivetweb error: content not found"
+#                }
+#                
+#                $pobj set_pagetext $::rivetweb::default_lang \
+#                                                "Content for $key not found"
+
+                set pobj [$::rivetweb::rwebdb page not_existing $::rivetweb::default_lang     \
+                                                                "Content for <b>$key</b> not found"  \
+                                                                "Rivetweb error: content not found" \
+                                                                "Content not found"]
+
             } else {
 
 # something else went wrong, it's a rivetweb internal error
 
-                $::rivetweb::logger log err \
-                                    "Rivetweb internal error: $error_caught ($e)"
+                $::rivetweb::logger log err "Rivetweb internal error: $error_caught ($e)"
 
                 if {[$::rivetweb::rwebdb check internal_error]} {
 
@@ -190,7 +208,9 @@ namespace eval ::rwebdb {
                                             "Error creating page for key $key<br /><pre>$e</pre>"
 
             }
+
             set pmodel $pobj
+
         } else {
 
 # page is stored in the in memory database
@@ -200,6 +220,34 @@ namespace eval ::rwebdb {
 
         return $pmodel
     }
+
+    proc page {key language {txt ""} {header ""} {title ""}} {
+
+        if {[$::rivetweb::rwebdb check $key]} {
+
+            set pobj [$::rivetweb::rwebdb fetch $key]
+
+        } else {
+
+            set pobj [::rwpage::RWStatic ::#auto $key]
+            $::rivetweb::rwebdb store $key $pobj ::RWDummy
+
+        }
+        
+        if {$txt != ""} {
+            $pobj set_pagetext $language $txt
+        }
+        if {$header != ""} {
+            $pobj add_metadata header $header
+            $pobj add_metadata title  $header
+        }
+        if {$title != ""} {
+            $pobj add_metadata title  $title
+        }
+
+        return $pobj
+    }
+    namespace export page
 
     namespace ensemble create
 }

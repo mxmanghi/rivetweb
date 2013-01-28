@@ -75,6 +75,9 @@ namespace eval ::rivetweb {
             if {[var exists lang]} { 
                 set local_ref "${local_ref}&lang=[var get lang]" 
             }
+            if {[var exists language]} { 
+                set local_ref "${local_ref}&language=[var get language]" 
+            }
             if {[var exists reset]} { 
                 set local_ref "${local_ref}&reset=[var get reset]" 
             }
@@ -210,9 +213,9 @@ namespace eval ::rivetweb {
             return [file join $::rivetweb::base_templates $style_dir picts $picts_file]
         }
 
-        set fn [file join   $::rivetweb::site_base  \
+        set fn [file join   $::rivetweb::site_base      \
                             $::rivetweb::base_templates \
-                            $style_dir              \
+                            $style_dir                  \
                             $picts_file]
 
         apache_log_error debug "1 pict file: >$fn<"
