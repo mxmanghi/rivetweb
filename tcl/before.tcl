@@ -2,6 +2,7 @@
 # $Id: before.tcl 2095 2011-12-14 17:40:52Z massimo.manghi $
 #
 #+
+# this file ships the BeforeScript code of a Rivetweb site.
 #-
 #
 
@@ -152,9 +153,10 @@ namespace eval ::rivetweb {
 
     foreach ds $::rivetweb::datasources {
 
-#       lappend ::rivetweb::pagemenus [$ds menu_list $::rivetweb::current_pmodel]
         set dsmenu [$ds menu_list $::rivetweb::current_pmodel]
         apache_log_error notice "got $dsmenu from $ds"
+        #puts "<pre>got $dsmenu from $ds</pre>"
+
         foreach k [dict keys $dsmenu] {
 
             if {[dict exists $::rivetweb::pagemenus $k]} {
