@@ -13,21 +13,16 @@ templates to structure HTML code into pages having a consistent
 appearance thorough a whole website.
 
  Rivetweb internal machinery and organizazion was entirely developed in 
-Tcl. Rivetweb was written with an emphasis on indipendence from actual
+Tcl/Itcl. Itcl based classes will probably migrate to the TclOO object system. 
+Rivetweb was written with an emphasis on indipendence from actual
 implementation of its components. Rivetweb aims to evolve to a fully
 customizable, extensible framework for simple websites. 
 
- Current code provides components that work with XML documents bearing 
-both metadata and content of a page. The data source implemented in 
-tcl/datasource/xmldata.tcl (which does the actual work of reading 
-the files and filling Rivetweb database) can be taken as a model 
-for implementing more data sources. Also the site structure is
-laid down in XML files. This XML centric choice is maybe not practical 
-but it provides a good workable and sufficently abstract representation 
-of data sources, thus it offers a good starting point for future 
-development. Rivetweb is not a feature rich website development
-framework, it's a blank canvas on which small size websites
-can be created.
+ Current code provides example components (dubbed datasource) that work with 
+XML documents bearing both metadata and content of a page. This data source 
+implemented in tcl/datasource/xmlchunk.tcl (which does the actual work of reading 
+the files, creating and composing menu object and filling Rivetweb database)
+can be taken as a model for implementing more data sources.
 
  From the beginning a basic feature of Rivetweb has been the
 ability of faking a dinamically generated website as a consistent 
