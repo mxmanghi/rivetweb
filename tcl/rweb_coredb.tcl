@@ -171,22 +171,21 @@ namespace eval ::rwebdb {
 
 # let's return a conventional page (to be preloaded in the database)
 
-#                if {[$::rivetweb::rwebdb check not_existing]} {
+#               if {[$::rivetweb::rwebdb check not_existing]} {
 #                    set pobj [$::rivetweb::rwebdb fetch not_existing]
-#                } else {
+#               } else {
 #                    set pobj [::rwpage::RWStatic ::#auto not_existing]
 #                    $pobj add_metadata title    "Content not found"
 #                    $pobj add_metadata header   "Rivetweb error: content not found"
-#                }
+#               }
 #                
-#                $pobj set_pagetext $::rivetweb::default_lang \
+#               $pobj set_pagetext $::rivetweb::default_lang \
 #                                                "Content for $key not found"
 
                 set pobj [$::rivetweb::rwebdb page not_existing $::rivetweb::default_lang     \
                                                                 "Content for <b>$key</b> not found"  \
                                                                 "Rivetweb error: content not found" \
                                                                 "Content not found"]
-
             } else {
 
 # something else went wrong, it's a rivetweb internal error

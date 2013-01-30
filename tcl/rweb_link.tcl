@@ -3,6 +3,7 @@
 #
 # Model for a hypertext link. 
 #
+#
 
 package require rwconf
 package require rwlogger
@@ -22,7 +23,7 @@ namespace eval ::rwlink {
     proc create {link_type reference link_text link_args {link_info ""}} {
         set link_d [dict create type $link_type reference $reference]
 
-        apache_log_error notice "<--- $link_text - ($link_info)<br/>"
+        apache_log_error debug "<--- $link_text - ($link_info)<br/>"
 
         foreach l [dict keys $link_text] {
             set l_info ""
