@@ -117,7 +117,7 @@ namespace eval ::rwsitemap {
 
         set disconnected [$sitemap_tree children disconnected]
         foreach dmenu $disconnected {
-            $::rivetweb::logger log debug "$i: $group_id $dmenu"
+            $::rivetweb::logger log debug "$group_id -> $dmenu"
 #           set menu_group [$sitemap get disconnected $dmenu]
             set menu_group $dmenu
 
