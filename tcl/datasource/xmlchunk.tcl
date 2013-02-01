@@ -323,6 +323,8 @@ namespace eval ::XMLBase {
 
                     if {[$title hasAttribute lang]} {
                         set language [$title getAttribute lang]
+                    } elseif {[$title hasAttribute language]} {
+                        set language [$title getAttribute language]
                     } else {
                         set language $::rivetweb::default_lang
                     }
@@ -350,6 +352,8 @@ namespace eval ::XMLBase {
                     
                         if {[$linkdata hasAttribute lang]} {
                             set language [$linkdata getAttribute lang]
+			} elseif {[$linkdata hasAttribute language]} {
+			    set language [$linkdata getAttribute language] 
                         } else {
                             set language $::rivetweb::default_lang
                         }
@@ -381,7 +385,7 @@ namespace eval ::XMLBase {
                             }
                         }
                     }
-#                   puts "-> $ltext $linfo"
+                    #puts "<pre style=\"background: white:\">-> $ltext $linfo</pre>"
 
                     set linkobj [$lm create $ltype $lref $ltext $largs $linfo]
                     $lm set_attribute linkobj $attributes
