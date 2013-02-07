@@ -7,9 +7,8 @@
 namespace eval ::htmlizer {
 
 # -- html_menu, a procedure whose specialization is 
-# transforming a menuobj into an
-# HTML menu. menustruct is a even lenght list of attribute
-# value pairs controlling the markup
+# transforming a menuobj into an HTML menu. menustruct is a even lenght list
+# of attribute value pairs controlling the markup
 #
 # html_menu takes a tdom object command from the menu dom and generates the html
 # code for the menu. This procedure uses tdom calls in order to obtain an xhtml

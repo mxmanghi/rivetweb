@@ -330,6 +330,14 @@ namespace eval ::rivetweb {
 
 # -- build_html_menu 
 #
+# central function returning a menu of link as an HTML fragment. The markup
+# is described withing the dictionary 'templates_db'
+#
+# Arguments:
+#
+#  - pagemenus: dictionary associating positions and menu objects
+#  - template_key: key to the dictionary storing template specific definitions
+#  - position: keyword (usually a 'position') specifing role within the page
 #
 
     proc build_html_menu { pagemenus template_key position } {
@@ -351,6 +359,8 @@ namespace eval ::rivetweb {
         return $htmltext
     }
     namespace export build_html_menu
+
+    namespace ensemble create
 }
 
 package provide rivetweb 2.0
