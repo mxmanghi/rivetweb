@@ -79,9 +79,19 @@ namespace eval ::htmlizer {
         set menudom [dom createDocument $menu_tag]
         set htmlmenu_o [$menudom documentElement]
 
-        eval $htmlmenu_o setAttribute id [$menuobj id]       
+# setting id and class attributes (if defined)
+
+        set menuid [$menuobj id]
+        if {[string length $menuid]} {
+            $htmlmenu_o setAttribute id [$menuobj id]
+        }
+
         if {[string length $menu_class]} { 
-            eval $htmlmenu_o setAttribute class $menu_class 
+            $htmlmenu_o setAttribute class $menu_class 
+        }
+        set cssclass [$menuobj peek cssclass]
+        if {[string length $cssclass]} {
+            $htmlmenu_o setAttribute class $cssclass 
         }
 
 # we set aside the handling of the 'notitle' attribute
