@@ -24,11 +24,11 @@
             <ul>
                 <li <?= [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>>
                 <a href="<?= [::rivetweb::makeUrl index] ?>">Home</a></li>
-                <li <? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
-                <a href="<? puts -nonewline [::rivetweb::makeUrl download] ?>">Downloads</a></li>
+                <li <?= [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
+                <a href="<?= [::rivetweb::makeUrl download] ?>">Downloads</a></li>
                 <li></li>
-                <li <? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content installation current_page_item] ?>>
-                <a href="<? puts -nonewline [::rivetweb::makeUrl installation] ?>">Installation</a></li>
+                <li <?= [::rivetweb::thisClass $::rivetweb::page_content installation current_page_item] ?>>
+                <a href="<?= [::rivetweb::makeUrl installation] ?>">Installation</a></li>
             </ul>
         </div>
     </div>
