@@ -26,6 +26,7 @@ namespace eval ::rwsitemap {
         constructor {ds} {
             set cnt         0
             set datasource  $ds
+
 # The sitemap structure is implemented by a ::struct::tree Tcl
 # structure
 

@@ -49,7 +49,7 @@ namespace eval ::XMLBase {
             
             $::rivetweb::logger log notice "Wrong path for sitemap ($sitemap_dir)"
 
-            return -code error  -error_code invalid_path            \
+            return -code error  -error_code invalid_path                \
                                 -errorinfo  "Wrong path $sitemap_dir"   \
                                             "Wrong path $sitemap_dir"
         } else {
@@ -147,6 +147,7 @@ namespace eval ::XMLBase {
 # data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
 
         foreach content [$domroot getElementsByTagName content] {
+
             if {[$content hasAttribute language]} {
                 set clang [$content getAttribute language]
             } else {
