@@ -72,7 +72,9 @@ namespace eval ::rivetweb {
         } e]} { puts "errore: $e" }
 
     } else {
+
         set template_key rwbase
+
     }
 
     $::rivetweb::logger log info "selected template: $running_template (css: $running_css)"

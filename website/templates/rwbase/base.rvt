@@ -2,22 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
 	<?
-	    if {[catch { namespace eval ::rivetweb { source [file join $rivet_scripts rivet_page.tcl] } } e]} {
-			puts "<pre>$e</pre>"
-			abort_page
-	    }
-        puts [::rivetweb::contentType]
+	    #if {[catch { namespace eval ::rivetweb { source [file join $rivet_scripts rivet_page.tcl] } } e]} {
+	    #		puts "<pre>$e</pre>"
+	    #		abort_page
+	    #}
+
+	    puts [::rivetweb::contentType]
 	?>
-	<title><? puts -nonewline $::rivetweb::page_title ?></title>
-	<link rel="stylesheet" 
-          href="<? puts -nonewline [::rivetweb::makeCssPath rivet.css $::rivetweb::template_key] ?>" />
+	<title><?= $::rivetweb::page_title ?></title>
+	<link rel="stylesheet" href="<?= [::rivetweb::makeCssPath rivet.css $::rivetweb::template_key] ?>" />
     </head>
     <body>
 	<div id="bigcontainer"> 
 	    <div id="pageheadline">
 		<div class="decoration">
-            <img src="<? puts -nonewline [::rivetweb::makePictsPath Rivetlogo_smaller.png $::rivetweb::template_key] ?>" alt="Apache Rivet" /><!-- /a -->
-            <? puts [pwd] ?>
+		    <img src="<?= [::rivetweb::makePictsPath Rivetlogo_smaller.png $::rivetweb::template_key] ?>" alt="Apache Rivet" /><?= [pwd] ?>
 		</div>
 		<div class="headline"><? puts -nonewline $::rivetweb::page_headline ?></div>
 	    </div>

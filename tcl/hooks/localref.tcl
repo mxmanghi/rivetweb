@@ -13,7 +13,7 @@ proc localref {element_text attribute_list} {
     array set attributes $attribute_list
     if {[info exists attributes(href)]} {   
 
-        set attributes(href) [file join / $::rivetweb::local_pages $attributes(href)]
+        set attributes(href) [join [list $::rivetweb::local_pages $attributes(href)] "/"]
 
     }
     dict set d text $element_text
