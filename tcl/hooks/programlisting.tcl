@@ -25,17 +25,21 @@ proc programlisting {element_text attribute_list} {
 
     if {[info exists attributes(src)]} {
 
-        set code_file [::rivetweb::searchPath $attributes(src) [list $::rivetweb::static_pages \
-                                                                 $::rivetweb::site_base    \
-                                                                 $::rivetweb::rivetweb_root]]
+        set code_file [::rivetweb::searchPath $attributes(src) [list    $::XMLBase::static_pages \
+                                                                        $::rivetweb::site_base    \
+                                                                        $::rivetweb::rivetweb_root]]
 
-        if {[string length $code_file]} {
-            set code_fp     [open $code_file r]
-            set code_text   [read $code_fp]
+        if {[string length $code_file] && [file exists $code_file]} {
+#           set code_fp     [open $code_file r]
+#           set code_text   [read $code_fp]
+#           close $code_fp
 
-            close $code_fp
+            set code_text [read_file $code_file]
+
         } else {
+
             set code_text ""
+
         }
 
         unset attributes(src)

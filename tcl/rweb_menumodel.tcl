@@ -52,7 +52,7 @@ namespace eval ::rwmenu {
         if {[string length $language] == 0} {
             set language $::rivetweb::default_lang
         }
-
+        #puts "<pre><b>$::rivetweb::default_lang -%gt; $title</b></pre>"
         if {[dict exists $title $language]} {
             return [dict get $title $language]
         } else {

@@ -26,7 +26,7 @@ package require struct::stack
 namespace eval ::XMLBase {
     variable sitemap
     variable sitemap_dir        sitemap
-    variable static_pages	pages
+    variable static_pages	    pages
     variable timestamp          0
     variable sitemap_stat   
     variable xmlpath
