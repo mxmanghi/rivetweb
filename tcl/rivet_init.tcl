@@ -56,6 +56,9 @@ foreach template $templates_dir_list {
                 if {[info exists ::rwtemplate::link_class]} {
                     dict set ::rivetweb::templates_db $template_key link_class $::rwtemplate::link_class
                 }
+		if {[info exists ::rwtemplate::pictures]} { 
+		    dict set ::rivetweb::templates_db $template_key pictures $::rwtemplate::pictures
+		}
             }
 
         } e]} {

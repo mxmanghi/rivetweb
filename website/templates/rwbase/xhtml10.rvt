@@ -58,7 +58,10 @@
 
                             if {[string equal $::rivetweb::page_content index] == 1} { }
                             $::rivetweb::current_pmodel print_content $::rivetweb::language
+
+			    # let's print the page's main content
                             set page_d [$::rivetweb::current_pmodel to_string]
+
                             html $::rivetweb::current_pmodel div b
                             puts "<table>"
                             foreach k [dict keys $page_d] {

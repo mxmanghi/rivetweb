@@ -11,8 +11,6 @@ namespace eval ::rivetweb {
     # let's load the environment into array ::request::env
 
     load_env env
-#   set template_defs "[file rootname $env(DOCUMENT_NAME)].defs"
-#   if {[file exists $template_defs]} { source $template_defs }
 
     apache_log_error debug "running tcl/before.tcl"
 
@@ -31,7 +29,9 @@ namespace eval ::rivetweb {
 # static   -> enabling generation of 'static' (i.e. .html) pages
 # homepage -> the home is treated in a slightly different way, so we have
 #             to signal it with this flag
-# 
+#
+# this assignements are meaningful only when appropriate mod_rewrite rules
+# are set up in the configuration 
 
     set ::rivetweb::static_links [var exists static]
     set ::rivetweb::is_homepage  [var exists homepage]
@@ -42,11 +42,12 @@ namespace eval ::rivetweb {
 
     set ::rivetweb::running_picts_path  $::rivetweb::picts_path
     set ::rivetweb::running_css_path    $::rivetweb::css_path
+
     if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
-#       set ::rivetweb::running_picts_path  [file join $::rivetweb::site_base $::rivetweb::picts_path]
-#       set ::rivetweb::running_css_path    [file join $::rivetweb::site_base $::rivetweb::css_path]
+
         set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
         set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
+
     }
 
 # let's determine which template we are using. We set a couple of default
@@ -58,28 +59,38 @@ namespace eval ::rivetweb {
     if {[var exists template]} {
 
         set template_key [var get template]
-        catch {
-            set running_template  [dict get $::rivetweb::templates_db $template_key template]
-            set running_css       [dict get $::rivetweb::templates_db $template_key css]
-        }
+
+#        catch {
+#
+#            set running_template  [dict get $::rivetweb::templates_db $template_key template]
+#            set running_css       [dict get $::rivetweb::templates_db $template_key css]
+#
+#        }
 
     } elseif {[string compare $::rivetweb::default_template ""] != 0} {
 
         set template_key $::rivetweb::default_template
-        if {[catch {
-            set running_template  [dict get $::rivetweb::templates_db $template_key template]
-            set running_css       [dict get $::rivetweb::templates_db $template_key css]
-        } e]} { puts "errore: $e" }
+#        if {[catch {
+#
+#            set running_template  [dict get $::rivetweb::templates_db $template_key template]
+#            set running_css       [dict get $::rivetweb::templates_db $template_key css]
+#
+#        } e]} { puts "errore: $e" }
 
     } else {
+
+# there must be always a definition for the rwbase template
 
         set template_key rwbase
 
     }
 
     $::rivetweb::logger log info "selected template: $running_template (css: $running_css)"
-    set ::rivetweb::running_template  [template_path $running_template $template_key]
-    set ::rivetweb::running_css       [makeCssPath $running_css $template_key]
+
+# let's build the full path to the template and css files through the Rivetweb specific calls
+
+    set ::rivetweb::running_template  [::rivetweb::template $template_key]
+    set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
     set ::rivetweb::template_key      $template_key
 
 # setting this parameter redirs to the 'static' form of the website.
@@ -104,7 +115,7 @@ namespace eval ::rivetweb {
 #
     set argsqs [dict create {*}[var_qs all]]
 
-    $::rivetweb::logger log info  "registered datasources: $::rivetweb::datasources"
+    $::rivetweb::logger log debug  "registered datasources: $::rivetweb::datasources"
     $::rivetweb::logger log debug "argsqs: $argsqs"
     foreach ds $::rivetweb::datasources {
 

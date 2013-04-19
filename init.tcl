@@ -15,7 +15,9 @@ apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
 
 # rivetweb initialization 
 
-source [file join $::rivetweb::site_base site_defs.tcl]
+set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
+
+if {[file exists $website_definitions]} { source $website_definitions }
  
 ::rivetweb::init Scripted
 ::rivetweb::init XMLBase
