@@ -100,6 +100,10 @@ namespace eval ::rivetweb {
             set arglist [lassign $arglist param value]
             lappend urlargs "$param=[escape_string $value]"
         }
+
+        if {[var_qs exists template]} { 
+            lappend "&template=[var_qs get template]" 
+        }
         return "[env SCRIPT_NAME]?[join $urlargs "&"]"
     }
     namespace export composeUrl
