@@ -147,14 +147,19 @@ namespace eval ::htmlizer {
             }
 
             set hrefvalue "#"
+	    set lnkargs   [$linkmodel arguments $link]
             switch [$linkmodel type $link] {
     
                 internal {
                     set hrefvalue [::rivetweb::makeUrl $link_ref]
+		    if {[dict exists $lnkargs doctarget]} {
+			append hrefvalue "#[dict get $lnkargs doctarget]"
+		    }
+		    #puts "<pre>href=$hrefvalue (args: $lnkargs)</pre>"
                 }
                 scripted {
                     set arguments ""
-                    foreach {param value} [$linkmodel arguments $link] {
+                    foreach {param value} $lnkargs {
                         lappend arguments "$param=[escape_string $value]" 
                     }
                     
