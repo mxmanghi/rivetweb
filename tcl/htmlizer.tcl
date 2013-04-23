@@ -160,10 +160,10 @@ namespace eval ::htmlizer {
                 scripted {
                     set arguments ""
                     foreach {param value} $lnkargs {
-                        lappend arguments "$param=[escape_string $value]" 
+                        lappend arguments $param [escape_string $value] 
                     }
                     
-                    set hrefvalue "index.rvt?[join $arguments &]"
+                    set hrefvalue [::rivetweb::composeUrl {*}$arguments]
                 }
                 external {
                     set hrefvalue $link_ref

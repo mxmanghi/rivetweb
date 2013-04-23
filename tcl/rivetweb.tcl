@@ -102,7 +102,7 @@ namespace eval ::rivetweb {
         }
 
         if {[var_qs exists template]} { 
-            lappend "&template=[var_qs get template]" 
+            lappend urlargs "template=[var_qs get template]" 
         }
         return "[env SCRIPT_NAME]?[join $urlargs "&"]"
     }
@@ -115,7 +115,7 @@ namespace eval ::rivetweb {
 # 
 # Arguments: 
 #
-#    - mag	    Message text
+#    - mag          Message text
 #    - cssclass     css class the element enclosing the text must have
 #    - pagina_id    identification of the page for subsequent retrieving 
 #                   from the cache
@@ -174,8 +174,8 @@ namespace eval ::rivetweb {
 #
 # Arguments:
 #
-#	css_file:   CSS file name
-#	style_dir:  template/CSS key
+#       css_file:   CSS file name
+#       style_dir:  template/CSS key
 #
 # style_dir is supposed to be a 'key' in a database of templates, it
 # represents the directory name where the CSS is located within the 
@@ -203,7 +203,7 @@ namespace eval ::rivetweb {
 
     proc csspath {template_key} {
 
-	return [makeCssPath [dict get $::rivetweb::templates_db $template_key css] $template_key]
+        return [makeCssPath [dict get $::rivetweb::templates_db $template_key css] $template_key]
 
     }
     namespace export csspath
@@ -227,15 +227,17 @@ namespace eval ::rivetweb {
 # we have to deceive static links (relative to the ::rivetweb::static_path variable)
 # but still we must be aware we are running from /index.rvt
 
-	set template_picts [dict get $::rivetweb::templates_db $::rivetweb::template_key pictures]
-        set fn [file join   $::rivetweb::site_base      \
-                            $::rivetweb::base_templates \
-                            $style_dir                  \
-                            $template_picts $picts_file]
+        if {[dict exists $::rivetweb::templates_db $::rivetweb::template_key pictures]} {
+            set template_picts [dict get $::rivetweb::templates_db $::rivetweb::template_key pictures]
+            set fn [file join   $::rivetweb::site_base      \
+                                $::rivetweb::base_templates \
+                                $style_dir                  \
+                                $template_picts $picts_file]
 
-        apache_log_error debug "0 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::base_templates $style_dir picts $picts_file]
+            apache_log_error debug "0 pict file: >$fn<"
+            if {[file exists $fn]} {
+                return [file join $::rivetweb::base_templates $style_dir picts $picts_file]
+            }
         }
 
 # pictures directory within the template directory, style_dir is usually the template_key variable
@@ -282,13 +284,13 @@ namespace eval ::rivetweb {
                             $picts_file]
 
         apache_log_error debug "4 pict file: >$fn<"
-	if {[file exists $fn]} {
-	    return [file join   $::rivetweb::running_picts_path   \
-				$::rivetweb::default_template     \
-				$picts_file]
-	}
+        if {[file exists $fn]} {
+            return [file join   $::rivetweb::running_picts_path   \
+                                $::rivetweb::default_template     \
+                                $picts_file]
+        }
 
-	return ""
+        return ""
     }
     namespace export makePictsPath
 
@@ -318,7 +320,7 @@ namespace eval ::rivetweb {
 
     proc template {template_key} {
 
-	return [::rivetweb::template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
+        return [::rivetweb::template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
     }
     namespace export template
 
@@ -328,7 +330,7 @@ namespace eval ::rivetweb {
 #
     proc script_path {script_name {template_dir ""}} {
 
-	return [file join $::rivetweb::base_templates $template_dir $script_name]
+        return [file join $::rivetweb::base_templates $template_dir $script_name]
 
     }
     namespace export script_path
@@ -338,7 +340,7 @@ namespace eval ::rivetweb {
 #
     proc javascript {script} {
 
-	return "<script type=\"text/javascript\" src=\"[script_path $script $::rivetweb::template_key]\"></script>"
+        return "<script type=\"text/javascript\" src=\"[script_path $script $::rivetweb::template_key]\"></script>"
 
     }
     namespace export javascript
