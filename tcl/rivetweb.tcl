@@ -236,7 +236,7 @@ namespace eval ::rivetweb {
 
             apache_log_error debug "0 pict file: >$fn<"
             if {[file exists $fn]} {
-                return [file join $::rivetweb::base_templates $style_dir picts $picts_file]
+                return [file join $::rivetweb::base_templates $style_dir $template_picts $picts_file]
             }
         }
 
@@ -317,7 +317,6 @@ namespace eval ::rivetweb {
 # -- template
 #
 #
-
     proc template {template_key} {
 
         return [::rivetweb::template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
