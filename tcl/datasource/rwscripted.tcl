@@ -26,11 +26,11 @@ namespace eval ::Scripted {
     proc init {args} {
         variable sitemap
         variable script_path
-	    variable scriptsdb
+        variable scriptsdb
 
         set sitemap     [::rwsitemap::create [namespace current]]
         set script_path [file normalize [file join $::rivetweb::site_base $script_path]]
-	    set scriptsdb	[dict create]
+        set scriptsdb   [dict create]
 
 # to speed up the development I just load the whole directory of scripts
 # We need to pass to auto loading as soon as the mechanics has been set
@@ -46,12 +46,12 @@ namespace eval ::Scripted {
             if {[info exists rwdescriptor(classname)]} { 
                 set cmdname $rwdescriptor(classname)
             } else {
-                set cmdname	[file rootname [file tail $script]]
+                set cmdname     [file rootname [file tail $script]]
             }
             set classname "[namespace current]::[string totitle $cmdname]"
-	        
-            dict set scriptsdb $cmdname class	$classname 
-	        dict set scriptsdb $cmdname object	[$classname ::#auto]
+                
+            dict set scriptsdb $cmdname class   $classname 
+            dict set scriptsdb $cmdname object  [$classname ::#auto]
         }
     }
 
@@ -61,7 +61,7 @@ namespace eval ::Scripted {
     proc willHandle {arglist keyvar} {
         variable varsqs
         variable script_path
-	    variable scriptsdb
+        variable scriptsdb
 
         upvar $keyvar key 
 
@@ -94,12 +94,11 @@ namespace eval ::Scripted {
 
     proc fetchData {key reassigned_key} {
         variable varsqs
-	    variable scriptsdb
-
+        variable scriptsdb
         upvar $reassigned_key rkey
 
         set rkey $key
-	    set scriptobj [dict get $scriptsdb $rkey object]
+        set scriptobj [dict get $scriptsdb $rkey object]
         $scriptobj setup $varsqs
 
         set newpage [::rwpage::RWScripted ::#auto $key $scriptobj]

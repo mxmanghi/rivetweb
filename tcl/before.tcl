@@ -115,7 +115,7 @@ namespace eval ::rivetweb {
 #
     set argsqs [dict create {*}[var_qs all]]
 
-    $::rivetweb::logger log debug  "registered datasources: $::rivetweb::datasources"
+    $::rivetweb::logger log debug "registered datasources: $::rivetweb::datasources"
     $::rivetweb::logger log debug "argsqs: $argsqs"
     foreach ds $::rivetweb::datasources {
 
@@ -134,7 +134,6 @@ namespace eval ::rivetweb {
     $::rivetweb::logger log info "processing request for '$page_key'"
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
-
     set ::rivetweb::current_pmodel [$::rivetweb::current_pmodel prepare $::rivetweb::language $argsqs]
 
 # vi:shiftwidth=4:softtabstop=4:
@@ -209,6 +208,9 @@ namespace eval ::rivetweb {
         }
     }
 
-    headers type "text/html; charset=$::rivetweb::http_encoding"
-
+    if {[$::rivetweb::current_pmodel binary_content]} {
+        $::rivetweb::current_pmodel print_binary
+    } else {
+        headers type "text/html; charset=$::rivetweb::http_encoding"
+    }
 }

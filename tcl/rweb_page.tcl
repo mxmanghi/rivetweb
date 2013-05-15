@@ -52,6 +52,7 @@ namespace eval ::rwpage {
             }
         }
         public method clear_metadata { } { set metadata [dict create] }
+	public method binary_content { } { return false }
     }
 
 # -- add_metadata 
