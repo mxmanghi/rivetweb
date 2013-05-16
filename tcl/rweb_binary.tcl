@@ -37,7 +37,6 @@ namespace eval ::rwpage {
             set file_size   [file size $binary_file]
             set mimetype    [::fileutil::magic::mimetype $binary_file]
             #set mimetype    [exec xdg-mime query filetype $binary_file]
-            apache_log_error info "Downloading file $binary_file ($mimetype)"
 
             if {($mimetype == "") || ($mimetype == "Microsoft Office Document")} {
                 if {[regexp {^.+\.ppt$} $fname]} {
@@ -47,6 +46,7 @@ namespace eval ::rwpage {
                 }
             }
 
+            apache_log_error info "Downloading file $binary_file ($mimetype)"
             set file_handle [open $binary_file r]
             fconfigure $file_handle -translation binary
             fconfigure stdout       -translation binary
@@ -70,7 +70,7 @@ namespace eval ::rwpage {
                 incr nrecs
                 puts -nonewline $chunk
 
-                apache_log_error debug "rec $nrecs"
+                apache_log_error debug "file downloaded in $nrecs chunks"
             }
         }
     }

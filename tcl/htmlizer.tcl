@@ -72,7 +72,7 @@ namespace eval ::htmlizer {
         set item_tag        [lindex $item_html 0]
         set item_class      [lindex $item_html 1]
 
-        set linkmodel   $::rivetweb::linkmodel
+        set linkmodel       $::rivetweb::linkmodel
 
 # we create the HTML menu dom
 

@@ -180,7 +180,6 @@ namespace eval ::rwpage {
                 set processor [dict get $ppp $hk function]
                 
                 ::rivetweb::$processor $this
-
             }
         }
     }
@@ -188,11 +187,10 @@ namespace eval ::rwpage {
 # -- print_content
 # 
 # 
-    ::itcl::body RWPage::print_content {language} { 
-    }
+    ::itcl::body RWPage::print_content {language} { }
 
     proc create {key {class RWStatic}} {
-	    return [$class ::#auto $key]
+        return [$class ::#auto $key]
     }
 
 # -- to_string 

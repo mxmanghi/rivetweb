@@ -140,12 +140,14 @@ namespace eval ::rwpage {
                 }
 
             } else {
+
                 set errormsg "Inconsistent model: Missing 'pagetext' tag for language $language"
 
                 $::rivetweb::logger log emerg "inconsistent model: $pageobj"
                 return -code error  -errorcode missing_default_content  \
                                     -errorinfo $errormsg $errormsg
             }
+
         } else {
             set output_buffer "No Data"
         }
@@ -250,7 +252,7 @@ namespace eval ::rwpage {
 #
 #
     ::itcl::body RWStatic::languages { } {
-	    return [dict keys $content]
+	return [dict keys $content]
     }
 
 # -- to_string 
