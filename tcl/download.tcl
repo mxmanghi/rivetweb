@@ -31,7 +31,7 @@
             fconfigure stdout -translation binary
             headers type                    $mimetype
             headers add Content-Disposition "attachment; filename=\"$fname\""
-            headers add Content-Length		$file_size
+            headers add Content-Length	    $file_size
 
         # we send it in one or more chunks
 

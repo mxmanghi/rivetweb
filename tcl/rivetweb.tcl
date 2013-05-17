@@ -98,8 +98,8 @@ namespace eval ::rivetweb {
         set urlargs {}
         while {[llength $arglist]} {
             set arglist [lassign $arglist param value]
-            #lappend urlargs "$param=[escape_string $value]"
-            lappend urlargs "$param=$value"
+            lappend urlargs "$param=[escape_string $value]"
+            #lappend urlargs "$param=$value"
         }
 
         if {[var_qs exists template]} { 

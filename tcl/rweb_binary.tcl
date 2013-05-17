@@ -18,8 +18,8 @@ namespace eval ::rwpage {
         public	variable chunk_size   8192
 
         constructor {pagekey binfile} {RWPage::constructor $pagekey} { 
-	        set binary_file $binfile
-	    }
+	    set binary_file $binfile
+	}
 
         public method binary_content { } { return true }
         public method print_binary {} 

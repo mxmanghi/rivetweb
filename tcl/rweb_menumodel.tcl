@@ -49,10 +49,13 @@ namespace eval ::rwmenu {
     }
 
     ::itcl::body RWMenu::get_title {language} {
+
         if {[string length $language] == 0} {
             set language $::rivetweb::default_lang
         }
+
         #puts "<pre><b>$menuid -> $::rivetweb::default_lang -> $title</b></pre>"
+
         if {[dict exists $title $language]} {
             return [dict get $title $language]
         } else {
@@ -62,10 +65,17 @@ namespace eval ::rwmenu {
 	    } else {
 		return ""
 	    }
+
         }
+
     }
 
+# -- set_title
+#
+#
+
     ::itcl::body RWMenu::set_title {testo {language ""}} {
+
         if {[string length $language] == 0} {
             set language $::rivetweb::default_lang
         }

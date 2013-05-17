@@ -149,7 +149,7 @@ namespace eval ::rwsitemap {
 
             }
 
-	        $::rivetweb::logger log info "walking up ancestors -> [$sitemap_tree ancestors $group_id]"    
+	    $::rivetweb::logger log info "walking up ancestors -> [$sitemap_tree ancestors $group_id]"    
 
             foreach anc [$sitemap_tree ancestors $group_id] {
 
