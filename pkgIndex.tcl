@@ -8,9 +8,7 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded XMLData 0.1 [list source [file join $dir tcl/datasource/xmldata.tcl]]
-package ifneeded XMLMenu 1.0 [list source [file join $dir tcl/datasource/xmlmenu.tcl]]
-package ifneeded XMLBase 1.0 [list source [file join $dir tcl/datasource/xmlchunk.tcl]]
+package ifneeded XMLBase 1.0 [list source [file join $dir tcl/datasource/xmlbase.tcl]]
 package ifneeded Scripted 1.0 [list source [file join $dir tcl/datasource/rwscripted.tcl]]
 package ifneeded htmlizer 1.0 [list source [file join $dir tcl/htmlizer.tcl]]
 package ifneeded rivetweb 2.0 [list source [file join $dir tcl/rivetweb.tcl]]
@@ -27,4 +25,5 @@ package ifneeded rwscripted 0.1 [list source [file join $dir tcl/rweb_scripted.t
 package ifneeded ScriptBase 0.1 [list source [file join $dir tcl/rweb_scriptbase.tcl]]
 package ifneeded RWDummy 1.0 [list source [file join $dir tcl/datasource/dummy.tcl]]
 package ifneeded rwbinary 0.1 [list source [file join $dir tcl/rweb_binary.tcl]]
+package ifneeded Datasource 1.0 [list source [file join $dir tcl/datasource/datasource.tcl]]
 
