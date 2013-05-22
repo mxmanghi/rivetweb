@@ -18,6 +18,14 @@ namespace eval ::rwpage {
 
         constructor {pagekey} {RWPage::constructor $pagekey} {
             set content [dict create]
+
+    # we store an initial text object. The content variable 
+    # cannot fail to return a pagetext value
+
+	    set page_dom  [dom createDocument pagetext]
+	    set page_o    [$page_dom documentElement]
+	    $page_o appendXML "<div>undefined</div>"
+            dict set content $::rivetweb::default_lang pagetext $page_o
         }
 
         public method destroy {}
@@ -54,7 +62,7 @@ namespace eval ::rwpage {
         $page_o appendXML "<${rootel}>$page_text</${rootel}>"
 
         if {![catch {set pageref [$this content $language]} e]} {
-             $pageref delete
+            $pageref delete
         }
 
         $this set_content $language pagetext $page_dom
@@ -112,7 +120,7 @@ namespace eval ::rwpage {
                 set method asHTML
             }
             default {
-                return [dict get $content $language]
+		return [dict get $content $language pagetext]
             }
         }
 
@@ -132,12 +140,14 @@ namespace eval ::rwpage {
                 }
 
             } else {
+
                 set errormsg "Inconsistent model: Missing 'pagetext' tag for language $language"
 
                 $::rivetweb::logger log emerg "inconsistent model: $pageobj"
                 return -code error  -errorcode missing_default_content  \
                                     -errorinfo $errormsg $errormsg
             }
+
         } else {
             set output_buffer "No Data"
         }
@@ -185,8 +195,8 @@ namespace eval ::rwpage {
 # passed as arguments to the hook, which returns a new tag name
 # and a new list of attributes which are to replace the element
 
-                set page_content [$this content $language -reference]
-                set page_xml [dict get $page_content pagetext]
+                set page_xml [$this content $language -reference]
+                #set page_xml [dict get $page_content pagetext]
                 foreach el2xform [$page_xml getElementsByTagName $hk] {
                     
                     set attribute_list {}
@@ -242,7 +252,7 @@ namespace eval ::rwpage {
 #
 #
     ::itcl::body RWStatic::languages { } {
-	    return [dict keys $content]
+	return [dict keys $content]
     }
 
 # -- to_string 

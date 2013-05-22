@@ -3,31 +3,34 @@
 
  Rivetweb is a minimum requirements Tcl based engine for creating template 
 based websites. The only mandatory software you need is the Apache HTTP 
-Webserver and Apache Rivet plus some additional packages when specific
-features are needed.
+Webserver,Apache Rivet, some of the popular Tcl related packages (tdom,
+Itcl) plus some additional packages when specific features are needed.
  
  Rivetweb relies on Apache Rivet (http://tcl.apache.org/rivet/) for doing 
 most of the work needed to create and manipulate content to be displayed in
 HTML pages. Rivetweb exploits the ability of Rivet of handling 
-templates to structure HTML code into pages having a consistent
-appearance thorough a whole website.
+templates to pages having a consistent appearance thorough a whole website.
 
- Rivetweb internal machinery and organizazion was entirely developed in 
+ Rivetweb internal machinery and organizazion is entirely developed in 
 Tcl/Itcl. Itcl based classes will probably migrate to the TclOO object system. 
 Rivetweb was written with an emphasis on indipendence from actual
-implementation of its components. Rivetweb aims to evolve to a fully
-customizable, extensible framework for simple websites. 
+implementation of its components and aims to evolve to a customizable yet 
+simple, extensible framework for simple websites. 
 
- Current code provides basically 2 example components (dubbed datasource): 
+ A key component in Rivetweb are datasources, components capable of
+processing url-encoded parameters into page objects.
+
+ Current code provides basically 3 example datasources: 
  - XMLBase: a datasource dealing with XML documents bearing both metadata and
-contents of a page. 
- - Scripted: a largely suboptimal datasource whose aim was to provide 
+contents of a page.
+ - Scripted: a largely suboptimal datasource whose aim is to provide 
 an example of a component capable of running site specific scripts.
  - RWDummy: a dummy datasource whose main role is to create pages for
 error messages
 
- A Rivetweb web site can be running several XHTML/CSS templates at the same 
-time, you just switch from one to another in the site specific configuration
+ Like in every template based framework Rivetweb can be running different 
+XHTML/CSS templates at once. You can switch between templates by customizing
+the website specific configuration.
 
  Rivetweb is thought to be multilingual. Its page model interface handles
 language codes and also menu links and headers can switch from a language
@@ -40,4 +43,4 @@ thus adding new data transformations and/or tag expansion.
 
 Rivetweb is entirely free and released under the Apache 2.0 licence.
 
-# 2013-01-23
+# 2013-01-28

@@ -26,6 +26,7 @@ namespace eval ::rwsitemap {
         constructor {ds} {
             set cnt         0
             set datasource  $ds
+
 # The sitemap structure is implemented by a ::struct::tree Tcl
 # structure
 
@@ -117,7 +118,7 @@ namespace eval ::rwsitemap {
 
         set disconnected [$sitemap_tree children disconnected]
         foreach dmenu $disconnected {
-            $::rivetweb::logger log debug "$i: $group_id $dmenu"
+            $::rivetweb::logger log debug "$group_id -> $dmenu"
 #           set menu_group [$sitemap get disconnected $dmenu]
             set menu_group $dmenu
 
@@ -148,7 +149,7 @@ namespace eval ::rwsitemap {
 
             }
 
-	        $::rivetweb::logger log info "walking up ancestors -> [$sitemap_tree ancestors $group_id]"    
+	    $::rivetweb::logger log info "walking up ancestors -> [$sitemap_tree ancestors $group_id]"    
 
             foreach anc [$sitemap_tree ancestors $group_id] {
 

@@ -24,11 +24,11 @@
             <ul>
                 <li <?= [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>>
                 <a href="<?= [::rivetweb::makeUrl index] ?>">Home</a></li>
-                <li <? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
-                <a href="<? puts -nonewline [::rivetweb::makeUrl download] ?>">Downloads</a></li>
+                <li <?= [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
+                <a href="<?= [::rivetweb::makeUrl download] ?>">Downloads</a></li>
                 <li></li>
-                <li <? puts -nonewline [::rivetweb::thisClass $::rivetweb::page_content installation current_page_item] ?>>
-                <a href="<? puts -nonewline [::rivetweb::makeUrl installation] ?>">Installation</a></li>
+                <li <?= [::rivetweb::thisClass $::rivetweb::page_content installation current_page_item] ?>>
+                <a href="<?= [::rivetweb::makeUrl installation] ?>">Installation</a></li>
             </ul>
         </div>
     </div>
@@ -58,8 +58,11 @@
 
                             if {[string equal $::rivetweb::page_content index] == 1} { }
                             $::rivetweb::current_pmodel print_content $::rivetweb::language
+
+			    # let's print the page's main content
                             set page_d [$::rivetweb::current_pmodel to_string]
-                            puts [html $::rivetweb::current_pmodel div b]
+
+                            html $::rivetweb::current_pmodel div b
                             puts "<table>"
                             foreach k [dict keys $page_d] {
                                 puts "<tr><td>$k</td><td>[dict get $page_d $k]</td></tr>"

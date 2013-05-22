@@ -13,7 +13,7 @@ set hook_descriptor(stage)      metadata
 
 proc extract_ident {pmodel} {
 
-    set ident [$pmodel metadata ident]
+    set ident [unescape_string [$pmodel metadata ident]]
 
     if {[regexp {\$Id:\s+[-\w]+\.xml\s+\d*\s+(.*Z)\s+([\.\w]*)\s+\$} $ident match last_modified committer]} {
 
@@ -22,7 +22,7 @@ proc extract_ident {pmodel} {
 
     } else {
     
-        $::rivetweb::logger log debug "'Id' did not match" 
+        $::rivetweb::logger log debug "ident: $ident did not match" 
         set ::rivetweb::last_modified ""
 
 # we couldn't match the subversion Id, so we store the content of this

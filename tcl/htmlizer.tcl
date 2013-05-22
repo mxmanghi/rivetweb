@@ -7,9 +7,8 @@
 namespace eval ::htmlizer {
 
 # -- html_menu, a procedure whose specialization is 
-# transforming a menuobj into an
-# HTML menu. menustruct is a even lenght list of attribute
-# value pairs controlling the markup
+# transforming a menuobj into an HTML menu. menustruct is a even lenght list
+# of attribute value pairs controlling the markup
 #
 # html_menu takes a tdom object command from the menu dom and generates the html
 # code for the menu. This procedure uses tdom calls in order to obtain an xhtml
@@ -73,16 +72,26 @@ namespace eval ::htmlizer {
         set item_tag        [lindex $item_html 0]
         set item_class      [lindex $item_html 1]
 
-        set linkmodel   $::rivetweb::linkmodel
+        set linkmodel       $::rivetweb::linkmodel
 
 # we create the HTML menu dom
 
         set menudom [dom createDocument $menu_tag]
         set htmlmenu_o [$menudom documentElement]
 
-        eval $htmlmenu_o setAttribute id [$menuobj id]       
+# setting id and class attributes (if defined)
+
+        set menuid [$menuobj id]
+        if {[string length $menuid]} {
+            $htmlmenu_o setAttribute id [$menuobj id]
+        }
+
         if {[string length $menu_class]} { 
-            eval $htmlmenu_o setAttribute class $menu_class 
+            $htmlmenu_o setAttribute class $menu_class 
+        }
+        set cssclass [$menuobj peek cssclass]
+        if {[string length $cssclass]} {
+            $htmlmenu_o setAttribute class $cssclass 
         }
 
 # we set aside the handling of the 'notitle' attribute
@@ -138,25 +147,30 @@ namespace eval ::htmlizer {
             }
 
             set hrefvalue "#"
+	    set lnkargs   [$linkmodel arguments $link]
             switch [$linkmodel type $link] {
     
                 internal {
                     set hrefvalue [::rivetweb::makeUrl $link_ref]
+		    if {[dict exists $lnkargs doctarget]} {
+			append hrefvalue "#[dict get $lnkargs doctarget]"
+		    }
+		    #puts "<pre>href=$hrefvalue (args: $lnkargs)</pre>"
                 }
                 scripted {
                     set arguments ""
-                    foreach {param value} [$linkmodel arguments $link] {
-                        lappend arguments "$param=[escape_string $value]" 
+                    foreach {param value} $lnkargs {
+                        lappend arguments $param [escape_string $value] 
                     }
                     
-                    set hrefvalue "index.rvt?[join $arguments &]"
+                    set hrefvalue [::rivetweb::composeUrl {*}$arguments]
                 }
                 external {
                     set hrefvalue $link_ref
                 }
                 local {
                     set hrefvalue  \
-                        [file join / $::rivetweb::local_pages $link_ref]
+                        [join [list $::rivetweb::local_pages $link_ref] "/"]
                     
                 }
             }

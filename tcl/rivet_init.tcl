@@ -7,10 +7,10 @@
 #
 
 # prefetch index page
-
 #$::rivetweb::rwebdb fetch index 
 
-# costruiamo il database in memoria dei template disponibili
+# building an in-memory database of available templates for this website
+
 apache_log_error notice "Initializing Apache child [pid], [pwd]"
 
 set templates_dir [file join $::rivetweb::site_base $::rivetweb::base_templates]
@@ -56,6 +56,9 @@ foreach template $templates_dir_list {
                 if {[info exists ::rwtemplate::link_class]} {
                     dict set ::rivetweb::templates_db $template_key link_class $::rwtemplate::link_class
                 }
+		if {[info exists ::rwtemplate::pictures]} { 
+		    dict set ::rivetweb::templates_db $template_key pictures $::rwtemplate::pictures
+		}
             }
 
         } e]} {

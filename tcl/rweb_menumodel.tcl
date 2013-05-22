@@ -20,8 +20,9 @@ namespace eval ::rwmenu {
         private variable    links
         private variable    attributes
         private variable    index
+        private variable    cssclass
 
-        constructor {id {parent_menu none} {menu_visibility normal}} {
+        constructor {id {parent_menu none} {menu_visibility normal} {css_class ""}} {
             set menuid      $id
             set parent      $parent_menu
             set visibility  $menu_visibility
@@ -29,6 +30,7 @@ namespace eval ::rwmenu {
             set links       {}
             set attributes  {}
             set index       end
+            set cssclass    $css_class
         }
 
         private method get_title {language}
@@ -47,18 +49,33 @@ namespace eval ::rwmenu {
     }
 
     ::itcl::body RWMenu::get_title {language} {
+
         if {[string length $language] == 0} {
             set language $::rivetweb::default_lang
         }
 
+        #puts "<pre><b>$menuid -> $::rivetweb::default_lang -> $title</b></pre>"
+
         if {[dict exists $title $language]} {
             return [dict get $title $language]
         } else {
-            return [dict get $title $::rivetweb::default_lang]
+
+	    if {[dict exists $title $::rivetweb::default_lang]} {
+		return [dict get $title $::rivetweb::default_lang]
+	    } else {
+		return ""
+	    }
+
         }
+
     }
 
+# -- set_title
+#
+#
+
     ::itcl::body RWMenu::set_title {testo {language ""}} {
+
         if {[string length $language] == 0} {
             set language $::rivetweb::default_lang
         }
@@ -101,9 +118,12 @@ namespace eval ::rwmenu {
     ::itcl::body RWMenu::index {} { return $index }
     ::itcl::body RWMenu::attributes {} { return $attributes }
 
-# -- peek: generic accessor for a custom parameter
+# -- peek: 
+#
+# generic accessor for a custom parameter
 # associated to the menuobj. if the attribute 'param'
 # is not existing in the object an error is raised
+#
 
     ::itcl::body RWMenu::peek {param} {
         return [set $param]
@@ -121,6 +141,9 @@ namespace eval ::rwmenu {
             }
             parent {
                 set parent $pvalue
+            }
+            cssclass {
+                set cssclass $pvalue
             }
             title {
                 lassign $args language

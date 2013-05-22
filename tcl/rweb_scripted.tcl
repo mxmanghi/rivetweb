@@ -81,20 +81,24 @@ namespace eval ::rwpage {
         
         if {[catch {$script $do_method $language $this} e opts]} {
             set errorCode [dict get $opts -errorcode]
+
+            set pagetxt "<pre><b>$e</b> (code $errorCode): $opts</pre>"
+            set pagehdr "[string range $e 0 40]..."
+            set pagetitle "[string range $e 0 40]..."
             if {![$::rivetweb::rwebdb check $errorCode]} {
 
                 set pobj [::rwpage::RWStatic ::#auto $errorCode]
-                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> (code $errorCode): $opts"
-                $pobj add_metadata header "[string range $e 0 20]..."
-                $pobj add_metadata title  "[string range $e 0 20]..."
+                $pobj set_pagetext $::rivetweb::default_lang $pagetxt
+                $pobj add_metadata header $pagehdr
+                $pobj add_metadata title  $pagetitle
                 $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
 
             } else {
 
                 set pobj [$::rivetweb::rwebdb fetch $errorCode]
-                $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> $opts"
-                $pobj add_metadata header "[string range $e 0 20]..."
-                $pobj add_metadata title  "[string range $e 0 20]..."
+                $pobj set_pagetext $::rivetweb::default_lang $pagetxt
+                $pobj add_metadata header $pagehdr
+                $pobj add_metadata title  $pagetitle
 
             }
 

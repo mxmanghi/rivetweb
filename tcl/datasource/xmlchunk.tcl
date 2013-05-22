@@ -26,6 +26,7 @@ package require struct::stack
 namespace eval ::XMLBase {
     variable sitemap
     variable sitemap_dir        sitemap
+    variable static_pages       pages
     variable timestamp          0
     variable sitemap_stat   
     variable xmlpath
@@ -35,7 +36,8 @@ namespace eval ::XMLBase {
         variable xmlpath
         variable sitemap
         variable sitemap_dir
-        variable sitemap_stat   
+        variable sitemap_stat
+        variable static_pages
 
 # we first set up the variables controlling the sitemap
 
@@ -43,17 +45,20 @@ namespace eval ::XMLBase {
 
 # let's rewrite the patg to the sitemap
 
-        set sitemap_dir [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
+        set sitemap_dir  [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
+        set static_pages [file normalize [file join $::rivetweb::site_base $static_pages]]
 
         if {![file isdirectory $sitemap_dir]} {
-            
+
             $::rivetweb::logger log notice "Wrong path for sitemap ($sitemap_dir)"
 
-            return -code error  -error_code invalid_path            \
+            return -code error  -error_code invalid_path                \
                                 -errorinfo  "Wrong path $sitemap_dir"   \
                                             "Wrong path $sitemap_dir"
         } else {
+
             $::rivetweb::logger log notice "setting sitemap path as $sitemap_dir"
+
         }
         
 # and the we set the path to the XML pages
@@ -147,6 +152,7 @@ namespace eval ::XMLBase {
 # data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
 
         foreach content [$domroot getElementsByTagName content] {
+
             if {[$content hasAttribute language]} {
                 set clang [$content getAttribute language]
             } else {
@@ -186,8 +192,9 @@ namespace eval ::XMLBase {
 # needs to be refreshed.
 
     proc time_reference {key} {
+        variable static_pages
 
-        set xmlfile [file join $::rivetweb::static_pages ${key}.xml]
+        set xmlfile [file join $static_pages ${key}.xml]
         file stat $xmlfile file_stat
         return $file_stat(mtime)
 
@@ -210,15 +217,16 @@ namespace eval ::XMLBase {
 # -- fetchData 
 #
 # This method retrieves a page content from the backend. This implementation
-# looks for an XML file in the website directory tree (::rivetweb::static_pages). 
+# looks for an XML file in the website directory tree ( now ::XMLBase::static_pages). 
 #
 #
 
     proc fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
         variable xmlpath
+        variable static_pages
 
-        set xmlfile [file join $::rivetweb::static_pages ${key}.xml]
+        set xmlfile [file join $static_pages ${key}.xml]
         $::rivetweb::logger log info "->opening $xmlfile" 
 
         if {[file exists $xmlfile]} {
@@ -270,7 +278,7 @@ namespace eval ::XMLBase {
         file stat $sitemap_dir sitemap_stat
 
         $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
-        if {($sitemap_stat(mtime) < $timestamp)} { 
+        if {($sitemap_stat(mtime) > $timestamp)} { 
 
             return true
         }
@@ -323,6 +331,8 @@ namespace eval ::XMLBase {
 
                     if {[$title hasAttribute lang]} {
                         set language [$title getAttribute lang]
+                    } elseif {[$title hasAttribute language]} {
+                        set language [$title getAttribute language]
                     } else {
                         set language $::rivetweb::default_lang
                     }
@@ -350,6 +360,8 @@ namespace eval ::XMLBase {
                     
                         if {[$linkdata hasAttribute lang]} {
                             set language [$linkdata getAttribute lang]
+                        } elseif {[$linkdata hasAttribute language]} {
+                            set language [$linkdata getAttribute language] 
                         } else {
                             set language $::rivetweb::default_lang
                         }
@@ -381,7 +393,7 @@ namespace eval ::XMLBase {
                             }
                         }
                     }
-#                   puts "-> $ltext $linfo"
+                    #puts "<pre style=\"background: white:\">-> $ltext $linfo</pre>"
 
                     set linkobj [$lm create $ltype $lref $ltext $largs $linfo]
                     $lm set_attribute linkobj $attributes
@@ -461,7 +473,7 @@ namespace eval ::XMLBase {
 
 # -- menu_list
 #
-#
+# XMLBase::menu_list has the special role to provide the base menu 
 
     proc menu_list {page} {
         variable sitemap 
@@ -469,12 +481,19 @@ namespace eval ::XMLBase {
 #       puts "<br/><b>pmodel</b>: $page"
 #       puts "<br/><b>ds</b>: [$page metadata datasource]"
 
+        if {[has_updates]} {
+            load_sitemap $sitemap
+        }
+
         if {[$page metadata datasource] == "::XMLBase"} {
+
             set menul [$page metadata menu]
+
         } else {
-            set menul [dict create  \
-                            $::rivetweb::default_menu_pos \
-                            $::rivetweb::default_menu]
+
+            set menul [dict create  $::rivetweb::default_menu_pos \
+                                    $::rivetweb::default_menu]
+
         }
 
         set menudb [dict create]

@@ -7,10 +7,9 @@ namespace eval ::rivetweb {
 # this must be the local path to the site's document root
     variable site_base
     variable rivetweb_root
-    variable scripts     
-    variable static_pages
-    variable local_pages	        docs
-    variable website_init	        rivetweb.tcl
+    variable scripts
+    variable local_pages	    docs
+    variable website_init	    rivetweb.tcl
     variable site_before_script     ""
     variable default_menu           main
     variable pagemenus
@@ -26,7 +25,7 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable default_template       rwbase
-    variable http_encoding          utf-8
+    variable http_encoding          UTF-8
     variable datasources            {}
     variable datasource             ::XMLBase
     variable rwebdb                 ::rwebdb
@@ -128,6 +127,7 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase it_cont_html   {div itemcontainer}
     dict set templates_db rwbase item_html      {span menuitem}
     dict set templates_db rwbase link_class     navitem
+    dict set templates_db rwbase pictures	picts
 
     variable debug                  1
     variable hooks_dir              hooks
@@ -156,14 +156,12 @@ namespace eval ::rivetweb {
         variable    scripts
         variable    rivetweb_root
         variable    site_base
-        variable    static_pages
         variable    logger
         variable    site_before_script
 
         set rivetweb_root   [file normalize $rweb_root]
-        set scripts	        [file join $rivetweb_root tcl]
+        set scripts	    [file join $rivetweb_root tcl]
         set site_base       $website_root        
-        set static_pages    [file normalize [file join $site_base pages]]
         
         set site_before_script [file normalize [file join $site_base before.tcl]]
         if {![file exists $site_before_script]} {

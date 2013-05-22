@@ -1,4 +1,4 @@
-set rwtemplate 	xhtml10.rvt
+set rwtemplate	    xhtml10.rvt
 set rwcss	    xhtml10.css
 set menu_html       {li ""}
 set title_html      {h2 ""}
