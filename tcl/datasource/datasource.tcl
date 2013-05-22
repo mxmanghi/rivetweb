@@ -9,13 +9,13 @@ package require Itcl
 package require rwconf
 package require rwlogger
 
-namespace eval ::rwdatasource {
+namespace eval ::rwdatas {
 
     ::itcl::class Datasource {
 
         public method init {args} {}
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
-        public method fetchData { } { return "" }
+        public method fetchData {key reassigned_key}
         public method is_stale {key timereference} { return false }
         public method synchData {key data_dict} {}
         public method dispose {key} {}

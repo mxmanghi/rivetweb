@@ -160,7 +160,7 @@ namespace eval ::rivetweb {
         variable    site_before_script
 
         set rivetweb_root   [file normalize $rweb_root]
-        set scripts	    [file join $rivetweb_root tcl]
+        set scripts	        [file join $rivetweb_root tcl]
         set site_base       $website_root        
         
         set site_before_script [file normalize [file join $site_base before.tcl]]
@@ -188,10 +188,12 @@ namespace eval ::rivetweb {
 
         package require $ds
 
+        set dsobj [::rwdatas::${ds} ::${ds}]
+
         if {$position == "top"} {
-            set datasources [linsert $datasources 0 ::${ds}]
+            set datasources [linsert $datasources 0 ::${dsobj}]
         } else {
-            lappend datasources ::${ds} 
+            lappend datasources ::${dsobj} 
         }
 
         $ds init

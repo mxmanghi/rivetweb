@@ -14,19 +14,23 @@ package require rwscripted
 package require rwmenu
 package require ScriptBase
 
-namespace eval ::Scripted {
-    variable sitemap
-    variable script_path tcl
-    variable varsqs
-    variable scriptsdb
 
-# -- init
-#
-#
-    proc init {args} {
-        variable sitemap
-        variable script_path
-        variable scriptsdb
+namespace eval ::rwdatas {
+
+    ::itcl::class Scripted {
+        private variable sitemap
+        private variable script_path tcl
+        private variable varsqs
+        private variable scriptsdb
+        
+        public method init {args}
+        public method willHandle {arglist keyvar}
+        public method fetchData {key reassigned_key}
+        public method is_stale {key timereference } { return false }
+        public method menu_list {page} 
+    }
+
+    ::itcl::body Scripted::init {args} {
 
         set sitemap     [::rwsitemap::create [namespace current]]
         set script_path [file normalize [file join $::rivetweb::site_base $script_path]]
@@ -58,7 +62,7 @@ namespace eval ::Scripted {
 # -- willHandle
 #
 #
-    proc willHandle {arglist keyvar} {
+    ::itcl::body Scripted::willHandle {arglist keyvar} {
         variable varsqs
         variable script_path
         variable scriptsdb
@@ -87,14 +91,12 @@ namespace eval ::Scripted {
         $::rivetweb::logger log info "[namespace current] not mapping request"
         return -code continue -errorcode rw_continue
     }
-
+    
 # -- fetchData 
 #
 #
 
-    proc fetchData {key reassigned_key} {
-        variable varsqs
-        variable scriptsdb
+    ::itcl::body Scripted::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
 
         set rkey $key
@@ -107,14 +109,11 @@ namespace eval ::Scripted {
         return $newpage
     }
 
-    proc is_stale {key timereference } { return false }
-
 # -- menu_list
 #
 #
 
-    proc menu_list {page} { 
-        variable scriptsdb
+    ::itcl::body Scripted::menu_list {page} { 
 
         set menudb [dict create]
         #puts stderr "<div style=\"background: yellow;\">menudb created ($menudb)</div>"
@@ -137,9 +136,6 @@ namespace eval ::Scripted {
 
         return $menudb
     }
-
-    namespace export *
-    namespace ensemble create
 }
 
-package provide Scripted 1.0
+package provide Scripted 2.0

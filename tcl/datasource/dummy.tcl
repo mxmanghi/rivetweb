@@ -5,13 +5,14 @@
 #
 #
 
+package require Itcl
 package require rwconf
 package require rwlogger
 package require Datasource
 
 namespace eval ::rwdatas {
 
-    ::itcl:class RWDummy { 
+    ::itcl::class RWDummy { 
         inherit Datasource
 
         public method name {} { return "Dummy" }

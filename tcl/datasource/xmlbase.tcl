@@ -41,10 +41,12 @@ namespace eval ::rwdatas {
         
         public method init {args}
         public method willHandle {arglist keyvar}
-        public method fetchData { } 
+        public method fetchData {key reassigned_key}
         public method is_stale {key timereference}
         public method has_updates {} 
         public method name {} { return "XMLBase" }
+        public method load_sitemap {sitemap_mgr {ctx ""}}
+        public method menu_list {page} 
         
     }
 
@@ -499,4 +501,4 @@ namespace eval ::rwdatas {
     }
 }
 
-package provide XMLBase 1.0
+package provide XMLBase 2.0
