@@ -6,7 +6,8 @@
 # the core database
 #
 #
-
+package require Itcl
+package require Datasource
 package require rwconf
 package require rwlogger
 package require rwsitemap
@@ -18,6 +19,8 @@ package require ScriptBase
 namespace eval ::rwdatas {
 
     ::itcl::class Scripted {
+        inherit Datasource
+
         private variable sitemap
         private variable script_path tcl
         private variable varsqs

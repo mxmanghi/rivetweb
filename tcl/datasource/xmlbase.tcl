@@ -6,6 +6,7 @@
 #
 #
 
+package require Itcl
 package require tdom
 package require rwconf
 package require rwlogger
@@ -27,6 +28,8 @@ package require Datasource
 namespace eval ::rwdatas {
 
     ::itcl::class XMLBase {
+        inherit Datasource
+
         private variable sitemap
         private variable sitemap_dir        sitemap
         private variable static_pages       pages

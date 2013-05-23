@@ -19,7 +19,7 @@ namespace eval ::rwdatas {
         public method is_stale {key timereference} { return false }
         public method synchData {key data_dict} {}
         public method dispose {key} {}
-        public method has_updates {} {return false}
+        public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} { return [dict create] }
         public method name {} { return "Datasource" }
