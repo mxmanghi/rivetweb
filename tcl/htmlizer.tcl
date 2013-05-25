@@ -28,25 +28,27 @@ namespace eval ::htmlizer {
 #       </div>
 #   </$menu_tag>
 #
-#
 #   Arguments: 
 #
 # - menuObj: tdom object representing the menu to be printed
 # - language: language code
 # - menu_struct: list of attr-value pairs controlling the markup of the menu
 #
-#	  * Element 0: html element tag that will encompass the whole menu 
-#                  (default: div)
+#	  * Element 0: html element tag that will encompass the whole menu (default: div)
 #	  * Element 1: css class for the element (default: staticmenu)
 #
 # - title_html: 2 element list
+#
 #		* Element 0: html element tag enclosing the menu title (def: div)
 #		* Element 1: css class for the element (default: menuheader)
 #
 # - it_cont_html: 2 element list
+#
 #		* Element 0: html element tag enclosing the menu items (def: div)
 #		* Element 1: css class for the element (default: itemcontainer)
+#
 # - item_html: 2 element list
+#
 #		* Element 0: html element delimiting an item (def: span)
 #		* Element 1: css class for the element (default: navitem)
 #
@@ -147,15 +149,15 @@ namespace eval ::htmlizer {
             }
 
             set hrefvalue "#"
-	    set lnkargs   [$linkmodel arguments $link]
+	        set lnkargs   [$linkmodel arguments $link]
             switch [$linkmodel type $link] {
     
                 internal {
                     set hrefvalue [::rivetweb::makeUrl $link_ref]
-		    if {[dict exists $lnkargs doctarget]} {
-			append hrefvalue "#[dict get $lnkargs doctarget]"
-		    }
-		    #puts "<pre>href=$hrefvalue (args: $lnkargs)</pre>"
+		            if {[dict exists $lnkargs doctarget]} {
+			            append hrefvalue "#[dict get $lnkargs doctarget]"
+		            }
+		            #puts "<pre>href=$hrefvalue (args: $lnkargs)</pre>"
                 }
                 scripted {
                     set arguments ""

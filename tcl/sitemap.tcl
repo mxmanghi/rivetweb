@@ -137,11 +137,12 @@ namespace eval ::rwsitemap {
 # marked as leaves.
 
     ::itcl::body RWSitemap::menu_list {group_id} {
+        #$::rivetweb::logger log info "sitemap_tree -> [$sitemap_tree serialize]"    
 
         set menu_s [::struct::stack menu_stack[incr cnt]]
 
         if {[$sitemap_tree exists $group_id]} {
-#	        puts ">>>[$sitemap keys $group_id]<<<"
+            #puts ">>>[$sitemap_tree keys $group_id]<<<"
             foreach m [$sitemap_tree keys $group_id] {
 
                 set menu_o [$sitemap_tree get $group_id $m] 
@@ -149,7 +150,7 @@ namespace eval ::rwsitemap {
 
             }
 
-	    $::rivetweb::logger log info "walking up ancestors -> [$sitemap_tree ancestors $group_id]"    
+            $::rivetweb::logger log info "walking up ancestors -> [$sitemap_tree ancestors $group_id]"    
 
             foreach anc [$sitemap_tree ancestors $group_id] {
 
