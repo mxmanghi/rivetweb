@@ -52,7 +52,7 @@ namespace eval ::rwpage {
             }
         }
         public method clear_metadata { } { set metadata [dict create] }
-	public method binary_content { } { return false }
+        public method binary_content { } { return false }
     }
 
 # -- add_metadata 
@@ -146,7 +146,7 @@ namespace eval ::rwpage {
 # tdom objects). Abstract method for this class
 
     ::itcl::body RWPage::destroy { } {
-	    ::itcl::delete object $this
+        ::itcl::delete object $this
     }
 
 # -- postproc_hooks

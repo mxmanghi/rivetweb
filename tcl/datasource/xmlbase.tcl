@@ -14,8 +14,8 @@ package require rwsitemap
 package require rwstatic
 package require rwsitemap
 package require rwmenu
-package require struct::stack
 package require Datasource
+package require struct::stack
 
 # temporary variable names
 #
@@ -54,6 +54,8 @@ namespace eval ::rwdatas {
     }
 
     ::itcl::body XMLBase::init {args} {
+
+        set ::rwdatas::static_pages $static_pages
 
 # we first set up the variables controlling the sitemap
 
