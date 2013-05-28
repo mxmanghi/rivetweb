@@ -473,11 +473,11 @@ namespace eval ::rwdatas {
                     }
 
                     if {[$sm hasAttribute position]} {
-                        set position    [$sm getAttribute position]
+                        set position [$sm getAttribute position]
                         if {![string is integer $position]} { set position end }
                     }
                     $sitemap_mgr add_menu_group $group_parent $group_menu_id \
-                                                    [listStaticMenus $sm $group_parent]
+                                                            [listStaticMenus $sm $group_parent]
                     
                     $logger log notice "adding $group_menu_id to $group_parent"
 
