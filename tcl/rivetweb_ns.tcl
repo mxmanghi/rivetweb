@@ -191,9 +191,9 @@ namespace eval ::rivetweb {
         set dsobj [::rwdatas::${ds} ::${ds}]
 
         if {$position == "top"} {
-            set datasources [linsert $datasources 0 ::${dsobj}]
+            set datasources [linsert $datasources 0 $dsobj]
         } else {
-            lappend datasources ::${dsobj} 
+            lappend datasources $dsobj 
         }
 
         $ds init

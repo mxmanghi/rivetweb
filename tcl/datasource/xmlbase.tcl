@@ -288,7 +288,7 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::listStaticMenus {sm parent_mg} {
         
         set menumodel $::rivetweb::menumodel
-        set group_menu_list {}
+        array set group_menu_list {}
 
         foreach menu [$sm getElementsByTagName menu] {
             foreach cn [$menu childNodes] {
@@ -395,11 +395,29 @@ namespace eval ::rwdatas {
                     
                     $menuobj add_link $linkobj
                 }
+
+            # checking 'position' attribute
+
+                if {[$menu hasAttribute position]} {
+                    set position [$menu getAttribute position]
+                    $::rivetweb::logger log debug "$menuobj has position $position"
+                    if {[string is integer $position]} {
+                        lappend group_menu_list($position) $menuobj
+                    } else {
+                        lappend group_menu_list(1000) $menuobj
+                    }
+                } else {
+                    lappend group_menu_list(1000) $menuobj
+                }
             }
-            lappend group_menu_list $menuobj
         }
 
-        return $group_menu_list
+        $::rivetweb::logger log debug "->collected menus [array get group_menu_list]"
+        set positions [lsort -integer [array names group_menu_list]]
+        set group_list {} 
+        foreach group_pos $positions { lappend group_list {*}$group_menu_list($group_pos) }
+
+        return $group_list
     }
 
 # -- load_sitemap
@@ -415,6 +433,8 @@ namespace eval ::rwdatas {
 
         set logger $::rivetweb::logger
         $logger log info "recreating sitemap"
+
+        $sitemap_mgr recreate
 
         file stat $sitemap_dir  sitemap_stat
         set timestamp $sitemap_stat(mtime) 
@@ -450,6 +470,11 @@ namespace eval ::rwdatas {
                         set group_parent    [$sm getAttribute parent]
                     } else {
                         set group_parent    root
+                    }
+
+                    if {[$sm hasAttribute position]} {
+                        set position    [$sm getAttribute position]
+                        if {![string is integer $position]} { set position end }
                     }
                     $sitemap_mgr add_menu_group $group_parent $group_menu_id \
                                                     [listStaticMenus $sm $group_parent]
