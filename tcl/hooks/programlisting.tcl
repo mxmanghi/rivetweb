@@ -11,7 +11,7 @@ set hook_descriptor(descrip)    "manipolazione tag pre inclusione testo preforma
 set hook_descriptor(stage)      xmlpostproc
 set hook_descriptor(textmode)   XML
 
-proc programlisting {element_text attribute_list} {
+proc programlisting { datasource element_text attribute_list} {
 
     set d [dict create]
 

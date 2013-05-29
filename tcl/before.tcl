@@ -186,7 +186,8 @@ namespace eval ::rivetweb {
 
     if {[catch {
 
-       $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks   \
+       $::rivetweb::current_pmodel postproc_hooks   $::rivetweb::datasource \
+                                                    $::rivetweb::hooks   \
                                                     xmlpostproc         \
                                                     $language
 
