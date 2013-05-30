@@ -12,7 +12,10 @@
     if {[var exists rwinfo]} {
         load_env env
         parray_table env
-        parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
+        #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
+
+        $::rivetweb::rwebdb coredump
+
     } elseif {[var exists function]} {
         set fun [var get function]
         if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {

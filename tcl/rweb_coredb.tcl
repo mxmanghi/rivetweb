@@ -248,6 +248,29 @@ namespace eval ::rwebdb {
     }
     namespace export page
 
+    # -- coredump
+    #
+    #
+
+    proc coredump {} {
+        variable sitepages
+
+        foreach pageentry [dict keys $sitepages] {
+
+            set entry_d [dict create {*}[dict get $sitepages $pageentry]]
+            puts "<table><tr><th colspan=\"2\">$pageentry</th></tr>"
+            foreach prop [dict keys $entry_d] {
+
+                puts "<tr><td>$prop</td><td>[dict get $entry_d $prop]</td></tr>"
+
+            }            
+            puts "</table>"
+
+        }
+
+    }
+    namespace export coredump
+
     namespace ensemble create
 }
 
