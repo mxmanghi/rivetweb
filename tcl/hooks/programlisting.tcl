@@ -26,6 +26,7 @@ proc programlisting { datasource element_text attribute_list} {
     if {[info exists attributes(src)]} {
 
         set code_file [::rivetweb::searchPath $attributes(src) [list    $::rwdatas::static_pages    \
+                                                                        $::rivetweb::local_pages    \
                                                                         $::rivetweb::site_base      \
                                                                         $::rivetweb::rivetweb_root]]
 
