@@ -205,9 +205,9 @@ namespace eval ::rwpage {
                     }
 
                     if {[string tolower $text_mode] == "xml"} {
-                        set new_element_d [::rivetweb::$processor $datasource [$el2xform asXML -indent 2] $attribute_list]
+                        set new_element_d [::rivetweb::$processor $datasource $hk [$el2xform asXML -indent 2] $attribute_list]
                     } else {
-                        set new_element_d [::rivetweb::$processor $datasource [$el2xform text] $attribute_list]
+                        set new_element_d [::rivetweb::$processor $datasource $hk [$el2xform text] $attribute_list]
                     }
 
 #                   apache_log_error debug $new_element_d

@@ -38,7 +38,7 @@ proc listaPunti {punti} {
 }
 
 
-proc expandcalendar {datasource element_xml attribute_list} {
+proc expandcalendar {datasource tag element_xml attribute_list} {
 
     set d [dict create]
     dict set d expansion "<b>error</b>"

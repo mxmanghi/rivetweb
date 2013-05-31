@@ -7,7 +7,7 @@ set hook_descriptor(function)   localref
 set hook_descriptor(descrip)    "link to local static resources"
 set hook_descriptor(stage)      xmlpostproc
 
-proc localref {datasource element_text attribute_list} {
+proc localref {datasource tag element_text attribute_list} {
 
     set d [dict create]
     array set attributes $attribute_list
@@ -17,6 +17,7 @@ proc localref {datasource element_text attribute_list} {
         set file_path [join [list $::rivetweb::local_pages $aliasdef] "/"]
         set attributes(href) $file_path
         unset attributes(alias)
+
     } elseif {[info exists attributes(href)]} {   
 
         set attributes(href) [join [list $::rivetweb::local_pages $attributes(href)] "/"]
