@@ -171,9 +171,7 @@ namespace eval ::htmlizer {
                     set hrefvalue $link_ref
                 }
                 local {
-                    set hrefvalue  \
-                        [join [list $::rivetweb::local_pages $link_ref] "/"]
-                    
+                    set hrefvalue  "/$::rivetweb::local_pages/$link_ref"
                 }
             }
             

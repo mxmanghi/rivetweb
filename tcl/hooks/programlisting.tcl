@@ -61,7 +61,7 @@ proc programlisting { datasource tag element_text attribute_list} {
         $el_dom delete
     }
 
-    dict set d text $code_text
+    dict set d text [string trim $code_text]
     dict set d attributes [array get attributes]
     dict set d tagname pre
 
