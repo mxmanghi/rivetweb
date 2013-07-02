@@ -75,6 +75,10 @@ namespace eval ::rivetweb {
 
     variable static_links           false
 
+# URL encoded parameters to be replicated by makeUrl and composeUrl
+
+    variable passthroughs	    {lang language reset template}
+
 # 'picts_path' and 'css_path' are paths relative to the 
 # website root. 'running_*_paths' are needed because paths
 # change when pages are simulating a static website.

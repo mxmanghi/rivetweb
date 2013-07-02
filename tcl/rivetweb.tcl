@@ -72,25 +72,32 @@ namespace eval ::rivetweb {
 
 # structural variables passover
 
-            if {[var exists lang]} { 
-                set local_ref "${local_ref}&lang=[var get lang]" 
-            }
-            if {[var exists language]} { 
-                set local_ref "${local_ref}&language=[var get language]" 
-            }
-            if {[var exists reset]} { 
-                set local_ref "${local_ref}&reset=[var get reset]" 
-            }
-            if {[var exists template]} { 
-                set local_ref "${local_ref}&template=[var get template]" 
-            }
+#            if {[var exists lang]} { 
+#                set local_ref "${local_ref}&lang=[var get lang]" 
+#            }
+#            if {[var exists language]} { 
+#                set local_ref "${local_ref}&language=[var get language]" 
+#            }
+#            if {[var exists reset]} { 
+#                set local_ref "${local_ref}&reset=[var get reset]" 
+#            }
+#            if {[var exists template]} { 
+#                set local_ref "${local_ref}&template=[var get template]" 
+#            }
+
+	    foreach passthrough $::rivetweb::passthroughs {
+		if {[var_qs exists $passthrough]} {
+		    lappend urlargs "${passthrough}=[var_qs get $passthrough]"
+		}	
+	    }
             return $local_ref
         }
     }
     namespace export makeUrl
 
 # -- composeUrl
-#
+# 
+# this function should consistently build links 
 #
     proc composeUrl {args} {
 
@@ -102,10 +109,17 @@ namespace eval ::rivetweb {
             #lappend urlargs "$param=$value"
         }
 
-        if {[var_qs exists template]} { 
-            lappend urlargs "template=[var_qs get template]" 
-        }
+	foreach passthrough $::rivetweb::passthroughs {
+	    if {[var_qs exists $passthrough]} {
+		lappend urlargs "${passthrough}=[var_qs get $passthrough]"
+	    }	
+	}
+
+        #if {[var_qs exists template]} { 
+        #    lappend urlargs "template=[var_qs get template]" 
+        #}
         return "[env SCRIPT_NAME]?[join $urlargs "&"]"
+
     }
     namespace export composeUrl
 
