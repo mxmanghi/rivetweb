@@ -134,7 +134,6 @@ namespace eval ::rivetweb {
     $::rivetweb::logger log info "processing request for '$page_key'"
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
-
     set ::rivetweb::current_pmodel [$::rivetweb::current_pmodel prepare $::rivetweb::language $argsqs]
 
 # vi:shiftwidth=4:softtabstop=4:
@@ -187,8 +186,9 @@ namespace eval ::rivetweb {
 
     if {[catch {
 
-       $::rivetweb::current_pmodel postproc_hooks  $::rivetweb::hooks   \
-                                                    xmlpostproc         \
+       $::rivetweb::current_pmodel postproc_hooks   $::rivetweb::datasource \
+                                                    $::rivetweb::hooks      \
+                                                    xmlpostproc             \
                                                     $language
 
     } e]} {
@@ -209,6 +209,9 @@ namespace eval ::rivetweb {
         }
     }
 
-    headers type "text/html; charset=$::rivetweb::http_encoding"
-
+    if {[$::rivetweb::current_pmodel binary_content]} {
+        $::rivetweb::current_pmodel print_binary
+    } else {
+        headers type "text/html; charset=$::rivetweb::http_encoding"
+    }
 }

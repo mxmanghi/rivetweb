@@ -6,7 +6,8 @@
 # the core database
 #
 #
-
+package require Itcl
+package require Datasource
 package require rwconf
 package require rwlogger
 package require rwsitemap
@@ -14,23 +15,29 @@ package require rwscripted
 package require rwmenu
 package require ScriptBase
 
-namespace eval ::Scripted {
-    variable sitemap
-    variable script_path tcl
-    variable varsqs
-    variable scriptsdb
 
-# -- init
-#
-#
-    proc init {args} {
-        variable sitemap
-        variable script_path
-	    variable scriptsdb
+namespace eval ::rwdatas {
+
+    ::itcl::class Scripted {
+        inherit Datasource
+
+        private variable sitemap
+        private variable script_path tcl
+        private variable varsqs
+        private variable scriptsdb
+        
+        public method init {args}
+        public method willHandle {arglist keyvar}
+        public method fetchData {key reassigned_key}
+        public method is_stale {key timereference } { return false }
+        public method menu_list {page} 
+    }
+
+    ::itcl::body Scripted::init {args} {
 
         set sitemap     [::rwsitemap::create [namespace current]]
         set script_path [file normalize [file join $::rivetweb::site_base $script_path]]
-	    set scriptsdb	[dict create]
+        set scriptsdb   [dict create]
 
 # to speed up the development I just load the whole directory of scripts
 # We need to pass to auto loading as soon as the mechanics has been set
@@ -46,22 +53,22 @@ namespace eval ::Scripted {
             if {[info exists rwdescriptor(classname)]} { 
                 set cmdname $rwdescriptor(classname)
             } else {
-                set cmdname	[file rootname [file tail $script]]
+                set cmdname     [file rootname [file tail $script]]
             }
             set classname "[namespace current]::[string totitle $cmdname]"
-	        
-            dict set scriptsdb $cmdname class	$classname 
-	        dict set scriptsdb $cmdname object	[$classname ::#auto]
+                
+            dict set scriptsdb $cmdname class   $classname 
+            dict set scriptsdb $cmdname object  [$classname ::#auto]
         }
     }
 
 # -- willHandle
 #
 #
-    proc willHandle {arglist keyvar} {
+    ::itcl::body Scripted::willHandle {arglist keyvar} {
         variable varsqs
         variable script_path
-	    variable scriptsdb
+        variable scriptsdb
 
         upvar $keyvar key 
 
@@ -87,19 +94,16 @@ namespace eval ::Scripted {
         $::rivetweb::logger log info "[namespace current] not mapping request"
         return -code continue -errorcode rw_continue
     }
-
+    
 # -- fetchData 
 #
 #
 
-    proc fetchData {key reassigned_key} {
-        variable varsqs
-	    variable scriptsdb
-
+    ::itcl::body Scripted::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
 
         set rkey $key
-	    set scriptobj [dict get $scriptsdb $rkey object]
+        set scriptobj [dict get $scriptsdb $rkey object]
         $scriptobj setup $varsqs
 
         set newpage [::rwpage::RWScripted ::#auto $key $scriptobj]
@@ -108,14 +112,11 @@ namespace eval ::Scripted {
         return $newpage
     }
 
-    proc is_stale {key timereference } { return false }
-
 # -- menu_list
 #
 #
 
-    proc menu_list {page} { 
-        variable scriptsdb
+    ::itcl::body Scripted::menu_list {page} { 
 
         set menudb [dict create]
         #puts stderr "<div style=\"background: yellow;\">menudb created ($menudb)</div>"
@@ -138,9 +139,6 @@ namespace eval ::Scripted {
 
         return $menudb
     }
-
-    namespace export *
-    namespace ensemble create
 }
 
-package provide Scripted 1.0
+package provide Scripted 2.0

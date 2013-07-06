@@ -7,6 +7,7 @@
 package require Itcl
 package require struct::tree
 package require struct::stack
+package require struct::queue
 package require rwmenu
 
 namespace eval ::rwsitemap {
@@ -42,7 +43,7 @@ namespace eval ::rwsitemap {
         public method recreate {}
         public method has_updates {{data_source_l "*"} {ood out_of_date}} 
         public method sitemap_reload {} 
-        public method add_menu_group {parent_id group_id menuobjs} 
+        public method add_menu_group {parent_id group_id menuobjs {position end}} 
         public method menu_list {group_id} 
         public method to_string {}
     }
@@ -55,7 +56,12 @@ namespace eval ::rwsitemap {
 
 # 21-03-2012: shouldn't we destroy every single menu object???
 
-        foreach node [$sitemap_tree nodes] { $node destroy }
+        foreach node [$sitemap_tree nodes] { 
+            if {[$sitemap_tree keyexists $node menus]} {
+                set menulist [$sitemap_tree get $node menus]
+                foreach {menuid menu_o} $menulist { $menu_o destroy }
+            }
+        }
 
         $sitemap_tree destroy
         set sitemap_tree [::struct::tree sitemap[incr smcnt]] 
@@ -84,31 +90,34 @@ namespace eval ::rwsitemap {
 #
 
     ::itcl::body RWSitemap::sitemap_reload {} {
-
         $datasource load_sitemap $this
     }
 
 # -- add_menu_group 
+#
+#
 
-    ::itcl::body RWSitemap::add_menu_group {parent_id group_id menuobjs} {
+    ::itcl::body RWSitemap::add_menu_group {parent_id group_id menuobjs {position end}} {
 
+        $::rivetweb::logger log debug "adding $group_id to $parent_id ($menuobjs)"
         if {[$sitemap_tree exists $parent_id]} {
 
-            $sitemap_tree insert $parent_id end $group_id 
+            $sitemap_tree insert $parent_id $position $group_id 
+            set menulist {}
             foreach menu_o $menuobjs {
-                set menuid [$menu_o id]
-                $sitemap_tree set $group_id $menuid $menu_o
+                lappend menulist [$menu_o id] $menu_o
             }
+            $sitemap_tree set $group_id menus $menulist
 
         } else {
 
-            $sitemap_tree insert disconnected end $group_id
+            $sitemap_tree insert disconnected $position $group_id
+            set menulist {}
             foreach menu_o $menuobjs {
-                set menuid [$menu_o id]
-
-                $sitemap_tree set $group_id $menuid $menu_o
-                $sitemap_tree set $group_id parent  $parent_id
+                lappend menulist [$menu_o id] $menu_o
             }
+            $sitemap_tree set $group_id menus  $menulist
+            $sitemap_tree set $group_id parent $parent_id
 
             return
         }
@@ -117,15 +126,15 @@ namespace eval ::rwsitemap {
 # a menu group object previously stored in the 'disconnected' branch
 
         set disconnected [$sitemap_tree children disconnected]
-        foreach dmenu $disconnected {
-            $::rivetweb::logger log debug "$group_id -> $dmenu"
-#           set menu_group [$sitemap get disconnected $dmenu]
-            set menu_group $dmenu
+        foreach menu_group $disconnected {
+            $::rivetweb::logger log debug "$group_id -> $menu_group"
 
             set parent [$sitemap_tree get $menu_group parent]
             if {[string match $group_id $parent]} {
+
                 $sitemap_tree move $parent end $menu_group
                 $sitemap_tree unset $menu_group parent
+
             }
         }
 
@@ -138,31 +147,41 @@ namespace eval ::rwsitemap {
 
     ::itcl::body RWSitemap::menu_list {group_id} {
 
-        set menu_s [::struct::stack menu_stack[incr cnt]]
+        $::rivetweb::logger log notice "sitemap nodes -> [$sitemap_tree nodes]"    
+        $::rivetweb::logger log notice "sitemap_tree -> [$sitemap_tree serialize]"    
+
+        #set menu_s [::struct::queue menu_stack[incr cnt]]
+        set menu_s {}
 
         if {[$sitemap_tree exists $group_id]} {
-#	        puts ">>>[$sitemap keys $group_id]<<<"
-            foreach m [$sitemap_tree keys $group_id] {
 
-                set menu_o [$sitemap_tree get $group_id $m] 
-                $menu_s push $menu_o
+            #puts ">>>[$sitemap_tree keys $group_id]<<<"
+            set menulist [$sitemap_tree get $group_id menus]
+            set menugroup {}
+            foreach {menuid menu_o} $menulist {
+
+                lappend menugroup $menu_o
 
             }
-
-	        $::rivetweb::logger log info "walking up ancestors -> [$sitemap_tree ancestors $group_id]"    
+            lappend menu_s $menugroup
+            
+            $::rivetweb::logger log info "walking up ancestors ->> [$sitemap_tree ancestors $group_id]"    
 
             foreach anc [$sitemap_tree ancestors $group_id] {
 
                 if {[string match $anc "root"]} { continue }
 
-                foreach menuid [$sitemap_tree keys $anc] {
+                set menulist [$sitemap_tree get $anc menus]
+                set menugroup {}
+                foreach {menuid menu_o} $menulist {
 
-                    set menu_o [$sitemap_tree get $anc $menuid]
                     set menutype [$menu_o peek visibility]
                     if {[string match $menutype "node"]} {
-                        $menu_s push $menu_o
+                        lappend menugroup $menu_o
                     }
                 }
+
+                lappend menu_s $menugroup
             }
 
         } else {
@@ -170,16 +189,9 @@ namespace eval ::rwsitemap {
             $::rivetweb::logger log err "No menu group $group_id"
 
         }
-
-# let's revert the list of menu by extracting them from the stack
-#
-        if {[$menu_s size] > 0}  {
-            set menuobjs [$menu_s pop [$menu_s size]]
-        } else {
-            set menuobjs {}
-        }
-        $menu_s destroy
-        return $menuobjs
+        
+        $::rivetweb::logger log notice "returning [lreverse $menu_s] as menulist for group '$group_id'"
+        return [concat {*}[lreverse $menu_s]]
     }
 
     ::itcl::body RWSitemap::to_string {} {

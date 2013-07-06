@@ -31,7 +31,7 @@ namespace eval ::rwpage {
         public method destroy {}
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {language field value} 
-        public method postproc_hooks {hooks_d hooks_class {language ""}}
+        public method postproc_hooks {ds hooks_d hooks_class {language ""}}
         public method print_content {language}
         public method languages {}
         public method content {language {fmt -reference}}
@@ -140,12 +140,14 @@ namespace eval ::rwpage {
                 }
 
             } else {
+
                 set errormsg "Inconsistent model: Missing 'pagetext' tag for language $language"
 
                 $::rivetweb::logger log emerg "inconsistent model: $pageobj"
                 return -code error  -errorcode missing_default_content  \
                                     -errorinfo $errormsg $errormsg
             }
+
         } else {
             set output_buffer "No Data"
         }
@@ -166,7 +168,7 @@ namespace eval ::rwpage {
 #       <processor_name> { element_text attributes }
 #
 
-    ::itcl::body RWStatic::postproc_hooks { hooks_d hooks_class {language ""}} {
+    ::itcl::body RWStatic::postproc_hooks { datasource hooks_d hooks_class {language ""}} {
 
         if {[dict exists $hooks_d $hooks_class]} {
 
@@ -203,9 +205,9 @@ namespace eval ::rwpage {
                     }
 
                     if {[string tolower $text_mode] == "xml"} {
-                        set new_element_d [::rivetweb::$processor [$el2xform asXML -indent 2] $attribute_list]
+                        set new_element_d [::rivetweb::$processor $datasource $hk [$el2xform asXML -indent 2] $attribute_list]
                     } else {
-                        set new_element_d [::rivetweb::$processor [$el2xform text] $attribute_list]
+                        set new_element_d [::rivetweb::$processor $datasource $hk [$el2xform text] $attribute_list]
                     }
 
 #                   apache_log_error debug $new_element_d
@@ -250,7 +252,7 @@ namespace eval ::rwpage {
 #
 #
     ::itcl::body RWStatic::languages { } {
-	    return [dict keys $content]
+	return [dict keys $content]
     }
 
 # -- to_string 

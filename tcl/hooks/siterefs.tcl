@@ -9,7 +9,7 @@ set hook_descriptor(function)   sitereference
 set hook_descriptor(descrip)    "link to other internal resource of the website"
 set hook_descriptor(stage)      xmlpostproc
 
-proc sitereference { element_text attribute_list } {
+proc sitereference { datasource tag element_text attribute_list } {
     set new_attributes {}
     foreach {attr attrval} $attribute_list {
         switch $attr {

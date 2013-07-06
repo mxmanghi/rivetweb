@@ -5,22 +5,19 @@
 #
 #
 
+package require Itcl
 package require rwconf
 package require rwlogger
+package require Datasource
 
-namespace eval ::RWDummy {
+namespace eval ::rwdatas {
 
-# -- init
-#
-#
-    proc init {args} { }
-    proc willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
-    proc fetchData { } { return "" }
-    proc is_stale {key timereference} { return false }
-    proc menu_list {page} { return [dict create] }
+    ::itcl::class RWDummy { 
+        inherit Datasource
 
-    namespace export *
-    namespace ensemble create
+        public method name {} { return "Dummy" }
+    }
+
 }
 
-package provide RWDummy 1.0
+package provide RWDummy 1.1

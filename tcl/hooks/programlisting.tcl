@@ -11,7 +11,7 @@ set hook_descriptor(descrip)    "manipolazione tag pre inclusione testo preforma
 set hook_descriptor(stage)      xmlpostproc
 set hook_descriptor(textmode)   XML
 
-proc programlisting {element_text attribute_list} {
+proc programlisting { datasource tag element_text attribute_list} {
 
     set d [dict create]
 
@@ -25,14 +25,12 @@ proc programlisting {element_text attribute_list} {
 
     if {[info exists attributes(src)]} {
 
-        set code_file [::rivetweb::searchPath $attributes(src) [list    $::XMLBase::static_pages \
-                                                                        $::rivetweb::site_base    \
+        set code_file [::rivetweb::searchPath $attributes(src) [list    $::rwdatas::static_pages    \
+                                                                        $::rivetweb::local_pages    \
+                                                                        $::rivetweb::site_base      \
                                                                         $::rivetweb::rivetweb_root]]
 
         if {[string length $code_file] && [file exists $code_file]} {
-#           set code_fp     [open $code_file r]
-#           set code_text   [read $code_fp]
-#           close $code_fp
 
             set code_text [read_file $code_file]
 
@@ -63,7 +61,7 @@ proc programlisting {element_text attribute_list} {
         $el_dom delete
     }
 
-    dict set d text $code_text
+    dict set d text [string trim $code_text]
     dict set d attributes [array get attributes]
     dict set d tagname pre
 

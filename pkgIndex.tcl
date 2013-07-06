@@ -8,10 +8,8 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded XMLData 0.1 [list source [file join $dir tcl/datasource/xmldata.tcl]]
-package ifneeded XMLMenu 1.0 [list source [file join $dir tcl/datasource/xmlmenu.tcl]]
-package ifneeded XMLBase 1.0 [list source [file join $dir tcl/datasource/xmlchunk.tcl]]
-package ifneeded Scripted 1.0 [list source [file join $dir tcl/datasource/rwscripted.tcl]]
+package ifneeded XMLBase 2.0 [list source [file join $dir tcl/datasource/xmlbase.tcl]]
+package ifneeded Scripted 2.0 [list source [file join $dir tcl/datasource/rwscripted.tcl]]
 package ifneeded htmlizer 1.0 [list source [file join $dir tcl/htmlizer.tcl]]
 package ifneeded rivetweb 2.0 [list source [file join $dir tcl/rivetweb.tcl]]
 package ifneeded rwconf 2.0 [list source [file join $dir tcl/rivetweb_ns.tcl]]
@@ -19,12 +17,13 @@ package ifneeded rwebdb 0.1 [list source [file join $dir tcl/rweb_coredb.tcl]]
 package ifneeded rwlink 1.0 [list source [file join $dir tcl/rweb_link.tcl]]
 package ifneeded rwlogger 1.0 [list source [file join $dir tcl/rwlogger.tcl]]
 package ifneeded rwmenu 1.0 [list source [file join $dir tcl/rweb_menumodel.tcl]]
-#package ifneeded rwpmodel 0.1 [list source [file join $dir tcl/rweb_pmodel.tcl]]
 package ifneeded rwsitemap 1.0 [list source [file join $dir tcl/sitemap.tcl]]
 package ifneeded rwterm 0.1 [list source [file join $dir tcl/terminal.tcl]]
 package ifneeded rwpage 0.1 [list source [file join $dir tcl/rweb_page.tcl]]
 package ifneeded rwstatic 0.1 [list source [file join $dir tcl/rweb_static.tcl]]
 package ifneeded rwscripted 0.1 [list source [file join $dir tcl/rweb_scripted.tcl]]
 package ifneeded ScriptBase 0.1 [list source [file join $dir tcl/rweb_scriptbase.tcl]]
-package ifneeded RWDummy 1.0 [list source [file join $dir tcl/datasource/dummy.tcl]]
+package ifneeded RWDummy 1.1 [list source [file join $dir tcl/datasource/dummy.tcl]]
+package ifneeded rwbinary 0.1 [list source [file join $dir tcl/rweb_binary.tcl]]
+package ifneeded Datasource 1.0 [list source [file join $dir tcl/datasource/datasource.tcl]]
 

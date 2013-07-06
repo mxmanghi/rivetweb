@@ -26,7 +26,7 @@ namespace eval ::rwpage {
         public method prepare {language args}
         public method languages { } 
         public method metadata {{key ""}}
-        public method postproc_hooks { hooks_d hooks_class {language ""}}
+        public method postproc_hooks { ds hooks_d hooks_class {language ""}}
         public method metadata_hooks { hooks_d } 
         public method print_content {language}
         public method destroy {}
@@ -52,6 +52,7 @@ namespace eval ::rwpage {
             }
         }
         public method clear_metadata { } { set metadata [dict create] }
+        public method binary_content { } { return false }
     }
 
 # -- add_metadata 
@@ -145,7 +146,7 @@ namespace eval ::rwpage {
 # tdom objects). Abstract method for this class
 
     ::itcl::body RWPage::destroy { } {
-	    ::itcl::delete object $this
+        ::itcl::delete object $this
     }
 
 # -- postproc_hooks
@@ -162,7 +163,7 @@ namespace eval ::rwpage {
 #       <processor_name> { element_text attributes }
 #
 
-    ::itcl::body RWPage::postproc_hooks { hooks_d hooks_class {language ""}} { }
+    ::itcl::body RWPage::postproc_hooks { ds hooks_d hooks_class {language ""}} { }
 
 # -- metadata_hooks
 #
@@ -179,7 +180,6 @@ namespace eval ::rwpage {
                 set processor [dict get $ppp $hk function]
                 
                 ::rivetweb::$processor $this
-
             }
         }
     }
@@ -187,11 +187,10 @@ namespace eval ::rwpage {
 # -- print_content
 # 
 # 
-    ::itcl::body RWPage::print_content {language} { 
-    }
+    ::itcl::body RWPage::print_content {language} { }
 
     proc create {key {class RWStatic}} {
-	    return [$class ::#auto $key]
+        return [$class ::#auto $key]
     }
 
 # -- to_string 

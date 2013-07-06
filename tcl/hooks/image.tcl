@@ -10,7 +10,7 @@ set hook_descriptor(function)   imagehandler
 set hook_descriptor(descrip)    "handler per tag <image src=..... />"
 set hook_descriptor(stage)      xmlpostproc
 
-proc imagehandler {element_text attribute_list} {
+proc imagehandler { datasource tag element_text attribute_list } {
 
     set d [dict create]
 

@@ -35,7 +35,6 @@ namespace eval ::rwlink {
             add_text link_d $l [dict get $link_text $l] $l_info
         }
 
-
 # setting arguments dictionary for scripted links
 
         dict set link_d arguments $link_args

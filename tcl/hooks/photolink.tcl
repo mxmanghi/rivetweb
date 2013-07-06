@@ -13,7 +13,7 @@ set hook_descriptor(function)   photolink
 set hook_descriptor(descrip)    "manipolazione tag photolink per costruire album di foto"
 set hook_descriptor(stage)      xmlpostproc
 
-proc photolink {element_text attribute_list} {
+proc photolink { datasource tag element_text attribute_list} {
 
     set d [dict create]
     dict set d tagname img
