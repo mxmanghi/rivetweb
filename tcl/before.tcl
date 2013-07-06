@@ -115,7 +115,7 @@ namespace eval ::rivetweb {
 #
     set argsqs [dict create {*}[var_qs all]]
 
-    $::rivetweb::logger log debug  "registered datasources: $::rivetweb::datasources"
+    $::rivetweb::logger log debug "registered datasources: $::rivetweb::datasources"
     $::rivetweb::logger log debug "argsqs: $argsqs"
     foreach ds $::rivetweb::datasources {
 
