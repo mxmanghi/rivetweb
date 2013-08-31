@@ -8,8 +8,8 @@ namespace eval ::rivetweb {
     variable site_base
     variable rivetweb_root
     variable scripts
-    variable local_pages	    docs
-    variable website_init	    rivetweb.tcl
+    variable local_pages	        docs
+    variable website_init	        rivetweb.tcl
     variable site_before_script     ""
     variable default_menu           main
     variable pagemenus
@@ -77,7 +77,7 @@ namespace eval ::rivetweb {
 
 # URL encoded parameters to be replicated by makeUrl and composeUrl
 
-    variable passthroughs	    {lang language reset template}
+    variable passthroughs	        {lang language reset template}
 
 # 'picts_path' and 'css_path' are paths relative to the 
 # website root. 'running_*_paths' are needed because paths
