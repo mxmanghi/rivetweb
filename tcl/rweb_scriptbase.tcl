@@ -24,7 +24,9 @@ package require rwmenu
 
 # -- template
 #
-#
+# this methods is in charge for peeking the template file and 
+# parse it.
+
 ::itcl::body ScriptBase::template {pageobj rvtname} {
     parse [file join $::rivetweb::site_base rvt "${rvtname}.rvt"]
 }
@@ -32,9 +34,9 @@ package require rwmenu
 # -- run
 #
 #
+
 ::itcl::body ScriptBase::run {pageobj} {
     puts "<b>[namespace current]</b>"
 }
-
 
 package provide ScriptBase 0.1

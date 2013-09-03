@@ -85,11 +85,11 @@ namespace eval ::rivetweb {
 #                set local_ref "${local_ref}&template=[var get template]" 
 #            }
 
-	    foreach passthrough $::rivetweb::passthroughs {
-		if {[var_qs exists $passthrough]} {
-		    lappend urlargs "${passthrough}=[var_qs get $passthrough]"
-		}	
-	    }
+            foreach passthrough $::rivetweb::passthroughs {
+                if {[var_qs exists $passthrough]} {
+                    lappend urlargs "${passthrough}=[var_qs get $passthrough]"
+                }	
+            }
             return $local_ref
         }
     }
@@ -109,11 +109,11 @@ namespace eval ::rivetweb {
             #lappend urlargs "$param=$value"
         }
 
-	foreach passthrough $::rivetweb::passthroughs {
-	    if {[var_qs exists $passthrough]} {
-		lappend urlargs "${passthrough}=[var_qs get $passthrough]"
-	    }	
-	}
+        foreach passthrough $::rivetweb::passthroughs {
+            if {[var_qs exists $passthrough]} {
+                lappend urlargs "${passthrough}=[var_qs get $passthrough]"
+            }	
+        }
 
         #if {[var_qs exists template]} { 
         #    lappend urlargs "template=[var_qs get template]" 

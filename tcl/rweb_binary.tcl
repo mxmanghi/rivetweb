@@ -18,8 +18,8 @@ namespace eval ::rwpage {
         public	variable chunk_size   8192
 
         constructor {pagekey binfile} {RWPage::constructor $pagekey} { 
-	    set binary_file $binfile
-	}
+	        set binary_file $binfile
+	    }
 
         public method binary_content { } { return true }
         public method print_binary {} 
@@ -65,12 +65,11 @@ namespace eval ::rwpage {
                     close $file_handle
                     puts -nonewline $chunk
                     flush stdout
+                    apache_log_error debug "file downloaded in $nrecs chunks"
                     break
                 } 
-                incr nrecs
                 puts -nonewline $chunk
-
-                apache_log_error debug "file downloaded in $nrecs chunks"
+                incr nrecs
             }
         }
     }
