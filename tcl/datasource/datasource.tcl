@@ -27,7 +27,7 @@ namespace eval ::rwdatas {
         public method name {} { return "Datasource" }
         public method set_alias {alias aliasdef}
         public method get_alias {alias aliasdef}
-
+        public method rewrite_url {urlscript urlargs}
     }
 
     ::itcl::body Datasource::set_alias {alias aliasdef} {
@@ -45,6 +45,11 @@ namespace eval ::rwdatas {
 
         return $alias_found
     }
+
+    ::itcl::body Datasource::rewrite_url {urlscript urlargs} {
+        return -code continue -errorcode rw_continue
+    }
+
 }
 
 package provide Datasource 1.0
