@@ -101,23 +101,38 @@ namespace eval ::rivetweb {
 #
     proc composeUrl {args} {
 
+        if {[::rivet::var_qs exists $::rivetweb::rewrite_par]} {
+
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            foreach ds $::rivetweb::datasources {
+
+                $ds rewrite_url $rwcode [env SCRIPT_NAME] $args rewritten_url
+                return $rewritten_url 
+
+            }
+
+        }
+
         set arglist $args
         set urlargs {}
+
         while {[llength $arglist]} {
             set arglist [lassign $arglist param value]
-            lappend urlargs "$param=[escape_string $value]"
-            #lappend urlargs "$param=$value"
+            set argsmap($param) [::rivet::escape_string $value]
         }
 
         foreach passthrough $::rivetweb::passthroughs {
             if {[::rivet::var_qs exists $passthrough]} {
-                lappend urlargs "${passthrough}=[::rivet::var_qs get $passthrough]"
+                set argsmap($passthrough) [::rivet::var_qs get $passthrough]
             }	
         }
 
-        #if {[var_qs exists template]} { 
-        #    lappend urlargs "template=[var_qs get template]" 
-        #}
+        set arglist [array get argsmap]
+        while {[llength $arglist]} {
+            set arglist [lassign $arglist param value]
+            lappend urlargs "${param}=${value}"
+        }
+
         return "[env SCRIPT_NAME]?[join $urlargs "&"]"
 
     }
@@ -332,6 +347,7 @@ namespace eval ::rivetweb {
     proc template {template_key} {
 
         return [::rivetweb::template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
+
     }
     namespace export template
 
@@ -452,6 +468,7 @@ namespace eval ::rivetweb {
         return $htmltext
     }
     namespace export build_html_menu
+
 
     namespace ensemble create
 }
