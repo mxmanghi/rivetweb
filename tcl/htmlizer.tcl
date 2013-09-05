@@ -162,7 +162,7 @@ namespace eval ::htmlizer {
                 scripted {
                     set arguments ""
                     foreach {param value} $lnkargs {
-                        lappend arguments $param [escape_string $value] 
+                        lappend arguments $param [::rivet::escape_string $value] 
                     }
                     
                     set hrefvalue [::rivetweb::composeUrl {*}$arguments]
