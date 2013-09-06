@@ -25,6 +25,7 @@ namespace eval ::rwsitemap {
         private common   smcnt      0
 
         constructor {ds} {
+
             set cnt         0
             set datasource  $ds
 
@@ -46,6 +47,7 @@ namespace eval ::rwsitemap {
         public method add_menu_group {parent_id group_id menuobjs {position end}} 
         public method menu_list {group_id} 
         public method to_string {}
+
     }
 
 # -- recreate
