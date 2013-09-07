@@ -285,7 +285,9 @@ namespace eval ::rwdatas {
 
 # -- listStaticMenus
 #
-#
+# foreach group in a menu group a 
+
+
     ::itcl::body XMLBase::listStaticMenus {sm parent_mg} {
         
         set menumodel $::rivetweb::menumodel
@@ -295,6 +297,10 @@ namespace eval ::rwdatas {
             foreach cn [$menu childNodes] {
                 $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
             }                            
+
+# again, menus without an id are ignored. 
+# How can we be sure to avoid id definition clashes?
+# This is an issue to be tackled and solved....
 
             if {[$menu hasAttribute id]} {
 
@@ -313,7 +319,10 @@ namespace eval ::rwdatas {
                     } else {
                         set visibility normal
                     }
+
                 }
+
+# create_menu is a 'static' menu of class RWMenu
 
                 set menuobj [$menumodel create_menu [$menu getAttribute id]  \
                                                      $parent                 \
@@ -337,6 +346,9 @@ namespace eval ::rwdatas {
                 }
 
                 $menuobj assign parent $parent_mg
+
+        # links are interpreted here. A link obj should be created
+        # for each of them using the linkmodel interface
 
                 set links [$menu getElementsByTagName link]
                 set lm    $::rivetweb::linkmodel
@@ -464,6 +476,8 @@ namespace eval ::rwdatas {
             set sitemenus [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             foreach sm $sitemenus {
 
+# any menu without an id is simply ignored. This should be documented
+
                 if {[$sm hasAttribute id]} {
 
                     set group_menu_id       [$sm getAttribute id]
@@ -473,12 +487,15 @@ namespace eval ::rwdatas {
                         set group_parent    root
                     }
 
+# it seems the position isn't used in any way....
+
                     if {[$sm hasAttribute position]} {
                         set position [$sm getAttribute position]
                         if {![string is integer $position]} { set position end }
                     }
+
                     $sitemap_mgr add_menu_group $group_parent $group_menu_id \
-                                                            [listStaticMenus $sm $group_parent]
+                                            [listStaticMenus $sm $group_parent]
                     
                     $logger log notice "adding $group_menu_id to $group_parent"
 

@@ -23,9 +23,9 @@ package require ScriptBase
 #
 ::itcl::body Test::run {pobj} {
 
-    puts [html [pid] div]
-    puts [html "running at [clock format [clock seconds]]" div b]
-    puts [html "created at [clock format $setup_timestamp]" div h4]
+    puts [::rivet::html [pid] div]
+    puts [::rivet::html "running at [clock format [clock seconds]]" div b]
+    puts [::rivet::html "created at [clock format $setup_timestamp]" div h4]
 
 }
 

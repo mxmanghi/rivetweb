@@ -1,8 +1,8 @@
 #
 # -- linkmodel.tcl
 #
-# Itcl based linkmodel. To preserve the interface a set
-# of common (proc) methods will be defined
+# Itcl based linkmodel. 
+#
 #
 #
 
@@ -11,6 +11,8 @@ package require Itcl
 namespace eval ::rwmenu {
 
     ::itcl::class RWLink {
+
+        private variable 
 
         constructor {
 
@@ -22,6 +24,8 @@ namespace eval ::rwmenu {
 
 
     proc create {link_type reference link_text link_args {link_info ""}} {
+
+        switch 
 
     }
 

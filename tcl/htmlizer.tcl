@@ -119,10 +119,11 @@ namespace eval ::htmlizer {
         }
         $htmlmenu_o appendChild $item_container_o
 
-# and finally we create a node for each link in the menu
-        
+# and finally we create a node for each link in the menu.
+# We scan each link in the menu and gather the information
+# stored in it filling a link_o (domeNode) object instance
+#
         set links [$menuobj links]
-
         foreach link $links {
             set item_o [$menudom createElement $item_tag]
             if {[string length $link_class]} {
@@ -173,6 +174,7 @@ namespace eval ::htmlizer {
                 local {
                     set hrefvalue  "/$::rivetweb::local_pages/$link_ref"
                 }
+
             }
             
             $link_o setAttribute href $hrefvalue
