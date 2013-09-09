@@ -34,6 +34,7 @@ namespace eval ::rwdatas {
         private variable sitemap
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
+        private variable local_pages	    docs
         private variable timestamp          0
         private variable sitemap_stat   
         private variable xmlpath
@@ -51,8 +52,9 @@ namespace eval ::rwdatas {
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
-        public method resource_exists {resource_key translated_key} { return false }
+        public method resource_exists {resource_key {translated_key translated_key}} { return false }
         public method to_url {lm}
+        public method makeUrl {reference} 
     }
 
     ::itcl::body XMLBase::init {args} {
@@ -233,7 +235,7 @@ namespace eval ::rwdatas {
 #
 #
 
-    ::itcl::body XMLBase::resource_exists {key translated_key} {
+    ::itcl::body XMLBase::resource_exists {key {translated_key translated_key}} {
         variable static_pages
         upvar $translated_key xmlfile
 
@@ -386,7 +388,8 @@ namespace eval ::rwdatas {
                             set language $::rivetweb::default_lang
                         }
 
-                        set tagname [$linkdata tagName]
+                        set lowner    [$this name]
+                        set tagname   [$linkdata tagName]
                         switch $tagname {
                             text {
                                 dict set ltext $language [$linkdata text]
@@ -394,8 +397,12 @@ namespace eval ::rwdatas {
                                     dict set linfo $language [$infoel text]
                                 }
                             }
+                            datasource 
+                            {
+                                set lowner [$linkdata text]
+                            }
                             type {
-                                set ltype ::[$this name]
+                                set ltype [$linkdata text]        
                             }
                             url -
                             reference {
@@ -415,9 +422,8 @@ namespace eval ::rwdatas {
                     }
                     #puts "<pre style=\"background: white:\">-> $ltext $linfo</pre>"
 
-                    set linkobj [$lm create $ltype $lref $ltext $largs $linfo]
-
-                    $lm set_attribute linkobj $attributes
+                    set linkobj [$lm create $lowner $lref $ltext $largs $linfo]
+                    $lm set_attribute linkobj [concat $attributes type $ltype]
                     $menuobj add_link $linkobj
                 }
 
@@ -555,21 +561,110 @@ namespace eval ::rwdatas {
 #
 # metodo che deve generare la 
 
-    ::itcl::body Datasource::to_url {lm} {
-
+    ::itcl::body XMLBase::to_url {lm} {
 
         set linkmodel   $::rivetweb::linkmodel
         set link_ref    [$linkmodel reference $lm]
-        
-        if {[$this resource_exists $link_ref]} {
+
+        set ltype [$linkmodel get_attribute $lm type]      
+        if {(($ltype == "internal") && [$this resource_exists $link_ref]) || \
+            ($ltype == "local") || ($ltype == "external")} {
+
+            set link_descriptor [$this makeUrl $lm]
+            set urlargs [dict get $link_descriptor args]
+            set href    [dict get $link_descriptor href]
+            if {[llength $urlargs]} {
+                set urlpars {}
+                foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
+                set href "${href}?[join $urlpars "&"]"
+            }
+
+            $linkmodel set_attribute lm [list href $href]
+        } else {
+            ::rivet::apache_log_error err "Invalid reference $link_ref for data source [$this name]"
+            $linkmodel set_attribute lm {href ""}
+        }
+
+        return $lm
+    }
+
+# -- makeUrl
+#
+#
+# References are built accordingly to the mode we are generating a page
+# (either static or dynamic). In case the 'lang' or 'reset' parameters are 
+# passed in their values are appended to the local path
+#
+# Arguments:
+#
+#   reference:  a string that works as a key to the page to be generated. 
+#
+# Returned value:
+#
+#   the URL to the page in relative form.
+#
+# 21-11-2012 Rivetweb has gone dynamic. Supporting static links requires every datasource to
+# provide a one-to-one map between keys and set of parameters. 
+
+    ::itcl::body XMLBase::makeUrl {lm} {
+
+        set linkmodel $::rivetweb::linkmodel
+        set reference [$linkmodel reference $lm]
+        if {$::rivetweb::static_links} {
+
+            if {([string length $reference] == 0) || \
+                 [string equal $reference index]}  {
+                if {$::rivetweb::is_homepage} {
+                    return index.html
+                } else {
+                    return [file join .. index.html]
+                }
+            } else {
+                if {$::rivetweb::is_homepage} {
+                    return [file join $::rivetweb::static_path ${reference}.html]
+                } else {
+                    return ${reference}.html
+                }
+            }
 
         } else {
 
+            if {[string length $reference] == 0} {
+                set reference $::rivetweb::index
+            }
 
+# we use therefore ::request::env(DOCUMENT_NAME) to infer the template name
+
+            set urlargs [dict create]
+            switch [$linkmodel get_attribute $lm type] {
+                internal {
+                    set href    [env DOCUMENT_URI]
+                    dict set urlargs show $reference
+                }
+                external {
+                    set href [$linkmodel reference $lm]
+                }
+                local {
+                    set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
+                }
+            }
+
+# URL data composition
+
+            set stored_args [$linkmodel arguments $lm]
+            if {[llength $stored_args]} {
+                #puts "<div>stored_args: $stored_args</div>"
+                set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
+            }
+	        foreach passthrough $::rivetweb::passthroughs {
+		        if {[var_qs exists $passthrough]} {
+		            dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
+		        }	
+	        }
+
+            return [dict create href $href args $urlargs]
         }
-
     }
-
 }
 
 package provide XMLBase 2.0

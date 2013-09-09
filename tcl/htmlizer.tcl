@@ -125,6 +125,10 @@ namespace eval ::htmlizer {
 #
         set links [$menuobj links]
         foreach link $links {
+
+            set ds    [$linkmodel owner $link]
+            set link  [$ds to_url $link]
+
             set item_o [$menudom createElement $item_tag]
             if {[string length $link_class]} {
                 $item_o setAttribute class $link_class
@@ -136,7 +140,7 @@ namespace eval ::htmlizer {
 
             set link_text [$linkmodel link_text $link $language]
             set link_info [$linkmodel link_info $link $language]
-            set link_target [$linkmodel get_attribute $link target]
+            #set link_target [$linkmodel get_attribute $link target]
             set link_ref  [$linkmodel reference $link]
 
             set text_o [$menudom createTextNode $link_text]
@@ -145,40 +149,45 @@ namespace eval ::htmlizer {
             if {[string length $link_info]} {
                 $link_o setAttribute title $link_info
             }
-            if {[string length $link_target]} {
-                $link_o setAttribute target $link_target
-            }
 
-            set hrefvalue "#"
-	        set lnkargs   [$linkmodel arguments $link]
+            #if {[string length $link_target]} {
+            #    $link_o setAttribute target $link_target
+            #}
 
-            switch [$linkmodel type $link] {
-    
-                internal {
-                    set hrefvalue [::rivetweb::makeUrl $link_ref]
-		            if {[dict exists $lnkargs doctarget]} {
-			            append hrefvalue "#[dict get $lnkargs doctarget]"
-		            }
-		            #puts "<pre>href=$hrefvalue (args: $lnkargs)</pre>"
-                }
-                scripted {
-                    set arguments ""
-                    foreach {param value} $lnkargs {
-                        lappend arguments $param [::rivet::escape_string $value] 
-                    }
-                    
-                    set hrefvalue [::rivetweb::composeUrl {*}$arguments]
-                }
-                external {
-                    set hrefvalue $link_ref
-                }
-                local {
-                    set hrefvalue  "/$::rivetweb::local_pages/$link_ref"
-                }
+# this should set also href, as it's part of the link object attributes
 
-            }
+            $link_o setAttribute {*}[dict get $link attributes]
+
+#           set hrefvalue "#"
+#	        set lnkargs   [$linkmodel arguments $link]
+
+#            switch [$linkmodel type $link] {
+#    
+#                internal {
+#                    set hrefvalue [::rivetweb::makeUrl $link_ref]
+#		            if {[dict exists $lnkargs doctarget]} {
+#			            append hrefvalue "#[dict get $lnkargs doctarget]"
+#		            }
+#		            #puts "<pre>href=$hrefvalue (args: $lnkargs)</pre>"
+#                }
+#                scripted {
+#                    set arguments ""
+#                    foreach {param value} $lnkargs {
+#                        lappend arguments $param [::rivet::escape_string $value] 
+#                    }
+#                    
+#                    set hrefvalue [::rivetweb::composeUrl {*}$arguments]
+#                }
+#                external {
+#                    set hrefvalue $link_ref
+#                }
+#                local {
+#                    set hrefvalue  "/$::rivetweb::local_pages/$link_ref"
+#                }
+#
+#            }
             
-            $link_o setAttribute href $hrefvalue
+#            $link_o setAttribute href $hrefvalue
         }
 
         set htmlMenu [$menudom asXML]

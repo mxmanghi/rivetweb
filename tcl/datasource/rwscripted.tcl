@@ -14,7 +14,7 @@ package require rwsitemap
 package require rwscripted
 package require rwmenu
 package require ScriptBase
-
+package require rwlink
 
 namespace eval ::rwdatas {
 
@@ -32,6 +32,7 @@ namespace eval ::rwdatas {
         public method is_stale {key timereference } { return false }
         public method menu_list {page} 
         public method rewrite_url {rwcode urlscript urlargs rewritten_base}
+        public method to_url {lm}
     }
 
     ::itcl::body Scripted::init {args} {
@@ -165,6 +166,31 @@ namespace eval ::rwdatas {
 
         return -code continue -errorcode rw_continue
     }
+
+# -- to_url
+
+    ::itcl::body Scripted::to_url {lm} {
+        set linkmodel   $::rivetweb::linkmodel
+
+        set href [env DOCUMENT_URI]
+        set urlargs [$linkmodel arguments $lm]
+        foreach passthrough $::rivetweb::passthroughs {
+            if {[var_qs exists $passthrough]} {
+                dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
+            }	
+        }
+        if {[llength $urlargs]} {
+            set urlpars {}
+            foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
+            
+            set href "${href}?[join $urlpars "&"]"
+        }
+
+        $linkmodel set_attribute lm [list href $href]
+
+        return $lm
+    }
+
 }
 
 package provide Scripted 2.0

@@ -10,21 +10,33 @@ set hook_descriptor(descrip)    "link to other internal resource of the website"
 set hook_descriptor(stage)      xmlpostproc
 
 proc sitereference { datasource tag element_text attribute_list } {
-    set new_attributes {}
-    foreach {attr attrval} $attribute_list {
-        switch $attr {
-            href {
-                lappend new_attributes $attr [::rivetweb::makeUrl $attrval]
-            }
-            default {
-                lappend new_attributes $attr $attrval
-            }
-        }
+
+    set language $::rivetweb::default_lang
+    array set attribs $attribute_list
+    if {[info exists attribs(href)]} {
+        set lm [$::rivetweb::linkmodel create $attribs(href) XMLBase [dict create language $element_text] "" ""]
+        
     }
+    unset attribs(href)
+    $::rivetweb::linkmodel set_attribute lm [concat [array get attributes] type static]
+    set translated_link [$datasource to_url $lm]
+    set attribs(href) [$::rivetweb::linkmodel get_attribute $lm href]
+
+#    set new_attributes {}
+#    foreach {attr attrval} $attribute_list {
+#        switch $attr {
+#            href {
+#                lappend new_attributes $attr [::rivet::makeurl $attrval]
+#            }
+#            default {
+#                lappend new_attributes $attr $attrval
+#            }
+#        }
+#    }
 
     set d [dict create]
     dict set d text $element_text
-    dict set d attributes $new_attributes
+    dict set d attributes [array get attribs]
     dict set d tagname a
     return $d
 }

@@ -23,12 +23,12 @@
         <div id="menu">
             <ul>
                 <li <?= [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>>
-                <a href="<?= [::rivetweb::makeUrl index] ?>">Home</a></li>
+                <a href="<?= [::rivetweb::composeUrl show index] ?>">Home</a></li>
                 <li <?= [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
-                <a href="<?= [::rivetweb::makeUrl download] ?>">Downloads</a></li>
+                <a href="<?= [::rivetweb::composeUrl show download] ?>">Downloads</a></li>
                 <li></li>
                 <li <?= [::rivetweb::thisClass $::rivetweb::page_content installation current_page_item] ?>>
-                <a href="<?= [::rivetweb::makeUrl installation] ?>">Installation</a></li>
+                <a href="<?= [::rivetweb::composeUrl show installation] ?>">Installation</a></li>
             </ul>
         </div>
     </div>

@@ -28,7 +28,7 @@ namespace eval ::rwdatas {
         public method set_alias {alias aliasdef}
         public method get_alias {alias aliasdef}
         public method rewrite_url {rwcode urlscript urlargs rewritten_base}
-        public method resource_exists {resource_key translated_key} { return false }
+        public method resource_exists {resource_key {translated_key translated_key}} { return false }
         public method to_url {lm}
     }
 
@@ -53,7 +53,7 @@ namespace eval ::rwdatas {
     }
 
     ::itcl::body Datasource::to_url {lm} {
-        return ""
+        return $lm
     }
 
 }
