@@ -154,40 +154,9 @@ namespace eval ::htmlizer {
             #    $link_o setAttribute target $link_target
             #}
 
-# this should set also href, as it's part of the link object attributes
+# this should set also href as it's part of the link object attributes
 
             $link_o setAttribute {*}[dict get $link attributes]
-
-#           set hrefvalue "#"
-#	        set lnkargs   [$linkmodel arguments $link]
-
-#            switch [$linkmodel type $link] {
-#    
-#                internal {
-#                    set hrefvalue [::rivetweb::makeUrl $link_ref]
-#		            if {[dict exists $lnkargs doctarget]} {
-#			            append hrefvalue "#[dict get $lnkargs doctarget]"
-#		            }
-#		            #puts "<pre>href=$hrefvalue (args: $lnkargs)</pre>"
-#                }
-#                scripted {
-#                    set arguments ""
-#                    foreach {param value} $lnkargs {
-#                        lappend arguments $param [::rivet::escape_string $value] 
-#                    }
-#                    
-#                    set hrefvalue [::rivetweb::composeUrl {*}$arguments]
-#                }
-#                external {
-#                    set hrefvalue $link_ref
-#                }
-#                local {
-#                    set hrefvalue  "/$::rivetweb::local_pages/$link_ref"
-#                }
-#
-#            }
-            
-#            $link_o setAttribute href $hrefvalue
         }
 
         set htmlMenu [$menudom asXML]

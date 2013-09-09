@@ -60,7 +60,7 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::init {args} {
 
         set ::rwdatas::static_pages $static_pages
-
+        set ::rwdatas::local_pages  $local_pages
 # we first set up the variables controlling the sitemap
 
         array set sitemap_stat {}
@@ -374,7 +374,9 @@ namespace eval ::rwdatas {
                     set ltext [dict create]
                     set largs [dict create]
                     set attributes {}
+                    set doctarget ""
                     foreach linkdata [$l childNodes] {
+
 
         # In order not to replicate the same snippet of code
         # we anyway try to determine the language of the link, 
@@ -415,15 +417,18 @@ namespace eval ::rwdatas {
                                     }
                                 }
                             }
+                            doctarget {
+                                set doctarget [$linkdata text]
+                            }
                             default {
                                 lappend attributes $tagname [$linkdata text]
                             }
                         }
                     }
-                    #puts "<pre style=\"background: white:\">-> $ltext $linfo</pre>"
 
                     set linkobj [$lm create $lowner $lref $ltext $largs $linfo]
                     $lm set_attribute linkobj [concat $attributes type $ltype]
+                    if {$doctarget != ""} { $lm set_urltarget linkobj $doctarget }
                     $menuobj add_link $linkobj
                 }
 
@@ -577,6 +582,10 @@ namespace eval ::rwdatas {
                 set urlpars {}
                 foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
                 set href "${href}?[join $urlpars "&"]"
+            }
+
+            if {[$linkmodel get_urltarget $lm target]} {
+                set href "${href}#$target"
             }
 
             $linkmodel set_attribute lm [list href $href]
