@@ -23,14 +23,15 @@ namespace eval ::rivetweb {
 
         set arglist $args
         set rewritten_url [env DOCUMENT_NAME]
-        if {[::rivet::var_qs exists $::rivetweb::rewrite_par]} {
 
-            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            foreach ds $::rivetweb::datasources {
-                $ds rewrite_url $rwcode [env SCRIPT_NAME] arglist rewritten_url
-            }
-
-        }
+#        if {[::rivet::var_qs exists $::rivetweb::rewrite_par]} {
+#
+#            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+#            foreach ds $::rivetweb::datasources {
+#                $ds rewrite_url $rwcode [env SCRIPT_NAME] arglist rewritten_url
+#            }
+#
+#        }
 
         ::rivet::apache_log_error notice "URL $rewritten_url -> $arglist"
         array set argsmap {}

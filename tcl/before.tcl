@@ -33,8 +33,10 @@ namespace eval ::rivetweb {
 # this assignements are meaningful only when appropriate mod_rewrite rules
 # are set up in the configuration 
 
-    set ::rivetweb::static_links [var exists static]
-    set ::rivetweb::is_homepage  [var exists homepage]
+#   set ::rivetweb::static_links [::rivet::var_qs exists static]
+
+    set ::rivetweb::rewrite_links [::rivet::var_qs exists $::rivetweb::rewrite_par]
+    set ::rivetweb::is_homepage   [::rivet::var_qs exists homepage]
     
 # when Rivetweb is pretending to be a static site, pages fake their location 
 # to be in the a subdirectory of the site root (default: 'static'), so 
@@ -43,7 +45,7 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_picts_path  $::rivetweb::picts_path
     set ::rivetweb::running_css_path    $::rivetweb::css_path
 
-    if {$::rivetweb::static_links && !$::rivetweb::is_homepage} {
+    if {$::rivetweb::rewrite_links && !$::rivetweb::is_homepage} {
 
         set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
         set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]

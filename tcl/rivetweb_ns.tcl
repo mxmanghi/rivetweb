@@ -73,7 +73,8 @@ namespace eval ::rivetweb {
 # we assume we are running dynamic. A static parameter in the url
 # would emulate a static site 
 
-    variable static_links           false
+    variable rewrite_links          false
+    variable rewrite_code
 
 # URL encoded parameters to be replicated by makeUrl and composeUrl
 
@@ -82,7 +83,7 @@ namespace eval ::rivetweb {
 # rewrite_par is the name of the urlencoded parameter used
 # to signal which form of rewriting was detected
 
-    variable rewrite_par            rwrw
+    variable rewrite_par            static
 
 # 'picts_path' and 'css_path' are paths relative to the 
 # website root. 'running_*_paths' are needed because paths
