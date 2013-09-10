@@ -172,8 +172,11 @@ namespace eval ::rwdatas {
     ::itcl::body Scripted::to_url {lm} {
         set linkmodel   $::rivetweb::linkmodel
 
-        set href [env DOCUMENT_URI]
+        set href [::rivet::env SCRIPT_NAME]
         set urlargs [$linkmodel arguments $lm]
+
+        #::rivet::html "base href: $href ($urlargs)" div b
+
         foreach passthrough $::rivetweb::passthroughs {
             if {[var_qs exists $passthrough]} {
                 dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
