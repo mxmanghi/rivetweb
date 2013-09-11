@@ -12,7 +12,7 @@ package ifneeded XMLBase 2.0 [list source [file join $dir tcl/datasource/xmlbase
 package ifneeded Scripted 2.0 [list source [file join $dir tcl/datasource/rwscripted.tcl]]
 package ifneeded htmlizer 1.0 [list source [file join $dir tcl/htmlizer.tcl]]
 package ifneeded rivetweb 2.0 [list source [file join $dir tcl/rivetweb.tcl]]
-package ifneeded rwconf 2.0 [list source [file join $dir tcl/rivetweb_ns.tcl]]
+package ifneeded rwconf 2.1 [list source [file join $dir tcl/rivetweb_ns.tcl]]
 package ifneeded rwebdb 0.1 [list source [file join $dir tcl/rweb_coredb.tcl]]
 package ifneeded rwlink 1.0 [list source [file join $dir tcl/rweb_link.tcl]]
 package ifneeded rwlogger 1.0 [list source [file join $dir tcl/rwlogger.tcl]]

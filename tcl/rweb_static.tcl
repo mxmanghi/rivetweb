@@ -109,6 +109,12 @@ namespace eval ::rwpage {
                                 -errorinfo $errormsg $errormsg
         }
 
+        if {[dict exists $content $language pagetext]} {
+            set pagedom [dict get $content $language pagetext]
+        } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
+            set pagedom [dict get $content $::rivetweb::default_lang pagetext]
+        }
+
         switch -nocase -- $fmt {
             -xml {
                 set method asXML
@@ -120,14 +126,8 @@ namespace eval ::rwpage {
                 set method asHTML
             }
             default {
-		return [dict get $content $language pagetext]
+		        return $pagedom
             }
-        }
-
-        if {[dict exists $content $language pagetext]} {
-            set pagedom [dict get $content $language pagetext]
-        } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
-            set pagedom [dict get $content $default_lang pagetext]
         }
 
         if {[info exists pagedom]} {

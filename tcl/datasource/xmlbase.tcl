@@ -368,13 +368,14 @@ namespace eval ::rwdatas {
                 set lm    $::rivetweb::linkmodel
                 foreach l $links {
 
-                    set ltype internal
+                    set ltype ""
                     set lref  index
                     set linfo [dict create]
                     set ltext [dict create]
                     set largs [dict create]
                     set attributes {}
                     set doctarget ""
+                    set lowner    [$this name]
                     foreach linkdata [$l childNodes] {
 
 
@@ -390,7 +391,6 @@ namespace eval ::rwdatas {
                             set language $::rivetweb::default_lang
                         }
 
-                        set lowner    [$this name]
                         set tagname   [$linkdata tagName]
                         switch $tagname {
                             text {
@@ -425,11 +425,11 @@ namespace eval ::rwdatas {
                             }
                         }
                     }
-
                     set linkobj [$lm create $lowner $lref $ltext $largs $linfo]
                     $lm set_attribute linkobj [concat $attributes type $ltype]
                     if {$doctarget != ""} { $lm set_urltarget linkobj $doctarget }
                     $menuobj add_link $linkobj
+                    ### coredump here !!!! #### ::rivet::apache_log_error notice "adding link for [$this to_url $linkobj]"
                 }
 
             # checking 'position' attribute
@@ -571,7 +571,7 @@ namespace eval ::rwdatas {
         set linkmodel   $::rivetweb::linkmodel
         set link_ref    [$linkmodel reference $lm]
         set ltype [$linkmodel get_attribute $lm type]      
-        if {(($ltype == "internal") && [$this resource_exists $link_ref]) || \
+        if {($ltype == "internal")  || \
             ($ltype == "local") || ($ltype == "external")} {
 
             set link_descriptor [$this makeUrl $lm]
@@ -589,7 +589,7 @@ namespace eval ::rwdatas {
 
             $linkmodel set_attribute lm [list href $href]
         } else {
-            ::rivet::apache_log_error err "Invalid reference $link_ref for data source [$this name]"
+            ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"
             $linkmodel set_attribute lm {href ""}
         }
 
@@ -618,60 +618,45 @@ namespace eval ::rwdatas {
 
         set linkmodel $::rivetweb::linkmodel
         set reference [$linkmodel reference $lm]
-        if {$::rivetweb::static_links} {
 
-            if {([string length $reference] == 0) || \
-                 [string equal $reference index]}  {
-                if {$::rivetweb::is_homepage} {
-                    return index.html
-                } else {
-                    return [file join .. index.html]
-                }
-            } else {
-                if {$::rivetweb::is_homepage} {
-                    return [file join $::rivetweb::static_path ${reference}.html]
-                } else {
-                    return ${reference}.html
-                }
-            }
-
-        } else {
-
-            if {[string length $reference] == 0} {
-                set reference $::rivetweb::index
-            }
-
-# we use therefore ::request::env(DOCUMENT_NAME) to infer the template name
-
-            set urlargs [dict create]
-            switch [$linkmodel get_attribute $lm type] {
-                internal {
-                    set href    [env DOCUMENT_URI]
-                    dict set urlargs show $reference
-                }
-                external {
-                    set href [$linkmodel reference $lm]
-                }
-                local {
-                    set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
-                }
-            }
-
-# URL data composition
-
-            set stored_args [$linkmodel arguments $lm]
-            if {[llength $stored_args]} {
-                #puts "<div>stored_args: $stored_args</div>"
-                set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
-            }
-	        foreach passthrough $::rivetweb::passthroughs {
-		        if {[var_qs exists $passthrough]} {
-		            dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
-		        }	
-	        }
-
-            return [dict create href $href args $urlargs]
+        if {[string length $reference] == 0} {
+            set reference $::rivetweb::index
         }
+
+# URL arguments composition
+
+        set stored_args [$linkmodel arguments $lm]
+        if {[llength $stored_args]} {
+            set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
+        }
+        foreach passthrough $::rivetweb::passthroughs {
+            if {[var_qs exists $passthrough]} {
+                dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
+            }	
+        }
+
+# we read env(DOCUMENT_URI) to infer the template name
+
+        set urlargs [dict create]
+        switch [$linkmodel get_attribute $lm type] {
+            internal {
+                set href [::rivet::env DOCUMENT_URI]
+                dict set urlargs show $reference
+                if {$::rivetweb::rewrite_links} {
+
+                    ::rivetweb::rewrite_url [::rivet::var_qs get $::rivetweb::rewrite_par] $href urlargs rewritten_url]
+
+                } 
+            }
+            external {
+                set href [$linkmodel reference $lm]
+            }
+            local {
+                set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
+            }
+        }
+
+        return [dict create href $href args $urlargs]
     }
 }
 

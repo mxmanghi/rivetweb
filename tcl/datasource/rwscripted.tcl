@@ -31,8 +31,8 @@ namespace eval ::rwdatas {
         public method fetchData {key reassigned_key}
         public method is_stale {key timereference } { return false }
         public method menu_list {page} 
-        public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method to_url {lm}
+        #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
     }
 
     ::itcl::body Scripted::init {args} {
@@ -147,33 +147,36 @@ namespace eval ::rwdatas {
 #
 #
 
-    ::itcl::body Scripted::rewrite_url {rwcode urlbase urlargs rewritten_base} {
-        upvar $rewritten_base rwbase
-        upvar $urlargs        urlencoded
-
-        set d [dict create {*}$urlencoded]
-
-        ::rivet::apache_log_error notice " --> $d"
-        if {[dict exists $d f]} {
-            set rwbase "/[dict get $d f]/"
-            dict unset d f
-            set urlencoded $d
-
-            ::rivet::apache_log_error notice "URL $rwbase ($urlencoded) rewritten"
-
-            return -code break -errorcode rw_break
-        }
-
-        return -code continue -errorcode rw_continue
-    }
+#    ::itcl::body Scripted::rewrite_url {rwcode urlbase urlargs rewritten_base} {
+#        upvar $rewritten_base rwbase
+#        upvar $urlargs        urlencoded
+#
+#        set d [dict create {*}$urlencoded]
+#
+#        ::rivet::apache_log_error notice " --> $d"
+#        if {[dict exists $d f]} {
+#            set rwbase "/[dict get $d f]/"
+#            dict unset d f
+#            set urlencoded $d
+#
+#            ::rivet::apache_log_error notice "URL $rwbase ($urlencoded) rewritten"
+#
+#            return -code break -errorcode rw_break
+#        }
+#
+#        return -code continue -errorcode rw_continue
+#    }
 
 # -- to_url
 
     ::itcl::body Scripted::to_url {lm} {
         set linkmodel   $::rivetweb::linkmodel
 
-        set href [env DOCUMENT_URI]
+        set href [::rivet::env SCRIPT_NAME]
         set urlargs [$linkmodel arguments $lm]
+
+        #::rivet::html "base href: $href ($urlargs)" div b
+
         foreach passthrough $::rivetweb::passthroughs {
             if {[var_qs exists $passthrough]} {
                 dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
