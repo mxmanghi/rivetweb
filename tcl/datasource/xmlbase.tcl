@@ -426,7 +426,7 @@ namespace eval ::rwdatas {
                         }
                     }
                     set linkobj [$lm create $lowner $lref $ltext $largs $linfo]
-                    $lm set_attribute linkobj [concat $attributes type $ltype]
+                    $lm set_property linkobj type $ltype
                     if {$doctarget != ""} { $lm set_urltarget linkobj $doctarget }
                     $menuobj add_link $linkobj
                     ### coredump here !!!! #### ::rivet::apache_log_error notice "adding link for [$this to_url $linkobj]"
@@ -570,7 +570,7 @@ namespace eval ::rwdatas {
 
         set linkmodel   $::rivetweb::linkmodel
         set link_ref    [$linkmodel reference $lm]
-        set ltype [$linkmodel get_attribute $lm type]      
+        set ltype [$linkmodel property $lm type]      
         if {($ltype == "internal")  || \
             ($ltype == "local") || ($ltype == "external")} {
 
@@ -638,7 +638,7 @@ namespace eval ::rwdatas {
 # we read env(DOCUMENT_URI) to infer the template name
 
         set urlargs [dict create]
-        switch [$linkmodel get_attribute $lm type] {
+        switch [$linkmodel property $lm type] {
             internal {
                 set href [::rivet::env DOCUMENT_URI]
                 dict set urlargs show $reference
