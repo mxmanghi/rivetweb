@@ -29,7 +29,8 @@ proc localref {datasource tag element_text attribute_list} {
         set lm [$::rivetweb::linkmodel create XMLBase $attributes(src) $text_dict "" ""]
 
     }
-    $::rivetweb::linkmodel set_attribute lm [concat [array get attributes] type local]
+    $::rivetweb::linkmodel set_attribute lm [array get attributes]
+    $::rivetweb::linkmodel set_property lm type local
 
 #   set     file_path           "/$::rivetweb::local_pages/$aliasdef"
 #   set     attributes(href)    $file_path

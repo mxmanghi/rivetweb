@@ -34,11 +34,11 @@ namespace eval ::rivetweb {
         if {[::rivet::var_qs exists $::rivetweb::rewrite_par]} {
 
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_url $rwcode [::rivet::env REQUEST_URI] arglist rewritten_url
+            ::rivetweb::rewrite_url $rwcode [::rivet::env SCRIPT_NAME] arglist rewritten_url
 
         } else {
 
-            set rewritten_url [::rivet::env REQUEST_URI]
+            set rewritten_url [::rivet::env SCRIPT_NAME]
 
         }
 

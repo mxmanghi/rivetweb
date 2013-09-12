@@ -22,6 +22,7 @@ proc sitereference { datasource tag element_text attribute_list } {
         set attribs(href) [$::rivetweb::linkmodel get_attribute $translated_link href]
 
     }
+
 #    set new_attributes {}
 #    foreach {attr attrval} $attribute_list {
 #        switch $attr {
