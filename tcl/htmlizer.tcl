@@ -157,7 +157,7 @@ namespace eval ::htmlizer {
 # this should set also href as it's part of the link object attributes
 
             $link_o setAttribute {*}[dict get $link attributes]
-            #::rivet::html "called datasource $ds for link [dict get $link attributes]" div b 
+            #::rivet::html "assigning attributes [dict get $link attributes] to link" div b 
         }
 
         set htmlMenu [$menudom asXML]

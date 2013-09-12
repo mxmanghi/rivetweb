@@ -15,6 +15,14 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+    proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
+        upvar $rewritten_base rrbase
+
+        set rrbase $urlscript
+    
+    }
+    namespace export rewrite_url
+
 # -- composeUrl
 # 
 # this function should consistently build links 
@@ -22,12 +30,15 @@ namespace eval ::rivetweb {
     proc composeUrl {args} {
 
         set arglist $args
-        set rewritten_url [env DOCUMENT_NAME]
 
         if {[::rivet::var_qs exists $::rivetweb::rewrite_par]} {
 
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_url $rwcode [env SCRIPT_NAME] arglist rewritten_url
+            ::rivetweb::rewrite_url $rwcode [::rivet::env REQUEST_URI] arglist rewritten_url
+
+        } else {
+
+            set rewritten_url [::rivet::env REQUEST_URI]
 
         }
 

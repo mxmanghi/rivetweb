@@ -428,6 +428,7 @@ namespace eval ::rwdatas {
                     set linkobj [$lm create $lowner $lref $ltext $largs $linfo]
                     $lm set_property linkobj type $ltype
                     if {$doctarget != ""} { $lm set_urltarget linkobj $doctarget }
+                    if {![::rivet::lempty $attributes]} { dict set linkobj attributes [dict create {*}$attributes] }
                     $menuobj add_link $linkobj
                     ### coredump here !!!! #### ::rivet::apache_log_error notice "adding link for [$this to_url $linkobj]"
                 }
