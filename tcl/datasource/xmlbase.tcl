@@ -645,8 +645,9 @@ namespace eval ::rwdatas {
                 dict set urlargs show $reference
                 if {$::rivetweb::rewrite_links} {
 
-                    ::rivetweb::rewrite_url [::rivet::var_qs get $::rivetweb::rewrite_par] $href urlargs rewritten_url]
-
+                    ::rivetweb::rewrite_url     \
+                                    [::rivet::var_qs get $::rivetweb::rewrite_par] \
+                                    $href urlargs href
                 } 
             }
             external {
