@@ -15,6 +15,14 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+    proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
+        upvar $rewritten_css_url rwcss
+
+        set rwcss $css_relative
+
+    }
+    namespace export rewrite_css_url
+
     proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
         upvar $rewritten_base rrbase
 
@@ -31,7 +39,7 @@ namespace eval ::rivetweb {
 
         set arglist $args
 
-        if {[::rivet::var_qs exists $::rivetweb::rewrite_par]} {
+        if {$::rivetweb::rewrite_links} {
 
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
             ::rivetweb::rewrite_url $rwcode [::rivet::env SCRIPT_NAME] arglist rewritten_url
@@ -149,10 +157,20 @@ namespace eval ::rivetweb {
 
     proc makeCssPath {css_file {style_dir ""}} {
 
-        return [::rivet::makeurl [file join                             \
-                                        $::rivetweb::site_url_base      \
-                                        $::rivetweb::css_path           \
-                                        $style_dir $css_file]]
+        set css_uri [file join $::rivetweb::css_path $style_dir $css_file]
+
+        if {$::rivetweb::rewrite_links} {
+            
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            ::rivetweb::rewrite_css_url $rwcode [::rivet::env SCRIPT_NAME] $css_uri css_uri
+
+            return $css_uri
+
+        } else {
+
+            return $css_uri 
+
+        }
 
     }
     namespace export makeCssPath

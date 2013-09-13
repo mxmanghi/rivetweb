@@ -391,6 +391,10 @@ namespace eval ::rwdatas {
                             set language $::rivetweb::default_lang
                         }
 
+        # XMLBase assumes every tag not explicitly handled to be an attribute
+        # of the <a ...> tag. This comes from the subsequent adjustments done
+        # on the XML sitemap definition, but are arguably correct or well designed.
+
                         set tagname   [$linkdata tagName]
                         switch $tagname {
                             text {
