@@ -10,6 +10,8 @@
 # first of all we test the parameter rwinfo. 
 
     if {[var exists rwinfo]} {
+        puts "<div>pwd: [pwd]</div>"
+
         load_env env
         parray_table env
         #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
