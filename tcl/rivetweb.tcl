@@ -23,7 +23,7 @@ namespace eval ::rivetweb {
     proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
         upvar $rewritten_css_url rwcss
 
-        set rwcss $css_relative
+        set rwcss $css_path
     }
     namespace export rewrite_css_url
 
