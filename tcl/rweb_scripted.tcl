@@ -33,12 +33,11 @@ namespace eval ::rwpage {
     ::itcl::body RWScripted::prepare {language argsqs} {
         RWPage::prepare $language $argsqs
 
-# before we check for specific methods to be run we run a generic
-# 'init' method with common initialization for all methods.
+    # before we check for specific methods to be run we run a generic
+    # 'init' method with common initialization for all methods.
 
         $this clear_metadata
         if {[catch {$script init $language $this} e opts]} {
-
 
     # first of all we run the 'handler' method that could have been 
     # superseded in the application subclasses of ScriptBase
@@ -82,7 +81,7 @@ namespace eval ::rwpage {
         if {[catch {$script $do_method $language $this} e opts]} {
             set errorCode [dict get $opts -errorcode]
 
-            set pagetxt "<pre><b>$e</b> (code $errorCode): $opts</pre>"
+            set pagetxt "<pre><b>[::rivet::wrapline $e 60]</b> (code <b>$errorCode</b>): $opts</pre>"
             set pagehdr "[string range $e 0 40]..."
             set pagetitle "[string range $e 0 40]..."
             if {![$::rivetweb::rwebdb check $errorCode]} {
@@ -101,6 +100,8 @@ namespace eval ::rwpage {
                 $pobj add_metadata title  $pagetitle
 
             }
+
+            $script rollback
 
             return $pobj
 
