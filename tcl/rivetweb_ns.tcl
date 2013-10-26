@@ -8,8 +8,8 @@ namespace eval ::rivetweb {
     variable site_base
     variable rivetweb_root
     variable scripts
-    variable local_pages	    docs
-    variable website_init	    rivetweb.tcl
+    variable local_pages	        docs
+    variable website_init	        rivetweb.tcl
     variable site_before_script     ""
     variable default_menu           main
     variable pagemenus

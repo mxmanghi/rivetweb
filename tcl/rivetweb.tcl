@@ -110,8 +110,8 @@ namespace eval ::rivetweb {
         }
 
         foreach passthrough $::rivetweb::passthroughs {
-            if {[var_qs exists $passthrough]} {
-                lappend urlargs "${passthrough}=[var_qs get $passthrough]"
+            if {[::rivet::var_qs exists $passthrough]} {
+                lappend urlargs "${passthrough}=[::rivet::var_qs get $passthrough]"
             }	
         }
 
@@ -206,7 +206,7 @@ namespace eval ::rivetweb {
     namespace export makeCssPath
 
 
-# csspath 
+# -- csspath 
 #
 # the templates database is supposed to store the whole dataset needed to build 
 # any reference to a theme related piece of information, thus we can fetch the css
@@ -312,10 +312,7 @@ namespace eval ::rivetweb {
 # -- picture
 #
 #
-    proc picture {pict_name} {
-
-
-    }
+    proc picture {pict_name} {  }
 
 
 # -- template_path
