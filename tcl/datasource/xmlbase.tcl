@@ -570,7 +570,6 @@ namespace eval ::rwdatas {
 
         set linkmodel   $::rivetweb::linkmodel
         set link_ref    [$linkmodel reference $lm]
-
         set ltype [$linkmodel get_attribute $lm type]      
         if {($ltype == "internal")  || \
             ($ltype == "local") || ($ltype == "external")} {
