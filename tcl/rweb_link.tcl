@@ -164,6 +164,12 @@ namespace eval ::rwlink {
 
 # -- urltarget
 #
+# urltarget link property handling
+#
+# the 'urltarget' is the suffix appended after
+# a '#' char to point to a specific  element within
+# a page.
+#
 
     proc set_urltarget {linkobj target} {
         upvar $linkobj lo

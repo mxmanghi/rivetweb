@@ -57,14 +57,14 @@
     <menu id="scripts" type="leaf">
         <title>Scripts</title>
         <link>
-            <type>scripted</type>
+            <datasource>Scripted</datasource>
             <text>Test Script<info>Testing basic scripting in Rivetweb</info></text>
             <args>
                 <param value="test">f</param>
             </args>
         </link>
         <link>
-            <type>scripted</type>
+            <datasource>Scripted</datasource>
             <text>Dump Database<info>Testing basic scripting in Rivetweb</info></text>
             <args>
                 <param value="test">f</param>

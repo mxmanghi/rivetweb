@@ -368,13 +368,14 @@ namespace eval ::rwdatas {
                 set lm    $::rivetweb::linkmodel
                 foreach l $links {
 
-                    set ltype internal
+                    set ltype ""
                     set lref  index
                     set linfo [dict create]
                     set ltext [dict create]
                     set largs [dict create]
                     set attributes {}
                     set doctarget ""
+                    set lowner    [$this name]
                     foreach linkdata [$l childNodes] {
 
 
@@ -390,7 +391,6 @@ namespace eval ::rwdatas {
                             set language $::rivetweb::default_lang
                         }
 
-                        set lowner    [$this name]
                         set tagname   [$linkdata tagName]
                         switch $tagname {
                             text {
@@ -425,11 +425,11 @@ namespace eval ::rwdatas {
                             }
                         }
                     }
-
                     set linkobj [$lm create $lowner $lref $ltext $largs $linfo]
                     $lm set_attribute linkobj [concat $attributes type $ltype]
                     if {$doctarget != ""} { $lm set_urltarget linkobj $doctarget }
                     $menuobj add_link $linkobj
+                    ### coredump here !!!! #### ::rivet::apache_log_error notice "adding link for [$this to_url $linkobj]"
                 }
 
             # checking 'position' attribute
@@ -572,7 +572,7 @@ namespace eval ::rwdatas {
         set link_ref    [$linkmodel reference $lm]
 
         set ltype [$linkmodel get_attribute $lm type]      
-        if {(($ltype == "internal") && [$this resource_exists $link_ref]) || \
+        if {($ltype == "internal")  || \
             ($ltype == "local") || ($ltype == "external")} {
 
             set link_descriptor [$this makeUrl $lm]
@@ -590,7 +590,7 @@ namespace eval ::rwdatas {
 
             $linkmodel set_attribute lm [list href $href]
         } else {
-            ::rivet::apache_log_error err "Invalid reference $link_ref for data source [$this name]"
+            ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"
             $linkmodel set_attribute lm {href ""}
         }
 
@@ -642,12 +642,12 @@ namespace eval ::rwdatas {
                 set reference $::rivetweb::index
             }
 
-# we use therefore ::request::env(DOCUMENT_NAME) to infer the template name
+# we read env(DOCUMENT_URI) to infer the template name
 
             set urlargs [dict create]
             switch [$linkmodel get_attribute $lm type] {
                 internal {
-                    set href    [env DOCUMENT_URI]
+                    set href [::rivet::env DOCUMENT_URI]
                     dict set urlargs show $reference
                 }
                 external {
