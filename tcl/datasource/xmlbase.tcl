@@ -50,7 +50,6 @@ namespace eval ::rwdatas {
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
-        
     }
 
     ::itcl::body XMLBase::init {args} {

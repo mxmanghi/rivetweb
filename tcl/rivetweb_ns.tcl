@@ -17,6 +17,7 @@ namespace eval ::rivetweb {
 # these paths are relative to the DocumentRoot, so we don't need
 # to normalize them
 
+    variable site_url_base          /
     variable picts_path             picts
     variable css_path               templates
     variable base_templates         templates

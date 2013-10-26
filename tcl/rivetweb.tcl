@@ -101,21 +101,19 @@ namespace eval ::rivetweb {
 #
     proc composeUrl {args} {
 
+        set arglist $args
+        set rewritten_url [env DOCUMENT_NAME]
         if {[::rivet::var_qs exists $::rivetweb::rewrite_par]} {
 
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
             foreach ds $::rivetweb::datasources {
-
-                $ds rewrite_url $rwcode [env SCRIPT_NAME] $args rewritten_url
-                return $rewritten_url 
-
+                $ds rewrite_url $rwcode [env SCRIPT_NAME] arglist rewritten_url
             }
 
         }
 
-        set arglist $args
-        set urlargs {}
-
+        ::rivet::apache_log_error notice "URL $rewritten_url -> $arglist"
+        array set argsmap {}
         while {[llength $arglist]} {
             set arglist [lassign $arglist param value]
             set argsmap($param) [::rivet::escape_string $value]
@@ -128,12 +126,18 @@ namespace eval ::rivetweb {
         }
 
         set arglist [array get argsmap]
-        while {[llength $arglist]} {
-            set arglist [lassign $arglist param value]
-            lappend urlargs "${param}=${value}"
+        set urlargs {}
+
+        if {[llength $arglist]} {
+            while {[llength $arglist]} {
+                set arglist [lassign $arglist param value]
+                lappend urlargs "${param}=${value}"
+            }
+            return "${rewritten_url}?[join $urlargs "&"]"
+        } else {
+            return $rewritten_url
         }
 
-        return "[env SCRIPT_NAME]?[join $urlargs "&"]"
 
     }
     namespace export composeUrl
@@ -215,7 +219,10 @@ namespace eval ::rivetweb {
 
     proc makeCssPath {css_file {style_dir ""}} {
 
-        return [file join $::rivetweb::running_css_path $style_dir $css_file] 
+        return [::rivet::makeurl [file join                             \
+                                        $::rivetweb::site_url_base      \
+                                        $::rivetweb::css_path           \
+                                        $style_dir $css_file]]
 
     }
     namespace export makeCssPath
