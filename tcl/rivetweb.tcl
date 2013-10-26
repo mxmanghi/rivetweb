@@ -15,11 +15,15 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+# base methods for url rewriting. This procedures can be 
+# superseded by application specific code and should
+# go into a class to preserve the basic functionality and
+# extend them through subclassing
+
     proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
         upvar $rewritten_css_url rwcss
 
         set rwcss $css_relative
-
     }
     namespace export rewrite_css_url
 
@@ -27,7 +31,6 @@ namespace eval ::rivetweb {
         upvar $rewritten_base rrbase
 
         set rrbase $urlscript
-    
     }
     namespace export rewrite_url
 
@@ -50,7 +53,6 @@ namespace eval ::rivetweb {
 
         }
 
-        ::rivet::apache_log_error notice "URL $rewritten_url -> $arglist"
         array set argsmap {}
         while {[llength $arglist]} {
             set arglist [lassign $arglist param value]
@@ -66,6 +68,7 @@ namespace eval ::rivetweb {
         set arglist [array get argsmap]
         set urlargs {}
 
+        ::rivet::apache_log_error notice "URL $rewritten_url -> $arglist"
         if {[llength $arglist]} {
             while {[llength $arglist]} {
                 set arglist [lassign $arglist param value]
