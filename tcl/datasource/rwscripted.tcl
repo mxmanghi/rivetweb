@@ -126,6 +126,7 @@ namespace eval ::rwdatas {
             set scriptobj [dict get $scriptsdb $script object]
             set menul [$scriptobj menu_list $page]
 
+    #
     # the list returned by 'menu_list' should be structured like
     #
     # group1 menu_list1 group2 menu_list2

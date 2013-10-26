@@ -72,24 +72,11 @@ namespace eval ::rivetweb {
 
 # structural variables passover
 
-#            if {[var exists lang]} { 
-#                set local_ref "${local_ref}&lang=[var get lang]" 
-#            }
-#            if {[var exists language]} { 
-#                set local_ref "${local_ref}&language=[var get language]" 
-#            }
-#            if {[var exists reset]} { 
-#                set local_ref "${local_ref}&reset=[var get reset]" 
-#            }
-#            if {[var exists template]} { 
-#                set local_ref "${local_ref}&template=[var get template]" 
-#            }
-
-            foreach passthrough $::rivetweb::passthroughs {
-                if {[var_qs exists $passthrough]} {
-                    lappend urlargs "${passthrough}=[var_qs get $passthrough]"
-                }	
-            }
+	        foreach passthrough $::rivetweb::passthroughs {
+		        if {[var_qs exists $passthrough]} {
+		            lappend urlargs "${passthrough}=[::rivet::var_qs get $passthrough]"
+		        }	
+	        }
             return $local_ref
         }
     }
