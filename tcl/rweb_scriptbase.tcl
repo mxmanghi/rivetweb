@@ -20,6 +20,7 @@ package require rwmenu
     public method template {pageobj rvtname}
     public method run {pageobj}
     public method menu_list {page} { return {} }
+    public method rollback {} {}
 }
 
 # -- template
