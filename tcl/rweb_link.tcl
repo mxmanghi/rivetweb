@@ -20,8 +20,8 @@ namespace eval ::rwlink {
 #  .... 
 #
 
-    proc create {link_type reference link_text link_args {link_info ""}} {
-        set link_d [dict create type $link_type reference $reference]
+    proc create {link_owner reference link_text link_args {link_info ""}} {
+        set link_d [dict create owner $link_owner reference $reference]
 
         apache_log_error debug "<--- $link_text - ($link_info)<br/>"
 
@@ -132,11 +132,11 @@ namespace eval ::rwlink {
 
 # -- type. Accessor which returns the link type. Possible
 # values are 'internal','external' and 'local'
-
-    proc type {linkmodel} {
-        return [dict get $linkmodel type]
-    }
-    namespace export type
+#
+#    proc type {linkmodel} {
+#        return [dict get $linkmodel type]
+#    }
+#    namespace export type
 
 # -- reference. Accessor which returns the hypetext reference
 # the link points to. This parameter is set through the 
@@ -154,6 +154,13 @@ namespace eval ::rwlink {
         return [dict get $linkobj arguments]
     }
     namespace export arguments
+
+# -- owner
+#
+    proc owner {linkobj} {
+        return [dict get $linkobj owner]
+    }
+    namespace export owner
 
     namespace ensemble create
 }
