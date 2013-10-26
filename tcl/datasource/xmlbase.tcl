@@ -14,6 +14,7 @@ package require rwsitemap
 package require rwstatic
 package require rwsitemap
 package require rwmenu
+package require rwlink
 package require Datasource
 package require struct::stack
 
@@ -50,6 +51,8 @@ namespace eval ::rwdatas {
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
+        public method resource_exists {resource_key translated_key} { return false }
+        public method to_url {lm}
     }
 
     ::itcl::body XMLBase::init {args} {
@@ -226,6 +229,18 @@ namespace eval ::rwdatas {
 
     }
 
+# -- resourceExists
+#
+#
+
+    ::itcl::body XMLBase::resource_exists {key translated_key} {
+        variable static_pages
+        upvar $translated_key xmlfile
+
+        set xmlfile [file join $static_pages ${key}.xml]
+        return [file exists $xmlfile]
+    }
+
 
 # -- fetchData 
 #
@@ -237,12 +252,9 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
         variable xmlpath
-        variable static_pages
 
-        set xmlfile [file join $static_pages ${key}.xml]
-        $::rivetweb::logger log info "->opening $xmlfile" 
-
-        if {[file exists $xmlfile]} {
+        if {[$this resource_exists $key xmlfile]} {
+            $::rivetweb::logger log info "->opening $xmlfile" 
             if {[catch {
                 set xmlfp    [open $xmlfile r]
                 set xmldata  [read $xmlfp]
@@ -383,7 +395,7 @@ namespace eval ::rwdatas {
                                 }
                             }
                             type {
-                                set ltype [$linkdata text]
+                                set ltype ::[$this name]
                             }
                             url -
                             reference {
@@ -404,8 +416,8 @@ namespace eval ::rwdatas {
                     #puts "<pre style=\"background: white:\">-> $ltext $linfo</pre>"
 
                     set linkobj [$lm create $ltype $lref $ltext $largs $linfo]
+
                     $lm set_attribute linkobj $attributes
-                    
                     $menuobj add_link $linkobj
                 }
 
@@ -480,13 +492,9 @@ namespace eval ::rwdatas {
 
                 if {[$sm hasAttribute id]} {
 
-                    set group_menu_id       [$sm getAttribute id]
-                    if {[$sm hasAttribute parent]} {
-                        set group_parent    [$sm getAttribute parent]
-                    } else {
-                        set group_parent    root
-                    }
-
+                    set group_menu_id   [$sm getAttribute id]
+                    set group_parent    [$sm getAttribute parent root]
+                    
 # it seems the position isn't used in any way....
 
                     if {[$sm hasAttribute position]} {
@@ -540,11 +548,28 @@ namespace eval ::rwdatas {
 
         }
 
-#       puts "<br/>$menul<br/>"
-#       puts "<br/>$menudb<br/>"
-
         return $menudb
     }
+
+# -- to_url
+#
+# metodo che deve generare la 
+
+    ::itcl::body Datasource::to_url {lm} {
+
+
+        set linkmodel   $::rivetweb::linkmodel
+        set link_ref    [$linkmodel reference $lm]
+        
+        if {[$this resource_exists $link_ref]} {
+
+        } else {
+
+
+        }
+
+    }
+
 }
 
 package provide XMLBase 2.0

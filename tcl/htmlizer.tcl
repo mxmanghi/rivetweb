@@ -151,6 +151,7 @@ namespace eval ::htmlizer {
 
             set hrefvalue "#"
 	        set lnkargs   [$linkmodel arguments $link]
+
             switch [$linkmodel type $link] {
     
                 internal {
