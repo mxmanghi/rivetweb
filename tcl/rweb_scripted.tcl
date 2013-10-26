@@ -111,6 +111,8 @@ namespace eval ::rwpage {
 
         } else {
 
+            $script finalize
+
             return $this
 
         }
