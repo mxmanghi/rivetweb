@@ -79,6 +79,11 @@ namespace eval ::rivetweb {
 
     variable passthroughs           {lang language reset template}
 
+# rewrite_par is the name of the urlencoded parameter used
+# to signal which form of rewriting was detected
+
+    variable rewrite_par            rwrw
+
 # 'picts_path' and 'css_path' are paths relative to the 
 # website root. 'running_*_paths' are needed because paths
 # change when pages are simulating a static website.
