@@ -10,11 +10,14 @@
 # first of all we test the parameter rwinfo. 
 
     if {[var exists rwinfo]} {
-        puts "<div>pwd: [pwd]</div>"
-
         load_env env
         parray_table env
         #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
+        set siteconf [::rivet::inspect]
+
+        foreach k [dict keys $siteconf] {
+            puts "<pre>$k -> [dict get $siteconf $k]</pre>"
+        }
 
         $::rivetweb::rwebdb coredump
 
