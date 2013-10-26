@@ -211,5 +211,5 @@ namespace eval ::rivetweb {
     }
 }
 
-package provide rwconf 2.0
+package provide rwconf 2.1
 

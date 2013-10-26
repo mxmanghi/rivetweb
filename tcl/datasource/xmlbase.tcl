@@ -636,7 +636,6 @@ namespace eval ::rwdatas {
             }	
         }
 
-
 # we read env(DOCUMENT_URI) to infer the template name
 
         set urlargs [dict create]
@@ -657,9 +656,6 @@ namespace eval ::rwdatas {
                 set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
             }
         }
-
-
-
 
         return [dict create href $href args $urlargs]
     }
