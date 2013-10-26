@@ -72,9 +72,9 @@ namespace eval ::rwlink {
     }
     namespace export create add_text 
 
-# -- set_attribute, get_attribute: accessors to generic piece
-# of information that other components of Rivetweb might need to
-# associate with this link object
+# -- set_attribute, get_attribute: 
+# accessors to generic piece of information that should be treated as
+# a key-value list to become the attributes of the <a ...> tag
 
     proc set_attribute {linkobj attribute_list} {
         upvar $linkobj link_o
@@ -132,7 +132,11 @@ namespace eval ::rwlink {
 
 # -- property
 # 
-#
+# properties of a link is a free form pair of key-value
+# describing a property of a link for internal use of
+# a datasource.
+# 
+
     proc property {linkmodel property} {
         return [dict get $linkmodel $property]
     }

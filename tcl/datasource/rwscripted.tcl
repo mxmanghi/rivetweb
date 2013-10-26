@@ -189,6 +189,8 @@ namespace eval ::rwdatas {
             set href "${href}?[join $urlpars "&"]"
         }
 
+# we now set the href attribute of the link
+
         $linkmodel set_attribute lm [list href $href]
 
         return $lm
