@@ -162,7 +162,30 @@ namespace eval ::rwlink {
     }
     namespace export owner
 
+# -- urltarget
+#
+
+    proc set_urltarget {linkobj target} {
+        upvar $linkobj lo
+        dict set lo urltarget $target
+    }
+    namespace export set_urltarget
+
+    proc get_urltarget {linkobj target_var} {
+        upvar $target_var target
+
+        if {[dict exists $linkobj urltarget]} {
+            set target [dict get $linkobj urltarget]
+            return true
+        } else {
+            return false
+        }
+    }
+    namespace export get_urltarget          
+
     namespace ensemble create
 }
+
+
 
 package provide rwlink 1.0
