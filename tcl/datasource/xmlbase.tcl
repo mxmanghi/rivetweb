@@ -575,13 +575,16 @@ namespace eval ::rwdatas {
 
         set linkmodel   $::rivetweb::linkmodel
         set link_ref    [$linkmodel reference $lm]
-        set ltype [$linkmodel property $lm type]      
+        set ltype       [$linkmodel property $lm type]      
+        set urlargs     {}
         if {($ltype == "internal")  || \
-            ($ltype == "local") || ($ltype == "external")} {
+            ($ltype == "local")     || \
+            ($ltype == "external")} {
 
             set link_descriptor [$this makeUrl $lm]
             set urlargs [dict get $link_descriptor args]
             set href    [dict get $link_descriptor href]
+
             if {[llength $urlargs]} {
                 set urlpars {}
                 foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
@@ -593,12 +596,16 @@ namespace eval ::rwdatas {
             }
 
             $linkmodel set_attribute lm [list href $href]
+            return $lm
+
         } else {
+
             ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"
             $linkmodel set_attribute lm {href ""}
+            return $lm
+
         }
 
-        return $lm
     }
 
 # -- makeUrl
@@ -649,16 +656,17 @@ namespace eval ::rwdatas {
                 dict set urlargs show $reference
                 if {$::rivetweb::rewrite_links} {
 
-                    ::rivetweb::rewrite_url     \
-                                    [::rivet::var_qs get $::rivetweb::rewrite_par] \
-                                    $href urlargs href
+                    set rp [::rivet::var_qs get $::rivetweb::rewrite_par] 
+
+                    ::rivetweb::rewrite_url $rp $href urlargs href
                 } 
             }
             external {
                 set href [$linkmodel reference $lm]
             }
             local {
-                set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
+#               set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
+                set href [file join "/" ${local_pages} [$linkmodel reference $lm]]
             }
         }
 
