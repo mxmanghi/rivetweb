@@ -130,13 +130,20 @@ namespace eval ::rwlink {
     }
     namespace export link_info
 
-# -- type. Accessor which returns the link type. Possible
-# values are 'internal','external' and 'local'
+# -- property
+# 
 #
-#    proc type {linkmodel} {
-#        return [dict get $linkmodel type]
-#    }
-#    namespace export type
+    proc property {linkmodel property} {
+        return [dict get $linkmodel $property]
+    }
+    namespace export property
+
+    proc set_property {linkobj lprop lprop_val} {
+        upvar $linkobj link_o
+
+        dict set link_o $lprop $lprop_val
+    }
+    namespace export set_property
 
 # -- reference. Accessor which returns the hypetext reference
 # the link points to. This parameter is set through the 
@@ -147,7 +154,10 @@ namespace eval ::rwlink {
     }
     namespace export reference
 
-# -- arguments. Returns the arguments dictionary
+# -- arguments. Returns the arguments dictionary. Arguments
+# is list storing key-value pairs to be matched and become
+# the part of the URL after the '?' query character joined
+# by means of the '&' ampersand char
 #
 
     proc arguments {linkobj} {
