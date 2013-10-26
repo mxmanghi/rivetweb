@@ -60,12 +60,11 @@ namespace eval ::rwmenu {
             return [dict get $title $language]
         } else {
 
-	    if {[dict exists $title $::rivetweb::default_lang]} {
-		return [dict get $title $::rivetweb::default_lang]
-	    } else {
-		return ""
-	    }
-
+            if {[dict exists $title $::rivetweb::default_lang]} {
+                return [dict get $title $::rivetweb::default_lang]
+            } else {
+                return ""
+            }
         }
 
     }
@@ -118,7 +117,7 @@ namespace eval ::rwmenu {
     ::itcl::body RWMenu::index {} { return $index }
     ::itcl::body RWMenu::attributes {} { return $attributes }
 
-# -- peek: 
+# -- peek 
 #
 # generic accessor for a custom parameter
 # associated to the menuobj. if the attribute 'param'

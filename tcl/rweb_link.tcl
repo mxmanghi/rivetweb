@@ -138,7 +138,7 @@ namespace eval ::rwlink {
     }
     namespace export type
 
-# -- reference. Accessor which returs the hypetext reference
+# -- reference. Accessor which returns the hypetext reference
 # the link points to. This parameter is set through the 
 # set_parameter method
 
