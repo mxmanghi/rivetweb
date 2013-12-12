@@ -137,8 +137,8 @@ namespace eval ::rwlink {
 # a datasource.
 # 
 
-    proc property {linkmodel property} {
-        return [dict get $linkmodel $property]
+    proc property {linkobj property} {
+        return [dict get $linkobj $property]
     }
     namespace export property
 
@@ -148,6 +148,11 @@ namespace eval ::rwlink {
         dict set link_o $lprop $lprop_val
     }
     namespace export set_property
+
+    proc property_exists {linkobj property} {
+        return [dict exists $linkobj $property]
+    }
+    namespace export property_exists
 
 # -- reference. Accessor which returns the hypetext reference
 # the link points to. This parameter is set through the 
