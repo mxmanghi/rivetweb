@@ -45,7 +45,7 @@ namespace eval ::rwdatas {
 # We need to pass to auto loading as soon as the mechanics has been set
 # to work
 
-        $::rivetweb::logger log notice "loading scripts from $script_path"        
+        $::rivetweb::logger log info "loading scripts from $script_path"        
         set tclfiles [glob -nocomplain -directory $script_path *.tcl]
         foreach script $tclfiles {
             $::rivetweb::logger log notice "sourcing $script"
@@ -55,7 +55,7 @@ namespace eval ::rwdatas {
             if {[info exists rwdescriptor(classname)]} { 
                 set cmdname $rwdescriptor(classname)
             } else {
-                set cmdname     [file rootname [file tail $script]]
+                set cmdname [file rootname [file tail $script]]
             }
             set classname "[namespace current]::[string totitle $cmdname]"
                 
