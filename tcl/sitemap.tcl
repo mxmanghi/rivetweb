@@ -149,8 +149,8 @@ namespace eval ::rwsitemap {
 
     ::itcl::body RWSitemap::menu_list {group_id} {
 
-        $::rivetweb::logger log notice "sitemap nodes -> [$sitemap_tree nodes]"    
-        $::rivetweb::logger log notice "sitemap_tree -> [$sitemap_tree serialize]"    
+        $::rivetweb::logger log debug "sitemap nodes -> [$sitemap_tree nodes]"    
+        $::rivetweb::logger log debug "sitemap_tree -> [$sitemap_tree serialize]"    
 
         #set menu_s [::struct::queue menu_stack[incr cnt]]
         set menu_s {}
@@ -167,7 +167,7 @@ namespace eval ::rwsitemap {
             }
             lappend menu_s $menugroup
             
-            $::rivetweb::logger log info "walking up ancestors ->> [$sitemap_tree ancestors $group_id]"    
+            $::rivetweb::logger log debug "walking up ancestors ->> [$sitemap_tree ancestors $group_id]"    
 
             foreach anc [$sitemap_tree ancestors $group_id] {
 
@@ -192,7 +192,7 @@ namespace eval ::rwsitemap {
 
         }
         
-        $::rivetweb::logger log notice "returning [lreverse $menu_s] as menulist for group '$group_id'"
+        $::rivetweb::logger log debug "returning [lreverse $menu_s] as menulist for group '$group_id'"
         return [concat {*}[lreverse $menu_s]]
     }
 

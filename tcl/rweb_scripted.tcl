@@ -2,7 +2,6 @@
 #
 # Page model for a generic scripted page
 #
-# $Id: $
 #
 
 package require Itcl
@@ -104,6 +103,8 @@ namespace eval ::rwpage {
                 $pobj add_metadata title  $pagetitle
 
             }
+            ::rivet::apache_log_error err "invoking rollback"
+            $script rollback
 
             $script rollback
 
