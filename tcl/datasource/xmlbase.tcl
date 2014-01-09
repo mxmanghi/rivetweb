@@ -569,13 +569,14 @@ namespace eval ::rwdatas {
 
 # -- to_url
 #
-# metodo che deve generare la 
+# metodo che deve elaborare il link object e trasformarlo 
+# componendo la url finale (chiamando makeUrl)
 
     ::itcl::body XMLBase::to_url {lm} {
 
         set linkmodel   $::rivetweb::linkmodel
         set link_ref    [$linkmodel reference $lm]
-        set ltype       [$linkmodel property $lm type]      
+        set ltype       [$linkmodel property $lm type]  
         set urlargs     {}
         if {($ltype == "internal")  || \
             ($ltype == "local")     || \
@@ -625,6 +626,7 @@ namespace eval ::rwdatas {
 #
 # 21-11-2012 Rivetweb has gone dynamic. Supporting static links requires every datasource to
 # provide a one-to-one map between keys and set of parameters. 
+#
 
     ::itcl::body XMLBase::makeUrl {lm} {
 

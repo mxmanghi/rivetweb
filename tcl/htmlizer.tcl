@@ -56,7 +56,7 @@ namespace eval ::htmlizer {
 #
 #	menu in XHTML 
 #  
-    proc html_menu { menuobj language menustruct} {
+    proc html_menu { menuobj language menustruct } {
 
 # let's remap menustruct into local variables
 

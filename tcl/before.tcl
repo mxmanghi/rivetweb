@@ -1,5 +1,4 @@
-#
-# $Id: before.tcl 2095 2011-12-14 17:40:52Z massimo.manghi $
+# -- before.tcl
 #
 #+
 # this file ships the BeforeScript code of a Rivetweb site.
