@@ -115,7 +115,7 @@ namespace eval ::rivetweb {
 #
 # the central point is exactly here: we determine which page we have to display
 #
-    set argsqs [dict create {*}[var_qs all]]
+    set argsqs [dict create {*}[::rivet::var_qs all]]
 
     $::rivetweb::logger log debug "registered datasources: $::rivetweb::datasources"
     $::rivetweb::logger log debug "argsqs: $argsqs"

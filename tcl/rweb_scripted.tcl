@@ -106,7 +106,7 @@ namespace eval ::rwpage {
             ::rivet::apache_log_error err "invoking rollback"
             $script rollback
 
-            $script rollback
+            #$script rollback
 
             return $pobj
 
