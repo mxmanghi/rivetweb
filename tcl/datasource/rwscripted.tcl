@@ -172,7 +172,7 @@ namespace eval ::rwdatas {
     ::itcl::body Scripted::to_url {lm} {
         set linkmodel   $::rivetweb::linkmodel
 
-        set href [::rivet::env SCRIPT_NAME]
+        #set href [::rivet::env SCRIPT_NAME]
         set urlargs [$linkmodel arguments $lm]
 
         #::rivet::html "base href: $href ($urlargs)" div b
@@ -182,12 +182,14 @@ namespace eval ::rwdatas {
                 dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
             }	
         }
-        if {[llength $urlargs]} {
-            set urlpars {}
-            foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
-            
-            set href "${href}?[join $urlpars "&"]"
-        }
+#       if {[llength $urlargs]} {
+#           set urlpars {}
+#           foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
+#            
+#           set href "${href}?[join $urlpars "&"]"
+#       }
+
+        set href [::rivetweb::composeUrl {*}$urlargs]
 
 # we now set the href attribute of the link
 

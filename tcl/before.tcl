@@ -11,7 +11,7 @@ namespace eval ::rivetweb {
 
     load_env env
 
-    apache_log_error debug "running tcl/before.tcl"
+    ::rivet::apache_log_error debug "running tcl/before.tcl"
 
 #
 # -- rivet_before.tcl
@@ -128,8 +128,8 @@ namespace eval ::rivetweb {
 
 # specific 'before' script
 
-    apache_log_error notice "running specific 'before' script >$::rivetweb::site_before_script<"
     if {$::rivetweb::site_before_script != ""} { 
+        apache_log_error notice "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
     }
 

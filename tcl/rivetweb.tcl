@@ -23,7 +23,7 @@ namespace eval ::rivetweb {
     proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
         upvar $rewritten_css_url rwcss
 
-        set rwcss $css_path
+        set rwcss "/$css_path"
     }
     namespace export rewrite_css_url
 
@@ -202,8 +202,18 @@ namespace eval ::rivetweb {
 #
 
     proc makePictsPath {picts_file {style_dir ""}} {
+        return [findPictureFile $picts_file $style_dir]
+    }
+    namespace export makePictsPath
 
-        apache_log_error debug "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
+# -- findPictureFile
+# 
+# searching various directories to determine the path to the file 
+#
+
+    proc findPictureFile {picts_file style_dir} {
+
+        ::rivet::apache_log_error debug "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
 
 # search list for a picts file. 
 #
@@ -222,7 +232,7 @@ namespace eval ::rivetweb {
                                 $style_dir                  \
                                 $template_picts $picts_file]
 
-            apache_log_error debug "0 pict file: >$fn<"
+            ::rivet::apache_log_error debug "0 pict file: >$fn<"
             if {[file exists $fn]} {
                 return [file join $::rivetweb::base_templates $style_dir $template_picts $picts_file]
             }
@@ -236,7 +246,7 @@ namespace eval ::rivetweb {
                             $style_dir                  \
                             $picts_file]
 
-        apache_log_error debug "1 pict file: >$fn<"
+        ::rivet::apache_log_error debug "1 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::base_templates $style_dir $picts_file]
         } 
@@ -248,7 +258,7 @@ namespace eval ::rivetweb {
                             $style_dir              \
                             $picts_file]
 
-        apache_log_error debug "2 pict file: >$fn<"
+        ::rivet::apache_log_error debug "2 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::running_picts_path $style_dir $picts_file]
         } 
@@ -259,7 +269,7 @@ namespace eval ::rivetweb {
                             $::rivetweb::picts_path   \
                             $picts_file]
 
-        apache_log_error debug "3 pict file: >$fn<"
+        ::rivet::apache_log_error debug "3 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join $::rivetweb::running_picts_path $picts_file]
         } 
@@ -271,7 +281,7 @@ namespace eval ::rivetweb {
                             $::rivetweb::default_template   \
                             $picts_file]
 
-        apache_log_error debug "4 pict file: >$fn<"
+        ::rivet::apache_log_error debug "4 pict file: >$fn<"
         if {[file exists $fn]} {
             return [file join   $::rivetweb::running_picts_path   \
                                 $::rivetweb::default_template     \
@@ -280,7 +290,6 @@ namespace eval ::rivetweb {
 
         return ""
     }
-    namespace export makePictsPath
 
 # -- picture
 #
