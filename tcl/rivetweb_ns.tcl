@@ -138,7 +138,7 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase it_cont_html   {div itemcontainer}
     dict set templates_db rwbase item_html      {span menuitem}
     dict set templates_db rwbase link_class     navitem
-    dict set templates_db rwbase pictures	picts
+    dict set templates_db rwbase pictures	    picts
 
     variable debug                  1
     variable hooks_dir              hooks
@@ -150,13 +150,13 @@ namespace eval ::rivetweb {
 
 # variable controlling metadata for a new static page creation 
 
-    set metadatatags		    {date author ident keywords}
+    set metadatatags		        {date author ident keywords}
 
 # if any RCS system it should be set here. 
 # Possible values are 'svn' and 'git' or 'none'. Any other string
 # falls back on 'none'
 
-    set versioning_system	    none
+    set versioning_system	        none
 
 # parameters for downloading binary files
 

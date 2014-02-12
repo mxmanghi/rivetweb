@@ -639,6 +639,7 @@ namespace eval ::rwdatas {
 
 # URL arguments composition
 
+        set urlargs {}
         set stored_args [$linkmodel arguments $lm]
         if {[llength $stored_args]} {
             set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
