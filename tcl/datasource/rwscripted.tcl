@@ -82,7 +82,7 @@ namespace eval ::rwdatas {
             set key [dict get $varsqs f]
             if {[dict exists $scriptsdb $key]} {
 
-                $::rivetweb::logger log info    \
+                $::rivetweb::logger log debug    \
                                     "mapping fun $key ([dict get $scriptsdb $key]) for processing"
                 return -code break -errorcode rw_ok
 
@@ -93,7 +93,7 @@ namespace eval ::rwdatas {
             } 
         } 
 
-        $::rivetweb::logger log info "[namespace current] not mapping request"
+        $::rivetweb::logger log debug "[namespace current] not mapping request"
         return -code continue -errorcode rw_continue
     }
     
