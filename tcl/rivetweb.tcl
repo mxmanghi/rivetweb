@@ -15,6 +15,29 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+# -- select_datasource
+#
+# this function is the central mechanism for selecting
+# a datasource depending on the urlencoded parameters
+#
+# The function accepts the list of param-value pairs 
+# encoded and a variable name to store the datasource
+# generated key to the resource. The procedure returns
+# the reference to the selected datasource
+#
+
+    proc select_datasource {urlencoded_pars resource_key_var} {
+        variable datasources
+        upvar $resource_key_var key
+
+        foreach ds $datasources {
+            $ds willHandle $urlencoded_pars key
+        }
+
+        return $ds
+    }
+
+
 # base methods for url rewriting. This procedures can be 
 # superseded by application specific code and should
 # go into a class to preserve the basic functionality and
