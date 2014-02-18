@@ -191,7 +191,7 @@ namespace eval ::rivetweb {
 
     proc csspath {template_key} {
 
-        return [makeCssPath [dict get $::rivetweb::templates_db $template_key css] $template_key]
+        return [::rivetweb::makeCssPath [dict get $::rivetweb::templates_db $template_key css] $template_key]
 
     }
     namespace export csspath
@@ -202,7 +202,7 @@ namespace eval ::rivetweb {
 #
 
     proc makePictsPath {picts_file {style_dir ""}} {
-        return [findPictureFile $picts_file $style_dir]
+        return [file join / [findPictureFile $picts_file $style_dir]]
     }
     namespace export makePictsPath
 
@@ -218,7 +218,7 @@ namespace eval ::rivetweb {
 # search list for a picts file. 
 #
 #    - We first try in the template's specific dir
-#    - then we try the picts root directory 
+#    - then we try the template picts directory 
 #    - then we try in the website root 'picts' directory
 #    - last we attempt in the rwbase dir
 
