@@ -47,6 +47,7 @@ namespace eval ::rwdatas {
         public method init {args}
         public method willHandle {arglist keyvar}
         public method fetchData {key reassigned_key}
+        public method create {key page_data}
         public method is_stale {key timereference}
         public method has_updates {} 
         public method name {} { return "XMLBase" }
@@ -55,6 +56,7 @@ namespace eval ::rwdatas {
         public method resource_exists {resource_key {translated_key translated_key}} { return false }
         public method to_url {lm}
         public method makeUrl {reference} 
+        public proc   buildSimplePage {msg cssclass pagina_id} 
     }
 
     ::itcl::body XMLBase::init {args} {
@@ -109,6 +111,8 @@ namespace eval ::rwdatas {
 
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
+        } elseif {[dict exists $arglist create]} {
+
         }
 
         $::rivetweb::logger log info "mapping key $key for processing"
@@ -268,7 +272,7 @@ namespace eval ::rwdatas {
                 set page_id errore_interno
                 set notfound_msg "It was impossible to open the requested page ($fileioerr)"
                 $::rivetweb::logger err "[pid] $notfound_msg"
-                return [::rivetweb::buildSimplePage $notfound_msg message internal_error]
+                return [XMLBase::buildSimplePage $notfound_msg message internal_error]
             } else {
                 set pagedbentry [buildPageEntry $key $xmldata rkey]
                 return $pagedbentry
@@ -276,7 +280,6 @@ namespace eval ::rwdatas {
         } else {
             $::rivetweb::logger log info "$xmlfile not found"
             set notexisting_msg "The requested page does not exist"
-#           return [::rivetweb::buildSimplePage $notexists_msg message $page_id]
             return -code error  -errorcode not_existing         \
                                 -errorinfo $notexisting_msg     $notexisting_msg
         }
@@ -296,6 +299,68 @@ namespace eval ::rwdatas {
 
         return false
     }
+
+# -- create
+#
+#
+
+    ::itcl::body XMLBase::create {key page_data} {
+
+        set msgdom  [dom createDocument page]
+        set xml_o   [$msgdom documentElement]
+        $xml_o setAttribute id $key
+
+# ident metadata element
+
+        set elem_o [$msgdom createElement ident]
+        set dom_txt [$msgdom createTextNode [clock format [clock seconds]]]
+
+        set elem_o [$msgdom createElement date]
+        set dom_txt [$msgdom createTextNode [clock format [clock seconds] -format "%Y-%m-%d"]
+
+# if an author is existing
+
+        set elem_o [$msgdom createElement author]
+        if {[dict exists $page_data author]} {
+
+        } else {
+            set dom_txt [$msgdom createTextNode [clock format [clock seconds]]]
+        }
+
+# if there are menus in the data
+
+        if {[dict exists $page_data menus]} {
+
+            foreach pos [dict get $page_data menus] {
+
+                set elem_o  [$msgdom createElement menu]
+                set dom_txt [$msgdom createTextNode [dict get $page_data menus $pos]]
+
+            }
+        }
+
+# finally we get to the page creation
+
+        set elem_o  [$msgdom createElement content]
+        set lang $::rivetweb::default_lang
+        if {[dict exists $page_data language]} {
+            set lang [dict get $page_data language]
+        }
+
+        $elem_o setAttribute language $key
+
+        if {[dict exists $page_data title]} {
+            set elem_o  [$msgdom createElement title]
+            set dom_txt [$msgdom createTextNode [dict get $page_data title]]
+        }
+        if {[dict exists $page_data headline]} {
+            set elem_o  [$msgdom createElement title]
+            set dom_txt [$msgdom createTextNode [dict get $page_data headline]]
+        }
+
+
+    }
+
 
 # -- listStaticMenus
 #
@@ -675,6 +740,65 @@ namespace eval ::rwdatas {
 
         return [dict create href $href args $urlargs]
     }
+
+# -- buildSimplePage 
+#
+# Utility function that builds a simple page out of a message 
+# 
+# Arguments: 
+#
+#    - mag          Message text
+#    - cssclass     css class the element enclosing the text must have
+#    - pagina_id    identification of the page for subsequent retrieving 
+#                   from the cache
+#
+#  Returned value:
+#
+#   - reference to the tdom object representing the page
+#
+
+    ::itcl::body XMLBase::buildSimplePage {msg cssclass pagina_id} {
+
+        if {![$::rivetweb::rwebdb check $pagina_id)]} {
+            set msgdom  [dom createDocument page]
+            set xml_o   [$msgdom documentElement]
+
+# Let's add the menus to the dom
+
+            set menu_o  [$msgdom createElement menu]
+            $xml_o appendChild $menu_o
+            set t   [$msgdom createTextNode "index"]
+            $menu_o appendChild $t
+
+# ...and then the page main content
+
+            set content_o [$msgdom createElement content]
+            $xml_o appendChild $content_o
+
+            set headline_o [$msgdom createElement headline]
+            set hdline_to  [$msgdom createTextNode "Rivetweb anomaly"]
+            $headline_o appendChild $hdline_to
+            set title_o   [$msgdom createElement title]
+            set title_to  [$msgdom createTextNode "Rivetweb anomaly"]
+            $title_o    appendChild $title_to
+            $headline_o appendChild $hdline_to
+            $content_o  appendChild $headline_o
+            $content_o  appendChild $title_o
+
+            set htmldiv_o [$msgdom createElement pagetext]
+            $content_o appendChild $htmldiv_o
+            eval $htmldiv_o setAttribute class $cssclass 
+
+            set t [$msgdom createTextNode $msg]
+            $htmldiv_o appendChild $t
+
+        } else {
+            set msgdom $::rivetweb::pagine($pagina_id)
+        }
+
+        return $msgdom
+    }
+
 }
 
 package provide XMLBase 2.0

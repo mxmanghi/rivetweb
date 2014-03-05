@@ -107,65 +107,6 @@ namespace eval ::rivetweb {
     namespace export composeUrl
 
 
-# -- buildSimplePage 
-#
-# Utility function that builds a simple page out of a message 
-# 
-# Arguments: 
-#
-#    - mag          Message text
-#    - cssclass     css class the element enclosing the text must have
-#    - pagina_id    identification of the page for subsequent retrieving 
-#                   from the cache
-#
-#  Returned value:
-#
-#   - reference to the tdom object representing the page
-#
-
-    proc buildSimplePage {msg cssclass pagina_id} {
-
-        if {![info exists ::rivetweb::pagine($pagina_id)]} {
-            set msgdom  [dom createDocument page]
-            set xml_o   [$msgdom documentElement]
-
-# Let's add the menus to the dom
-
-            set menu_o  [$msgdom createElement menu]
-            $xml_o appendChild $menu_o
-            set t   [$msgdom createTextNode "index"]
-            $menu_o appendChild $t
-
-# ...and then the page main content
-
-            set content_o [$msgdom createElement content]
-            $xml_o appendChild $content_o
-
-            set headline_o [$msgdom createElement headline]
-            set hdline_to  [$msgdom createTextNode "Rivetweb anomaly"]
-            $headline_o appendChild $hdline_to
-            set title_o   [$msgdom createElement title]
-            set title_to  [$msgdom createTextNode "Rivetweb anomaly"]
-            $title_o    appendChild $title_to
-            $headline_o appendChild $hdline_to
-            $content_o  appendChild $headline_o
-            $content_o  appendChild $title_o
-
-            set htmldiv_o [$msgdom createElement pagetext]
-            $content_o appendChild $htmldiv_o
-            eval $htmldiv_o setAttribute class $cssclass 
-
-            set t [$msgdom createTextNode $msg]
-            $htmldiv_o appendChild $t
-
-        } else {
-            set msgdom $::rivetweb::pagine($pagina_id)
-        }
-
-        return $msgdom
-    }
-    namespace export buildSimplePage
-
 # -- makeCssPath 
 #
 #   creates rivetweb path to a CSS file
