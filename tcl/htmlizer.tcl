@@ -4,6 +4,8 @@
 # to transform different objects in their HTML representation
 #  
 
+package require tdom
+
 namespace eval ::htmlizer {
 
 # -- html_menu, a procedure whose specialization is 

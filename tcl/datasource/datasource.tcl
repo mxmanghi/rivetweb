@@ -17,9 +17,11 @@ namespace eval ::rwdatas {
 
         public method init {args} { set aliasdb [dict create] }
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
-        public method fetchData {key reassigned_key}
-        public method is_stale {key timereference} { return false }
+        public method fetchData {key reassigned_key} {}
         public method synchData {key data_dict} {}
+        public method createData {key data_dict} {}
+        public method storeData {key data_dict} {}
+        public method is_stale {key timereference} { return false }
         public method dispose {key} {}
         public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -48,14 +50,13 @@ namespace eval ::rwdatas {
         return $alias_found
     }
 
-#    ::itcl::body Datasource::rewrite_url {rwcode urlscript urlargs rewritten_base} {
-#        return -code continue -errorcode rw_continue
-#    }
-
     ::itcl::body Datasource::to_url {lm} {
         return $lm
     }
 
+#    ::itcl::body Datasource::rewrite_url {rwcode urlscript urlargs rewritten_base} {
+#        return -code continue -errorcode rw_continue
+#    }
 }
 
 package provide Datasource 1.0

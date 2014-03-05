@@ -30,9 +30,9 @@ namespace eval ::rwebdb {
 
 # -- store
 #
-# This method stores a page model in the in memory database
-# The method should evolve to a simple cache mechanism if
-# requested by the size of the web site.
+# This method stores unconditionally a page model in the in memory 
+# database. The method should evolve to a simple cache mechanism if
+# required by the size of the web site.
 #
 
     proc store {key page_model datasource} {

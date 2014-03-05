@@ -16,7 +16,7 @@ proc imagehandler { datasource tag element_text attribute_list } {
 
     array set attributes $attribute_list
     if {[info exists attributes(src)]} {
-        set attributes(src) [makePictsPath $attributes(src) $::rivetweb::template_key]
+        set attributes(src) [::rivetweb::makePictsPath $attributes(src) $::rivetweb::template_key]
     }
 
     dict set d attributes [array get attributes]

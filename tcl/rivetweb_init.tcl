@@ -1,7 +1,8 @@
 # -- rivetweb_init.tcl
 #
 #
-package require tdom
+
+
 catch { package require Rivet }
 
 # Some preliminary setup before the application is ready to serve pages

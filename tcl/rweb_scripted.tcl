@@ -48,6 +48,7 @@ namespace eval ::rwpage {
             $script handler $opts
 
             if {[dict exists $opts -errorcode]} {
+
                 set errorCode [dict get $opts -errorcode]
                 if {![$::rivetweb::rwebdb check $errorCode]} {
 
@@ -65,6 +66,7 @@ namespace eval ::rwpage {
                     $pobj add_metadata title  "[string range $e 0 20]..."
 
                 }
+
             } else {
 
             }
@@ -80,7 +82,12 @@ namespace eval ::rwpage {
 
         set do_method "do[string totitle $method]"
         #puts "<div style=\"background: #aaf\">do_method -&gt; $do_method</div>"
-        
+ 
+        # the actual method in the subclass is run. Any error is handled
+        # and in case an error page is returned. In case of errors the
+        # method callback is invoked to run each roll back code that might have
+        # been set up (generally in 'init' or in the $do_method method)
+       
         if {[catch {$script $do_method $language $this} e opts]} {
             set errorCode [dict get $opts -errorcode]
 
@@ -105,8 +112,6 @@ namespace eval ::rwpage {
             }
             ::rivet::apache_log_error err "invoking rollback"
             $script rollback
-
-            #$script rollback
 
             return $pobj
 
