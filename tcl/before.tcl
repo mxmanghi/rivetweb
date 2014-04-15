@@ -105,9 +105,9 @@ namespace eval ::rivetweb {
 # within the ::rivetweb namespace.
 
     if {[var exists lang]} {
-        set language [var get lang]
+        set language [::rivet::var get lang]
     } elseif {[var exists language]} {
-        set language [var get language]
+        set language [::rivet::var get language]
     } else {
         set language $::rivetweb::default_lang
     }
@@ -158,7 +158,7 @@ namespace eval ::rivetweb {
 
     $::rivetweb::current_pmodel metadata_hooks $::rivetweb::hooks
 
-    if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
+    #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
     apache_log_error notice "-> $::rivetweb::current_pmodel"
 

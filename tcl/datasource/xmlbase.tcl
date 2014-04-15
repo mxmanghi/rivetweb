@@ -47,6 +47,7 @@ namespace eval ::rwdatas {
         public method init {args}
         public method willHandle {arglist keyvar}
         public method fetchData {key reassigned_key}
+        public method storeData {key data_dict}
         public method create {key page_data}
         public method is_stale {key timereference}
         public method has_updates {} 
@@ -111,8 +112,11 @@ namespace eval ::rwdatas {
 
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
-        } elseif {[dict exists $arglist create]} {
+        } elseif {[dict exists $arglist store]} {
+            
+            
 
+            set key [dict get $arglist store]
         }
 
         $::rivetweb::logger log info "mapping key $key for processing"
@@ -300,6 +304,19 @@ namespace eval ::rwdatas {
         return false
     }
 
+# -- storeData
+#
+#
+
+    ::itcl::body XMLBase::storeData {key data_dict} {
+
+        set xmldata [$this create $key $data_dict]
+        
+        return [$this buildPageEntry $key $data_dict reassigned_key]
+
+    }
+    
+
 # -- create
 #
 #
@@ -313,19 +330,23 @@ namespace eval ::rwdatas {
 # ident metadata element
 
         set elem_o [$msgdom createElement ident]
-        set dom_txt [$msgdom createTextNode [clock format [clock seconds]]]
+        set dom_txt [$msgdom createTextNode "$Id: [clock format [clock seconds]]"]
+        $xml_o appendChild $elem_o
 
         set elem_o [$msgdom createElement date]
         set dom_txt [$msgdom createTextNode [clock format [clock seconds] -format "%Y-%m-%d"]
+        $xml_o appendChild $elem_o
 
 # if an author is existing
 
         set elem_o [$msgdom createElement author]
         if {[dict exists $page_data author]} {
+            set dom_txt [$msgdom createTextNode [dict get $page_data author]]]
 
         } else {
-            set dom_txt [$msgdom createTextNode [clock format [clock seconds]]]
+            set dom_txt [$msgdom createTextNode ""]
         }
+        $xml_o appendChild $elem_o
 
 # if there are menus in the data
 
@@ -338,26 +359,56 @@ namespace eval ::rwdatas {
 
             }
         }
+        $xml_o appendChild $elem_o
 
 # finally we get to the page creation
 
-        set elem_o  [$msgdom createElement content]
         set lang $::rivetweb::default_lang
         if {[dict exists $page_data language]} {
             set lang [dict get $page_data language]
         }
 
-        $elem_o setAttribute language $key
+        if {[dict exists $page_data language]} {
+            set language [dict get $page_data language]
+        } else {
+            set language $::rivetweb::default_lang
+        }
+
+        set content_o [$msgdom createElement content]
+        $content_o setAttribute language $language
+
+# 
+
+        set content ""
+        set title   ""
 
         if {[dict exists $page_data title]} {
-            set elem_o  [$msgdom createElement title]
-            set dom_txt [$msgdom createTextNode [dict get $page_data title]]
+            set title   [dict get $page_data title]
         }
-        if {[dict exists $page_data headline]} {
-            set elem_o  [$msgdom createElement title]
-            set dom_txt [$msgdom createTextNode [dict get $page_data headline]]
-        }
+        set title_o  [$msgdom createElement title]
+        set dom_txt [$msgdom createTextNode $title]
+        $title_o appendChild $dom_txt
 
+        set headline $title
+        if {[dict exists $page_data headline]} {
+            set headline [dict get $page_data headline]
+        }
+        set head_o  [$msgdom createElement headline]
+        set dom_txt [$msgdom createTextNode $headline]
+        $head_o appendChild $dom_txt
+
+        if {[dict exists $page_data content]} {
+            set content [dict get $page_data content]
+        }
+        set pagetxt_o [$msgdom createElement pagetext]
+        set dom_txt   [$msgdom createTextNomde $content]
+        $pagetxt_o appendChild $dom_txt
+
+        $content_o appendChild $head_o
+        $content_o appendChild $title_o
+        $content_o appendChild $pagetxt_o
+
+        return $xml_o
 
     }
 

@@ -12,6 +12,7 @@ package require fileutil::magic::mimetype
 namespace eval ::rwpage {
 
     ::itcl::class RWBinary {
+
         inherit RWPage
 
         private variable binary_file
@@ -22,7 +23,8 @@ namespace eval ::rwpage {
 	    }
 
         public method binary_content { } { return true }
-        public method print_binary {} 
+        public method print_binary { } 
+
     }
 
 # --print_binary
@@ -65,11 +67,12 @@ namespace eval ::rwpage {
                     close $file_handle
                     puts -nonewline $chunk
                     flush stdout
-                    apache_log_error debug "file downloaded in $nrecs chunks"
+                    apache_log_error debug "$fname downloaded: $sent_data bytes sent in $nrecs chunks"
                     break
                 } 
                 puts -nonewline $chunk
                 incr nrecs
+
             }
         }
     }
