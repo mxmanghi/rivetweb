@@ -785,7 +785,13 @@ namespace eval ::rwdatas {
             }
             local {
 #               set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
-                set href [file join "/" ${local_pages} [$linkmodel reference $lm]]
+
+                set lref [$linkmodel reference $lm]
+                if {[$this get_alias $lref lref]} {
+                    set href $lref
+                } else {
+                    set href [file join "/" ${local_pages} $lref]
+                }
             }
         }
 

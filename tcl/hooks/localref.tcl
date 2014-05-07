@@ -17,18 +17,19 @@ proc localref {datasource tag element_text attribute_list} {
 
     if {[info exists attributes(alias)] && [$datasource get_alias $attributes(alias) aliasdef]} { 
 
-        set lm [$::rivetweb::linkmodel create XMLBase $aliasdef $text_dict "" ""]
+        set link_reference $aliasdef
         unset attributes(alias)
 
     } elseif {[info exists attributes(href)]} {   
 
-        set lm [$::rivetweb::linkmodel create XMLBase $attributes(href) $text_dict "" ""]
+        set link_reference $attributes(href) 
 
     } elseif {[info exists attributes(src)]} {
 
-        set lm [$::rivetweb::linkmodel create XMLBase $attributes(src) $text_dict "" ""]
-
+        set link_reference $attributes(src)
     }
+
+    set lm [$::rivetweb::linkmodel create XMLBase $link_reference $text_dict "" ""]
     $::rivetweb::linkmodel set_attribute lm [array get attributes]
     $::rivetweb::linkmodel set_property lm type local
 
