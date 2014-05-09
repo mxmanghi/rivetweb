@@ -79,42 +79,47 @@ namespace eval ::rivetweb {
 # actually this should be a search list of directories where hooks
 # can be stored...
 
-    set hooks_dir_fq [file join $scripts $hooks_dir *.tcl]
+    foreach hooks_d [list [file join $scripts $hooks_dir] [file join $site_base hooks]] {
+
+        if {[file exists $hooks_d] == 0} { continue }
+
+        set hooks_dir_fq [file join $hooks_d *.tcl]
 
 # every hook defines a tag or data element transformer. Hooks
 # must define a hook_descriptor array where code characteristics
 # are listed.
 
-    set nhooks 0
-    if {[catch {set hooks_list [glob $hooks_dir_fq]} e]} {
+        set nhooks 0
+        if {[catch {set hooks_list [glob $hooks_dir_fq]} e]} {
 
-        apache_log_error notice "no hooks read from $hooks_dir_fq"
+            apache_log_error notice "no hooks read from $hooks_dir_fq"
 
-    } else {
+        } else {
 
-        foreach hook_file [glob $hooks_dir_fq] {
+            foreach hook_file [glob $hooks_dir_fq] {
 
-            array unset hook_descriptor
-            source $hook_file
+                array unset hook_descriptor
+                source $hook_file
 
 # we assume everything has been stored in the hook_descriptor array
 
-            if {![info exists hook_descriptor(textmode)]} {
-                set hook_descriptor(textmode)   text
+                if {![info exists hook_descriptor(textmode)]} {
+                    set hook_descriptor(textmode)   text
+                }
+
+                if {[info exists hook_descriptor(tag)]} {
+                    dict set hooks  $hook_descriptor(stage)                          \
+                                    $hook_descriptor(tag)                            \
+                                    [dict create function $hook_descriptor(function) \
+                                                 textmode $hook_descriptor(textmode) \
+                                                 descrip  $hook_descriptor(descrip)]
+                    incr nhooks
+                }
             }
 
-            if {[info exists hook_descriptor(tag)]} {
-                dict set hooks  $hook_descriptor(stage)                          \
-                                $hook_descriptor(tag)                            \
-                                [dict create function $hook_descriptor(function) \
-                                             textmode $hook_descriptor(textmode) \
-                                             descrip  $hook_descriptor(descrip)]
-                incr nhooks
-            }
+            apache_log_error notice "$nhooks hooks processed in $hooks_d"
+            apache_log_error debug   $hooks
         }
-
-        apache_log_error notice "$nhooks hooks processed"
-        apache_log_error debug   $hooks
     }
 }
 
