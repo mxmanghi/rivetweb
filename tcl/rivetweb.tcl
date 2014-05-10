@@ -50,6 +50,13 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_css_url
 
+    proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
+        upvar $rewritten_js_url rwjs
+
+        set rwjs "/${js_path}"
+    }
+    namespace export rewrite_js_url
+
     proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
         upvar $rewritten_base rrbase
 
@@ -134,12 +141,9 @@ namespace eval ::rivetweb {
 
             return $css_uri
 
-        } else {
-
-            return $css_uri 
-
         }
 
+        return $css_uri 
     }
 
 
@@ -165,11 +169,12 @@ namespace eval ::rivetweb {
 
 # -- css
 #
+#
 
     proc css {css_path {attributes ""}} {
         
         set xhtml "<link rel=\"stylesheet\" type=\"text/css\" href=\"$css_path\""
-        foreach {attrb attrv} $attributes { append xhtml "${attrv}=${attrb}" }
+        foreach {attrb attrv} $attributes { append xhtml " ${attrv}=${attrb}" }
         return "${xhtml} />"
 #       return [::rivet::xml "" [concat link rel "stylesheet" type "text/css" href $css_path $attributes]]
 
@@ -308,22 +313,26 @@ namespace eval ::rivetweb {
 # this method is to be considered as private
 
     proc jscript_path {script_path} {
+        set js_uri $script_path
 
-        if {[string index $script_path 0] != "/"} {
-            set script_path "/${script_path}"
-        }
+        if {$::rivetweb::rewrite_links} {
+            
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            ::rivetweb::rewrite_js_url $rwcode [::rivet::env SCRIPT_NAME] $js_uri js_uri
 
-        return $script_path
+
+        } 
+
+        return $js_uri
     }
     namespace export jscript_path
 
 # -- js
 #
 #
-    proc js {script {attributes ""}} {
+    proc js {jscript_file {attributes ""}} {
 
-        set jscript_file [::rivetweb jscript_path $script]
-        return [::rivet::xml "" [concat script type "text/javascript" src [jscript_path $jscript_file] $attributes]]
+        return [::rivet::xml "" [concat script type "text/javascript" src $jscript_file $attributes]]
 
     }
     namespace export js
@@ -336,7 +345,7 @@ namespace eval ::rivetweb {
     proc javascript {script {attributes ""}} {
 
         set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
-        return [::rivet::xml "" [concat script type "text/javascript" src [jscript_path $jscript_file] $attributes]]
+        return [::rivet::xml "" [concat script type "text/javascript" src [::rivetweb jscript_path $jscript_file] $attributes]]
         
         #set xhtml "<script type=\"text/javascript\" src=\"[jscript_path $jscript_file]\""
         #foreach {attrb attrv} $attributes { append xhtml " ${attrb}=${attrv}" }
