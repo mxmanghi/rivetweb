@@ -50,6 +50,13 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_css_url
 
+    proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
+        upvar $rewritten_js_url rwjs
+
+        set rwjs "/${js_path}"
+    }
+    namespace export rewrite_js_url
+
     proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
         upvar $rewritten_base rrbase
 
@@ -106,8 +113,7 @@ namespace eval ::rivetweb {
     }
     namespace export composeUrl
 
-
-# -- makeCssPath 
+# -- make_css_path 
 #
 #   creates rivetweb path to a CSS file
 #
@@ -121,10 +127,12 @@ namespace eval ::rivetweb {
 # ::rivetweb::running_css_path directory containing the css files for 
 # the supported templates.
 #
+# this method should be considered as private
+#
 
-    proc makeCssPath {css_file {style_dir ""}} {
+    proc make_css_path {css_relative_path} {
 
-        set css_uri [file join $::rivetweb::css_path $style_dir $css_file]
+        set css_uri $css_relative_path
 
         if {$::rivetweb::rewrite_links} {
             
@@ -133,14 +141,10 @@ namespace eval ::rivetweb {
 
             return $css_uri
 
-        } else {
-
-            return $css_uri 
-
         }
 
+        return $css_uri 
     }
-    namespace export makeCssPath
 
 
 # -- csspath 
@@ -154,11 +158,28 @@ namespace eval ::rivetweb {
 #
 
     proc csspath {template_key} {
+    
+        set css_file_name [dict get $::rivetweb::templates_db $template_key css]
+        set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
 
-        return [::rivetweb::makeCssPath [dict get $::rivetweb::templates_db $template_key css] $template_key]
+        return [::rivetweb::make_css_path $css_file_path]
 
     }
     namespace export csspath
+
+# -- css
+#
+#
+
+    proc css {css_path {attributes ""}} {
+        
+        set xhtml "<link rel=\"stylesheet\" type=\"text/css\" href=\"$css_path\""
+        foreach {attrb attrv} $attributes { append xhtml " ${attrv}=${attrb}" }
+        return "${xhtml} />"
+#       return [::rivet::xml "" [concat link rel "stylesheet" type "text/css" href $css_path $attributes]]
+
+    }
+    namespace export css
 
 # -- makePictsPath
 #
@@ -277,28 +298,58 @@ namespace eval ::rivetweb {
 #
     proc template {template_key} {
 
-        return [::rivetweb::template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
+        return [::rivetweb template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
 
     }
     namespace export template
 
 
-# -- script_path
+# -- jscript_path
 #
+# the rationale behind this method is similar to make_css_path. By now the
+# method simply checks for the path to be absolute and in case it returns
+# it in absolute form
 #
-    proc script_path {script_name {template_dir ""}} {
+# this method is to be considered as private
 
-        return [file join $::rivetweb::base_templates $template_dir $script_name]
+    proc jscript_path {script_path} {
+        set js_uri $script_path
+
+        if {$::rivetweb::rewrite_links} {
+            
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            ::rivetweb::rewrite_js_url $rwcode [::rivet::env SCRIPT_NAME] $js_uri js_uri
+
+
+        } 
+
+        return $js_uri
+    }
+    namespace export jscript_path
+
+# -- js
+#
+#
+    proc js {jscript_file {attributes ""}} {
+
+        return [::rivet::xml "" [concat script type "text/javascript" src $jscript_file $attributes]]
 
     }
-    namespace export script_path
+    namespace export js
 
 # -- javascript
 #
+# this method should know the whereabouts of the template database. Specific
+# templates might have specific javascript code, 
 #
-    proc javascript {script} {
+    proc javascript {script {attributes ""}} {
 
-        return "<script type=\"text/javascript\" src=\"[script_path $script $::rivetweb::template_key]\"></script>"
+        set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
+        return [::rivet::xml "" [concat script type "text/javascript" src [::rivetweb jscript_path $jscript_file] $attributes]]
+        
+        #set xhtml "<script type=\"text/javascript\" src=\"[jscript_path $jscript_file]\""
+        #foreach {attrb attrv} $attributes { append xhtml " ${attrb}=${attrv}" }
+        #return "$xhtml></script>"
 
     }
     namespace export javascript

@@ -9,8 +9,7 @@ namespace eval ::rivetweb {
 
     # let's load the environment into array ::request::env
 
-    load_env env
-
+    ::rivet::load_env env
     ::rivet::apache_log_error debug "running tcl/before.tcl"
 
 #
@@ -44,12 +43,12 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_picts_path  $::rivetweb::picts_path
     set ::rivetweb::running_css_path    $::rivetweb::css_path
 
-    if {$::rivetweb::rewrite_links && !$::rivetweb::is_homepage} {
-
-        set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
-        set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
-
-    }
+#    if {$::rivetweb::rewrite_links && !$::rivetweb::is_homepage} {
+#
+#        set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
+#        set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
+#
+#    }
 
 # let's determine which template we are using. We set a couple of default
 # values for them
@@ -59,7 +58,7 @@ namespace eval ::rivetweb {
 
     if {[var exists template]} {
 
-        set template_key [var get template]
+        set template_key [::rivet::var get template]
 
 #        catch {
 #
