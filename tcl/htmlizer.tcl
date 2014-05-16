@@ -93,17 +93,18 @@ namespace eval ::htmlizer {
         if {[string length $menu_class]} { 
             $htmlmenu_o setAttribute class $menu_class 
         }
+
         set cssclass [$menuobj peek cssclass]
         if {[string length $cssclass]} {
             $htmlmenu_o setAttribute class $cssclass 
         }
 
 # we set aside the handling of the 'notitle' attribute
-
 # let's get the title to be printed as header for the menu
 
         set menu_title [$menuobj title $language]
         if {[string length $menu_title] > 0} {
+
             set title_dom [$menudom createElement $title_tag]
             if {[string length $title_class]} {
                 $title_dom setAttribute class $title_class 
@@ -111,6 +112,7 @@ namespace eval ::htmlizer {
             $htmlmenu_o appendChild $title_dom
             set text_o [$menudom createTextNode $menu_title]
             $title_dom appendChild $text_o
+
         }
 
 # we now create the element which to contain the menu items
@@ -152,14 +154,12 @@ namespace eval ::htmlizer {
                 $link_o setAttribute title $link_info
             }
 
-            #if {[string length $link_target]} {
-            #    $link_o setAttribute target $link_target
-            #}
-
 # this should set also href as it's part of the link object attributes
+
             if {[dict exists $link attributes]} {
                 $link_o setAttribute {*}[dict get $link attributes]
             }
+
             #::rivet::html "assigning attributes [dict get $link attributes] to link" div b 
         }
 
