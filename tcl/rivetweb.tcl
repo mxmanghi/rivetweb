@@ -4,6 +4,10 @@
 #
 #
 
+# starting with this branch we require Tcl 8.6
+
+package require Tcl 8.6
+
 package require rwconf
 package require rwebdb
 package require rwlogger
@@ -71,7 +75,6 @@ namespace eval ::rivetweb {
     proc composeUrl {args} {
 
         set arglist $args
-
         if {$::rivetweb::rewrite_links} {
 
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
@@ -133,7 +136,6 @@ namespace eval ::rivetweb {
     proc make_css_path {css_relative_path} {
 
         set css_uri $css_relative_path
-
         if {$::rivetweb::rewrite_links} {
             
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
@@ -450,7 +452,6 @@ namespace eval ::rivetweb {
         return $htmltext
     }
     namespace export build_html_menu
-
 
     namespace ensemble create
 }
