@@ -85,7 +85,7 @@ namespace eval ::rwpage {
 
 # -- content
 #
-# crucial method returning a the content for a specific language
+# crucial method returning the content for a specific language
 # (when existing). Depending on the value of argument fmt
 # 'content' returns the output as
 #

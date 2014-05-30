@@ -94,7 +94,7 @@ namespace eval ::rivetweb {
     set ::rivetweb::template_key      $template_key
 
 # we determine the language for this request (keep in mind we are running
-# within the ::rivetweb namespace.
+# within the ::rivetweb namespace)
 
     if {[var exists lang]} {
         set language [::rivet::var get lang]
@@ -190,11 +190,13 @@ namespace eval ::rivetweb {
         $::rivetweb::logger log err "Error processing data for page ($e)"
         $::rivetweb::logger log err $errorInfo
         if {![$::rivetweb::rwebdb check postproc_hook_error]} {
+
             set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
             $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
             $pobj add_metadata header "Postprocessing error"
             $pobj add_metadata title  "Postprocessing error"
             $::rivetweb::rwebdb store postproc_hook_error $pobj ::RWDummy
+
         } else {
 
             set pobj [$::rivetweb::rwebdb fetch postproc_hook_error]
@@ -208,4 +210,5 @@ namespace eval ::rivetweb {
     } else {
         headers type "text/html; charset=$::rivetweb::http_encoding"
     }
+
 }
