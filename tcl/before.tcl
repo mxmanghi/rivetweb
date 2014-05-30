@@ -2,6 +2,9 @@
 #
 #+
 # this file ships the BeforeScript code of a Rivetweb site.
+# This code is running within the ::rivetweb namespace, but we keep to 
+# fully qualify variables so to make explicit their role of status variables
+# in the request processing
 #-
 #
 
@@ -136,21 +139,6 @@ namespace eval ::rivetweb {
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
     set ::rivetweb::current_pmodel [$::rivetweb::current_pmodel prepare $::rivetweb::language $argsqs]
-
-# vi:shiftwidth=4:softtabstop=4:
-
-# 
-# -- rivet_page
-# 
-# various stuff here to prepare the actual page generation.
-#
-# First of all we have to determine which menus have to be displayed in this
-# context. Let's check to see if the sitemap has to be updated
-#
-
-# This code is running within the ::rivetweb namespace, but we keep to 
-# fully qualify variables so to make explicit their role of status variables
-# in the request processing
 
 # we run metadata hooks for variable that have to be extracted to control the
 # display of our template
