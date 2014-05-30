@@ -93,13 +93,6 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
     set ::rivetweb::template_key      $template_key
 
-# setting this parameter redirs to the 'static' form of the website.
-#
-#   if {[var exists staticroot]} {
-#       header redir index.html
-#   }
-#
-
 # we determine the language for this request (keep in mind we are running
 # within the ::rivetweb namespace.
 
