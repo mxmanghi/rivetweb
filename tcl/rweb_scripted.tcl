@@ -53,7 +53,8 @@ namespace eval ::rwpage {
                 if {![$::rivetweb::rwebdb check $errorCode]} {
 
                     set pobj [::rwpage::RWStatic ::#auto $errorCode]
-                    $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> (code $errorCode): [escape_sgml_chars $opts]"
+                    set opts [::rivet::escape_sgml_chars $opts]
+                    $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b> (code $errorCode): $opts"
                     $pobj add_metadata header "[string range $e 0 20]..."
                     $pobj add_metadata title  "[string range $e 0 20]..."
                     $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
@@ -118,7 +119,6 @@ namespace eval ::rwpage {
         } else {
 
             $script finalize
-
             return $this
 
         }

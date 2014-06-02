@@ -1,9 +1,10 @@
 #
 # -- test
 #
+#+
 # Can I stretch Rivetweb capabilities and make it suitable
 # for dynamic website generation?
-#
+#-
 #
 
 package require Itcl
@@ -56,10 +57,10 @@ package require ScriptBase
 
 ::itcl::body Test::doError {language pageobj} {
     
-    return  -code error -options    [$this error_descriptor errore_generico \
-                        -par1       "param 1"   \
-                        -par2       "param 2"   \
-                        -par3       "param 3"] "error message"
+    return  -code error -options    [$this  error_descriptor errore_generico \
+                                            -par1       "param 1"            \
+                                            -par2       "param 2"            \
+                                            -par3       "param 3"] "error message"
 
 }
 

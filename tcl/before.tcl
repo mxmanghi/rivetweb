@@ -1,7 +1,14 @@
 # -- before.tcl
 #
 #+
-# this file ships the BeforeScript code of a Rivetweb site.
+# 
+# This is where at every request most of the work is done to prepare a page. 
+# rivet_before sets some Rivetweb status variables depending on the value
+# of some typically urlencoded parameters.
+# Code is running within the ::rivetweb namespace, but we keep to 
+# fully qualify variables so to make explicit their role of status variables
+# in the request processing
+#
 #-
 #
 
@@ -12,14 +19,6 @@ namespace eval ::rivetweb {
     ::rivet::load_env env
     ::rivet::apache_log_error debug "running tcl/before.tcl"
 
-#
-# -- rivet_before.tcl
-# 
-# This is where at every request most of the work is done to prepare a page. 
-# rivet_before sets some Rivetweb status variables depending on the value
-# of some typically urlencoded parameters
-#
-#
 
 # let's assign the controlling variables with the corresponding parameters 
 # definitions.
@@ -43,13 +42,6 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_picts_path  $::rivetweb::picts_path
     set ::rivetweb::running_css_path    $::rivetweb::css_path
 
-#    if {$::rivetweb::rewrite_links && !$::rivetweb::is_homepage} {
-#
-#        set ::rivetweb::running_picts_path  [file join .. $::rivetweb::picts_path]
-#        set ::rivetweb::running_css_path    [file join .. $::rivetweb::css_path]
-#
-#    }
-
 # let's determine which template we are using. We set a couple of default
 # values for them
 
@@ -60,22 +52,9 @@ namespace eval ::rivetweb {
 
         set template_key [::rivet::var get template]
 
-#        catch {
-#
-#            set running_template  [dict get $::rivetweb::templates_db $template_key template]
-#            set running_css       [dict get $::rivetweb::templates_db $template_key css]
-#
-#        }
-
     } elseif {[string compare $::rivetweb::default_template ""] != 0} {
 
         set template_key $::rivetweb::default_template
-#        if {[catch {
-#
-#            set running_template  [dict get $::rivetweb::templates_db $template_key template]
-#            set running_css       [dict get $::rivetweb::templates_db $template_key css]
-#
-#        } e]} { puts "errore: $e" }
 
     } else {
 
@@ -92,13 +71,6 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_template  [::rivetweb::template $template_key]
     set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
     set ::rivetweb::template_key      $template_key
-
-# setting this parameter redirs to the 'static' form of the website.
-#
-#   if {[var exists staticroot]} {
-#       header redir index.html
-#   }
-#
 
 # we determine the language for this request (keep in mind we are running
 # within the ::rivetweb namespace.
@@ -128,45 +100,31 @@ namespace eval ::rivetweb {
 # specific 'before' script
 
     if {$::rivetweb::site_before_script != ""} { 
-        apache_log_error notice "running specific 'before' script -> $::rivetweb::site_before_script"
+        ::rivet::apache_log_error notice "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
     }
 
     $::rivetweb::logger log info "processing request for '$page_key'"
     set ::rivetweb::page_content $page_key
-    set ::rivetweb::current_pmodel [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
-    set ::rivetweb::current_pmodel [$::rivetweb::current_pmodel prepare $::rivetweb::language $argsqs]
+    set ::rivetweb::current_page [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
+    set ::rivetweb::current_page [$::rivetweb::current_page prepare $::rivetweb::language $argsqs]
 
-# vi:shiftwidth=4:softtabstop=4:
-
-# 
-# -- rivet_page
-# 
-# various stuff here to prepare the actual page generation.
-#
-# First of all we have to determine which menus have to be displayed in this
-# context. Let's check to see if the sitemap has to be updated
-#
-
-# This code is running within the ::rivetweb namespace, but we keep to 
-# fully qualify variables so to make explicit their role of status variables
-# in the request processing
 
 # we run metadata hooks for variable that have to be extracted to control the
 # display of our template
 
-    $::rivetweb::current_pmodel metadata_hooks $::rivetweb::hooks
+    $::rivetweb::current_page metadata_hooks $::rivetweb::hooks
 
     #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
 
-    apache_log_error notice "-> $::rivetweb::current_pmodel"
+    ::rivet::apache_log_error debug "-> $::rivetweb::current_page"
 
     catch {unset ::rivetweb::pagemenus}
     set ::rivetweb::pagemenus [dict create]
 
     foreach ds $::rivetweb::datasources {
 
-        set dsmenu [$ds menu_list $::rivetweb::current_pmodel]
+        set dsmenu [$ds menu_list $::rivetweb::current_page]
         apache_log_error notice "got $dsmenu from $ds"
         #puts "<pre>got $dsmenu from $ds</pre>"
 
@@ -183,36 +141,44 @@ namespace eval ::rivetweb {
 
     }
 
-    apache_log_error notice "menu database $::rivetweb::pagemenus"
+    ::rivet::apache_log_error notice "menu database $::rivetweb::pagemenus"
 
     if {[catch {
 
-       $::rivetweb::current_pmodel postproc_hooks   $::rivetweb::datasource \
-                                                    $::rivetweb::hooks      \
-                                                    xmlpostproc             \
-                                                    $language
+       $::rivetweb::current_page postproc_hooks   $::rivetweb::datasource   \
+                                                  $::rivetweb::hooks        \
+                                                  xmlpostproc               \
+                                                  $language
 
     } e]} {
 
         $::rivetweb::logger log err "Error processing data for page ($e)"
         $::rivetweb::logger log err $errorInfo
+
         if {![$::rivetweb::rwebdb check postproc_hook_error]} {
+
             set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
             $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
             $pobj add_metadata header "Postprocessing error"
             $pobj add_metadata title  "Postprocessing error"
             $::rivetweb::rwebdb store postproc_hook_error $pobj ::RWDummy
+
         } else {
 
             set pobj [$::rivetweb::rwebdb fetch postproc_hook_error]
-            set ::rivetweb::current_pmodel $pobj
+            set ::rivetweb::current_page $pobj
 
         }
+
     }
 
-    if {[$::rivetweb::current_pmodel binary_content]} {
-        $::rivetweb::current_pmodel print_binary
+    if {[$::rivetweb::current_page binary_content]} {
+        $::rivetweb::current_page print_binary
     } else {
         headers type "text/html; charset=$::rivetweb::http_encoding"
     }
+
+# this variable is set for compatibility and should go sooner or later
+
+    set ::rivetweb::current_pmodel $::rivetweb::current_page
 }
