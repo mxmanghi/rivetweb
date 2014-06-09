@@ -22,6 +22,7 @@ package require rwmenu
     public method menu_list {page} { return {} }
     public method rollback {} {}
     public method finalize {} {}
+
 }
 
 # -- template

@@ -289,6 +289,10 @@ namespace eval ::rwdatas {
         }
     }
 
+# -- has_updates
+#
+#
+
     ::itcl::body XMLBase::has_updates {} {
         variable timestamp
         variable sitemap_dir

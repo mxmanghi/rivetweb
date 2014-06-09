@@ -27,7 +27,7 @@
             puts $e
         }
     } else {
-        apache_log_error info "parsing $::rivetweb::running_template"
+        apache_log_error notice "\[rw\] parsing $::rivetweb::running_template"
         parse $::rivetweb::running_template
     }
 ?>
