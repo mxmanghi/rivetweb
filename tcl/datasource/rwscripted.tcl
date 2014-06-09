@@ -48,6 +48,7 @@ namespace eval ::rwdatas {
         $::rivetweb::logger log info "loading scripts from $script_path"        
         set tclfiles [glob -nocomplain -directory $script_path *.tcl]
         foreach script $tclfiles {
+
             $::rivetweb::logger log notice "sourcing $script"
             catch { array unset rwdescriptor }
             source $script
@@ -61,6 +62,7 @@ namespace eval ::rwdatas {
                 
             dict set scriptsdb $cmdname class   $classname 
             dict set scriptsdb $cmdname object  [$classname ::#auto]
+
         }
     }
 
@@ -75,9 +77,6 @@ namespace eval ::rwdatas {
         upvar $keyvar key 
 
         set varsqs      [dict create {*}$arglist]
-        set retcode     break
-        set errorcode   rw_ok
-
         if {[dict exists $varsqs f]} {
             set key [dict get $varsqs f]
             if {[dict exists $scriptsdb $key]} {
