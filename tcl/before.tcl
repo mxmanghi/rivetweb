@@ -70,6 +70,7 @@ namespace eval ::rivetweb {
     } elseif {[string compare $::rivetweb::default_template ""] != 0} {
 
         set template_key $::rivetweb::default_template
+
 #        if {[catch {
 #
 #            set running_template  [dict get $::rivetweb::templates_db $template_key template]

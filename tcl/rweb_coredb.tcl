@@ -15,6 +15,28 @@ namespace eval ::rwebdb {
 
     variable sitepages [dict create]
 
+    proc pages {} { 
+
+        set pdict [dict create]
+        foreach k [dict keys $sitepages] {
+            dict set pdict $k [dict get $sitepages $k object]
+        }
+
+        return $pdict
+    }
+
+# -- unset_page
+#
+# we needed a method to remove a reference to a page object from the
+# database. It's responsability of the caller to actually delete the
+# page instance.
+#
+
+    proc unset_page {key} {
+        $::rivetweb::logger debug "Removing page associated to $key"
+        dict unset sitepages $key
+    }
+
 # -- check
 #
 # Checking if the page associated to the key
@@ -155,7 +177,10 @@ namespace eval ::rwebdb {
     }
     namespace export erase
 
-
+# -- fetch_from_source
+#
+#
+#
     proc fetch_from_source {key} {
         variable sitepages
 
@@ -171,21 +196,12 @@ namespace eval ::rwebdb {
 
 # let's return a conventional page (to be preloaded in the database)
 
-#               if {[$::rivetweb::rwebdb check not_existing]} {
-#                    set pobj [$::rivetweb::rwebdb fetch not_existing]
-#               } else {
-#                    set pobj [::rwpage::RWStatic ::#auto not_existing]
-#                    $pobj add_metadata title    "Content not found"
-#                    $pobj add_metadata header   "Rivetweb error: content not found"
-#               }
-#                
-#               $pobj set_pagetext $::rivetweb::default_lang \
-#                                                "Content for $key not found"
+                set pobj [$::rivetweb::rwebdb page not_existing                     \
+                                                $::rivetweb::default_lang           \
+                                                "Content for <b>$key</b> not found" \
+                                                "Rivetweb error: content not found" \
+                                                "Content not found"]
 
-                set pobj [$::rivetweb::rwebdb page not_existing $::rivetweb::default_lang     \
-                                                                "Content for <b>$key</b> not found"  \
-                                                                "Rivetweb error: content not found" \
-                                                                "Content not found"]
             } else {
 
 # something else went wrong, it's a rivetweb internal error
@@ -203,7 +219,7 @@ namespace eval ::rwebdb {
                 }
                 $pobj add_metadata title    "Error creating page for key $key ($error_caught)"
                 $pobj add_metadata header   "Error creating page for key $key"
-                $pobj set_pagetext ::rivetweb::default_lang   \
+                $pobj set_pagetext $::rivetweb::default_lang   \
                                             "Error creating page for key $key<br /><pre>$e</pre>"
 
             }
@@ -219,6 +235,10 @@ namespace eval ::rwebdb {
 
         return $pmodel
     }
+
+    # -- page
+    #
+    #
 
     proc page {key language {txt ""} {header ""} {title ""}} {
 

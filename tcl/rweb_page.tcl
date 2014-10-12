@@ -163,7 +163,7 @@ namespace eval ::rwpage {
 #       <processor_name> { element_text attributes }
 #
 
-    ::itcl::body RWPage::postproc_hooks { ds hooks_d hooks_class {language ""}} { }
+    ::itcl::body RWPage::postproc_hooks {ds hooks_d hooks_class {language ""}} { }
 
 # -- metadata_hooks
 #
@@ -182,6 +182,7 @@ namespace eval ::rwpage {
                 ::rivetweb::$processor $this
             }
         }
+
     }
 
 # -- print_content
