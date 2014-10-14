@@ -62,34 +62,50 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::init {args} {
 
+        $::rivetweb::logger log notice "working from directory $::rivetweb::site_base"
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $local_pages
-# we first set up the variables controlling the sitemap
+
+    # we first set up the variables controlling the sitemap
 
         array set sitemap_stat {}
 
-# let's rewrite the patg to the sitemap
+    # let's rewrite the patg to the sitemap
 
         set sitemap_dir  [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
-        set static_pages [file normalize [file join $::rivetweb::site_base $static_pages]]
+        if {![file exists $sitemap_dir]} {
 
-        if {![file isdirectory $sitemap_dir]} {
+            $::rivetweb::logger log notice "creating sitemap path dir ($sitemap_dir)"
+            file mkdir $sitemap_dir
+
+        } elseif {![file isdirectory $sitemap_dir]} {
 
             $::rivetweb::logger log notice "Wrong path for sitemap ($sitemap_dir)"
-
             return -code error  -error_code invalid_path                \
                                 -errorinfo  "Wrong path $sitemap_dir"   \
                                             "Wrong path $sitemap_dir"
         } else {
-
             $::rivetweb::logger log notice "setting sitemap path as $sitemap_dir"
+        }
 
+        set static_pages [file normalize [file join $::rivetweb::site_base $static_pages]]
+        if {![file exists $static_pages]} {
+
+            $::rivetweb::logger log notice "creating sitemap path dir ($static_pages)"
+            file mkdir $static_pages
+
+        } elseif {![file isdirectory $static_pages]} {
+            $::rivetweb::logger log notice "Wrong path for sitemap ($static_pages)"
+            return -code error  -error_code invalid_path                \
+                                -errorinfo  "Wrong path $static_pages"   \
+                                            "Wrong path $static_pages"
+        } else {
+            $::rivetweb::logger log notice "setting pages path as $static_pages"
         }
         
-# and the we set the path to the XML pages
+    # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
-
         set sitemap [::rwsitemap::create ::XMLBase]
         load_sitemap $sitemap
     }
