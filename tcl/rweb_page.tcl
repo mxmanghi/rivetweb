@@ -62,7 +62,9 @@ namespace eval ::rwpage {
 #
 #
     ::itcl::body RWPage::add_metadata {field value} {
+
         dict set metadata $field $value
+
     }
 
 # -- set_metadata
@@ -80,7 +82,6 @@ namespace eval ::rwpage {
             dict set metadata $key $value
 
         }
-
     }
 
 # -- put_metadata 
