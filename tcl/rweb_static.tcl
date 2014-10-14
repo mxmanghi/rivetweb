@@ -22,9 +22,9 @@ namespace eval ::rwpage {
     # we store an initial text object. The content variable 
     # cannot fail to return a pagetext value
 
-	    set page_dom  [dom createDocument pagetext]
-	    set page_o    [$page_dom documentElement]
-	    $page_o appendXML "<div>undefined</div>"
+            set page_dom  [dom createDocument pagetext]
+            set page_o    [$page_dom documentElement]
+            $page_o appendXML "<div>undefined</div>"
             dict set content $::rivetweb::default_lang pagetext $page_o
         }
 
