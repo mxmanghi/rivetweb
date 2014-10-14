@@ -13,7 +13,7 @@ namespace eval ::rwdatas {
 
     ::itcl::class Datasource {
 
-        private variable aliasdb	[dict create]
+        private variable aliasdb [dict create]
 
         public method init {args} { set aliasdb [dict create] }
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
