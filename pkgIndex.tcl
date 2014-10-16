@@ -8,6 +8,9 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
+set dir [file dirname [info script]]
+::rivet::apache_log_error notice "Scripts base dir: $dir"
+
 package ifneeded XMLBase 2.0 [list source [file join $dir tcl/datasource/xmlbase.tcl]]
 package ifneeded Scripted 2.0 [list source [file join $dir tcl/datasource/rwscripted.tcl]]
 package ifneeded htmlizer 1.0 [list source [file join $dir tcl/htmlizer.tcl]]
