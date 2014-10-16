@@ -79,7 +79,7 @@ namespace eval ::rwmenu {
             set language $::rivetweb::default_lang
         }
 
-        dict set $title $language $testo
+        dict set title $language $testo
         if {![dict exists $title $::rivetweb::default_lang]} {
             dict set title $::rivetweb::default_lang $testo
         }

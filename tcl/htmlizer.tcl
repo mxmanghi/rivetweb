@@ -115,7 +115,7 @@ namespace eval ::htmlizer {
 
         }
 
-# we now create the element which to contain the menu items
+# we now create the element which is to contain the menu items
 
         set item_container_o [$menudom createElement $it_cont_tag]
         if {[string length $it_cont_class]} {

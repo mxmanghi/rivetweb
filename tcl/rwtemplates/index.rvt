@@ -1,0 +1,33 @@
+<?
+# -- index.rvt
+#
+# This template is actually just a basic handler of a request. It select
+# code execution for the template. It should evolve to handle dynamic page
+# generation, but for the time present it's just able to run rivetweb
+# scripts like download.tcl (binary file download)
+#
+
+# first of all we test the parameter rwinfo. 
+
+    if {[::rivet::var exists rwinfo]} {
+        load_env env
+        parray_table env
+        #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
+        set siteconf [::rivet::inspect]
+
+        foreach k [dict keys $siteconf] {
+            puts "<pre>$k -> [dict get $siteconf $k]</pre>"
+        }
+
+        $::rivetweb::rwebdb coredump
+
+    } elseif {[::rivet::var exists function]} {
+        set fun [var get function]
+        if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {
+            puts $e
+        }
+    } else {
+        apache_log_error info "parsing $::rivetweb::running_template"
+        parse $::rivetweb::running_template
+    }
+?>

@@ -279,8 +279,7 @@ namespace eval ::rivetweb {
 # -- picture
 #
 #
-    proc picture {pict_name} {  }
-
+    proc picture {pict_name} { return [::rivetweb::findPictureFile $pict_name $::rivetweb::template_key] }
 
 # -- template_path
 #
