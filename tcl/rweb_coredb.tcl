@@ -16,6 +16,7 @@ namespace eval ::rwebdb {
     variable sitepages [dict create]
 
     proc pages {} { 
+        variable sitepages
 
         set pdict [dict create]
         foreach k [dict keys $sitepages] {
@@ -24,6 +25,7 @@ namespace eval ::rwebdb {
 
         return $pdict
     }
+    namespace export pages
 
 # -- unset_page
 #
@@ -33,9 +35,12 @@ namespace eval ::rwebdb {
 #
 
     proc unset_page {key} {
-        $::rivetweb::logger debug "Removing page associated to $key"
+        variable sitepages
+
+        $::rivetweb::logger log debug "Removing page associated to $key"
         dict unset sitepages $key
     }
+    namespace export unset_page
 
 # -- check
 #

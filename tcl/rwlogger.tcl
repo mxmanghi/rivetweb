@@ -1,6 +1,7 @@
+#
 # --  rwlogger
 #
-#
+# Attempt to outline a logging utility for rivetweb based applications
 #
 
 namespace eval ::rwlogger {
@@ -9,9 +10,7 @@ namespace eval ::rwlogger {
 
         set msg "\[[pid]\] $msg"
 
-        if {[catch {
-            apache_log_error $severity $msg
-        }]} {
+        if {[catch { ::rivet::apache_log_error $severity $msg }]} {
             puts stderr "\[$severity\] $msg"
         }
     }
