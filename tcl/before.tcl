@@ -211,5 +211,6 @@ namespace eval ::rivetweb {
     } else {
         headers type "text/html; charset=$::rivetweb::http_encoding"
     }
-
+    
+    apache_log_error info "before.tcl done"
 }
