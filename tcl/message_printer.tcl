@@ -10,6 +10,7 @@ package require Itcl
 ::itcl::class MessagePrinter {
 
     private variable    message_queue  [::struct::queue]
+
     public method       reset_message_queue {}
     public method       post_message {msg {severity normal} {cssclass errormessage}}
     public method       get_message {msg}
@@ -47,7 +48,6 @@ package require Itcl
 #
 ::itcl::body MessagePrinter::get_message {msg} {
     upvar 1 $msg messaggio
-    variable message_queue
 
     if {[catch {set messaggio [$message_queue get]} e]} {
         return 0
