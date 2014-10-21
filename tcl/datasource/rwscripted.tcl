@@ -31,7 +31,7 @@ namespace eval ::rwdatas {
         public method fetchData {key reassigned_key}
         public method is_stale {key timereference } { return false }
         public method menu_list {page} 
-        public method to_url {lm}
+        public proc   to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
     }
 

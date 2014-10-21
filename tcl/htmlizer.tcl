@@ -131,7 +131,7 @@ namespace eval ::htmlizer {
         foreach link $links {
 
             set ds    [$linkmodel owner $link]
-            set link  [$ds to_url $link]
+            set link  [::rwdatas::${ds}::to_url $link]
 
             set item_o [$menudom createElement $item_tag]
             if {[string length $link_class]} {

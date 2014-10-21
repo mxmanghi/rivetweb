@@ -34,7 +34,7 @@ namespace eval ::rwdatas {
         private variable sitemap
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
-        private variable local_pages	    docs
+        private common   LOCAL_PAGES	    docs
         private variable timestamp          0
         private variable sitemap_stat   
         private variable xmlpath
@@ -55,8 +55,8 @@ namespace eval ::rwdatas {
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
         public method resource_exists {resource_key {translated_key translated_key}} { return false }
-        public method to_url {lm}
-        public method makeUrl {reference} 
+        public proc   to_url {lm}
+        public proc   makeUrl {reference} 
         public proc   buildSimplePage {msg cssclass pagina_id} 
     }
 
@@ -64,7 +64,7 @@ namespace eval ::rwdatas {
 
         $::rivetweb::logger log notice "working from directory $::rivetweb::site_base"
         set ::rwdatas::static_pages $static_pages
-        set ::rwdatas::local_pages  $local_pages
+        set ::rwdatas::local_pages  $LOCAL_PAGES
 
     # we first set up the variables controlling the sitemap
 
@@ -714,7 +714,7 @@ namespace eval ::rwdatas {
             ($ltype == "local")     || \
             ($ltype == "external")} {
 
-            set link_descriptor [$this makeUrl $lm]
+            set link_descriptor [::rwdatas::XMLBase::makeUrl $lm]
             set urlargs [dict get $link_descriptor args]
             set href    [dict get $link_descriptor href]
 
@@ -803,10 +803,10 @@ namespace eval ::rwdatas {
 #               set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
 
                 set lref [$linkmodel reference $lm]
-                if {[$this get_alias $lref lref]} {
+                if {[::rwdatas::Datasource::get_alias $lref lref]} {
                     set href $lref
                 } else {
-                    set href [file join "/" ${local_pages} $lref]
+                    set href [file join "/" $LOCAL_PAGES $lref]
                 }
             }
         }

@@ -13,7 +13,7 @@ namespace eval ::rwdatas {
 
     ::itcl::class Datasource {
 
-        private variable aliasdb [dict create]
+        private common ALIASDB [dict create]
 
         public method init {args} { set aliasdb [dict create] }
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
@@ -27,23 +27,23 @@ namespace eval ::rwdatas {
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} { return [dict create] }
         public method name {} { return "Datasource" }
-        public method set_alias {alias aliasdef}
-        public method get_alias {alias aliasdef}
+        public proc   set_alias {alias aliasdef}
+        public proc   get_alias {alias aliasdef}
         public method resource_exists {resource_key {translated_key translated_key}} { return false }
-        public method to_url {lm}
+        public proc to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
     }
 
     ::itcl::body Datasource::set_alias {alias aliasdef} {
-        dict set aliasdb $alias $aliasdef
+        dict set ALIASDB $alias $aliasdef
     }
 
     ::itcl::body Datasource::get_alias {alias aliasdef} {
         upvar $aliasdef alias_definition
 
         set alias_found 0
-        if {[dict exists $aliasdb $alias]} {
-            set alias_definition [dict get $aliasdb $alias]
+        if {[dict exists $ALIASDB $alias]} {
+            set alias_definition [dict get $ALIASDB $alias]
             set alias_found 1
         }
 
