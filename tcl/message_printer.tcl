@@ -11,11 +11,11 @@ package require Itcl
 
     private variable    message_queue  [::struct::queue]
 
-    public method       reset_message_queue {}
-    public method       post_message {msg {severity normal} {cssclass errormessage}}
-    public method       get_message {msg}
-    public method       print_messages {}
-    public method       num_messages {} { return [$message_queue size] }
+    public method reset_message_queue {}
+    public method post_message {msg {severity normal} {cssclass errormessage}}
+    public method get_message {msg}
+    public method print_messages {}
+    public method num_messages {} { return [$message_queue size] }
 }
 
 # -- reset_message_queue

@@ -4,6 +4,7 @@
 #
 # abstract class defining the common interface for all datasources
 #
+#
 
 package require Itcl
 package require rwconf
@@ -15,7 +16,7 @@ namespace eval ::rwdatas {
 
         private common ALIASDB [dict create]
 
-        public method init {args} { set aliasdb [dict create] }
+        public method init {args} {  }
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
         public method fetchData {key reassigned_key} {}
         public method synchData {key data_dict} {}
@@ -32,6 +33,7 @@ namespace eval ::rwdatas {
         public method resource_exists {resource_key {translated_key translated_key}} { return false }
         public proc to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
+        public method after_request {} {}
     }
 
     ::itcl::body Datasource::set_alias {alias aliasdef} {
