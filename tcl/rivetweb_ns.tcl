@@ -36,6 +36,7 @@ namespace eval ::rivetweb {
     variable menumodel              ::rwmenu
     variable htmlizer               ::htmlizer
 
+    variable is_homepage            0
     variable default_menu_pos       left
     variable template_key           ""
 

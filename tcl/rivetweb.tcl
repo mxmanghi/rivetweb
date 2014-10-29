@@ -450,7 +450,6 @@ namespace eval ::rivetweb {
     }
     namespace export build_html_menu
 
-
     namespace ensemble create
 }
 
