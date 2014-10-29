@@ -129,10 +129,9 @@ namespace eval ::rwdatas {
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
         } elseif {[dict exists $arglist store]} {
-            
-            
-
             set key [dict get $arglist store]
+        } else {
+            set ::rivetweb::is_homepage 1
         }
 
         $::rivetweb::logger log info "mapping key $key for processing"
