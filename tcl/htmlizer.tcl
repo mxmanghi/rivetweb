@@ -69,8 +69,11 @@ namespace eval ::htmlizer {
 
         set menu_class      [lindex $menu_html 1]
         set menu_tag        [lindex $menu_html 0]
-        set title_class     [lindex $title_html 1]
-        set title_tag       [lindex $title_html 0]
+        set title_html      [lassign $title_html title_tag title_class]
+        if {[llength $title_html]} { lassign $title_html title_container_tag title_container_class }
+
+        #set title_class     [lindex $title_html 1]
+        #set title_tag       [lindex $title_html 0]
         set it_cont_tag     [lindex $it_cont_html 0]
         set it_cont_class   [lindex $it_cont_html 1]
         set item_tag        [lindex $item_html 0]
@@ -105,11 +108,25 @@ namespace eval ::htmlizer {
         set menu_title [$menuobj title $language]
         if {[string length $menu_title] > 0} {
 
+            if {[info exists title_container_tag]} {
+                set title_container_dom [$menudom createElement $title_container_tag]
+                if {[info exists title_container_class]} {
+                    $title_container_dom setAttribute class $title_container_class
+                }
+
+                $htmlmenu_o appendChild $title_container_dom
+                set menu_title_parent $title_container_dom
+            } else {
+                set menu_title_parent $htmlmenu_o
+            }
+
+            #
+
             set title_dom [$menudom createElement $title_tag]
             if {[string length $title_class]} {
                 $title_dom setAttribute class $title_class 
             }
-            $htmlmenu_o appendChild $title_dom
+            $menu_title_parent appendChild $title_dom
             set text_o [$menudom createTextNode $menu_title]
             $title_dom appendChild $text_o
 
