@@ -18,6 +18,10 @@ proc imagehandler { datasource tag element_text attribute_list } {
     if {[info exists attributes(src)]} {
         set attributes(src) [::rivetweb::makePictsPath $attributes(src) $::rivetweb::template_key]
     }
+    if {[info exists attributes(float)] } {
+        append attributes(style) "float: $attributes(float);"
+        unset attributes(float)
+    }
 
     dict set d attributes [array get attributes]
     dict set d tagname img
