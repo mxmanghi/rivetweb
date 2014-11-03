@@ -173,8 +173,8 @@ namespace eval ::rivetweb {
 
     proc css {css_path {attributes ""}} {
         
-        set xhtml "<link rel=\"stylesheet\" type=\"text/css\" href=\"$css_path\""
-        foreach {attrb attrv} $attributes { append xhtml " ${attrv}=${attrb}" }
+        set xhtml "<link href=\"$css_path\" rel=\"stylesheet\" type=\"text/css\""
+        foreach {attrb attrv} $attributes { append xhtml " ${attrb}=\"${attrv}\"" }
         return "${xhtml} />"
 #       return [::rivet::xml "" [concat link rel "stylesheet" type "text/css" href $css_path $attributes]]
 
