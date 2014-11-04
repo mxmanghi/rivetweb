@@ -38,7 +38,7 @@ namespace eval ::rwebdb {
         variable sitepages
 
         $::rivetweb::logger log debug "Removing page associated to $key"
-        dict unset sitepages $key
+        catch {dict unset sitepages $key}
     }
     namespace export unset_page
 

@@ -198,7 +198,8 @@ namespace eval ::rivetweb {
 
     proc findPictureFile {picts_file style_dir} {
 
-        ::rivet::apache_log_error debug "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
+        ::rivet::apache_log_error debug \
+        "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
 
 # search list for a picts file. 
 #
