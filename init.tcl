@@ -13,6 +13,8 @@ package require rivetweb
 
 ::rivetweb::setup $rweb_root $website_root 
 
+cd $website_root
+
 # rivetweb initialization 
 
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
@@ -31,4 +33,3 @@ if {[file exists $website_init]} {
 
 source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
-cd $website_root

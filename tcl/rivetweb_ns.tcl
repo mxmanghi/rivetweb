@@ -209,7 +209,6 @@ namespace eval ::rivetweb {
         package require $ds
 
         set dsobj [::rwdatas::${ds} ::${ds}]
-
         if {$position == "top"} {
             set datasources [linsert $datasources 0 $dsobj]
         } else {
@@ -217,7 +216,6 @@ namespace eval ::rivetweb {
         }
 
         $ds init
-        $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }
 }
 
