@@ -12,7 +12,7 @@ package require Itcl
     private variable    message_queue  [::struct::queue]
 
     public method reset_message_queue {}
-    public method post_message {msg {severity normal} {cssclass errormessage}}
+    public method post_message {msg {severity info} {cssclass errormessage}}
     public method get_message {msg}
     public method print_messages {}
     public method num_messages {} { return [$message_queue size] }
@@ -31,7 +31,7 @@ package require Itcl
 #
 #
 
-::itcl::body MessagePrinter::post_message {msg {severity normal} {cssclass errormessage}} {
+::itcl::body MessagePrinter::post_message {msg {severity info} {cssclass errormessage}} {
     variable message_queue
 
     switch $severity {
@@ -40,6 +40,7 @@ package require Itcl
         }
         default { }
     }
+
     $message_queue put $msg
 }
 
