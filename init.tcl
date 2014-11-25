@@ -30,7 +30,10 @@ if {[file exists $website_init]} {
     apache_log_error notice "running website specific initialization $website_init ([pwd])"
     if {[catch {source $website_init} e]} {
 
-        ::rivet::apache_log_error crit "Error running website specific initialization"
+        ::rivet::apache_log_error crit "Error running website specific initialization ($e)"
+        foreach l [split $errorInfo "\n"] {
+            ::rivet::apache_log_error crit $l
+        }
         
     }
 }
