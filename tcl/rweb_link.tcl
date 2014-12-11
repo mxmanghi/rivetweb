@@ -23,7 +23,7 @@ namespace eval ::rwlink {
     proc create {link_owner reference link_text link_args {link_info ""}} {
         set link_d [dict create owner $link_owner reference $reference]
 
-        apache_log_error debug "<--- $link_text - ($link_info)<br/>"
+        ::rivet::apache_log_error debug "<--- $link_text - ($link_info)<br/>"
 
         foreach l [dict keys $link_text] {
             set l_info ""

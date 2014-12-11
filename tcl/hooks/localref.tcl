@@ -36,7 +36,7 @@ proc localref {datasource tag element_text attribute_list} {
 #   set     file_path           "/$::rivetweb::local_pages/$aliasdef"
 #   set     attributes(href)    $file_path
 
-    set transformed_link [$datasource to_url $lm]
+    set transformed_link [::rwdatas::${datasource}::to_url $lm]
     set attributes(href) [$::rivetweb::linkmodel get_attribute $transformed_link href]
     #::rivet::html [array get attributes] div b
     dict set d text $element_text

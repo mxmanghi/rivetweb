@@ -175,8 +175,8 @@ namespace eval ::rivetweb {
 
     proc css {css_path {attributes ""}} {
         
-        set xhtml "<link rel=\"stylesheet\" type=\"text/css\" href=\"$css_path\""
-        foreach {attrb attrv} $attributes { append xhtml " ${attrv}=${attrb}" }
+        set xhtml "<link href=\"$css_path\" rel=\"stylesheet\" type=\"text/css\""
+        foreach {attrb attrv} $attributes { append xhtml " ${attrb}=\"${attrv}\"" }
         return "${xhtml} />"
 #       return [::rivet::xml "" [concat link rel "stylesheet" type "text/css" href $css_path $attributes]]
 
@@ -200,7 +200,8 @@ namespace eval ::rivetweb {
 
     proc findPictureFile {picts_file style_dir} {
 
-        ::rivet::apache_log_error debug "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
+        ::rivet::apache_log_error debug \
+        "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
 
 # search list for a picts file. 
 #
@@ -281,8 +282,7 @@ namespace eval ::rivetweb {
 # -- picture
 #
 #
-    proc picture {pict_name} {  }
-
+    proc picture {pict_name} { return [::rivetweb::findPictureFile $pict_name $::rivetweb::template_key] }
 
 # -- template_path
 #

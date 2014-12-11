@@ -11,6 +11,8 @@ namespace eval ::rivetweb {
     variable website_init	        rivetweb.tcl
     variable site_before_script     ""
     variable site_after_script      ""
+    variable site_abort_script      ""
+    variable site_after_every_script ""
     variable default_menu           main
     variable pagemenus
 
@@ -36,6 +38,7 @@ namespace eval ::rivetweb {
     variable menumodel              ::rwmenu
     variable htmlizer               ::htmlizer
 
+    variable is_homepage            0
     variable default_menu_pos       left
     variable template_key           ""
 
@@ -170,6 +173,8 @@ namespace eval ::rivetweb {
         variable    logger
         variable    site_before_script
         variable    site_after_script
+        variable    site_abort_script
+        variable    site_after_every_script
 
         set rivetweb_root   [file normalize $rweb_root]
         set scripts	        [file join $rivetweb_root tcl]
@@ -187,6 +192,20 @@ namespace eval ::rivetweb {
             set site_after_script ""
         } else {
             ::rivet::apache_log_error notice "website specific after request script $site_after_script"
+        }
+
+        set site_abort_script [file normalize [file join $site_base abort.tcl]]
+        if {![file exists $site_abort_script]} {
+            set site_abort_script ""
+        } else {
+            ::rivet::apache_log_error notice "website specific abort request script $site_abort_script"
+        }
+
+        set site_after_every_script [file normalize [file join $site_base after_every.tcl]]
+        if {![file exists $site_after_every_script]} {
+            set site_after_every_script ""
+        } else {
+            ::rivet::apache_log_error notice "website specific 'after every' request script $site_after_every_script"
         }
 
         apache_log_error notice "rivetweb_root set as $rivetweb_root"
@@ -208,7 +227,6 @@ namespace eval ::rivetweb {
         package require $ds
 
         set dsobj [::rwdatas::${ds} ::${ds}]
-
         if {$position == "top"} {
             set datasources [linsert $datasources 0 $dsobj]
         } else {
@@ -216,7 +234,6 @@ namespace eval ::rivetweb {
         }
 
         $ds init
-        $logger log info "Rivetweb started up at $site_base, default_language: $default_lang"
     }
 }
 

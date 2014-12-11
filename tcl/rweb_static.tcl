@@ -22,9 +22,9 @@ namespace eval ::rwpage {
     # we store an initial text object. The content variable 
     # cannot fail to return a pagetext value
 
-	    set page_dom  [dom createDocument pagetext]
-	    set page_o    [$page_dom documentElement]
-	    $page_o appendXML "<div>undefined</div>"
+            set page_dom  [dom createDocument pagetext]
+            set page_o    [$page_dom documentElement]
+            $page_o appendXML "<div>undefined</div>"
             dict set content $::rivetweb::default_lang pagetext $page_o
         }
 
@@ -85,7 +85,7 @@ namespace eval ::rwpage {
 
 # -- content
 #
-# crucial method returning a the content for a specific language
+# crucial method returning the content for a specific language
 # (when existing). Depending on the value of argument fmt
 # 'content' returns the output as
 #
@@ -205,9 +205,11 @@ namespace eval ::rwpage {
                     }
 
                     if {[string tolower $text_mode] == "xml"} {
-                        set new_element_d [::rivetweb::$processor $datasource $hk [$el2xform asXML -indent 2] $attribute_list]
+                        set new_element_d [::rivetweb::$processor $datasource $hk \
+                                          [$el2xform asXML -indent 2] $attribute_list]
                     } else {
-                        set new_element_d [::rivetweb::$processor $datasource $hk [$el2xform text] $attribute_list]
+                        set new_element_d [::rivetweb::$processor $datasource $hk \
+                                          [$el2xform text] $attribute_list]
                     }
 
 #                   apache_log_error debug $new_element_d

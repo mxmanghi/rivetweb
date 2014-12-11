@@ -31,7 +31,7 @@ namespace eval ::rwdatas {
         public method fetchData {key reassigned_key}
         public method is_stale {key timereference } { return false }
         public method menu_list {page} 
-        public method to_url {lm}
+        public proc   to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
     }
 
@@ -126,11 +126,11 @@ namespace eval ::rwdatas {
             set scriptobj [dict get $scriptsdb $script object]
             set menul [$scriptobj menu_list $page]
 
-    #
-    # the list returned by 'menu_list' should be structured like
-    #
-    # group1 menu_list1 group2 menu_list2
-    #
+#
+# the list returned by 'menu_list' should be structured like
+#
+# group1 menu_list1 group2 menu_list2
+#
 
             foreach {menu_group menulist} $menul {
                 dict lappend menudb $menu_group {*}$menulist

@@ -54,6 +54,16 @@ namespace eval ::rivetweb {
     } elseif {[string compare $::rivetweb::default_template ""] != 0} {
 
         set template_key $::rivetweb::default_template
+<<<<<<< HEAD
+=======
+
+#        if {[catch {
+#
+#            set running_template  [dict get $::rivetweb::templates_db $template_key template]
+#            set running_css       [dict get $::rivetweb::templates_db $template_key css]
+#
+#        } e]} { puts "errore: $e" }
+>>>>>>> master
 
     } else {
 
@@ -72,7 +82,7 @@ namespace eval ::rivetweb {
     set ::rivetweb::template_key      $template_key
 
 # we determine the language for this request (keep in mind we are running
-# within the ::rivetweb namespace.
+# within the ::rivetweb namespace)
 
     if {[var exists lang]} {
         set language [::rivet::var get lang]
@@ -175,8 +185,13 @@ namespace eval ::rivetweb {
     } else {
         headers type "text/html; charset=$::rivetweb::http_encoding"
     }
+<<<<<<< HEAD
 
 # this variable is set for compatibility and should go sooner or later
 
     set ::rivetweb::current_pmodel $::rivetweb::current_page
+=======
+    
+    apache_log_error info "before.tcl done"
+>>>>>>> master
 }

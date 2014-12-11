@@ -69,8 +69,11 @@ namespace eval ::htmlizer {
 
         set menu_class      [lindex $menu_html 1]
         set menu_tag        [lindex $menu_html 0]
-        set title_class     [lindex $title_html 1]
-        set title_tag       [lindex $title_html 0]
+        set title_html      [lassign $title_html title_tag title_class]
+        if {[llength $title_html]} { lassign $title_html title_container_tag title_container_class }
+
+        #set title_class     [lindex $title_html 1]
+        #set title_tag       [lindex $title_html 0]
         set it_cont_tag     [lindex $it_cont_html 0]
         set it_cont_class   [lindex $it_cont_html 1]
         set item_tag        [lindex $item_html 0]
@@ -93,27 +96,43 @@ namespace eval ::htmlizer {
         if {[string length $menu_class]} { 
             $htmlmenu_o setAttribute class $menu_class 
         }
+
         set cssclass [$menuobj peek cssclass]
         if {[string length $cssclass]} {
             $htmlmenu_o setAttribute class $cssclass 
         }
 
 # we set aside the handling of the 'notitle' attribute
-
 # let's get the title to be printed as header for the menu
 
         set menu_title [$menuobj title $language]
         if {[string length $menu_title] > 0} {
+
+            if {[info exists title_container_tag]} {
+                set title_container_dom [$menudom createElement $title_container_tag]
+                if {[info exists title_container_class]} {
+                    $title_container_dom setAttribute class $title_container_class
+                }
+
+                $htmlmenu_o appendChild $title_container_dom
+                set menu_title_parent $title_container_dom
+            } else {
+                set menu_title_parent $htmlmenu_o
+            }
+
+            #
+
             set title_dom [$menudom createElement $title_tag]
             if {[string length $title_class]} {
                 $title_dom setAttribute class $title_class 
             }
-            $htmlmenu_o appendChild $title_dom
+            $menu_title_parent appendChild $title_dom
             set text_o [$menudom createTextNode $menu_title]
             $title_dom appendChild $text_o
+
         }
 
-# we now create the element which to contain the menu items
+# we now create the element which is to contain the menu items
 
         set item_container_o [$menudom createElement $it_cont_tag]
         if {[string length $it_cont_class]} {
@@ -129,7 +148,7 @@ namespace eval ::htmlizer {
         foreach link $links {
 
             set ds    [$linkmodel owner $link]
-            set link  [$ds to_url $link]
+            set link  [::rwdatas::${ds}::to_url $link]
 
             set item_o [$menudom createElement $item_tag]
             if {[string length $link_class]} {
@@ -152,14 +171,12 @@ namespace eval ::htmlizer {
                 $link_o setAttribute title $link_info
             }
 
-            #if {[string length $link_target]} {
-            #    $link_o setAttribute target $link_target
-            #}
-
 # this should set also href as it's part of the link object attributes
+
             if {[dict exists $link attributes]} {
                 $link_o setAttribute {*}[dict get $link attributes]
             }
+
             #::rivet::html "assigning attributes [dict get $link attributes] to link" div b 
         }
 

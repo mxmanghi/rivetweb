@@ -34,7 +34,7 @@ namespace eval ::rwdatas {
         private variable sitemap
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
-        private variable local_pages	    docs
+        private common   LOCAL_PAGES	    docs
         private variable timestamp          0
         private variable sitemap_stat   
         private variable xmlpath
@@ -55,41 +55,57 @@ namespace eval ::rwdatas {
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
         public method resource_exists {resource_key {translated_key translated_key}} { return false }
-        public method to_url {lm}
-        public method makeUrl {reference} 
+        public proc   to_url {lm}
+        public proc   makeUrl {reference} 
         public proc   buildSimplePage {msg cssclass pagina_id} 
     }
 
     ::itcl::body XMLBase::init {args} {
 
+        $::rivetweb::logger log notice "working from directory $::rivetweb::site_base"
         set ::rwdatas::static_pages $static_pages
-        set ::rwdatas::local_pages  $local_pages
-# we first set up the variables controlling the sitemap
+        set ::rwdatas::local_pages  $LOCAL_PAGES
+
+    # we first set up the variables controlling the sitemap
 
         array set sitemap_stat {}
 
-# let's rewrite the patg to the sitemap
+    # let's rewrite the patg to the sitemap
 
         set sitemap_dir  [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
-        set static_pages [file normalize [file join $::rivetweb::site_base $static_pages]]
+        if {![file exists $sitemap_dir]} {
 
-        if {![file isdirectory $sitemap_dir]} {
+            $::rivetweb::logger log notice "creating sitemap path dir ($sitemap_dir)"
+            file mkdir $sitemap_dir
+
+        } elseif {![file isdirectory $sitemap_dir]} {
 
             $::rivetweb::logger log notice "Wrong path for sitemap ($sitemap_dir)"
-
             return -code error  -error_code invalid_path                \
                                 -errorinfo  "Wrong path $sitemap_dir"   \
                                             "Wrong path $sitemap_dir"
         } else {
-
             $::rivetweb::logger log notice "setting sitemap path as $sitemap_dir"
+        }
 
+        set static_pages [file normalize [file join $::rivetweb::site_base $static_pages]]
+        if {![file exists $static_pages]} {
+
+            $::rivetweb::logger log notice "creating sitemap path dir ($static_pages)"
+            file mkdir $static_pages
+
+        } elseif {![file isdirectory $static_pages]} {
+            $::rivetweb::logger log notice "Wrong path for sitemap ($static_pages)"
+            return -code error  -error_code invalid_path                \
+                                -errorinfo  "Wrong path $static_pages"   \
+                                            "Wrong path $static_pages"
+        } else {
+            $::rivetweb::logger log notice "setting pages path as $static_pages"
         }
         
-# and the we set the path to the XML pages
+    # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
-
         set sitemap [::rwsitemap::create ::XMLBase]
         load_sitemap $sitemap
     }
@@ -113,10 +129,9 @@ namespace eval ::rwdatas {
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
         } elseif {[dict exists $arglist store]} {
-            
-            
-
             set key [dict get $arglist store]
+        } else {
+            set ::rivetweb::is_homepage 1
         }
 
         $::rivetweb::logger log info "mapping key $key for processing"
@@ -702,7 +717,7 @@ namespace eval ::rwdatas {
             ($ltype == "local")     || \
             ($ltype == "external")} {
 
-            set link_descriptor [$this makeUrl $lm]
+            set link_descriptor [::rwdatas::XMLBase::makeUrl $lm]
             set urlargs [dict get $link_descriptor args]
             set href    [dict get $link_descriptor href]
 
@@ -791,10 +806,10 @@ namespace eval ::rwdatas {
 #               set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
 
                 set lref [$linkmodel reference $lm]
-                if {[$this get_alias $lref lref]} {
+                if {[::rwdatas::Datasource::get_alias $lref lref]} {
                     set href $lref
                 } else {
-                    set href [file join "/" ${local_pages} $lref]
+                    set href [file join "/" $LOCAL_PAGES $lref]
                 }
             }
         }
