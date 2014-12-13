@@ -11,7 +11,7 @@ package require Itcl
 
     private variable    message_queue  [::struct::queue]
     public method       reset_message_queue {}
-    public method       post_message {msg severity cssclass}
+    public method       post_message {msg {severity info} {cssclass errormessage}}
     public method       get_message {msg}
     public method       print_messages {}
     public method       num_messages {} { return [$message_queue size] }
