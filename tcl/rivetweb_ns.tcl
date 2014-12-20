@@ -28,7 +28,7 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable default_template       rwbase
-    variable http_encoding          UTF-8
+    variable http_encoding          utf-8
     variable datasources            {}
     variable datasource             ::XMLBase
     variable rwebdb                 ::rwebdb
