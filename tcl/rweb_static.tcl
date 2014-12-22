@@ -38,6 +38,7 @@ namespace eval ::rwpage {
         public method to_string {}
         public method title {language}
         public method headline {language}
+        public method content_field {language field {default_val ""}}
     }
 
 
@@ -53,7 +54,6 @@ namespace eval ::rwpage {
 # -- set_pagetext
 #
 #
-
     ::itcl::body RWStatic::set_pagetext {language page_text {rootel "p"}} {
 
         set page_dom  [dom createDocument pagetext]
@@ -73,7 +73,7 @@ namespace eval ::rwpage {
 #
 # set the content branch of the page object for a specific content type and
 # language. Meaningful content types are 'pagetext', 'header', 'title'
-
+#
     ::itcl::body RWStatic::set_content {language field value} {
 
         dict set content $language $field $value
@@ -93,8 +93,7 @@ namespace eval ::rwpage {
 #    -text  pure text stripped of the markup
 #    -html  HTML code as output of asHTML of tdom
 #    -reference (default) tdom object reference
-
-    
+#
     ::itcl::body RWStatic::content { language {fmt -reference}} {
 
         if {[dict exists $content $language]} {
@@ -259,6 +258,7 @@ namespace eval ::rwpage {
 
 # -- to_string 
 #
+#
 
     ::itcl::body RWStatic::to_string {} { 
         return [dict merge [chain] $content]
@@ -289,5 +289,18 @@ namespace eval ::rwpage {
             return [$this title $language]
         }
     }
+
+# -- content_field
+#
+#
+
+    ::itcl::body RWStatic::content_field {language field {default_val ""}} {
+        if {[dict exists $content $language $field]} {
+            return [dict get $content $language $field]
+        } else {
+            return $default_val
+        }
+    }
 }
+
 package provide rwstatic 0.1

@@ -1,5 +1,5 @@
 namespace eval ::rivetweb {
-    set default_template    css3_six_dark
+    set default_template    retention
     set default_menu        sitolan
     set default_menu_pos    left
     

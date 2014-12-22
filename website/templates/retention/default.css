@@ -7,7 +7,7 @@ body {
 	padding: 0px;
 	background: #333333;
 	font-family: 'Muli', sans-serif;
-	font-size: 12pt;
+	font-size: 9pt;
 	font-weight: 300;
 	color: #363636;
 }
@@ -96,7 +96,7 @@ hr {
 	ul.style1 li
 	{
 		border-top: solid 1px #E5E5E5;
-		padding: 0.80em 0;
+		padding: 0.20em 0;
 	}
 	
 	ul.style1 li:first-child
@@ -115,7 +115,7 @@ hr {
 	ul.style2 li
 	{
 		border-top: solid 1px #E5E5E5;
-		padding: 0.80em 0;
+		padding: 2px 0;
 	}
 	
 	ul.style2 li:first-child
@@ -179,7 +179,8 @@ hr {
 
 	.title
 	{
-		margin-bottom: 2em;
+		margin-top: 1em;
+		margin-bottom: 0.5em;
 		text-transform: uppercase;
 	}
 
@@ -251,9 +252,9 @@ hr {
 	#logo 
 	{
 		width: 500px;
-		height: 100px;
+		height: 80px;
 		margin: 0 auto;
-		padding: 2em 0em;
+		padding: 1.5em 0em 1em;
 		text-transform: uppercase;
 	}
 	
@@ -302,12 +303,12 @@ hr {
 
 #menu {
 	overflow: hidden;
-	height: 100px;
+	height: 30px;
 }
 
 #menu ul {
 	margin: 0;
-	padding: 25px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
 	list-style: none;
 	line-height: normal;
 	text-align: center;
@@ -320,7 +321,7 @@ hr {
 #menu a {
 	display: block;
 	letter-spacing: 1px;
-	padding: 20px 40px;
+	padding: 10px 40px;
 	text-decoration: none;
 	text-align: center;
 	text-transform: uppercase;
@@ -352,7 +353,7 @@ hr {
 #content
 {
 	float: right;
-	width: 790px;
+	width: 850px;
 }
 
 /*********************************************************************************/
@@ -362,7 +363,7 @@ hr {
 	#sidebar
 	{
 		float: left;
-		width: 345px;
+		width: 300px;
 	}
 	
 	#sidebar .title h2

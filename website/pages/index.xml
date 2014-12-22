@@ -8,15 +8,16 @@
     <menu position="top">banner</menu>
     <menu position="left">main</menu>
     <content>
-        <title>Rivetweb: easy HTML generation with Tcl</title>
+        <title>Rivetweb</title>
         <headline>Rivetweb: easy HTML generation with Tcl</headline>
+        <byline>easy HTML generation with Tcl</byline>
         <pagetext>
         <p>
             Rivetweb is a minimum requirements Tcl engine for creating template
             based websites. The only required software packages you need are 
             the <externref href="http://httpd.apache.org/">Apache HTTP Webserver</externref>, 
             <externref href="http://tcl.apache.org/rivet/">Apache Rivet</externref> and (in 
-            <image src="141px-Borromean.png" align="left" />
+            <!--image src="141px-Borromean.png" align="left" / -->
             the current implementation) also 
             <externref href="http://tdom.github.com">tdom</externref> is used to 
             manipulate data and XHTML ouput.
