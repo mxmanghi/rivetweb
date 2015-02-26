@@ -12,11 +12,10 @@ package require fileutil::magic::mimetype
 namespace eval ::rwpage {
 
     ::itcl::class RWBinary {
-
         inherit RWPage
 
-        private variable binary_file
-        public	variable chunk_size   8192
+        protected   variable binary_file
+        public	    variable chunk_size   8192
 
         constructor {pagekey binfile} {RWPage::constructor $pagekey} { 
 	        set binary_file $binfile
@@ -32,7 +31,7 @@ namespace eval ::rwpage {
 # 
 
     ::itcl::body RWBinary::print_binary {} {
-
+        ::rivet::apache_log_error notice "attempting to download $binary_file"
         if {[file exists $binary_file]} {
             
             set fname	    [file tail $binary_file]
@@ -60,7 +59,7 @@ namespace eval ::rwpage {
             set sent_data   0
             while {1} {
 
-                set chunk	[read $file_handle $chunk_size]
+                set chunk	    [read $file_handle $chunk_size]
                 incr sent_data	[string length $chunk]
 
                 if {[eof $file_handle]} {
@@ -74,9 +73,10 @@ namespace eval ::rwpage {
                 incr nrecs
 
             }
+        } else {
+            ::rivet::apache_log_error err "not existing file $binary_file in class RWBinary"
         }
     }
-
 }
 
 package provide rwbinary 0.1

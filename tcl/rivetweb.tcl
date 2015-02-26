@@ -101,7 +101,7 @@ namespace eval ::rivetweb {
         set arglist [array get argsmap]
         set urlargs {}
 
-        ::rivet::apache_log_error notice "URL $rewritten_url -> $arglist"
+        ::rivet::apache_log_error debug "URL $rewritten_url -> $arglist"
         if {[llength $arglist]} {
             while {[llength $arglist]} {
                 set arglist [lassign $arglist param value]

@@ -127,7 +127,7 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::metadata {{key ""}} {
 
-        if {$key == "" } {
+        if {$key == ""} {
             return $metadata
         } else {
 
