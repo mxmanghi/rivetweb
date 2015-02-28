@@ -178,5 +178,6 @@ namespace eval ::rivetweb {
         headers type "text/html; charset=$::rivetweb::http_encoding"
     }
     
-    ::rivet::apache_log_error debug "before.tcl done (page: $::rivetweb::current_page, binary [$::rivetweb::current_page binary_content] )"
+    ::rivet::apache_log_error debug "before.tcl done (page: $::rivetweb::current_page, binary [$::rivetweb::current_page binary_content], charset: $::rivetweb::http_encoding)"
+    ::rivet::apache_log_error debug "before.tcl channel status (translation: [fconfigure stdout -translation], encoding: [fconfigure stdout -encoding])"
 }

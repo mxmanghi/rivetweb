@@ -50,7 +50,11 @@ namespace eval ::rwpage {
             apache_log_error info "Downloading file $binary_file ($mimetype)"
             set file_handle [open $binary_file r]
             fconfigure $file_handle -translation binary
+
+            set stored_translation  [fconfigure stdout -translation]
+            set stored_encoding     [fconfigure stdout -encoding]
             fconfigure stdout       -translation binary
+
             headers type                    $mimetype
             headers add Content-Disposition "attachment; filename=\"$fname\""
             headers add Content-Length	    $file_size
@@ -73,6 +77,8 @@ namespace eval ::rwpage {
                 incr nrecs
 
             }
+            
+            fconfigure stdout   -translation $stored_translation -encoding $stored_encoding
         } else {
             ::rivet::apache_log_error err "not existing file $binary_file in class RWBinary"
         }
