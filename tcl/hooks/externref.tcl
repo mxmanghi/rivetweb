@@ -13,7 +13,8 @@ proc externref { datasource tag element_text attribute_list } {
 
     array set attributes $attribute_list
 
-    if {[info exists attributes(alias)] && [$datasource get_alias $attributes(alias) aliasdef]} { 
+    if {[info exists attributes(alias)] && \
+        [::rwdatas::Datasource::get_alias $attributes(alias) aliasdef]} { 
 
         set attributes(href) $aliasdef
         unset attributes(alias)

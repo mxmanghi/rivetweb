@@ -780,7 +780,7 @@ namespace eval ::rwdatas {
             set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
         }
         foreach passthrough $::rivetweb::passthroughs {
-            if {[var_qs exists $passthrough]} {
+            if {[::rivet::var_qs exists $passthrough]} {
                 dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
             }	
         }

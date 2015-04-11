@@ -15,7 +15,8 @@ proc localref {datasource tag element_text attribute_list} {
     array set attributes $attribute_list
     set text_dict [dict create $::rivetweb::default_lang $element_text]
 
-    if {[info exists attributes(alias)] && [$datasource get_alias $attributes(alias) aliasdef]} { 
+    if {[info exists attributes(alias)] && \
+        [::rwdatas::Datasource::get_alias $attributes(alias) aliasdef]} { 
 
         set link_reference $aliasdef
         unset attributes(alias)
