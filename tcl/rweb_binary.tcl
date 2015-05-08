@@ -36,18 +36,30 @@ namespace eval ::rwpage {
             
             set fname	    [file tail $binary_file]
             set file_size   [file size $binary_file]
-            set mimetype    [::fileutil::magic::mimetype $binary_file]
+
+            set proposed_mimetype [::fileutil::magic::mimetype $binary_file]
             #set mimetype    [exec xdg-mime query filetype $binary_file]
 
-            if {($mimetype == "") || ($mimetype == "Microsoft Office Document")} {
-                if {[regexp {^.+\.ppt$} $fname]} {
-                    set mimetype "application/vnd.ms-powerpoint"
-                } else {
-                    set mimetype "application/octet-stream"
-                }
+            if {$proposed_mimetype == "application/zip" && [regexp {^.+\.odp} $fname]} {
+
+                # we assume it's an OpenDocument Presentation
+
+                set mimetype "application/vnd.oasis.opendocument.presentation"
+
+            } elseif {(($proposed_mimetype == "") || ($proposed_mimetype == "Microsoft Office Document")) && \
+                         [regexp {^.+\.ppt$} $fname]} {
+
+                set mimetype "application/vnd.ms-powerpoint"
+
+            } elseif {$proposed_mimetype == ""} {
+                set mimetype "application/octet-stream"
+            } else {
+                set mimetype $proposed_mimetype
             }
 
-            apache_log_error info "Downloading file $binary_file ($mimetype)"
+
+
+            ::rivet::apache_log_error info "Downloading file $binary_file ($mimetype)"
             set file_handle [open $binary_file r]
             fconfigure $file_handle -translation binary
 
@@ -55,9 +67,9 @@ namespace eval ::rwpage {
             set stored_encoding     [fconfigure stdout -encoding]
             fconfigure stdout       -translation binary
 
-            headers type                    $mimetype
-            headers add Content-Disposition "attachment; filename=\"$fname\""
-            headers add Content-Length	    $file_size
+            ::rivet::headers type                    $mimetype
+            ::rivet::headers add Content-Disposition "attachment; filename=\"$fname\""
+            ::rivet::headers add Content-Length	    $file_size
 
             set nrecs	    0
             set sent_data   0
