@@ -99,7 +99,7 @@ namespace eval ::rivetweb {
 # specific 'before' script
 
     if {$::rivetweb::site_before_script != ""} { 
-        ::rivet::apache_log_error notice "running specific 'before' script -> $::rivetweb::site_before_script"
+        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
     }
 
@@ -125,7 +125,7 @@ namespace eval ::rivetweb {
     foreach ds $::rivetweb::datasources {
 
         set dsmenu [$ds menu_list $::rivetweb::current_page]
-        apache_log_error notice "got $dsmenu from $ds"
+        apache_log_error debug "got $dsmenu from $ds"
         #puts "<pre>got $dsmenu from $ds</pre>"
 
         foreach k [dict keys $dsmenu] {
@@ -141,7 +141,7 @@ namespace eval ::rivetweb {
 
     }
 
-    ::rivet::apache_log_error notice "menu database $::rivetweb::pagemenus"
+    ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
 
     if {[catch {
 
