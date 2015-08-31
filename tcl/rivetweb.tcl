@@ -147,6 +147,7 @@ namespace eval ::rivetweb {
 
         return $css_uri 
     }
+    namespace export make_css_path
 
 
 # -- csspath 
