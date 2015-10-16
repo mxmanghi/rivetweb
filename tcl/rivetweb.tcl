@@ -5,8 +5,7 @@
 #
 
 # starting with this branch we require Tcl 8.6
-
-package require Tcl 8.6
+#package require Tcl 8.6
 
 package require rwconf
 package require rwebdb
