@@ -620,16 +620,26 @@ namespace eval ::rwdatas {
 # This object assumes the files to be in the 'sitemap_dir' directory
 # (its existence has been already checked in 'init')
 
-        set xmlmenus [glob [file join $sitemap_dir *.xml]]
+        set xmlmenus [glob -nocomplain [file join $sitemap_dir *.xml]]
 
-        foreach xmlfile $xmlmenus {
-            $logger log notice "reading $xmlfile..."
+# if there is no menu tree defined we give the database tree 
+# an empty root menu
 
-            set xml [read_file $xmlfile]
-            set map [file tail $xmlfile]
-            if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
-                $logger log emerg "could not parse map $map: $e"
+        if {[llength $xmlmenus] == 0} {
+            $logger log notice "no menu file found"
+            set xml "<sitemenus id=\"home\"></sitemenus>"
+        } else {
+
+            foreach xmlfile $xmlmenus {
+                $logger log notice "reading $xmlfile..."
+
+                set xml [read_file $xmlfile]
+                set map [file tail $xmlfile]
+                if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
+                    $logger log emerg "could not parse map $map: $e"
+                }
             }
+
         }
 
         foreach mdoc [array names xmlmenu] {

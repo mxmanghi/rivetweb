@@ -160,13 +160,19 @@ namespace eval ::rivetweb {
 # same name as the template key.
 #
 
-    proc csspath {template_key} {
+    proc csspath {template_key {specific_file ""}} {
     
-        set css_file_name [dict get $::rivetweb::templates_db $template_key css]
-        set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
+        if {$specific_file == ""} {
 
+            set css_file_name [dict get $::rivetweb::templates_db $template_key css]
+            set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
+
+        } else {
+
+            set css_file_path [file join $::rivetweb::css_path $template_key $specific_file]
+
+        }
         return [::rivetweb::make_css_path $css_file_path]
-
     }
     namespace export csspath
 
@@ -322,7 +328,6 @@ namespace eval ::rivetweb {
             
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
             ::rivetweb::rewrite_js_url $rwcode [::rivet::env SCRIPT_NAME] $js_uri js_uri
-
 
         } 
 
