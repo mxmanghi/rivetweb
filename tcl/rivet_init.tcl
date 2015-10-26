@@ -1,10 +1,6 @@
-#
-# $Id: rivet_init.tcl 2104 2011-12-18 00:24:45Z massimo.manghi $
-#
 #+
-#  Child initialization
+#  Rivetweb child process initialization
 #-
-#
 
 # prefetch index page
 #$::rivetweb::rwebdb fetch index 
@@ -56,7 +52,6 @@ foreach template $templates_dir_list {
                 if {[info exists ::rwtemplate::link_class]} {
                     dict set ::rivetweb::templates_db $template_key link_class $::rwtemplate::link_class
                 }
-
 		        if {[info exists ::rwtemplate::pictures]} { 
 		            dict set ::rivetweb::templates_db $template_key pictures $::rwtemplate::pictures
 		        }

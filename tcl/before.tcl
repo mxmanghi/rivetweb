@@ -42,12 +42,12 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_css_path    $::rivetweb::css_path
 
 # let's determine which template we are using. We set a couple of default
-# values for them
+# values for the running template and basic associated CSS
 
     set running_template base.rvt
     set running_css      base.css 
 
-    if {[var exists template]} {
+    if {[::rivet::var exists template]} {
 
         set template_key [::rivet::var get template]
 

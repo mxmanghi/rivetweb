@@ -87,8 +87,14 @@ namespace eval ::rivetweb {
         }
 
         array set argsmap {}
+        set hash ""
         while {[llength $arglist]} {
             set arglist [lassign $arglist param value]
+            if {$param == "#"} { 
+                set hash $value 
+                continue
+            }
+
             set argsmap($param) [::rivet::escape_string $value]
         }
 
@@ -107,11 +113,15 @@ namespace eval ::rivetweb {
                 set arglist [lassign $arglist param value]
                 lappend urlargs "${param}=${value}"
             }
-            return "${rewritten_url}?[join $urlargs "&"]"
+            set final_url "${rewritten_url}?[join $urlargs "&"]"
+
         } else {
-            return $rewritten_url
+            set final_url $rewritten_url
         }
 
+        if {$hash != ""} {append final_url "#$hash" }
+
+        return $final_url
 
     }
     namespace export composeUrl
@@ -312,6 +322,14 @@ namespace eval ::rivetweb {
     }
     namespace export template
 
+# -- select_template
+#
+#   template selection mechanism encapsulated within this function
+#   to allow applications to implement their own template selection
+#
+
+    proc select_template {template_key} {  }
+    namespace export select_template
 
 # -- jscript_path
 #
