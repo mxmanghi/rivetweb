@@ -465,12 +465,7 @@ namespace eval ::rivetweb {
             set menus [dict get $pagemenus $position]
 #           puts "<div style=\"border: 1px solid red;\">$menus</div>"
             foreach menuobj $menus {    
-
-                append htmltext [$::rivetweb::htmlizer html_menu            \
-                                                    $menuobj                \
-                                                    $::rivetweb::language   \
-                                                    $htmldefs]
-
+                append htmltext [$menuobj toHTML $htmldefs]    
             }
         }
         return $htmltext

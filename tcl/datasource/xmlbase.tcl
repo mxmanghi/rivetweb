@@ -70,7 +70,7 @@ namespace eval ::rwdatas {
 
         array set sitemap_stat {}
 
-    # let's rewrite the patg to the sitemap
+    # let's rewrite the path to the sitemap
 
         set sitemap_dir  [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
         if {![file exists $sitemap_dir]} {
@@ -471,12 +471,21 @@ namespace eval ::rwdatas {
 
                 }
 
-# create_menu is a 'static' menu of class RWMenu
+                if {[$menu hasAttribute tclclass]} {
+                    set tclclass [$menu getAttribute tclclass]
+                    package require $tclclass
 
-                set menuobj [$menumodel create_menu [$menu getAttribute id]  \
-                                                     $parent                 \
-                                                     $visibility]
+                    set menuobj [::rwmenu::$tclclass ::rwmenu::#auto [$menu getAttribute id] $parent $visibility]
 
+                } else {
+
+    # create_menu is a 'static' menu of class RWMenu
+
+                    set menuobj [$menumodel create_menu [$menu getAttribute id]  \
+                                                         $parent                 \
+                                                         $visibility]
+
+                }
     # Elements within 'menu' are <title lang="..">...</title> and
     # one or more <link>....</link>
 
@@ -633,10 +642,10 @@ namespace eval ::rwdatas {
             foreach xmlfile $xmlmenus {
                 $logger log notice "reading $xmlfile..."
 
-                set xml [read_file $xmlfile]
+                set xml [::rivet::read_file $xmlfile]
                 set map [file tail $xmlfile]
                 if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
-                    $logger log emerg "could not parse map $map: $e"
+                    $logger log err "could not parse map $map: $e"
                 }
             }
 
