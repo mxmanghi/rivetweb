@@ -68,6 +68,13 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_url
 
+# -- scriptName 
+#
+#
+
+    proc scriptName {} { return [::rivet::env SCRIPT_NAME] }
+
+
 # -- composeUrl
 # 
 # this function should consistently build links 
@@ -78,11 +85,11 @@ namespace eval ::rivetweb {
         if {$::rivetweb::rewrite_links} {
 
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_url $rwcode [::rivet::env SCRIPT_NAME] arglist rewritten_url
+            ::rivetweb::rewrite_url $rwcode [::rivetweb::scriptName] arglist rewritten_url
 
         } else {
 
-            set rewritten_url [::rivet::env SCRIPT_NAME]
+            set rewritten_url [::rivetweb::scriptName]
 
         }
 
