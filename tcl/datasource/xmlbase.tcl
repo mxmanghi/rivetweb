@@ -39,11 +39,15 @@ namespace eval ::rwdatas {
         private variable sitemap_stat   
         private variable xmlpath
         private variable current
+        private variable forceupdate        0
+
+        public variable menutclclass "" {set forceupdate 1}
 
         private method buildPageEntry {key xmldata reassigned_key}
         private method time_reference {key} 
         private method listStaticMenus {sm parent_mg}
-        
+        private method menuclass {menu_o tclclass_v}        
+
         public method init {args}
         public method willHandle {arglist keyvar}
         public method fetchData {key reassigned_key}
@@ -62,7 +66,7 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::init {args} {
 
-        $::rivetweb::logger log notice "working from directory $::rivetweb::site_base"
+        $::rivetweb::logger log debug "working from directory $::rivetweb::site_base"
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $LOCAL_PAGES
 
@@ -312,6 +316,11 @@ namespace eval ::rwdatas {
         variable timestamp
         variable sitemap_dir
 
+        if {$forceupdate} {
+            set forceupdate 0
+            return true
+        }
+
         file stat $sitemap_dir sitemap_stat
 
         $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
@@ -395,9 +404,7 @@ namespace eval ::rwdatas {
 
         set content_o [$msgdom createElement content]
         $content_o setAttribute language $language
-
 # 
-
         set content ""
         set title   ""
 
@@ -431,11 +438,31 @@ namespace eval ::rwdatas {
 
     }
 
+# -- 
+#
+#
+
+    ::itcl::body XMLBase::menuclass {menu tclclass_v} {
+        upvar $tclclass_v tclclass
+
+        if {[$menu hasAttribute tclclass]} {
+            set tclclass [$menu getAttribute tclclass]
+            return true
+        }
+
+        if {[string length $menutclclass] > 0} {
+            set tclclass $menutclclass
+            return true
+        }
+
+        return false
+    }
+
 
 # -- listStaticMenus
 #
 # foreach group in a menu group a 
-
+#
 
     ::itcl::body XMLBase::listStaticMenus {sm parent_mg} {
         
@@ -471,23 +498,23 @@ namespace eval ::rwdatas {
 
                 }
 
-                if {[$menu hasAttribute tclclass]} {
-                    set tclclass [$menu getAttribute tclclass]
+                if {[$this menuclass $menu tclclass]} {
                     package require $tclclass
 
                     set menuobj [::rwmenu::$tclclass ::rwmenu::#auto [$menu getAttribute id] $parent $visibility]
 
                 } else {
 
-    # create_menu is a 'static' menu of class RWMenu
+# create_menu is a 'static' menu of class RWMenu
 
                     set menuobj [$menumodel create_menu [$menu getAttribute id]  \
                                                          $parent                 \
                                                          $visibility]
 
                 }
-    # Elements within 'menu' are <title lang="..">...</title> and
-    # one or more <link>....</link>
+
+# Elements within 'menu' are <title lang="..">...</title> and
+# one or more <link>....</link>
 
                 set headers [$menu getElementsByTagName title]
                 foreach title $headers {
