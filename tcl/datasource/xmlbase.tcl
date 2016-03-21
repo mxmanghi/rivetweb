@@ -263,7 +263,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::resource_exists {key {translated_key translated_key}} {
-        variable static_pages
         upvar $translated_key xmlfile
 
         set xmlfile [file join $static_pages ${key}.xml]
@@ -280,7 +279,6 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
-        variable xmlpath
 
         if {[$this resource_exists $key xmlfile]} {
             $::rivetweb::logger log info "->opening $xmlfile" 
@@ -313,8 +311,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::has_updates {} {
-        variable timestamp
-        variable sitemap_dir
 
         if {$forceupdate} {
             set forceupdate 0
@@ -639,9 +635,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::load_sitemap {sitemap_mgr {ctx ""}} {
-        variable sitemap_dir
-        variable sitemap_stat
-        variable timestamp
 
         set logger $::rivetweb::logger
         $logger log info "recreating sitemap"
@@ -718,7 +711,6 @@ namespace eval ::rwdatas {
 # XMLBase::menu_list has the special role to provide the base menu 
 
     ::itcl::body XMLBase::menu_list {page} {
-        variable sitemap 
 
 #       puts "<br/><b>pmodel</b>: $page"
 #       puts "<br/><b>ds</b>: [$page metadata datasource]"
