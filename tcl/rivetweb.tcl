@@ -159,7 +159,6 @@ namespace eval ::rivetweb {
             ::rivetweb::rewrite_css_url $rwcode [::rivet::env SCRIPT_NAME] $css_uri css_uri
 
             return $css_uri
-
         }
 
         return $css_uri 
