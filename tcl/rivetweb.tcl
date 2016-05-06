@@ -54,12 +54,18 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_css_url
 
+# rewrite_js_url
+
     proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
         upvar $rewritten_js_url rwjs
 
         set rwjs "/${js_path}"
     }
     namespace export rewrite_js_url
+
+# -- rewrite_url
+#
+#
 
     proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
         upvar $rewritten_base rrbase
@@ -392,7 +398,9 @@ namespace eval ::rivetweb {
 # returns a class="classname" attribute when we are generating
 # a specific page. Useful in selectors both in forms or templates to highlight
 # an element.
-
+#
+# Deprecated in favor of select_html_class
+#
     proc thisClass {this_page page_reference class_selected {class_unselected ""}} {
 
         if {[string match $this_page $page_reference]} { 
@@ -411,6 +419,11 @@ namespace eval ::rivetweb {
     }
     namespace export thisClass
 
+# -- select_html_class
+
+    proc select_html_class {page_obj page_reference class_selected {class_unselected ""}} {
+        return [::rivetweb::thisClass [$page_obj key] $page_reference $class_selected $class_unselected]
+    }
 
 # -- isDebugging 
 #
