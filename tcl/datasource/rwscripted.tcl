@@ -70,13 +70,9 @@ namespace eval ::rwdatas {
 #
 #
     ::itcl::body Scripted::willHandle {arglist keyvar} {
-        variable varsqs
-        variable script_path
-        variable scriptsdb
-
         upvar $keyvar key 
 
-        set varsqs      [dict create {*}$arglist]
+        set varsqs  [dict create {*}$arglist]
         if {[dict exists $varsqs f]} {
             set key [dict get $varsqs f]
             if {[dict exists $scriptsdb $key]} {
@@ -86,6 +82,7 @@ namespace eval ::rwdatas {
                 return -code break -errorcode rw_ok
 
             } else {
+
                 $::rivetweb::logger log err \
                                     "'$key' function not existing"
 
