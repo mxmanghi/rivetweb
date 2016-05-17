@@ -5,7 +5,8 @@
 #
 
 # starting with this branch we require Tcl 8.6
-#package require Tcl 8.6
+
+package require Tcl 8.6
 
 package require rwconf
 package require rwebdb
@@ -53,6 +54,8 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_css_url
 
+# rewrite_js_url
+
     proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
         upvar $rewritten_js_url rwjs
 
@@ -60,12 +63,23 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_js_url
 
+# -- rewrite_url
+#
+#
+
     proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
         upvar $rewritten_base rrbase
 
         set rrbase $urlscript
     }
     namespace export rewrite_url
+
+# -- scriptName 
+#
+#
+
+    proc scriptName {} { return [::rivet::env SCRIPT_NAME] }
+
 
 # -- composeUrl
 # 
@@ -77,17 +91,23 @@ namespace eval ::rivetweb {
         if {$::rivetweb::rewrite_links} {
 
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_url $rwcode [::rivet::env SCRIPT_NAME] arglist rewritten_url
+            ::rivetweb::rewrite_url $rwcode [::rivetweb::scriptName] arglist rewritten_url
 
         } else {
 
-            set rewritten_url [::rivet::env SCRIPT_NAME]
+            set rewritten_url [::rivetweb::scriptName]
 
         }
 
         array set argsmap {}
+        set hash ""
         while {[llength $arglist]} {
             set arglist [lassign $arglist param value]
+            if {$param == "#"} { 
+                set hash $value 
+                continue
+            }
+
             set argsmap($param) [::rivet::escape_string $value]
         }
 
@@ -106,11 +126,15 @@ namespace eval ::rivetweb {
                 set arglist [lassign $arglist param value]
                 lappend urlargs "${param}=${value}"
             }
-            return "${rewritten_url}?[join $urlargs "&"]"
+            set final_url "${rewritten_url}?[join $urlargs "&"]"
+
         } else {
-            return $rewritten_url
+            set final_url $rewritten_url
         }
 
+        if {$hash != ""} {append final_url "#$hash" }
+
+        return $final_url
 
     }
     namespace export composeUrl
@@ -141,7 +165,6 @@ namespace eval ::rivetweb {
             ::rivetweb::rewrite_css_url $rwcode [::rivet::env SCRIPT_NAME] $css_uri css_uri
 
             return $css_uri
-
         }
 
         return $css_uri 
@@ -159,13 +182,19 @@ namespace eval ::rivetweb {
 # same name as the template key.
 #
 
-    proc csspath {template_key} {
+    proc csspath {template_key {specific_file ""}} {
     
-        set css_file_name [dict get $::rivetweb::templates_db $template_key css]
-        set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
+        if {$specific_file == ""} {
 
+            set css_file_name [dict get $::rivetweb::templates_db $template_key css]
+            set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
+
+        } else {
+
+            set css_file_path [file join $::rivetweb::css_path $template_key $specific_file]
+
+        }
         return [::rivetweb::make_css_path $css_file_path]
-
     }
     namespace export csspath
 
@@ -305,6 +334,14 @@ namespace eval ::rivetweb {
     }
     namespace export template
 
+# -- select_template
+#
+#   template selection mechanism encapsulated within this function
+#   to allow applications to implement their own template selection
+#
+
+    proc select_template {template_key} {  }
+    namespace export select_template
 
 # -- jscript_path
 #
@@ -321,7 +358,6 @@ namespace eval ::rivetweb {
             
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
             ::rivetweb::rewrite_js_url $rwcode [::rivet::env SCRIPT_NAME] $js_uri js_uri
-
 
         } 
 
@@ -362,7 +398,9 @@ namespace eval ::rivetweb {
 # returns a class="classname" attribute when we are generating
 # a specific page. Useful in selectors both in forms or templates to highlight
 # an element.
-
+#
+# Deprecated in favor of select_html_class
+#
     proc thisClass {this_page page_reference class_selected {class_unselected ""}} {
 
         if {[string match $this_page $page_reference]} { 
@@ -381,6 +419,11 @@ namespace eval ::rivetweb {
     }
     namespace export thisClass
 
+# -- select_html_class
+
+    proc select_html_class {page_obj page_reference class_selected {class_unselected ""}} {
+        return [::rivetweb::thisClass [$page_obj key] $page_reference $class_selected $class_unselected]
+    }
 
 # -- isDebugging 
 #
@@ -441,12 +484,7 @@ namespace eval ::rivetweb {
             set menus [dict get $pagemenus $position]
 #           puts "<div style=\"border: 1px solid red;\">$menus</div>"
             foreach menuobj $menus {    
-
-                append htmltext [$::rivetweb::htmlizer html_menu            \
-                                                    $menuobj                \
-                                                    $::rivetweb::language   \
-                                                    $htmldefs]
-
+                append htmltext [$menuobj toHTML $htmldefs]    
             }
         }
         return $htmltext

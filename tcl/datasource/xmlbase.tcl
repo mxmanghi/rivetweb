@@ -39,11 +39,15 @@ namespace eval ::rwdatas {
         private variable sitemap_stat   
         private variable xmlpath
         private variable current
+        private variable forceupdate        0
+
+        public variable menutclclass "" {set forceupdate 1}
 
         private method buildPageEntry {key xmldata reassigned_key}
         private method time_reference {key} 
         private method listStaticMenus {sm parent_mg}
-        
+        private method menuclass {menu_o tclclass_v}        
+
         public method init {args}
         public method willHandle {arglist keyvar}
         public method fetchData {key reassigned_key}
@@ -62,7 +66,7 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::init {args} {
 
-        $::rivetweb::logger log notice "working from directory $::rivetweb::site_base"
+        $::rivetweb::logger log debug "working from directory $::rivetweb::site_base"
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $LOCAL_PAGES
 
@@ -70,7 +74,7 @@ namespace eval ::rwdatas {
 
         array set sitemap_stat {}
 
-    # let's rewrite the patg to the sitemap
+    # let's rewrite the path to the sitemap
 
         set sitemap_dir  [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
         if {![file exists $sitemap_dir]} {
@@ -259,7 +263,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::resource_exists {key {translated_key translated_key}} {
-        variable static_pages
         upvar $translated_key xmlfile
 
         set xmlfile [file join $static_pages ${key}.xml]
@@ -276,7 +279,6 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
-        variable xmlpath
 
         if {[$this resource_exists $key xmlfile]} {
             $::rivetweb::logger log info "->opening $xmlfile" 
@@ -309,8 +311,11 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::has_updates {} {
-        variable timestamp
-        variable sitemap_dir
+
+        if {$forceupdate} {
+            set forceupdate 0
+            return true
+        }
 
         file stat $sitemap_dir sitemap_stat
 
@@ -395,9 +400,7 @@ namespace eval ::rwdatas {
 
         set content_o [$msgdom createElement content]
         $content_o setAttribute language $language
-
 # 
-
         set content ""
         set title   ""
 
@@ -431,11 +434,31 @@ namespace eval ::rwdatas {
 
     }
 
+# -- 
+#
+#
+
+    ::itcl::body XMLBase::menuclass {menu tclclass_v} {
+        upvar $tclclass_v tclclass
+
+        if {[$menu hasAttribute tclclass]} {
+            set tclclass [$menu getAttribute tclclass]
+            return true
+        }
+
+        if {[string length $menutclclass] > 0} {
+            set tclclass $menutclclass
+            return true
+        }
+
+        return false
+    }
+
 
 # -- listStaticMenus
 #
 # foreach group in a menu group a 
-
+#
 
     ::itcl::body XMLBase::listStaticMenus {sm parent_mg} {
         
@@ -471,14 +494,23 @@ namespace eval ::rwdatas {
 
                 }
 
+                if {[$this menuclass $menu tclclass]} {
+                    package require $tclclass
+
+                    set menuobj [::rwmenu::$tclclass ::rwmenu::#auto [$menu getAttribute id] $parent $visibility]
+
+                } else {
+
 # create_menu is a 'static' menu of class RWMenu
 
-                set menuobj [$menumodel create_menu [$menu getAttribute id]  \
-                                                     $parent                 \
-                                                     $visibility]
+                    set menuobj [$menumodel create_menu [$menu getAttribute id]  \
+                                                         $parent                 \
+                                                         $visibility]
 
-    # Elements within 'menu' are <title lang="..">...</title> and
-    # one or more <link>....</link>
+                }
+
+# Elements within 'menu' are <title lang="..">...</title> and
+# one or more <link>....</link>
 
                 set headers [$menu getElementsByTagName title]
                 foreach title $headers {
@@ -603,9 +635,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::load_sitemap {sitemap_mgr {ctx ""}} {
-        variable sitemap_dir
-        variable sitemap_stat
-        variable timestamp
 
         set logger $::rivetweb::logger
         $logger log info "recreating sitemap"
@@ -620,16 +649,26 @@ namespace eval ::rwdatas {
 # This object assumes the files to be in the 'sitemap_dir' directory
 # (its existence has been already checked in 'init')
 
-        set xmlmenus [glob [file join $sitemap_dir *.xml]]
+        set xmlmenus [glob -nocomplain [file join $sitemap_dir *.xml]]
 
-        foreach xmlfile $xmlmenus {
-            $logger log notice "reading $xmlfile..."
+# if there is no menu tree defined we give the database tree 
+# an empty root menu
 
-            set xml [read_file $xmlfile]
-            set map [file tail $xmlfile]
-            if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
-                $logger log emerg "could not parse map $map: $e"
+        if {[llength $xmlmenus] == 0} {
+            $logger log notice "no menu file found"
+            set xml "<sitemenus id=\"home\"></sitemenus>"
+        } else {
+
+            foreach xmlfile $xmlmenus {
+                $logger log notice "reading $xmlfile..."
+
+                set xml [::rivet::read_file $xmlfile]
+                set map [file tail $xmlfile]
+                if {[catch { set xmlmenu($map) [dom parse $xml] } e]} {
+                    $logger log err "could not parse map $map: $e"
+                }
             }
+
         }
 
         foreach mdoc [array names xmlmenu] {
@@ -672,7 +711,6 @@ namespace eval ::rwdatas {
 # XMLBase::menu_list has the special role to provide the base menu 
 
     ::itcl::body XMLBase::menu_list {page} {
-        variable sitemap 
 
 #       puts "<br/><b>pmodel</b>: $page"
 #       puts "<br/><b>ds</b>: [$page metadata datasource]"

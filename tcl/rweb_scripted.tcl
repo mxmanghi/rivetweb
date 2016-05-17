@@ -37,7 +37,7 @@ namespace eval ::rwpage {
         RWPage::prepare $language $argsqs
 
     # before we check for specific methods to be run we run a generic
-    # 'init' method with common initialization for all methods.
+    # 'init' method with the initialization to all methods.
 
         $this clear_metadata
         if {[catch {$script init $language $this} e opts]} {
@@ -73,6 +73,8 @@ namespace eval ::rwpage {
             }
 
             return $pobj
+        } else {
+            puts "<h2>Error $e in init script</h2>"
         }
 
         if {[$this recall cmd cmd]} {
