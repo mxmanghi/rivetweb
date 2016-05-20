@@ -211,6 +211,4 @@ namespace eval ::rwlink {
     namespace ensemble create
 }
 
-
-
 package provide rwlink 1.0
