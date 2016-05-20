@@ -259,7 +259,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::resource_exists {key {translated_key translated_key}} {
-        variable static_pages
         upvar $translated_key xmlfile
 
         set xmlfile [file join $static_pages ${key}.xml]
@@ -276,7 +275,6 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
-        variable xmlpath
 
         if {[$this resource_exists $key xmlfile]} {
             $::rivetweb::logger log info "->opening $xmlfile" 
@@ -309,8 +307,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::has_updates {} {
-        variable timestamp
-        variable sitemap_dir
 
         file stat $sitemap_dir sitemap_stat
 
@@ -513,7 +509,6 @@ namespace eval ::rwdatas {
                     set lowner    [$this name]
                     foreach linkdata [$l childNodes] {
 
-
         # In order not to replicate the same snippet of code
         # we anyway try to determine the language of the link, 
         # regardless it's meaninful or not
@@ -567,7 +562,11 @@ namespace eval ::rwdatas {
                     set linkobj [$lm create $lowner $lref $ltext $largs $linfo]
                     $lm set_property linkobj type $ltype
                     if {$doctarget != ""} { $lm set_urltarget linkobj $doctarget }
-                    if {![::rivet::lempty $attributes]} { dict set linkobj attributes [dict create {*}$attributes] }
+
+                    set attributes [string trim $attributes]
+
+                    #::rivet::apache_log_error err "Attributes: $attributes [::rivet::lempty $attributes] [llength $attributes]"
+                    if { [llength $attributes] > 0 } { $lm set_attribute $linkobj $attributes }
                     $menuobj add_link $linkobj
                     ### coredump here !!!! #### ::rivet::apache_log_error notice "adding link for [$this to_url $linkobj]"
                 }
@@ -603,9 +602,6 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::load_sitemap {sitemap_mgr {ctx ""}} {
-        variable sitemap_dir
-        variable sitemap_stat
-        variable timestamp
 
         set logger $::rivetweb::logger
         $logger log info "recreating sitemap"
@@ -672,7 +668,6 @@ namespace eval ::rwdatas {
 # XMLBase::menu_list has the special role to provide the base menu 
 
     ::itcl::body XMLBase::menu_list {page} {
-        variable sitemap 
 
 #       puts "<br/><b>pmodel</b>: $page"
 #       puts "<br/><b>ds</b>: [$page metadata datasource]"

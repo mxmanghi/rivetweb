@@ -5,10 +5,71 @@
 #
 #
 
+package require Itcl
 package require rwconf
 package require rwlogger
 
 namespace eval ::rwlink {
+
+    ::itcl::class RWLink {
+        private variable owner
+        private variable text
+        private variable reference
+        private variable target
+        private variable arguments
+        private variable attributes
+        private variable properties
+        
+        constructor {own lref ltext {largs ""} {linfo ""}} {
+            set owner       $own
+            set reference   $lref
+            set target      ""
+            set text    [dict create {*}$ltext] 
+           
+            if {![dict exists $text $::rivetweb::default_lang]} {
+                return -code error -errcode default_lang_missing  "Default language text required for link $lref"
+            }
+
+            if {$linfo != ""} { dict set text info [dict create {*}$linfo]}
+            set arguments $largs
+            set attributes [dict create]
+            set properties [dict create]
+        }
+
+        public method add_text {language ltext}  { dict set text $language $ltext }
+        public method add_info {language linfo}  { dict set info $language $ltext }
+        public method set_attributes {attributes_l} {
+            dict merge attributes [dict create {*}$attributes_l]
+        }
+        public method attributes {attribute} {
+            if {[dict exists $attributes $attribute]} {
+                return [dict get $attributes $attribute]
+            }
+            return ""
+        }
+        public method link_text {language} {
+            if {[dict exists $text text $language]} { return [dict get $text text $language] }
+
+            return [dict get $text text $::rivetweb::default_lang]
+        }
+        public method link_info {language} {
+            if {[dict exists $text info $language]} {
+                return [dict get $text info $language]
+            } else {
+                return ""
+            }
+        }
+
+        public method property {prop} { return [dict get $properties $prop] }
+        public method set_property {prop propv} { dict set properties $prop $propv }
+        public method property_exists {prop} { return [dict exists $properties $prop] }
+        public method reference { return $reference }
+        public method arguments { return $arguments }
+        public method owner { return $owner }
+        public method set_target { t } { set target $t }
+        public method target {} { return $target }
+    }
+
 
 # -- create
 #
@@ -21,26 +82,14 @@ namespace eval ::rwlink {
 #
 
     proc create {link_owner reference link_text link_args {link_info ""}} {
-        set link_d [dict create owner $link_owner reference $reference]
 
         ::rivet::apache_log_error debug "<--- $link_text - ($link_info)<br/>"
 
-        foreach l [dict keys $link_text] {
-            set l_info ""
-            if {$link_info != ""} {
-                if {[dict exists $link_info $l]} {
-                    set l_info [dict get $link_info $l]
-                } 
-            }
-            add_text link_d $l [dict get $link_text $l] $l_info
-        }
+        set link_o  [RWLink [namespace current]::#auto $link_owner $reference $link_text $link_args $link_info]
 
-# setting arguments dictionary for scripted links
-
-        dict set link_d arguments $link_args
-
-        return $link_d
+        return $link_o
     }
+    namespace export create
 
 # -- add_text 
 #
@@ -48,51 +97,37 @@ namespace eval ::rwlink {
 # guarantees the default language has a definition (hopefully the
 # right one).
 #
-#
 
-    proc add_text {linkmodel language link_text {link_info ""}} {
-        upvar $linkmodel linkm
-
-        dict set linkm text $language $link_text
-
-# we just make sure we have a value for the default language
-
-        if {![dict exists $linkm text $::rivetweb::default_lang]} {
-            dict set linkm text $::rivetweb::default_lang $link_text
-        }
-
-        if {[string length $link_info]} {
-            dict set linkm info $language $link_info
-            
-            if {![dict exists $linkm info $::rivetweb::default_lang]} {
-                dict set linkm info $::rivetweb::default_lang $link_info
-            }
-        }
+    proc add_text {linkobj language link_text {link_info ""}} {
+        $linkobj add_text $language $link_text
+        if {$link_info != ""} { add_info $language $link_info }
 
     }
-    namespace export create add_text 
+    namespace export add_text 
+
+# -- add_info
+#
+# like add_text but specialized for the dictionary that goes into the info 
+# HTML attribute 
+#
+
+    proc add_info {linkobj language link_info} {
+        $linkobj add_info $language $link_info
+    }
+    namespace export create add_info
+
 
 # -- set_attribute, get_attribute: 
 # accessors to generic piece of information that should be treated as
 # a key-value list to become the attributes of the <a ...> tag
 
     proc set_attribute {linkobj attribute_list} {
-        upvar $linkobj link_o
-
-        foreach {attribute attrvalue} $attribute_list {
-            dict set link_o attributes $attribute $attrvalue
-        }
+        $linkobj set_attributes $attribute_list
     }
     namespace export set_attribute
 
     proc get_attribute {linkobj attribute} {
-
-        if {[dict exists $linkobj attributes $attribute]} {
-            return [dict get $linkobj attributes $attribute]
-        } else {
-            return ""
-        }
-
+        return [$linkobj attribute $attribute]]
     }
     namespace export get_attribute
 
@@ -101,12 +136,7 @@ namespace eval ::rwlink {
 # the language will fall back to the default language
 
     proc link_text {linkmodel {language ""}} {
-        if {([string length $language] == 0) || \
-            ![dict exists $linkmodel text $language]} {
-            set language $::rivetweb::default_lang
-        }
-
-        return [dict get $linkmodel text $language]
+        return [$linkmodel text $language]
     }
     namespace export link_text
 
@@ -118,15 +148,7 @@ namespace eval ::rwlink {
 #
 
     proc link_info {linkmodel {language ""}} {
-        if {[string length $language] == 0} {
-            set language $::rivetweb::default_lang
-        } 
-
-        if {[dict exists $linkmodel info $language]} {
-            return [dict get $linkmodel info $language]
-        } else {
-            return ""
-        }
+        $linkmodel link_info $language
     }
     namespace export link_info
 
@@ -138,19 +160,21 @@ namespace eval ::rwlink {
 # 
 
     proc property {linkobj property} {
-        return [dict get $linkobj $property]
+        return [$linkobj property $property]
     }
     namespace export property
 
     proc set_property {linkobj lprop lprop_val} {
         upvar $linkobj link_o
 
-        dict set link_o $lprop $lprop_val
-    }
+        #::rivet::apache_log_error err "set_property -> $linkobj $lprop $lprop_val"
+
+        $link_o set_property $lprop $lprop_val
+   }
     namespace export set_property
 
     proc property_exists {linkobj property} {
-        return [dict exists $linkobj $property]
+        return [$linkobj property_exists $property]
     }
     namespace export property_exists
 
@@ -159,7 +183,7 @@ namespace eval ::rwlink {
 # set_parameter method
 
     proc reference {linkobj} {
-        return [dict get $linkobj reference]
+        return [$linkobj reference]
     }
     namespace export reference
 
@@ -170,14 +194,14 @@ namespace eval ::rwlink {
 #
 
     proc arguments {linkobj} {
-        return [dict get $linkobj arguments]
+        return [$linkobj arguments]
     }
     namespace export arguments
 
 # -- owner
 #
     proc owner {linkobj} {
-        return [dict get $linkobj owner]
+        return [$linkobj owner]
     }
     namespace export owner
 
@@ -192,25 +216,19 @@ namespace eval ::rwlink {
 
     proc set_urltarget {linkobj target} {
         upvar $linkobj lo
-        dict set lo urltarget $target
+        $lo set_target $target
     }
     namespace export set_urltarget
 
     proc get_urltarget {linkobj target_var} {
         upvar $target_var target
 
-        if {[dict exists $linkobj urltarget]} {
-            set target [dict get $linkobj urltarget]
-            return true
-        } else {
-            return false
-        }
+        set target [$linkobj target]
+        return [expr ($target != "")]
     }
     namespace export get_urltarget          
 
     namespace ensemble create
 }
 
-
-
-package provide rwlink 1.0
+package provide rwlink 2.0
