@@ -42,14 +42,14 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_css_path    $::rivetweb::css_path
 
 # let's determine which template we are using. We set a couple of default
-# values for them
+# values for the running template and basic associated CSS
 
     set running_template base.rvt
     set running_css      base.css 
 
-    if {[var exists template]} {
+    if {[::rivet::var exists template]} {
 
-        set template_key [::rivet::var get template]
+        set template_key [::rivet::var_qs get template]
 
     } elseif {[string compare $::rivetweb::default_template ""] != 0} {
 
@@ -63,7 +63,7 @@ namespace eval ::rivetweb {
 
     }
 
-    $::rivetweb::logger log info "selected template: $running_template (css: $running_css)"
+    $::rivetweb::logger log info "selected template $template_key: $running_template (css: $running_css)"
 
 # let's build the full path to the template and css files through the Rivetweb specific calls
 
@@ -99,7 +99,7 @@ namespace eval ::rivetweb {
 # specific 'before' script
 
     if {$::rivetweb::site_before_script != ""} { 
-        ::rivet::apache_log_error notice "running specific 'before' script -> $::rivetweb::site_before_script"
+        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
     }
 
@@ -125,7 +125,7 @@ namespace eval ::rivetweb {
     foreach ds $::rivetweb::datasources {
 
         set dsmenu [$ds menu_list $::rivetweb::current_page]
-        apache_log_error notice "got $dsmenu from $ds"
+        apache_log_error debug "got $dsmenu from $ds"
         #puts "<pre>got $dsmenu from $ds</pre>"
 
         foreach k [dict keys $dsmenu] {
@@ -141,7 +141,7 @@ namespace eval ::rivetweb {
 
     }
 
-    ::rivet::apache_log_error notice "menu database $::rivetweb::pagemenus"
+    ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
 
     if {[catch {
 

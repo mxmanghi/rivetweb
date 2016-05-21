@@ -24,9 +24,9 @@ namespace eval ::rwlink {
             set owner       $own
             set reference   $lref
             set target      ""
-            set text    [dict create {*}$ltext] 
+            set text        [dict create text [dict create {*}$ltext]] 
            
-            if {![dict exists $text $::rivetweb::default_lang]} {
+            if {![dict exists $text text $::rivetweb::default_lang]} {
                 return -code error -errcode default_lang_missing  "Default language text required for link $lref"
             }
 
@@ -36,17 +36,19 @@ namespace eval ::rwlink {
             set properties [dict create]
         }
 
+        public method link_owner {} { return $owner }
         public method add_text {language ltext}  { dict set text $language $ltext }
         public method add_info {language linfo}  { dict set info $language $ltext }
         public method set_attributes {attributes_l} {
-            dict merge attributes [dict create {*}$attributes_l]
+            set attributes [dict merge $attributes [dict create {*}$attributes_l]]
         }
-        public method attributes {attribute} {
+        public method attribute {attribute} {
             if {[dict exists $attributes $attribute]} {
                 return [dict get $attributes $attribute]
             }
             return ""
         }
+        public method attributes { } { return $attributes }
         public method link_text {language} {
             if {[dict exists $text text $language]} { return [dict get $text text $language] }
 
@@ -59,13 +61,11 @@ namespace eval ::rwlink {
                 return ""
             }
         }
-
         public method property {prop} { return [dict get $properties $prop] }
         public method set_property {prop propv} { dict set properties $prop $propv }
         public method property_exists {prop} { return [dict exists $properties $prop] }
-        public method reference { return $reference }
-        public method arguments { return $arguments }
-        public method owner { return $owner }
+        public method reference {} { return $reference }
+        public method arguments {} { return $arguments }
         public method set_target { t } { set target $t }
         public method target {} { return $target }
     }
@@ -122,7 +122,9 @@ namespace eval ::rwlink {
 # a key-value list to become the attributes of the <a ...> tag
 
     proc set_attribute {linkobj attribute_list} {
-        $linkobj set_attributes $attribute_list
+        upvar $linkobj link_o
+
+        $link_o set_attributes $attribute_list
     }
     namespace export set_attribute
 
@@ -131,12 +133,17 @@ namespace eval ::rwlink {
     }
     namespace export get_attribute
 
+    proc attributes {linkobj} {
+        return [$linkobj attributes]
+    }
+    namespace export attributes
+
 # -- link_text. accessor for the text to become the
 # active part of the link. If 'language' is not specified
 # the language will fall back to the default language
 
     proc link_text {linkmodel {language ""}} {
-        return [$linkmodel text $language]
+        return [$linkmodel link_text $language]
     }
     namespace export link_text
 
@@ -201,7 +208,7 @@ namespace eval ::rwlink {
 # -- owner
 #
     proc owner {linkobj} {
-        return [$linkobj owner]
+        return [$linkobj link_owner]
     }
     namespace export owner
 
@@ -224,7 +231,8 @@ namespace eval ::rwlink {
         upvar $target_var target
 
         set target [$linkobj target]
-        return [expr ($target != "")]
+
+        return [expr [string length $target] > 0]
     }
     namespace export get_urltarget          
 

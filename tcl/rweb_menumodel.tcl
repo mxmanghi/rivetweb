@@ -46,6 +46,7 @@ namespace eval ::rwmenu {
         public method add_link {linkmodel {pos ""}}
         public method links {}
         public method id {}
+        public method toHTML {htmldefs}
     }
 
     ::itcl::body RWMenu::get_title {language} {
@@ -190,6 +191,15 @@ namespace eval ::rwmenu {
         return $menuid
     }
 
+# -- toHTML 
+#
+#
+    ::itcl::body RWMenu::toHTML {htmldefs} {
+        return  [$::rivetweb::htmlizer  html_menu               \
+                                        $this                   \
+                                        $::rivetweb::language   \
+                                        $htmldefs]
+    }
 
 # -- create <id> ?<parent> none? ?<visibility> normal?
 #

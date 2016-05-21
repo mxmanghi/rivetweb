@@ -6,7 +6,7 @@
 
 lappend auto_path $rweb_root $website_root
 
-apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
+::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
 
 package require rwlogger
 package require rivetweb
@@ -27,7 +27,7 @@ if {[file exists $website_definitions]} { source $website_definitions }
 
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $website_init]} {
-    apache_log_error notice "running website specific initialization $website_init ([pwd])"
+    ::rivet::apache_log_error notice "running website specific initialization $website_init ([pwd])"
     if {[catch {source $website_init} e]} {
 
         ::rivet::apache_log_error crit "Error running website specific initialization ($e)"

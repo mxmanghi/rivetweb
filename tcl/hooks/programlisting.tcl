@@ -18,11 +18,25 @@ proc programlisting { datasource tag element_text attribute_list} {
     array set attributes $attribute_list
 
     if {[info exists attributes(class)]} {
-        if {[string index $attributes(class) 0] == "+"} {
-            set attributes(class) "programlisting $attributes(class)"
+
+        set element_class "programlisting"
+
+        foreach cl [split $attributes(class) " "] {
+
+            if {[string index $cl 0] == "+"} {
+                lappend element_class [string range $cl 1 end]
+            } else {
+                set element_class $cl
+            }
+
         }
+
+        set attributes(class) $element_class
+
     } else {
+
         set attributes(class) programlisting
+
     }
 
     set code_text ""

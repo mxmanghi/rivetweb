@@ -208,7 +208,7 @@ namespace eval ::rivetweb {
             ::rivet::apache_log_error notice "website specific 'after every' request script $site_after_every_script"
         }
 
-        apache_log_error notice "rivetweb_root set as $rivetweb_root"
+        ::rivet::apache_log_error notice "rivetweb_root set as $rivetweb_root"
     }
 
 # -- init

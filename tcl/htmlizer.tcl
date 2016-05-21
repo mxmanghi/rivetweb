@@ -151,8 +151,8 @@ namespace eval ::htmlizer {
             set link  [::rwdatas::${ds}::to_url $link]
 
             set item_o [$menudom createElement $item_tag]
-            if {[string length $link_class]} {
-                $item_o setAttribute class $link_class
+            if {[string length $item_class]} {
+                $item_o setAttribute class $item_class
             }
             $item_container_o appendChild $item_o
 

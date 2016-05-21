@@ -9,8 +9,8 @@
 # full path name of this file's directory.
 
 set rivetweb_dir [file dirname [info script]]
-set msg "RW scripts base directory: $rivetweb_dir"
-if {[catch {::rivet::apache_log_error notice $msg} e]} { puts $msg }
+#set msg "RW scripts base directory: $rivetweb_dir"
+#if {[catch {::rivet::apache_log_error notice $msg} e]} { puts $msg }
 
 package ifneeded XMLBase 2.0 [list source [file join $rivetweb_dir tcl datasource xmlbase.tcl]]
 package ifneeded Scripted 2.0 [list source [file join $rivetweb_dir tcl datasource rwscripted.tcl]]
