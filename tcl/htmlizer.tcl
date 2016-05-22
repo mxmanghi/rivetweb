@@ -173,8 +173,8 @@ namespace eval ::htmlizer {
 
 # this should set also href as it's part of the link object attributes
 
-            if {[dict exists $link attributes]} {
-                $link_o setAttribute {*}[dict get $link attributes]
+            if {[dict size [$link attributes]] > 0} {
+                $link_o setAttribute {*}[$link attributes]
             }
 
             #::rivet::html "assigning attributes [dict get $link attributes] to link" div b 
