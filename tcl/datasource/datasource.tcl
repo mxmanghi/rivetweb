@@ -30,7 +30,7 @@ namespace eval ::rwdatas {
         public method name {} { return "Datasource" }
         public proc   set_alias {alias aliasdef}
         public proc   get_alias {alias aliasdef}
-        public method resource_exists {resource_key {translated_key translated_key}} { return false }
+        public method resource_exists {resource_key} { return false }
         public proc to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}

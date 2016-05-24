@@ -57,8 +57,6 @@ namespace eval ::rwpage {
                 set mimetype $proposed_mimetype
             }
 
-
-
             ::rivet::apache_log_error info "Downloading file $binary_file ($mimetype)"
             set file_handle [open $binary_file r]
             fconfigure $file_handle -translation binary
@@ -69,7 +67,7 @@ namespace eval ::rwpage {
 
             ::rivet::headers type                    $mimetype
             ::rivet::headers add Content-Disposition "attachment; filename=\"$fname\""
-            ::rivet::headers add Content-Length	    $file_size
+            ::rivet::headers add Content-Length	     $file_size
 
             set nrecs	    0
             set sent_data   0

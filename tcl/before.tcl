@@ -126,18 +126,8 @@ namespace eval ::rivetweb {
 
         set dsmenu [$ds menu_list $::rivetweb::current_page]
         apache_log_error debug "got $dsmenu from $ds"
-        #puts "<pre>got $dsmenu from $ds</pre>"
 
-        foreach k [dict keys $dsmenu] {
-
-            if {[dict exists $::rivetweb::pagemenus $k]} {
-                set m [concat [dict get $::rivetweb::pagemenus $k] [dict get $dsmenu $k]]
-            } else {
-                set m [dict get $dsmenu $k]
-            }
-
-            dict set ::rivetweb::pagemenus $k $m
-        }
+        set ::rivetweb::pagemenus [dict merge $::rivetweb::pagemenus $dsmenu]
 
     }
 
@@ -175,9 +165,10 @@ namespace eval ::rivetweb {
     if {[$::rivetweb::current_page binary_content]} {
         $::rivetweb::current_page print_binary
     } else {
-        headers type "text/html; charset=$::rivetweb::http_encoding"
+        ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
     }
     
-    ::rivet::apache_log_error debug "before.tcl done (page: $::rivetweb::current_page, binary [$::rivetweb::current_page binary_content], charset: $::rivetweb::http_encoding)"
-    ::rivet::apache_log_error debug "before.tcl channel status (translation: [fconfigure stdout -translation], encoding: [fconfigure stdout -encoding])"
+    # debugging
+    #::rivet::apache_log_error debug "before.tcl done (page: $::rivetweb::current_page, binary [$::rivetweb::current_page binary_content], charset: $::rivetweb::http_encoding)"
+    #::rivet::apache_log_error debug "before.tcl channel status (translation: [fconfigure stdout -translation], encoding: [fconfigure stdout -encoding])"
 }

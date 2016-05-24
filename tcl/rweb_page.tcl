@@ -23,6 +23,7 @@ namespace eval ::rwpage {
         public method add_metadata {field value} 
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
+        public methos set_title {language title_t}
         public method prepare {language args}
         public method languages { } 
         public method metadata {{key ""}}
@@ -77,12 +78,23 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::set_metadata {mdlist} {
 
-        while {[llength $mdlist] > 1} {
+        set metadata [dict merge $metadata $mdlist]
 
-            set mdlist [lassign $mdlist key value]
-            dict set metadata $key $value
+#        while {[llength $mdlist] > 1} {
+#
+#            set mdlist [lassign $mdlist key value]
+#            dict set metadata $key $value
+#
+#        }
 
-        }
+    }
+
+# -- set_title
+#
+# utility method to set the page title
+#
+    ::itcl::body RWPage::set_title {language title_t} {
+        dict set metadata title $language $title_t
     }
 
 # -- put_metadata 
@@ -213,8 +225,7 @@ namespace eval ::rwpage {
 # -- headline
 #
 # I add a 'headline' method for sake of simplicity, but there is
-# no reason to make this a base class method. Better if I imagine
-# a way to add dynamically this rather specific resources
+# no compelling reason to make this a base class method. 
 
     ::itcl::body RWPage::headline {language} { return "" }
 

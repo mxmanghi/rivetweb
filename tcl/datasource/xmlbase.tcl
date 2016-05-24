@@ -44,7 +44,7 @@ namespace eval ::rwdatas {
         public variable menutclclass "" {set forceupdate 1}
 
         private method buildPageEntry {key xmldata reassigned_key}
-        private method time_reference {key} 
+        private method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o tclclass_v}        
 
@@ -58,7 +58,7 @@ namespace eval ::rwdatas {
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
-        public method resource_exists {resource_key {translated_key translated_key}} { return false }
+        public method resource_exists {resource_key} { return false }
         public proc   to_url {lm}
         public proc   makeUrl {reference} 
         public proc   buildSimplePage {msg cssclass pagina_id} 
@@ -233,11 +233,10 @@ namespace eval ::rwdatas {
 
 # -- time_reference 
 #
-# time reference might eventually disappear from the public interface as
-# the datasource interface is going to bear the whole responsability
-# for determining which method has to be used to tell whether a resource
-# needs to be refreshed.
-
+# returns a time stamp of the requested resource. This method
+# is private and we assume it's called after the existence of 'key'
+# has been checked by calling [resource_exists]
+#
     ::itcl::body XMLBase::time_reference {key} {
 
         set xmlfile [file join $static_pages ${key}.xml]
@@ -253,20 +252,21 @@ namespace eval ::rwdatas {
 #
     ::itcl::body XMLBase::is_stale {key timereference } {
         
-        set current_timeref [time_reference $key]
-        return [expr $timereference < $current_timeref]
-
+        if {[$this resource_exists $key]} {
+            set current_timeref [$this time_reference $key]
+            return [expr $timereference < $current_timeref]
+        } else {
+            set errinfo "[$this name] Resource $key not found"
+            return -code error -errorcode resource_not_found -errorinfo $errinfo $errinfo
+        }
     }
 
 # -- resourceExists
 #
 #
 
-    ::itcl::body XMLBase::resource_exists {key {translated_key translated_key}} {
-        upvar $translated_key xmlfile
-
-        set xmlfile [file join $static_pages ${key}.xml]
-        return [file exists $xmlfile]
+    ::itcl::body XMLBase::resource_exists {key} {
+        return [file exists [file join $static_pages ${key}.xml]]
     }
 
 
@@ -290,10 +290,9 @@ namespace eval ::rwdatas {
 #               puts stderr $xmldata
                 close $xmlfp
             } fileioerr]} {
-                set page_id errore_interno
-                set notfound_msg "It was impossible to open the requested page ($fileioerr)"
-                $::rivetweb::logger err "[pid] $notfound_msg"
-                return [XMLBase::buildSimplePage $notfound_msg message internal_error]
+                set notfound_msg "Impossible to found page '$key' ($fileioerr)"
+                $::rivetweb::logger err "[$this name] $notfound_msg"
+                return [XMLBase::buildSimplePage $notfound_msg message page_not_found_error]
             } else {
                 set pagedbentry [buildPageEntry $key $xmldata rkey]
                 return $pagedbentry
