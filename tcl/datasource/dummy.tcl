@@ -25,7 +25,7 @@ namespace eval ::rwdatas {
     public method willHandle {arglist keyvar} { 
         upvar $keyvar key 
 
-        set key page_not_found
+        set key page_not_found_error
 
         return -code break -errorcode rw_ok 
     }
@@ -33,11 +33,15 @@ namespace eval ::rwdatas {
     public method fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
 
-        if {[dict exists $key]} {
+        set rkey $key
+        if {[dict exists $messages $key]} {
 
-        } else {
+            return [::rwpage::RWBasicPage ::#auto [dict get $messages $key]
 
-        }
+        } 
+
+        set rkey unknown_error_condition
+        return [::rwpage::RWBasicPage ::#auto [dict get $messages $rkey]
     }
 
 # -- rivetwebPage
