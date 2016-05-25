@@ -10,29 +10,41 @@ package require rwpage
 
 namespace eval ::rwpage {
 
-    ::itcl::class RWMessage {
+    ::itcl::class RWBasicPage {
         inherit RWPage
 
         private variable pagetext
+        private variable rootelement
 
-        constructor {pagekey} {RWPage::constructor $pagekey} {
-            set pagetext [dict create $::rivetweb::default_lang ""]
+        constructor {pagekey {message_text ""} {rootel "p"}} {RWPage::constructor $pagekey} {
+            set pagetext [dict create $::rivetweb::default_lang $message_text]
+            set rootelement $rootel
         }
 
-        public method set_pagetext {language page_text {rootel "p"}} {
-            dict set pagetext $language [::rivet::xml $page_text $rootel]
+        public method pagetext_append {$language $t} {
+            dict append pagetext $language $t
+        }
+
+        public method pagetext {language {page_text ""} } {
+
+            if {$page_text != ""} {
+                $this pagetext_append $language $page_text
+            }
+
+            if {[dict exists $pagetext $language]} {
+                return [dict get $pagetext $language]
+            } else {
+                return ""
+            }
+
         }
 
         public method print_content {language} {
-            if {[dict exists $pagetext $language]} {
-                puts -nonewline [dict get $pagetext $language]
-            } else {
-                puts -nonewline ""
-            }
+            puts -nonewline [::rivet::xml [$this pagetext $language] $rootelement]
         }
 
     }
 
 }
-package provide rwmessage 0.1
+package provide rwbasicpage 0.1
 

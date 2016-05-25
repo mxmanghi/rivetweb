@@ -9,7 +9,7 @@ package require Itcl
 package require rwconf
 package require rwlogger
 package require Datasource
-package require rwmessage
+package require rwbasicpage
 
 namespace eval ::rwdatas {
 
