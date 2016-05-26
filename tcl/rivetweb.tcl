@@ -122,6 +122,7 @@ namespace eval ::rivetweb {
 
         ::rivet::apache_log_error debug "URL $rewritten_url -> $arglist"
         if {[llength $arglist]} {
+
             while {[llength $arglist]} {
                 set arglist [lassign $arglist param value]
                 lappend urlargs "${param}=${value}"
@@ -135,7 +136,6 @@ namespace eval ::rivetweb {
         if {$hash != ""} {append final_url "#$hash" }
 
         return $final_url
-
     }
     namespace export composeUrl
 

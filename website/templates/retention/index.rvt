@@ -13,7 +13,7 @@ Released   : 20140221
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <?= [::rivetweb::contentType] ?>
-<title><?= [$::rivetweb::current_pmodel title $::rivetweb::language] ?></title>
+<title><?= [$::rivetweb::current_page title $::rivetweb::language] ?></title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link href="http://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet" />
@@ -52,7 +52,7 @@ Released   : 20140221
 	<div id="page" class="container">
 		<div id="content">
 			<div class="title">
-				<h2><?= [$::rivetweb::current_pmodel title $::rivetweb::language] ?></h2>
+				<h2><?= [$::rivetweb::current_page title $::rivetweb::language] ?></h2>
 				<span class="byline"><?= [$::rivetweb::current_page content_field \
                                                                     $::rivetweb::language \
                                                                     byline ""] ?></span>

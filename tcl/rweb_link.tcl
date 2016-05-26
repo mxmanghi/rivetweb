@@ -122,9 +122,9 @@ namespace eval ::rwlink {
 # a key-value list to become the attributes of the <a ...> tag
 
     proc set_attribute {linkobj attribute_list} {
-        upvar $linkobj link_o
-
-        $link_o set_attributes $attribute_list
+        upvar $linkobj link_obj
+    
+        $link_obj set_attributes $attribute_list
     }
     namespace export set_attribute
 

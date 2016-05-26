@@ -25,7 +25,6 @@ namespace eval ::rwpage {
 
         public method print_content {l}
         public method prepare {language argsqs} 
-        public method title {language {titletxt ""}}
         public method headline {language}
     }
 
@@ -54,7 +53,7 @@ namespace eval ::rwpage {
 
                     set pobj [::rwpage::RWStatic ::#auto $errorCode]
                     $pobj set_pagetext $::rivetweb::default_lang \
-                            "<b>$e</b> (code $errorCode): [escape_sgml_chars $opts]"
+                            "<b>$e</b> (code $errorCode): [::rivet::escape_sgml_chars $opts]"
                     $pobj add_metadata header "[string range $e 0 20]..."
                     $pobj add_metadata title  "[string range $e 0 20]..."
                     $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
@@ -69,12 +68,11 @@ namespace eval ::rwpage {
                 }
 
             } else {
-
+                set pobj $this
             }
 
+            #puts "<h2>Error '$e' (opts: $opts) in init script</h2>"
             return $pobj
-        } else {
-            puts "<h2>Error $e in init script</h2>"
         }
 
         if {[$this recall cmd cmd]} {
@@ -144,20 +142,6 @@ namespace eval ::rwpage {
             $script $method $language $this
         }
         
-    }
-
-# -- title
-#
-# 
-
-    ::itcl::body RWScripted::title {language {titletxt ""}} {
-
-        if {$titletxt == ""} {
-            return [$this metadata title]
-        } else {
-            $this add_metadata title $titletxt
-        }
-
     }
 
     ::itcl::body RWScripted::headline {language} {

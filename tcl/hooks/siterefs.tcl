@@ -15,7 +15,7 @@ proc sitereference { datasource tag element_text attribute_list } {
     array set attribs $attribute_list
     if {[info exists attribs(href)]} {
         set lm [$::rivetweb::linkmodel create XMLBase $attribs(href) \
-                                       [dict create language $element_text] "" ""]       
+                                       [dict create $::rivetweb::default_lang $element_text] "" ""]       
         unset attribs(href)
         $::rivetweb::linkmodel set_attribute lm [concat [array get attribs]]
         $::rivetweb::linkmodel set_property lm type internal

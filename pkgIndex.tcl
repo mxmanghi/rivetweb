@@ -31,4 +31,4 @@ package ifneeded RWDummy 1.1 [list source [file join $rivetweb_dir tcl datasourc
 package ifneeded rwbinary 0.1 [list source [file join $rivetweb_dir tcl rweb_binary.tcl]]
 package ifneeded Datasource 1.0 [list source [file join $rivetweb_dir tcl datasource datasource.tcl]]
 package ifneeded MessagePrinter 0.1 [list source [file join $rivetweb_dir tcl message_printer.tcl]]
-package ifneeded rwbasicpage 0.1 [list source [file join $rivetweb_dir tcl rweb_basicpagetcl]]
+package ifneeded rwbasicpage 0.1 [list source [file join $rivetweb_dir tcl rweb_basicpage.tcl]]

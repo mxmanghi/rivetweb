@@ -35,7 +35,8 @@ package require ScriptBase
 #
 
 ::itcl::body Test::doDump {language pageobj} {
-    $pageobj add_metadata title "Running method doDump"
+    $pageobj set_title $language "Running method doDump"
+    puts [list <b> [$pageobj metadata] </b>]
 }
 
 # -- doRun
@@ -44,7 +45,7 @@ package require ScriptBase
 
 ::itcl::body Test::doRun {language pageobj} {
 
-    if {[catch {$pageobj add_metadata title "Running method doRun"} e]} {
+    if {[catch {$pageobj set_title $language "Running method doRun"} e]} {
         puts $e
     }
 

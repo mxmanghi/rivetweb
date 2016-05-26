@@ -47,6 +47,7 @@ namespace eval ::rwdatas {
         private method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o tclclass_v}        
+        private method xmlfile {key} { return [file join $static_pages ${key}.xml] }
 
         public method init {args}
         public method willHandle {arglist keyvar}
@@ -58,7 +59,7 @@ namespace eval ::rwdatas {
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
-        public method resource_exists {resource_key} { return false }
+        public method resource_exists {resource_key {xmlfn xmlfile}} 
         public proc   to_url {lm}
         public proc   makeUrl {reference} 
         public proc   buildSimplePage {msg cssclass pagina_id} 
@@ -126,21 +127,30 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::willHandle {arglist keyvar} {
         upvar $keyvar key 
 
-        set retcode     break
-        set errorcode   rw_ok
         set key         index
-
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
         } elseif {[dict exists $arglist store]} {
             set key [dict get $arglist store]
         } else {
-            set ::rivetweb::is_homepage 1
-        }
+
+            set ag $arglist
+            foreach {urlarg argval} $arglist {
+                if {[lsearch $::rivetweb::passthroughs $urlarg] < 0} {
+                    continue
+                } else {
+                    set ag [lassign $ag a b]
+                }
+            }
+            if {[llength $ag] > 0 } {
+                return -code continue -errorcode rw_continue
+            }
+        } 
+        if {$key == "index"} { set ::rivetweb::is_homepage 1 }
 
         $::rivetweb::logger log info "mapping key $key for processing"
 
-        return -code $retcode -errorcode $errorcode 
+        return -code break -errorcode rw_ok 
     }
 
 #
@@ -239,8 +249,7 @@ namespace eval ::rwdatas {
 #
     ::itcl::body XMLBase::time_reference {key} {
 
-        set xmlfile [file join $static_pages ${key}.xml]
-        file stat $xmlfile file_stat
+        file stat [$this xmlfile $key] file_stat
         return $file_stat(mtime)
 
     }
@@ -265,8 +274,11 @@ namespace eval ::rwdatas {
 #
 #
 
-    ::itcl::body XMLBase::resource_exists {key} {
-        return [file exists [file join $static_pages ${key}.xml]]
+    ::itcl::body XMLBase::resource_exists {key {xml xmlfile}} {
+        upvar $xml xmlf
+
+        set xmlf [$this xmlfile $key]
+        return [file exists $xmlf]
     }
 
 
@@ -353,7 +365,7 @@ namespace eval ::rwdatas {
 # ident metadata element
 
         set elem_o [$msgdom createElement ident]
-        set dom_txt [$msgdom createTextNode "$Id: [clock format [clock seconds]]"]
+        set dom_txt [$msgdom createTextNode "\$Id: [clock format [clock seconds]]"]
         $xml_o appendChild $elem_o
 
         set elem_o [$msgdom createElement date]
@@ -601,7 +613,7 @@ namespace eval ::rwdatas {
                     set attributes [string trim $attributes]
 
                     #::rivet::apache_log_error err "Attributes: $attributes [::rivet::lempty $attributes] [llength $attributes]"
-                    if { [llength $attributes] > 0 } { $lm set_attribute $linkobj $attributes }
+                    if { [llength $attributes] > 0 } { $lm set_attribute linkobj $attributes }
                     $menuobj add_link $linkobj
                     ### coredump here !!!! #### ::rivet::apache_log_error notice "adding link for [$this to_url $linkobj]"
                 }
@@ -732,12 +744,12 @@ namespace eval ::rwdatas {
 
         }
 
+        #puts "<pre>menul: $menul</pre>"
         set menudb [dict create]
         foreach {group menuid} $menul {
-
             dict set menudb $group [$sitemap menu_list $menuid]
-
         }
+        #puts "<pre>menudb: $menudb</pre>"
 
         return $menudb
     }

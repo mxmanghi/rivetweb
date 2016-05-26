@@ -23,7 +23,7 @@ namespace eval ::rwpage {
         public method add_metadata {field value} 
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
-        public methos set_title {language title_t}
+        public method set_title {language title_t}
         public method prepare {language args}
         public method languages { } 
         public method metadata {{key ""}}
@@ -32,7 +32,7 @@ namespace eval ::rwpage {
         public method print_content {language}
         public method destroy {}
         public method to_string {}
-        public method title {language}
+        public method title {language {txt ""}}
         public method headline {language}
         public method store {var value} { dict set stored_vars $var $value }
         public method lappend {var value} { dict lappend stored_vars $var $value }
@@ -97,6 +97,25 @@ namespace eval ::rwpage {
         dict set metadata title $language $title_t
     }
 
+# -- title
+#
+# A method for getting the page title goes in the base RWPage class
+# because <title>...</title> is an element that goes in the <head>...</head>
+# section of a page and it's part of the standard HTML ever since
+#
+
+    ::itcl::body RWPage::title {language {titletxt ""}} { 
+        if {$titletxt != ""} {
+            $this set_title $language $titletext
+        }
+
+        if {[dict exists $metadata title $language]} {
+            return [dict get $metadata title $language]
+        } else {
+            return ""
+        }
+    }
+
 # -- put_metadata 
 # 
 # metadata dictionary is replaced by the <dictionary> value
@@ -104,7 +123,7 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::put_metadata {dictionary} {
  
-        set metadata $dictionary       
+        set metadata $dictionary
 
     }
 
@@ -212,15 +231,6 @@ namespace eval ::rwpage {
 #
 
     ::itcl::body RWPage::to_string {} { return $metadata }
-
-# -- title
-#
-# A method for getting the page title goes in the base RWPage class
-# because <title>...</title> is an element that goes in the <head>...</head>
-# section of a page and it's part of the standard HTML ever since
-#
-
-    ::itcl::body RWPage::title {language} { return "" }
 
 # -- headline
 #

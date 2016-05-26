@@ -14,7 +14,7 @@ package require rwmenu
         set setup_timestamp	[clock seconds]
     }
     public method setup {argsdict} { set stored_vars $argsdict }
-    public method init {language pageobj} { }
+    public method init {language pageobj} { return -code ok }
     public method handler {options}  { }
     public method prepare {} { return true } 
     public method template {pageobj rvtname}

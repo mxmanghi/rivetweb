@@ -181,6 +181,7 @@ namespace eval ::rwsitemap {
                     if {[string match $menutype "node"]} {
                         lappend menugroup $menu_o
                     }
+
                 }
 
                 lappend menu_s $menugroup

@@ -1,6 +1,6 @@
 namespace eval ::rivetweb {
     set default_template    retention
-    set default_menu        sitolan
+    set default_menu        main
     set default_menu_pos    left
     
     set default_lang        en
