@@ -125,10 +125,10 @@ namespace eval ::rivetweb {
     foreach ds $::rivetweb::datasources {
 
         set dsmenu [$ds menu_list $::rivetweb::current_page]
-        apache_log_error debug "got $dsmenu from $ds"
-
-        set ::rivetweb::pagemenus [dict merge $::rivetweb::pagemenus $dsmenu]
-
+        apache_log_error debug "got '$dsmenu' from $ds"
+        dict for {k v} $dsmenu {
+            dict lappend ::rivetweb::pagemenus $k {*}$v
+        }
     }
 
     ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"

@@ -165,7 +165,7 @@ namespace eval ::rwsitemap {
                 lappend menugroup $menu_o
 
             }
-            lappend menu_s $menugroup
+            if {[llength $menugroup] > 0} { lappend menu_s $menugroup }
             
             $::rivetweb::logger log debug "walking up ancestors ->> [$sitemap_tree ancestors $group_id]"    
 
@@ -191,8 +191,7 @@ namespace eval ::rwsitemap {
 
             $::rivetweb::logger log err "No menu group $group_id"
 
-        }
-        
+        }        
         $::rivetweb::logger log debug "returning [lreverse $menu_s] as menulist for group '$group_id'"
         return [concat {*}[lreverse $menu_s]]
     }

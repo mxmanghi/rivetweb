@@ -751,7 +751,10 @@ namespace eval ::rwdatas {
         #puts "<pre>menul: $menul</pre>"
         set menudb [dict create]
         foreach {group menuid} $menul {
-            dict set menudb $group [$sitemap menu_list $menuid]
+            set menuid_list [$sitemap menu_list $menuid]
+            if { [llength $menuid_list] > 0 } {
+                dict set menudb $group $menuid_list
+            }
         }
         #puts "<pre>menudb: $menudb</pre>"
 
