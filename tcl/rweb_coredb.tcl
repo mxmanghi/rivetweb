@@ -8,7 +8,6 @@
 #
 
 package require tdom
-package require rwconf
 package require rwpage
 
 namespace eval ::rwebdb {

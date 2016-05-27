@@ -10,6 +10,7 @@ lappend auto_path $rweb_root $website_root
 
 package require rwlogger
 package require rivetweb
+package require rwconf
 
 ::rivetweb::setup $rweb_root $website_root 
 

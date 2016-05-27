@@ -80,14 +80,14 @@ namespace eval ::rivetweb {
     variable rewrite_links          false
     variable rewrite_code
 
-# URL encoded parameters to be replicated by makeUrl and composeUrl
-
-    variable passthroughs           {lang language reset template}
-
 # rewrite_par is the name of the urlencoded parameter used
 # to signal which form of rewriting was detected
 
     variable rewrite_par            static
+
+# URL encoded parameters to be replicated by makeUrl and composeUrl
+
+    variable passthroughs           [list lang language reset template $rewrite_par]
 
 # 'picts_path' and 'css_path' are paths relative to the 
 # website root. 'running_*_paths' are needed because paths

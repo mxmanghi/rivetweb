@@ -111,11 +111,11 @@ namespace eval ::rivetweb {
             set argsmap($param) [::rivet::escape_string $value]
         }
 
-        foreach passthrough $::rivetweb::passthroughs {
-            if {[::rivet::var_qs exists $passthrough]} {
-                set argsmap($passthrough) [::rivet::var_qs get $passthrough]
-            }	
-        }
+        #foreach passthrough $::rivetweb::passthroughs {
+        #    if {[::rivet::var_qs exists $passthrough]} {
+        #        set argsmap($passthrough) [::rivet::var_qs get $passthrough]
+        #    }	
+        #}
 
         set arglist [array get argsmap]
         set urlargs {}
@@ -490,6 +490,21 @@ namespace eval ::rivetweb {
         return $htmltext
     }
     namespace export build_html_menu
+
+# -- set_rewrite_par
+#
+#   method to change the url argument that triggers the URI rewriting
+#  We need a method, not just a variable because the 'passthroughs' 
+#  list need update (a strong indication that we need to move to a class)
+#
+    proc set_rewrite_par {rw_par} {
+        variable rewrite_par
+        variable passthroughs
+
+        set rewrite_par     $rw_par
+        set passthroughs    [list lang language reset template $rewrite_par]
+    }
+    namespace export set_rewrite_par
 
     namespace ensemble create
 }

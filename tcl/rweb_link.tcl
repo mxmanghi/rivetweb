@@ -6,7 +6,6 @@
 #
 
 package require Itcl
-package require rwconf
 package require rwlogger
 
 namespace eval ::rwlink {

@@ -127,6 +127,7 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::willHandle {arglist keyvar} {
         upvar $keyvar key 
 
+        ## debug puts "<pre>arglist = $arglist</pre>"
         set key         index
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
@@ -135,6 +136,7 @@ namespace eval ::rwdatas {
         } else {
 
             set ag $arglist
+            ### puts "<pre>ag = $ag ($::rivetweb::passthroughs)</pre>"
             foreach {urlarg argval} $arglist {
                 if {[lsearch $::rivetweb::passthroughs $urlarg] < 0} {
                     continue
@@ -142,9 +144,11 @@ namespace eval ::rwdatas {
                     set ag [lassign $ag a b]
                 }
             }
+
             if {[llength $ag] > 0 } {
                 return -code continue -errorcode rw_continue
             }
+            ### puts "<pre>ag = $ag</pre>"
         } 
         if {$key == "index"} { set ::rivetweb::is_homepage 1 }
 
