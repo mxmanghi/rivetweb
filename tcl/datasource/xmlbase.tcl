@@ -838,9 +838,17 @@ namespace eval ::rwdatas {
         if {[llength $stored_args]} {
             set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
         }
-        foreach passthrough $::rivetweb::passthroughs {
-            if {[::rivet::var_qs exists $passthrough]} {
-                dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
+        foreach sticky_par $::rivetweb::passthroughs {
+
+        # we skip ::rivetweb::rewrite_par if we are alredy rewriting links
+        # as the whole point of link rewriting is charging mod_rewrite rules 
+        # to figure it out
+
+            if {$::rivetweb::rewrite_links && \
+                ($sticky_par == $::rivetweb::rewrite_par)} { continue }
+
+            if {[::rivet::var_qs exists $sticky_par]} {
+                dict set urlargs $sticky_par [::rivet::var_qs get $sticky_par]
             }	
         }
 

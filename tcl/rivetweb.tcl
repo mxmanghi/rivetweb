@@ -128,7 +128,6 @@ namespace eval ::rivetweb {
                 lappend urlargs "${param}=${value}"
             }
             set final_url "${rewritten_url}?[join $urlargs "&"]"
-
         } else {
             set final_url $rewritten_url
         }
