@@ -767,40 +767,33 @@ namespace eval ::rwdatas {
 # componendo la url finale (chiamando makeUrl)
 
     ::itcl::body XMLBase::to_url {lm} {
+        set linkmodel $::rivetweb::linkmodel
+        set link_descriptor [::rwdatas::XMLBase::makeUrl $lm]
+        switch [$linkmodel property $lm type] {
 
-        set linkmodel   $::rivetweb::linkmodel
-        set link_ref    [$linkmodel reference $lm]
-        set ltype       [$linkmodel property $lm type]  
-        set urlargs     {}
-        if {($ltype == "internal")  || \
-            ($ltype == "local")     || \
-            ($ltype == "external")} {
-
-            set link_descriptor [::rwdatas::XMLBase::makeUrl $lm]
-            set urlargs [dict get $link_descriptor args]
-            set href    [dict get $link_descriptor href]
-
-            if {[llength $urlargs]} {
-                set urlpars {}
-                foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
-                set href "${href}?[join $urlpars "&"]"
+            internal {
+                $linkmodel set_attribute lm [list href [::rwdatas::XMLBase::makeUrl $lm]]
             }
-
-            if {[$linkmodel get_urltarget $lm target]} {
-                set href "${href}#$target"
+            local {
+                set lref [$linkmodel reference $lm]
+                if {[::rwdatas::Datasource::get_alias $lref lref]} {
+                    set href $lref
+                } else {
+                    set href [file join "/" $LOCAL_PAGES $lref]
+                }
+                $linkmodel set_attribute lm [list href $href]
             }
+            external {
+                $linkmodel set_attribute lm [list href [$linkmodel reference $lm]]
+            }
+            default {
 
-            $linkmodel set_attribute lm [list href $href]
-            return $lm
-
-        } else {
-
-            ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"
-            $linkmodel set_attribute lm {href ""}
-            return $lm
+                ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"
+                $::rivetweb::linkmodel set_attribute lm {href ""}
+            }
 
         }
-
+        return $lm
     }
 
 # -- makeUrl
@@ -833,41 +826,13 @@ namespace eval ::rwdatas {
 
 # URL arguments composition
 
-        set urlargs [dict create]
-        set stored_args [$linkmodel arguments $lm]
-        if {[llength $stored_args]} {
-            set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
+        set urlargs [dict create show $reference {*}[$linkmodel arguments $lm]]
+        if {[$linkmodel get_urltarget $lm target]} {
+            lappend urlargs # $target
         }
+ 
+        return [::rivetweb::composeUrl {*}$urlargs] 
 
-        set urlargs [::rivetweb merge_sticky_args $urlargs]
-
-# we read env(DOCUMENT_URI) to infer the template name
-
-        switch [$linkmodel property $lm type] {
-            internal {
-                set href [::rivet::env DOCUMENT_URI]
-                dict set urlargs show $reference
-                if {$::rivetweb::rewrite_links} {
-
-                    set rp [::rivet::var_qs get $::rivetweb::rewrite_par] 
-                    ::rivetweb::rewrite_url $rp $href urlargs href
-
-                } 
-            }
-            external {
-                set href [$linkmodel reference $lm]
-            }
-            local {
-                set lref [$linkmodel reference $lm]
-                if {[::rwdatas::Datasource::get_alias $lref lref]} {
-                    set href $lref
-                } else {
-                    set href [file join "/" $LOCAL_PAGES $lref]
-                }
-            }
-        }
-
-        return [dict create href $href args $urlargs]
     }
 
 # -- buildSimplePage 

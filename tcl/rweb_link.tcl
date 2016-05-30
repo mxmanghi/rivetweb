@@ -128,7 +128,7 @@ namespace eval ::rwlink {
     namespace export set_attribute
 
     proc get_attribute {linkobj attribute} {
-        return [$linkobj attribute $attribute]]
+        return [$linkobj attribute $attribute]
     }
     namespace export get_attribute
 

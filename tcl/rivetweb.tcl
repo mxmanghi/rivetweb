@@ -118,6 +118,10 @@ namespace eval ::rivetweb {
         #}
 
         set arglist [array get argsmap]
+
+        # finally we blend into the arguments possible sticky arguments
+
+        set arglist [::rivetweb merge_sticky_args $arglist]
         set urlargs {}
 
         ::rivet::apache_log_error debug "URL $rewritten_url -> $arglist"
@@ -526,7 +530,7 @@ namespace eval ::rivetweb {
             if {$rewrite_links && \
                 ($sticky_arg == $rewrite_par)} { continue }
 
-            if {[::rivet::var_qs exists $sticky_arg]} {
+            if {[::rivet::var_qs exists $sticky_arg] & ![dict exists $urlargs $sticky_arg]} {
                 dict set urlargs $sticky_arg [::rivet::var_qs get $sticky_arg]
             }
         }
