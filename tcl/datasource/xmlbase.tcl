@@ -838,19 +838,8 @@ namespace eval ::rwdatas {
         if {[llength $stored_args]} {
             set urlargs [dict merge $urlargs [dict create {*}$stored_args]]
         }
-        foreach sticky_par $::rivetweb::passthroughs {
 
-        # we skip ::rivetweb::rewrite_par if we are alredy rewriting links
-        # as the whole point of link rewriting is charging mod_rewrite rules 
-        # to figure it out
-
-            if {$::rivetweb::rewrite_links && \
-                ($sticky_par == $::rivetweb::rewrite_par)} { continue }
-
-            if {[::rivet::var_qs exists $sticky_par]} {
-                dict set urlargs $sticky_par [::rivet::var_qs get $sticky_par]
-            }	
-        }
+        set urlargs [::rivetweb merge_sticky_args $urlargs]
 
 # we read env(DOCUMENT_URI) to infer the template name
 
@@ -861,16 +850,14 @@ namespace eval ::rwdatas {
                 if {$::rivetweb::rewrite_links} {
 
                     set rp [::rivet::var_qs get $::rivetweb::rewrite_par] 
-
                     ::rivetweb::rewrite_url $rp $href urlargs href
+
                 } 
             }
             external {
                 set href [$linkmodel reference $lm]
             }
             local {
-#               set href [file join [file dirname [env DOCUMENT_URI]] ${local_pages} [$linkmodel reference $lm]]
-
                 set lref [$linkmodel reference $lm]
                 if {[::rwdatas::Datasource::get_alias $lref lref]} {
                     set href $lref

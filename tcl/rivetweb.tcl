@@ -505,6 +505,36 @@ namespace eval ::rivetweb {
     }
     namespace export set_rewrite_par
 
+# -- merge_sticky_pars
+#
+#
+    proc merge_sticky_args {urlargs} {
+        variable passthroughs
+        variable rewrite_par
+        variable rewrite_links
+
+        # we skip ::rivetweb::rewrite_par if we are alredy rewriting links
+        # as the whole point of link rewriting is charging mod_rewrite rules 
+        # to figure it out
+
+        foreach sticky_arg $passthroughs {
+
+            # we skip ::rivetweb::rewrite_par if we are alredy rewriting links
+            # as the whole point of link rewriting is charging mod_rewrite rules 
+            # to figure it out
+
+            if {$rewrite_links && \
+                ($sticky_arg == $rewrite_par)} { continue }
+
+            if {[::rivet::var_qs exists $sticky_arg]} {
+                dict set urlargs $sticky_arg [::rivet::var_qs get $sticky_arg]
+            }
+        }
+
+        return $urlargs
+    }
+    namespace export merge_sticky_args
+
     namespace ensemble create
 }
 

@@ -139,30 +139,6 @@ namespace eval ::rwdatas {
         return $menudb
     }
 
-# -- rewrite_url
-#
-#
-
-#    ::itcl::body Scripted::rewrite_url {rwcode urlbase urlargs rewritten_base} {
-#        upvar $rewritten_base rwbase
-#        upvar $urlargs        urlencoded
-#
-#        set d [dict create {*}$urlencoded]
-#
-#        ::rivet::apache_log_error notice " --> $d"
-#        if {[dict exists $d f]} {
-#            set rwbase "/[dict get $d f]/"
-#            dict unset d f
-#            set urlencoded $d
-#
-#            ::rivet::apache_log_error notice "URL $rwbase ($urlencoded) rewritten"
-#
-#            return -code break -errorcode rw_break
-#        }
-#
-#        return -code continue -errorcode rw_continue
-#    }
-
 # -- to_url
 
     ::itcl::body Scripted::to_url {lm} {
@@ -170,20 +146,8 @@ namespace eval ::rwdatas {
 
         #set href [::rivet::env SCRIPT_NAME]
         set urlargs [$linkmodel arguments $lm]
-
+        set urlargs [::rivetweb merge_sticky_args $urlargs]
         #::rivet::html "base href: $href ($urlargs)" div b
-
-        foreach passthrough $::rivetweb::passthroughs {
-            if {[var_qs exists $passthrough]} {
-                dict set urlargs $passthrough [::rivet::var_qs get $passthrough]
-            }	
-        }
-#       if {[llength $urlargs]} {
-#           set urlpars {}
-#           foreach {attr attrv} $urlargs { lappend urlpars "$attr=$attrv" }
-#            
-#           set href "${href}?[join $urlpars "&"]"
-#       }
 
         set href [::rivetweb::composeUrl {*}$urlargs]
 
