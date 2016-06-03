@@ -25,10 +25,14 @@ namespace eval ::rwpage {
             dict append pagetext $language $t
         }
 
-        public method pagetext {language {page_text ""} } {
+        public method pagetext {language {page_text ""} {page_title ""}} {
 
             if {$page_text != ""} {
                 $this pagetext_append $language $page_text
+            }
+
+            if {$page_title != ""} {
+                $this set_title $language $page_title
             }
 
             if {[dict exists $pagetext $language]} {
@@ -38,6 +42,8 @@ namespace eval ::rwpage {
             }
 
         }
+
+        public method headline {language} { return [$this title $language] }
 
         public method print_content {language} {
             puts -nonewline [::rivet::xml [$this pagetext $language] $rootelement]
