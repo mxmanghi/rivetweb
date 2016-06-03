@@ -56,7 +56,7 @@ namespace eval ::rwebdb {
 
 # -- store
 #
-# This method stores unconditionally a page model in the in memory 
+# This method stores unconditionally a page model into the in-memory 
 # database. The method should evolve to a simple cache mechanism if
 # required by the size of the web site.
 #
@@ -69,9 +69,10 @@ namespace eval ::rwebdb {
 
         if {[dict exists $sitepages $key]} {
             set pobj [dict get $sitepages $key object]
+            #puts stderr "deleting $pobj"
             if {[catch {$pobj destroy} e]} {
-
-                apache_log_error crit "inconsistent core db entry for key $key"
+ 
+                apache_log_error crit "inconsistent core db entry for key $key ($e)"
 
             }
         }
@@ -112,8 +113,9 @@ namespace eval ::rwebdb {
 # found.
 #
 
-    proc fetch {key} {
+    proc fetch {key datasrc} {
         variable sitepages
+        upvar $datasrc datasource
 
         if {[check $key]} {
 
@@ -123,7 +125,8 @@ namespace eval ::rwebdb {
 
                 $::rivetweb::logger log info \
                         "page for key '$key' is stale, fetching it"
-                set pmodel [fetch_from_source $key]
+                set pmodel [fetch_from_source $key rkey datasource]
+                store $rkey $pmodel $datasource
 
             } else {
 
@@ -133,7 +136,8 @@ namespace eval ::rwebdb {
 
         } else {
 
-            set pmodel [fetch_from_source $key]
+            set pmodel [fetch_from_source $key rkey datasource]
+            store $rkey $pmodel $datasource
 
         }
 
@@ -185,58 +189,62 @@ namespace eval ::rwebdb {
 #
 #
 #
-    proc fetch_from_source {key} {
+    proc fetch_from_source {key returned_key datas} {
         variable sitepages
+        upvar $datas datasource
+        upvar $returned_key rkey
 
         if {[catch {
 
-            set pmodel [$::rivetweb::datasource fetchData $key rkey]
+            set rkey $key
+            set pmodel [$datasource fetchData $key rkey]
 
-        } e]} {
+            if {$pmodel == ""} {
+                if {[check $rkey]} {
 
-            set error_caught $::errorCode
+    # page cache hit
 
-            if {$error_caught == "not_existing"} {
-
-# let's return a conventional page (to be preloaded in the database)
-
-                set pobj [$::rivetweb::rwebdb page not_existing                     \
-                                                $::rivetweb::default_lang           \
-                                                "Content for <b>$key</b> not found" \
-                                                "Rivetweb error: content not found" \
-                                                "Content not found"]
-
-            } else {
-
-# something else went wrong, it's a rivetweb internal error
-
-                $::rivetweb::logger log err "Rivetweb internal error: $error_caught ($e)"
-
-                if {[$::rivetweb::rwebdb check internal_error]} {
-
-                    set pobj [$::rivetweb::rwebdb fetch internal_error]
+                    if {[is_stale $rkey]} {
+                        set pmodel  [fetch_from_source $rkey rkey datasource]
+                    } else {
+                        set pmodel  [dict get $sitepages $rkey object]
+                    }
 
                 } else {
 
-                    set pobj [::rwpage::RWStatic ::#auto internal_error]
+    # this cycle is guaranteed to return a page, al least through datasource ::RWDummy
 
+                    foreach ds $::rivetweb::datasources {
+                                          
+                        set pmodel [$ds fetchData $rkey returned_key]
+                        if {$pmodel != ""} {
+                            set rkey        $returned_key
+                            set datasource  $ds
+                            break
+                        }
+
+                    }
                 }
-                $pobj add_metadata title    "Error creating page for key $key ($error_caught)"
-                $pobj add_metadata header   "Error creating page for key $key"
-                $pobj set_pagetext $::rivetweb::default_lang   \
-                                            "Error creating page for key $key<br /><pre>$e</pre>"
-
             }
+
+        } e]} {
+
+# something else went wrong, it's a rivetweb internal error
+
+            $::rivetweb::logger log err "Rivetweb internal error: $e"
+
+            #set pobj [::rwpage::RWStatic ::#auto internal_error]
+            set pobj [::rwpage::RWBasicPage ::#auto rw_internal_error "Error creating page for key '<b>$key</b>'<br /><pre>$e</pre>"]
+            store rw_internal_error $pobj ::RWDummy
+
+            #$pobj add_metadata title    "Error creating page for key $key"
+            #$pobj add_metadata header   "Error creating page for key $key"
+            #$pobj set_pagetext $::rivetweb::default_lang   \
+            #                            "Error creating page for key '<b>$key</b>'<br /><pre>$e</pre>"
 
             set pmodel $pobj
 
-        } else {
-
-# page is stored in the in memory database
-
-            store $key $pmodel $::rivetweb::datasource
-        }
-
+        } 
         return $pmodel
     }
 
@@ -244,11 +252,11 @@ namespace eval ::rwebdb {
     #
     #
 
-    proc page {key language {txt ""} {header ""} {title ""}} {
+    proc page {key language datasource {txt ""} {header ""} {title ""}} {
 
         if {[$::rivetweb::rwebdb check $key]} {
 
-            set pobj [$::rivetweb::rwebdb fetch $key]
+            set pobj [$::rivetweb::rwebdb fetch $key $datasource]
 
         } else {
 
@@ -279,23 +287,25 @@ namespace eval ::rwebdb {
     proc coredump {} {
         variable sitepages
 
+        set html_dump "<table><tr><th></th><th>object</th><th>timestamp</th><th>datasource</th></tr>\n"
         foreach pageentry [dict keys $sitepages] {
 
             set entry_d [dict create {*}[dict get $sitepages $pageentry]]
-            puts "<table><tr><th colspan=\"2\">$pageentry</th></tr>"
-            foreach prop [dict keys $entry_d] {
+            append html_dump "<tr><td>$pageentry</td>"
+            foreach prop {object timestamp datasource} {
 
-                puts "<tr><td>$prop</td><td>[dict get $entry_d $prop]</td></tr>"
+                append html_dump "<td>[dict get $entry_d $prop]</td>"
 
-            }            
-            puts "</table>"
+            }
+            append html_dump "</tr>\n"
 
         }
-
+        append html_dump "</table>\n"
+        return $html_dump
     }
     namespace export coredump
 
     namespace ensemble create
 }
 
-package provide rwebdb 0.1
+package provide rwebdb 2.0

@@ -17,6 +17,7 @@ package require rwmenu
 package require rwlink
 package require Datasource
 package require struct::stack
+package require rwbasicpage
 
 # temporary variable names
 #
@@ -59,7 +60,8 @@ namespace eval ::rwdatas {
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} 
-        public method resource_exists {resource_key {xmlfn xmlfile}} 
+        public method resource_exists {resource_key} 
+        public method get_resource_repr {resource_key} 
         public proc   to_url {lm}
         public proc   makeUrl {reference} 
         public proc   buildSimplePage {msg cssclass pagina_id} 
@@ -263,8 +265,10 @@ namespace eval ::rwdatas {
 # returns a boolean condition if the resource linked to 'key' has
 # to be refreshed
 #
-    ::itcl::body XMLBase::is_stale {key timereference } {
+    ::itcl::body XMLBase::is_stale {key timereference} {
         
+        if {$key == "xml_page_not_found_error"} { return true }
+
         if {[$this resource_exists $key]} {
             set current_timeref [$this time_reference $key]
             return [expr $timereference < $current_timeref]
@@ -274,29 +278,40 @@ namespace eval ::rwdatas {
         }
     }
 
-# -- resourceExists
-#
+# -- resource_exists
+# -- get_resource_repr
 #
 
-    ::itcl::body XMLBase::resource_exists {key {xml xmlfile}} {
-        upvar $xml xmlf
+    ::itcl::body XMLBase::resource_exists {key} {
 
-        set xmlf [$this xmlfile $key]
-        return [file exists $xmlf]
+        if {$key == "xml_page_not_found_error"} { return 1 }
+
+        return [file exists [$this get_resource_repr $key]]
+    }
+
+    ::itcl::body XMLBase::get_resource_repr {key} {   
+        return [$this xmlfile $key]
     }
 
 
 # -- fetchData 
-#
+# 
 # This method retrieves a page content from the backend. This implementation
 # looks for an XML file in the website directory tree ( now ::XMLBase::static_pages). 
-#
 #
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
+        
+        set rkey $key
+        if {$key == "xml_page_not_found_error"} {
 
-        if {[$this resource_exists $key xmlfile]} {
+            set pagedbentry [::rwpage::RWBasicPage ::#auto $key "XML File not found"]
+
+        } elseif {[$this resource_exists $key]} {
+
+            set xmlfile [$this get_resource_repr $key]
+
             $::rivetweb::logger log info "->opening $xmlfile" 
             if {[catch {
                 set xmlfp    [open $xmlfile r]
@@ -306,19 +321,28 @@ namespace eval ::rwdatas {
 #               puts stderr $xmldata
                 close $xmlfp
             } fileioerr]} {
-                set notfound_msg "Impossible to found page '$key' ($fileioerr)"
-                $::rivetweb::logger err "[$this name] $notfound_msg"
-                return [XMLBase::buildSimplePage $notfound_msg message page_not_found_error]
+                set page_error_msg "Impossible to read page '$key' ($fileioerr)"
+                $::rivetweb::logger err "[$this name] $page_error_msg"
+                return [XMLBase::buildSimplePage    \
+                                $page_error_msg     \
+                                message xmlbase_error_reading_data]
             } else {
-                set pagedbentry [buildPageEntry $key $xmldata rkey]
-                return $pagedbentry
+                set pagedbentry [$this buildPageEntry $key $xmldata rkey]
             }
+
         } else {
-            $::rivetweb::logger log info "$xmlfile not found"
-            set notexisting_msg "The requested page does not exist"
-            return -code error  -errorcode not_existing         \
-                                -errorinfo $notexisting_msg     $notexisting_msg
+
+            $::rivetweb::logger log debug "page for key '$key' not found"
+            set pagedbentry ""
+            set rkey xml_page_not_found_error
+
+            #set notexisting_msg "The requested page does not exist"
+            #return -code error  -errorcode not_existing        \
+            #                    -errorinfo $notexisting_msg $notexisting_msg
+
         }
+
+        return $pagedbentry
     }
 
 # -- has_updates
@@ -768,7 +792,6 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::to_url {lm} {
         set linkmodel $::rivetweb::linkmodel
-        set link_descriptor [::rwdatas::XMLBase::makeUrl $lm]
         switch [$linkmodel property $lm type] {
 
             internal {

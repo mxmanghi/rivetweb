@@ -72,5 +72,13 @@
                 <param value="dump">rvt</param>
             </args>
         </link>
+        <link>
+            <datasource>RWDummy</datasource>
+            <text>Embedded Database Dump<info>Testing basic scripting in Rivetweb</info></text>
+            <args>
+                <param value="1">coredump</param>
+            </args>
+        </link>
+
     </menu>
 </sitemenus>

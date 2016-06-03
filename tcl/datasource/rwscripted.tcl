@@ -32,6 +32,9 @@ namespace eval ::rwdatas {
         public method is_stale {key timereference } { return false }
         public method menu_list {page} 
         public proc   to_url {lm}
+        public method resource_exists {resource_key} 
+        public method get_resource_repr {resource_key} 
+        public method name {} { return "Scripted" }
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
     }
 
@@ -66,6 +69,15 @@ namespace eval ::rwdatas {
         }
     }
 
+    ::itcl::body Scripted::resource_exists {key} {
+        return [dict exists $scriptsdb $key]
+    }
+
+    ::itcl::body Scripted::get_resource_repr {key} {   
+        return [dict get $scriptsdb $key object]
+    }
+
+
 # -- willHandle
 #
 #
@@ -75,7 +87,7 @@ namespace eval ::rwdatas {
         set varsqs  [dict create {*}$arglist]
         if {[dict exists $varsqs f]} {
             set key [dict get $varsqs f]
-            if {[dict exists $scriptsdb $key]} {
+            if {[$this resource_exists $key]} {
 
                 $::rivetweb::logger log debug    \
                                     "mapping fun $key ([dict get $scriptsdb $key]) for processing"
@@ -100,12 +112,19 @@ namespace eval ::rwdatas {
     ::itcl::body Scripted::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
 
-        set rkey $key
-        set scriptobj [dict get $scriptsdb $rkey object]
-        $scriptobj setup $varsqs
+        set newpage ""
+        if {[$this resource_exists $key]} {
 
-        set newpage [::rwpage::RWScripted ::#auto $key $scriptobj]
-        $newpage put_metadata $varsqs
+            set rkey $key
+            set scriptobj [$this get_resource_repr $key]
+            $scriptobj setup $varsqs
+
+            set newpage [::rwpage::RWScripted ::#auto $key $scriptobj]
+            $newpage put_metadata $varsqs
+
+        } else {
+            set rkey rwscript_not_found_error
+        }
 
         return $newpage
     }

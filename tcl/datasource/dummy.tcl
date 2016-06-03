@@ -20,17 +20,37 @@ namespace eval ::rwdatas {
         private variable messages
 
         public method init {args} {
-            set messages [dict create unknown_error_condition "Unknwon error condition (url args \$urlargs)" \
-                                      page_not_found_error    "Invalid URL arguments: <b>\$urlargs</b>"]
+            set messages [dict create unknown_error_condition "Unknwon error condition (key: \$key)" \
+                                      page_not_found_error    "page not found error (key: \$key)"]
         }
         public method name {} { return "Dummy" }
+        public method resource_exists {resource_key} { return true }
+        public proc to_url {lm} {
+
+            set linkmodel   $::rivetweb::linkmodel
+
+            set urlargs [$linkmodel arguments $lm]
+            set urlargs [::rivetweb merge_sticky_args $urlargs]
+            #::rivet::html "base href: $href ($urlargs)" div b
+
+            set href [::rivetweb::composeUrl {*}$urlargs]
+
+# we now set the href attribute of the link
+
+            $linkmodel set_attribute lm [list href $href]
+
+            return $lm
+        }
 
         public method willHandle {arglist keyvar} { 
             upvar $keyvar key 
 
-            set urlargs $arglist
-
-            set key page_not_found_error
+            set urlargs [dict create {*}$arglist]
+            if {[dict exists $urlargs coredump]} { 
+                set key rw_coredump
+            } else {
+                set key page_not_found_error
+            }
             return -code break -errorcode rw_ok 
         }
 
@@ -38,6 +58,10 @@ namespace eval ::rwdatas {
             upvar $reassigned_key rkey
 
             set rkey $key
+            if {$key == "rw_coredump"} {
+                return [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
+            }
+
             if {![dict exists $messages $key]} {
                 set rkey unknown_error_condition
             }

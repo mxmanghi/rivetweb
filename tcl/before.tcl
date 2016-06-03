@@ -105,7 +105,7 @@ namespace eval ::rivetweb {
 
     $::rivetweb::logger log info "processing request for '$page_key'"
     set ::rivetweb::page_content $page_key
-    set ::rivetweb::current_page [$::rivetweb::rwebdb fetch $::rivetweb::page_key]
+    set ::rivetweb::current_page [$::rivetweb::rwebdb fetch $::rivetweb::page_key ::rivetweb::datasource]
     set ::rivetweb::current_page [$::rivetweb::current_page prepare $::rivetweb::language $argsqs]
 
     set ::rivetweb::current_pmodel $::rivetweb::current_page

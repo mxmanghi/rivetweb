@@ -22,7 +22,7 @@ namespace eval ::rwdatas {
         public method synchData {key data_dict} {}
         public method createData {key data_dict} {}
         public method storeData {key data_dict} {}
-        public method is_stale {key timereference} { return false }
+        public method is_stale {key timereference} { return true }
         public method dispose {key} {}
         public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -31,6 +31,7 @@ namespace eval ::rwdatas {
         public proc   set_alias {alias aliasdef}
         public proc   get_alias {alias aliasdef}
         public method resource_exists {resource_key} { return false }
+        public method get_resource_repr {resource_key}  { return "" }
         public proc to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}
