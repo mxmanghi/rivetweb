@@ -319,7 +319,9 @@ namespace eval ::rwebdb {
                 switch $prop {
 
                     page_key {
-                        append html_dump [::rivet::xml $pageentry td]
+                        set page [dict get $entry_d object]
+                        set urlargs [$page url_args]
+                        append html_dump [::rivet::xml $pageentry td [list a href [::rivetweb::composeUrl {*}$urlargs]]]
                     }
                     default {
                         append html_dump [::rivet::xml [dict get $entry_d $prop] td]

@@ -24,12 +24,13 @@ namespace eval ::rwpage {
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
         public method set_title {language title_t}
-        public method prepare {language args}
+        public method prepare {language argsqs}
+        public method url_args {} { return $stored_vars }
         public method languages { } 
         public method metadata {{key ""}}
         public method postproc_hooks { ds hooks_d hooks_class {language ""}}
         public method metadata_hooks { hooks_d } 
-        public method print_content {language}
+        public method print_content { language }
         public method destroy {}
         public method to_string {}
         public method title {language {txt ""}}
@@ -124,9 +125,7 @@ namespace eval ::rwpage {
 # 
 
     ::itcl::body RWPage::put_metadata {dictionary} {
- 
         set metadata $dictionary
-
     }
 
 # -- prepare
@@ -145,9 +144,7 @@ namespace eval ::rwpage {
 #
 
     ::itcl::body RWPage::languages { } {
-
         return $::rivetweb::default_lang
-
     }
 
 
