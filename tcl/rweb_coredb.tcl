@@ -287,21 +287,46 @@ namespace eval ::rwebdb {
     proc coredump {} {
         variable sitepages
 
-        set html_dump "<table><tr><th></th><th>object</th><th>timestamp</th><th>datasource</th></tr>\n"
+    # datasource table
+        set dstable [::rivet::xml Datasources tr {th colspan 2}]
+        foreach ds $::rivetweb::datasources {
+            set tbrow "[::rivet::xml $ds td][::rivet::xml [$ds name] td]"
+            append dstable [::rivet::xml $tbrow tr]
+        }
+        set dstable [::rivet::xml $dstable table]
+
+    # page database table
+
+        set row 1
+        set html_dump ""
         foreach pageentry [dict keys $sitepages] {
 
-            set entry_d [dict create {*}[dict get $sitepages $pageentry]]
-            append html_dump "<tr><td>$pageentry</td>"
-            foreach prop {object timestamp datasource} {
+            foreach prop {page_key object timestamp datasource} {
+                if {$row == 1} {
 
-                append html_dump "<td>[dict get $entry_d $prop]</td>"
+                    append html_dump [::rivet::xml $prop th]
+                    set entry_d [dict create {*}[dict get $sitepages $pageentry]]
 
+                } else {
+
+                    switch $prop {
+
+                        page_key {
+                            append html_dump [::rivet::xml $pageentry td]
+                        }
+                        default {
+                            append html_dump [::rivet::xml [dict get $entry_d $prop] td]
+                        }
+
+                    }
+                }
             }
-            append html_dump "</tr>\n"
-
+            set html_dump [::rivet::xml $html_dump tr]
+            incr row
         }
-        append html_dump "</table>\n"
-        return $html_dump
+        set html_dump [::rivet::xml $html_dump table]
+
+        return [append dstable $html_dump]
     }
     namespace export coredump
 

@@ -27,7 +27,7 @@ namespace eval ::rwdatas {
         public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
         public method menu_list {page} { return [dict create] }
-        public method name {} { return "Datasource" }
+        public method name {} { return [$this info class] }
         public proc   set_alias {alias aliasdef}
         public proc   get_alias {alias aliasdef}
         public method resource_exists {resource_key} { return false }
