@@ -20,8 +20,14 @@ namespace eval ::rwdatas {
         private variable messages
 
         public method init {args} {
-            set messages [dict create unknown_error_condition "Unknwon error condition (key: \$key)" \
-                                      page_not_found_error    "page not found error (key: \$key)"]
+            set messages [dict create \
+    unknown_error_condition "Unknwon error condition (key: \$key)" \
+    page_not_found_error    "page not found error (key: \$key)" \
+    wrong_datasource_returned_key {
+A datasource didn't returned a valid page object
+and failed to reassigned the resource key } \
+
+]
         }
         public method name {} { return "Dummy" }
         public method resource_exists {resource_key} { return true }

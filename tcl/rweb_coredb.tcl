@@ -200,6 +200,12 @@ namespace eval ::rwebdb {
             set pmodel [$datasource fetchData $key rkey]
 
             if {$pmodel == ""} {
+                if {[string match $key $rkey]} {
+
+                    set rkey wrong_datasource_returned_key
+                    set datasource RWDummy
+
+                }
                 if {[check $rkey]} {
 
     # page cache hit
@@ -225,6 +231,7 @@ namespace eval ::rwebdb {
 
                     }
                 }
+
             }
 
         } e]} {
@@ -300,25 +307,24 @@ namespace eval ::rwebdb {
         set row 1
         set html_dump ""
         foreach pageentry [dict keys $sitepages] {
+            if {$row == 1} {
+                foreach prop {page_key object timestamp datasource} {
+                    append html_dump [::rivet::xml $prop th]
+                }
+                set html_dump [::rivet::xml $html_dump tr]
+            } 
 
             foreach prop {page_key object timestamp datasource} {
-                if {$row == 1} {
+                set entry_d [dict create {*}[dict get $sitepages $pageentry]]
+                switch $prop {
 
-                    append html_dump [::rivet::xml $prop th]
-                    set entry_d [dict create {*}[dict get $sitepages $pageentry]]
-
-                } else {
-
-                    switch $prop {
-
-                        page_key {
-                            append html_dump [::rivet::xml $pageentry td]
-                        }
-                        default {
-                            append html_dump [::rivet::xml [dict get $entry_d $prop] td]
-                        }
-
+                    page_key {
+                        append html_dump [::rivet::xml $pageentry td]
                     }
+                    default {
+                        append html_dump [::rivet::xml [dict get $entry_d $prop] td]
+                    }
+
                 }
             }
             set html_dump [::rivet::xml $html_dump tr]
