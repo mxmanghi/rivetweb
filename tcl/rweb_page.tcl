@@ -12,11 +12,13 @@ namespace eval ::rwpage {
         private variable metadata
         private variable key
         private variable stored_vars
+        private variable hits
 
         constructor {pagekey} {
             set key         $pagekey
             set metadata    [dict create]
             set stored_vars [dict create]
+            set hits        0
         }
 
         public method key {} { return $key }
@@ -134,6 +136,8 @@ namespace eval ::rwpage {
 # 
     ::itcl::body RWPage::prepare {language argsqs} { 
         set stored_vars $argsqs 
+        incr hits
+
         return $this
     }
 
@@ -229,7 +233,7 @@ namespace eval ::rwpage {
 # -- to_string 
 #
 
-    ::itcl::body RWPage::to_string {} { return $metadata }
+    ::itcl::body RWPage::to_string {} { return [dict create metadata $metadata hits $hits key $key] }
 
 # -- headline
 #

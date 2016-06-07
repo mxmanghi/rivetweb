@@ -8,8 +8,23 @@
 package require Itcl
 package require rwconf
 package require rwlogger
+package require rwpage
 package require Datasource
 package require rwbasicpage
+
+namespace eval ::rwpage {
+
+    ::itcl::class RWDumpPage {
+        inherit RWPage
+
+        constructor {pagekey} {RWPage::constructor $pagekey} {}
+
+        public method print_content { language } {
+            puts -nonewline [$::rivetweb::rwebdb coredump]
+        }
+    }
+}
+    
 
 namespace eval ::rwdatas {
 
@@ -48,6 +63,19 @@ and failed to reassigned the resource key } \
             return $lm
         }
 
+        public method is_stale {key timereference} {
+
+            switch $key {
+                rw_coredump {
+                    return false
+                }
+                default {
+                    return [$this chain $key $timereference]
+                }
+            }
+
+        }
+
         public method willHandle {arglist keyvar} { 
             upvar $keyvar key 
 
@@ -65,7 +93,8 @@ and failed to reassigned the resource key } \
 
             set rkey $key
             if {$key == "rw_coredump"} {
-                set pobj [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
+                #set pobj [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
+                set pobj [::rwpage::RWDumpPage ::#auto rw_coredump]
                 $pobj set_title $::rivetweb::default_lang "Core database dump"
                 
             } else {

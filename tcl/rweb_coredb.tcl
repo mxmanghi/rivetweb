@@ -295,6 +295,7 @@ namespace eval ::rwebdb {
         variable sitepages
 
     # datasource table
+
         set dstable [::rivet::xml Datasources tr {th colspan 2}]
         foreach ds $::rivetweb::datasources {
             set tbrow "[::rivet::xml $ds td][::rivet::xml [$ds name] td]"
@@ -307,6 +308,7 @@ namespace eval ::rwebdb {
         set row 1
         set html_dump ""
         foreach pageentry [dict keys $sitepages] {
+
             if {$row == 1} {
                 foreach prop {page_key object timestamp datasource} {
                     append html_dump [::rivet::xml $prop th]
@@ -314,7 +316,8 @@ namespace eval ::rwebdb {
                 set html_dump [::rivet::xml $html_dump tr]
             } 
 
-            foreach prop {page_key object timestamp datasource} {
+            foreach prop {page_key object timestamp datasource hits} {
+
                 set entry_d [dict create {*}[dict get $sitepages $pageentry]]
                 switch $prop {
 
@@ -323,11 +326,20 @@ namespace eval ::rwebdb {
                         set urlargs [$page url_args]
                         append html_dump [::rivet::xml $pageentry td [list a href [::rivetweb::composeUrl {*}$urlargs]]]
                     }
+                    timestamp {
+                        set ts [clock format [dict get $entry_d $prop]]
+                        append html_dump [::rivet::xml $ts td]
+                    }
+                    hits {
+                        set hits [dict get [$page to_string] hits]
+                        append html_dump [::rivet::xml $hits td]
+                    }
                     default {
                         append html_dump [::rivet::xml [dict get $entry_d $prop] td]
                     }
 
                 }
+
             }
             set html_dump [::rivet::xml $html_dump tr]
             incr row
