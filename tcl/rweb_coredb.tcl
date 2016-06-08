@@ -310,12 +310,15 @@ namespace eval ::rwebdb {
         foreach pageentry [dict keys $sitepages] {
 
             if {$row == 1} {
-                foreach prop {page_key object timestamp datasource} {
-                    append html_dump [::rivet::xml $prop th]
+                set cell_style [list th style "padding: 0.2em 1em;"]
+                foreach prop {page_key object timestamp datasource hits} {
+                    append html_dump [::rivet::xml $prop $cell_style]
                 }
                 set html_dump [::rivet::xml $html_dump tr]
             } 
 
+            set data_row {}
+            set cell_style [list td style "padding: 0.2em 1em;"]
             foreach prop {page_key object timestamp datasource hits} {
 
                 set entry_d [dict create {*}[dict get $sitepages $pageentry]]
@@ -324,29 +327,30 @@ namespace eval ::rwebdb {
                     page_key {
                         set page [dict get $entry_d object]
                         set urlargs [$page url_args]
-                        append html_dump [::rivet::xml $pageentry td [list a href [::rivetweb::composeUrl {*}$urlargs]]]
+                        #puts [list href=[::rivetweb::composeUrl {*}$urlargs] <br/>]
+                        append data_row [::rivet::xml $pageentry td [list a href [::rivetweb::composeUrl {*}$urlargs] {*}[lrange $cell_style 1 end]]]
                     }
                     timestamp {
                         set ts [clock format [dict get $entry_d $prop]]
-                        append html_dump [::rivet::xml $ts td]
+                        append data_row [::rivet::xml $ts $cell_style]
                     }
                     hits {
                         set hits [dict get [$page to_string] hits]
-                        append html_dump [::rivet::xml $hits td]
+                        append data_row [::rivet::xml $hits $cell_style]
                     }
                     default {
-                        append html_dump [::rivet::xml [dict get $entry_d $prop] td]
+                        append data_row [::rivet::xml [dict get $entry_d $prop] $cell_style]
                     }
 
                 }
 
             }
-            set html_dump [::rivet::xml $html_dump tr]
+            append html_dump [::rivet::xml $data_row tr]
             incr row
         }
         set html_dump [::rivet::xml $html_dump table]
 
-        return [append dstable $html_dump]
+        return [append dstable "\n" $html_dump]
     }
     namespace export coredump
 
