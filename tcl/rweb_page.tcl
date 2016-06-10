@@ -218,7 +218,6 @@ namespace eval ::rwpage {
                 ::rivetweb::$processor $this
             }
         }
-
     }
 
 # -- print_content

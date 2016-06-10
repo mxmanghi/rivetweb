@@ -5,7 +5,6 @@
 # 
 # $Id: download.tcl 2104 2011-12-18 00:24:45Z massimo.manghi $
 #
-#   apache_log_error notice "[info script] -> [pwd]"
 
     package require fileutil::magic::mimetype
 

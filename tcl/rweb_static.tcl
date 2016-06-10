@@ -180,13 +180,13 @@ namespace eval ::rwpage {
 
             set xmlpp [dict get $hooks_d $hooks_class]
 
-            foreach hk [dict keys $xmlpp] {
+            dict for {hk hkdescr} $xmlpp {
 
-                apache_log_error debug "processing hook: [dict get $xmlpp $hk descrip]"
-                set processor [dict get $xmlpp $hk function]
+                ::rivet::apache_log_error debug "processing hook '$hk': [dict get $hkdescr descrip]"
+                set processor [dict get $hkdescr function]
                 set text_mode "text"
-                if {[dict exists $xmlpp $hk textmode]} {
-                    set text_mode [dict get $xmlpp $hk textmode]
+                if {[dict exists $hkdescr textmode]} {
+                    set text_mode [dict get $hkdescr textmode]
                 }
 
 # we must fetch the content for a specific language and get the 
@@ -225,10 +225,11 @@ namespace eval ::rwpage {
 
                         [$el2xform parentNode] replaceChild $new_element $el2xform
                         if {[dict exists $new_element_d text]} {
+
                             set elem_text   [dict get $new_element_d text]
                             $page_xml createTextNode $elem_text new_element_text
-
                             $new_element appendChild $new_element_text
+
                         }
 
                         if {[dict exists $new_element_d expansion]} {
@@ -253,15 +254,17 @@ namespace eval ::rwpage {
 #
 #
     ::itcl::body RWStatic::languages { } {
-	return [dict keys $content]
+	    return [dict keys $content]
     }
 
 # -- to_string 
 #
+# object serialization through dictionary returned by the 
+# base class method. we merge into it this class content
 #
 
     ::itcl::body RWStatic::to_string {} { 
-        return [dict merge [chain] $content]
+        return [dict merge [RWPage::to_string] $content]
     }
 
 # -- title

@@ -328,7 +328,8 @@ namespace eval ::rwebdb {
                         set page [dict get $entry_d object]
                         set urlargs [$page url_args]
                         #puts [list href=[::rivetweb::composeUrl {*}$urlargs] <br/>]
-                        append data_row [::rivet::xml $pageentry td [list a href [::rivetweb::composeUrl {*}$urlargs] {*}[lrange $cell_style 1 end]]]
+                        append data_row [::rivet::xml $pageentry \
+                            td [list a href [::rivetweb::composeUrl {*}$urlargs] {*}[lrange $cell_style 1 end]]]
                     }
                     timestamp {
                         set ts [clock format [dict get $entry_d $prop]]

@@ -64,7 +64,6 @@ namespace eval ::rwdatas {
         public method get_resource_repr {resource_key} 
         public proc   to_url {lm}
         public proc   makeUrl {reference} 
-        public proc   buildSimplePage {msg cssclass pagina_id} 
     }
 
     ::itcl::body XMLBase::init {args} {
@@ -323,9 +322,7 @@ namespace eval ::rwdatas {
             } fileioerr]} {
                 set page_error_msg "Impossible to read page '$key' ($fileioerr)"
                 $::rivetweb::logger err "[$this name] $page_error_msg"
-                return [XMLBase::buildSimplePage    \
-                                $page_error_msg     \
-                                message xmlbase_error_reading_data]
+                set pagedbentry [::rwpage::RWBasicPage ::#auto xmlbase_error_reading_data $page_error_msg]
             } else {
                 set pagedbentry [$this buildPageEntry $key $xmldata rkey]
             }
@@ -335,11 +332,6 @@ namespace eval ::rwdatas {
             $::rivetweb::logger log debug "page for key '$key' not found"
             set pagedbentry ""
             set rkey xml_page_not_found_error
-
-            #set notexisting_msg "The requested page does not exist"
-            #return -code error  -errorcode not_existing        \
-            #                    -errorinfo $notexisting_msg $notexisting_msg
-
         }
 
         return $pagedbentry
@@ -496,7 +488,10 @@ namespace eval ::rwdatas {
 
 # -- listStaticMenus
 #
-# foreach group in a menu group a 
+# private method that walks the menu tree and actually builds
+# the menu objects (either instances of ::rwmenu:RWMenu or ::rwmenu::$tclclass)
+# Also their link objects lists (lists of ::rwlink::RWLink class instances) are
+# created and associated to the menu objects
 #
 
     ::itcl::body XMLBase::listStaticMenus {sm parent_mg} {
@@ -511,7 +506,7 @@ namespace eval ::rwdatas {
 
 # again, menus without an id are ignored. 
 # How can we be sure to avoid id definition clashes?
-# This is an issue to be tackled and solved....
+# This is an issue still to be solved....
 
             if {[$menu hasAttribute id]} {
 
@@ -540,7 +535,7 @@ namespace eval ::rwdatas {
 
                 } else {
 
-# create_menu is a 'static' menu of class RWMenu
+# create_menu returns a 'static' menu of class RWMenu
 
                     set menuobj [$menumodel create_menu [$menu getAttribute id]  \
                                                          $parent                 \
@@ -854,68 +849,8 @@ namespace eval ::rwdatas {
             lappend urlargs # $target
         }
  
-        return [::rivetweb::composeUrl {*}$urlargs] 
-
+        return [::rivetweb::composeUrl {*}$urlargs]
     }
-
-# -- buildSimplePage 
-#
-# Utility function that builds a simple page out of a message 
-# 
-# Arguments: 
-#
-#    - mag          Message text
-#    - cssclass     css class the element enclosing the text must have
-#    - pagina_id    identification of the page for subsequent retrieving 
-#                   from the cache
-#
-#  Returned value:
-#
-#   - reference to the tdom object representing the page
-#
-
-    ::itcl::body XMLBase::buildSimplePage {msg cssclass pagina_id} {
-
-        if {![$::rivetweb::rwebdb check $pagina_id)]} {
-            set msgdom  [dom createDocument page]
-            set xml_o   [$msgdom documentElement]
-
-# Let's add the menus to the dom
-
-            set menu_o  [$msgdom createElement menu]
-            $xml_o appendChild $menu_o
-            set t   [$msgdom createTextNode "index"]
-            $menu_o appendChild $t
-
-# ...and then the page main content
-
-            set content_o [$msgdom createElement content]
-            $xml_o appendChild $content_o
-
-            set headline_o [$msgdom createElement headline]
-            set hdline_to  [$msgdom createTextNode "Rivetweb anomaly"]
-            $headline_o appendChild $hdline_to
-            set title_o   [$msgdom createElement title]
-            set title_to  [$msgdom createTextNode "Rivetweb anomaly"]
-            $title_o    appendChild $title_to
-            $headline_o appendChild $hdline_to
-            $content_o  appendChild $headline_o
-            $content_o  appendChild $title_o
-
-            set htmldiv_o [$msgdom createElement pagetext]
-            $content_o appendChild $htmldiv_o
-            eval $htmldiv_o setAttribute class $cssclass 
-
-            set t [$msgdom createTextNode $msg]
-            $htmldiv_o appendChild $t
-
-        } else {
-            set msgdom $::rivetweb::pagine($pagina_id)
-        }
-
-        return $msgdom
-    }
-
 }
 
 package provide XMLBase 2.0

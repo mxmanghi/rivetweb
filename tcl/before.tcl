@@ -96,7 +96,7 @@ namespace eval ::rivetweb {
 
     }
 
-# specific 'before' script
+# site specific 'before' script (if any was created) is evaluated
 
     if {$::rivetweb::site_before_script != ""} { 
         ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
@@ -107,6 +107,8 @@ namespace eval ::rivetweb {
     set ::rivetweb::page_content $page_key
     set ::rivetweb::current_page [$::rivetweb::rwebdb fetch $::rivetweb::page_key ::rivetweb::datasource]
     set ::rivetweb::current_page [$::rivetweb::current_page prepare $::rivetweb::language $argsqs]
+
+# this variable is deprecated and its retained only for compatibility
 
     set ::rivetweb::current_pmodel $::rivetweb::current_page
 
@@ -119,7 +121,8 @@ namespace eval ::rivetweb {
 
     ::rivet::apache_log_error debug "-> $::rivetweb::current_page"
 
-    catch {unset ::rivetweb::pagemenus}
+# we rebuild the navigation menu dictionary on every request
+
     set ::rivetweb::pagemenus [dict create]
 
     foreach ds $::rivetweb::datasources {
@@ -142,8 +145,8 @@ namespace eval ::rivetweb {
 
     } e]} {
 
-        $::rivetweb::logger log err "Error processing data for page ($e)"
-        $::rivetweb::logger log err $errorInfo
+        ::rivet::apache_log_error err "Error processing data for page ($e)"
+        ::rivet::apache_log_error err $errorInfo
 
         if {![$::rivetweb::rwebdb check postproc_hook_error]} {
 
@@ -155,7 +158,7 @@ namespace eval ::rivetweb {
 
         } else {
 
-            set pobj [$::rivetweb::rwebdb fetch postproc_hook_error]
+            set pobj [$::rivetweb::rwebdb fetch postproc_hook_error ::rivetweb::datasource]
             set ::rivetweb::current_page $pobj
 
         }
@@ -167,8 +170,4 @@ namespace eval ::rivetweb {
     } else {
         ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
     }
-    
-    # debugging
-    #::rivet::apache_log_error debug "before.tcl done (page: $::rivetweb::current_page, binary [$::rivetweb::current_page binary_content], charset: $::rivetweb::http_encoding)"
-    #::rivet::apache_log_error debug "before.tcl channel status (translation: [fconfigure stdout -translation], encoding: [fconfigure stdout -encoding])"
 }

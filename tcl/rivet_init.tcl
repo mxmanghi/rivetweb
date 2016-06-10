@@ -71,8 +71,8 @@ foreach k [dict keys $::rivetweb::templates_db] {
 
 namespace eval ::rivetweb {
 
-# actually this should be a search list of directories where hooks
-# can be stored...
+# scanning for hooks from rivetweb installation and thee hooks directory in $site_base
+#
 
     foreach hooks_d [list [file join $scripts $hooks_dir] [file join $site_base hooks]] {
 
@@ -112,7 +112,7 @@ namespace eval ::rivetweb {
                 }
             }
 
-            apache_log_error notice "$nhooks hooks processed in $hooks_d"
+            apache_log_error notice "$nhooks hooks read from $hooks_d"
             apache_log_error debug   $hooks
         }
     }

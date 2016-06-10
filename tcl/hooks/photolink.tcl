@@ -24,27 +24,13 @@ proc photolink { datasource tag element_text attribute_list} {
         set plattrs(src) [::rivetweb::makePictsPath $plattrs(src) $::rivetweb::template_key]
 
         if {[info exists plattrs(fullres)]} {
+
             dict set d tagname a
-            if {[info exists plattrs(download)] && ($plattrs(download) == 1) && ![var exists static]} then {
-                    
-                set download_args [join [list fname=$plattrs(fullres) function=$::rivetweb::download_proc] &]
-                set fullresUrl    [makeurl [join [list /index.rvt $download_args] ?]]
-
-                apache_log_error debug "download path $fullresUrl"
-
-                set plattrs(href) $fullresUrl
-
-            } else {
-
-                set subdom [dom createDocument img]
-                set imgel  [$subdom documentElement]
-                $imgel setAttribute src $plattrs(src)
-                unset plattrs(src)
-
-                dict set d expansion [$imgel asXML -indent 2]
-                set plattrs(href) [::rivetweb::makePictsPath $plattrs(fullres) $::rivetweb::template_key]
-            }
+            dict set d expansion [::rivet::xml "" [list img src $plattrs(src)]]
+            set plattrs(href) [::rivetweb::makePictsPath $plattrs(fullres) $::rivetweb::template_key]
+            unset plattrs(src)
             unset plattrs(fullres)
+
         }
     }
 

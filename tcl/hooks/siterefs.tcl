@@ -1,7 +1,7 @@
-# -- siterefs
+# -- sitereference.tcl
 #
-# transform of canonical references of the website in valid URL to a page
-#
+# Hook to transform canonical XMLBase controlled references in 
+# valid <a href="...">...</a> HTML link.
 #
 
 set hook_descriptor(tag)        sitereference
@@ -17,7 +17,7 @@ proc sitereference { datasource tag element_text attribute_list } {
         set lm [$::rivetweb::linkmodel create XMLBase $attribs(href) \
                                        [dict create $::rivetweb::default_lang $element_text] "" ""]       
         unset attribs(href)
-        $::rivetweb::linkmodel set_attribute lm [concat [array get attribs]]
+        $::rivetweb::linkmodel set_attribute lm [array get attribs]
         $::rivetweb::linkmodel set_property lm type internal
         set translated_link [::rwdatas::${datasource}::to_url $lm]
         set attribs(href) [$::rivetweb::linkmodel get_attribute $translated_link href]
@@ -29,4 +29,5 @@ proc sitereference { datasource tag element_text attribute_list } {
     dict set d attributes [array get attribs]
     dict set d tagname a
     return $d
+
 }

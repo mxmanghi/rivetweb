@@ -62,12 +62,6 @@ namespace eval ::rivetweb {
 
     set current_rev                 0
 
-# array that maps 'content' keys and xhtml (to be replaced
-# by a dictionary?)
-
-    variable pagine
-    array set pagine                {}
-
 # default key for content generation: basically this
 # is the key to the file containing the homepage.
 
@@ -112,11 +106,6 @@ namespace eval ::rivetweb {
     array set content               {}
     array set sitemenus_a           {}
 
-# and finally we create the dictionary that is to held the 
-# whole website database
-
-    variable sitepages              [dict create]
-
     variable page_headline          ""
     variable page_title             ""
     variable page_content_html      ""
@@ -124,12 +113,6 @@ namespace eval ::rivetweb {
     variable page_authors           ""
     variable ident                  ""
     variable site_structure_mtime   0
-
-# the effect of this are rather sticky, because when enabled 
-# rivetweb uses the in-memory cache whenever possible 
-# and won't change attitude until che child process exits
- 
-    variable use_page_cache         0
 
 # dictionary defining tags and class attributes for elements a menu
 # is made of
@@ -145,26 +128,7 @@ namespace eval ::rivetweb {
 
     variable debug                  1
     variable hooks_dir              hooks
-
     variable hooks                  [dict create]
-
-# These variables are of interest only for the basic XML pages support
-# They can be superseded in /<path_site_root>/site_defs.tcl
-
-# variable controlling metadata for a new static page creation 
-
-    set metadatatags		        {date author ident keywords}
-
-# if any RCS system it should be set here. 
-# Possible values are 'svn' and 'git' or 'none'. Any other string
-# falls back on 'none'
-
-    set versioning_system	        none
-
-# parameters for downloading binary files
-
-    variable download_proc          download.tcl
-    variable download_chunksize     65536
 
     proc setup {rweb_root website_root} {
         variable    scripts
