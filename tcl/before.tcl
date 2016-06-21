@@ -103,8 +103,8 @@ namespace eval ::rivetweb {
         source $::rivetweb::site_before_script
     }
 
-    $::rivetweb::logger log info "processing request for '$page_key'"
-    set ::rivetweb::page_content $page_key
+    $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
+    set ::rivetweb::page_content $::rivetweb::page_key
     set ::rivetweb::current_page [$::rivetweb::rwebdb fetch $::rivetweb::page_key ::rivetweb::datasource]
     set ::rivetweb::current_page [$::rivetweb::current_page prepare $::rivetweb::language $argsqs]
 

@@ -117,6 +117,7 @@ namespace eval ::rwebdb {
         variable sitepages
         upvar $datasrc datasource
 
+        $::rivetweb::logger log info "fetching new page for key '$key'"
         if {[check $key]} {
 
 # page was in the database, we hand it on to the client
@@ -124,7 +125,7 @@ namespace eval ::rwebdb {
             if {[is_stale $key]} {
 
                 $::rivetweb::logger log info \
-                        "page for key '$key' is stale, fetching it"
+                        "page for key '$key' was stale"
                 set pmodel [fetch_from_source $key rkey datasource]
                 store $rkey $pmodel $datasource
 
@@ -155,11 +156,11 @@ namespace eval ::rwebdb {
         variable sitepages
 
         if {[check $key]} {
+
             set pmodel [dict get $sitepages $key object]
-
             $pmodel destroy
-
             dict unset sitepages $key
+
         }
     }
     namespace export dispose
@@ -177,7 +178,6 @@ namespace eval ::rwebdb {
 
         foreach k [dict keys $sitepages] {
             set pmodel [dict get $sitepages $k object]
-
             $pmodel dispose
         }
         
@@ -200,12 +200,14 @@ namespace eval ::rwebdb {
             set pmodel [$datasource fetchData $key rkey]
 
             if {$pmodel == ""} {
+
                 if {[string match $key $rkey]} {
 
                     set rkey wrong_datasource_returned_key
                     set datasource RWDummy
 
                 }
+
                 if {[check $rkey]} {
 
     # page cache hit
@@ -218,7 +220,7 @@ namespace eval ::rwebdb {
 
                 } else {
 
-    # this cycle is guaranteed to return a page, al least through datasource ::RWDummy
+    # this cycle is guaranteed to return a page, al least through the last datasource in the chain (::RWDummy)
 
                     foreach ds $::rivetweb::datasources {
                                           
@@ -230,6 +232,7 @@ namespace eval ::rwebdb {
                         }
 
                     }
+
                 }
 
             }
@@ -240,14 +243,19 @@ namespace eval ::rwebdb {
 
             $::rivetweb::logger log err "Rivetweb internal error: $e"
 
-            #set pobj [::rwpage::RWStatic ::#auto internal_error]
-            set pobj [::rwpage::RWBasicPage ::#auto rw_internal_error "Error creating page for key '<b>$key</b>'<br /><pre>$e</pre>"]
-            store rw_internal_error $pobj ::RWDummy
+            set distanceToTop [info level]
+            set backtrace     ""
+            for {set i 0} {$i < $distanceToTop} {incr i} {
+                set callerlevel [expr {$distanceToTop - $i}]
+                append backtrace "\n frame $callerlevel: [info level $callerlevel]"
+            }
 
-            #$pobj add_metadata title    "Error creating page for key $key"
-            #$pobj add_metadata header   "Error creating page for key $key"
-            #$pobj set_pagetext $::rivetweb::default_lang   \
-            #                            "Error creating page for key '<b>$key</b>'<br /><pre>$e</pre>"
+            set page_text "Error creating page for key '<b>$key</b>'<br /><pre>$e \n $backtrace</pre>"
+
+            set pobj [::rwpage::RWBasicPage ::#auto \
+                                            rw_internal_error \
+                                            $page_text]
+            store rw_internal_error $pobj ::RWDummy
 
             set pmodel $pobj
 
@@ -307,7 +315,7 @@ namespace eval ::rwebdb {
 
         set row 1
         set html_dump ""
-        foreach pageentry [dict keys $sitepages] {
+        dict for {pageentry entry_d} $sitepages {
 
             if {$row == 1} {
                 set cell_style [list th style "padding: 0.2em 1em;"]
@@ -321,7 +329,7 @@ namespace eval ::rwebdb {
             set cell_style [list td style "padding: 0.2em 1em;"]
             foreach prop {page_key object timestamp datasource hits} {
 
-                set entry_d [dict create {*}[dict get $sitepages $pageentry]]
+                #set entry_d [dict create {*}[dict get $sitepages $pageentry]]
                 switch $prop {
 
                     page_key {
@@ -351,7 +359,7 @@ namespace eval ::rwebdb {
         }
         set html_dump [::rivet::xml $html_dump table]
 
-        return [append dstable "\n" $html_dump]
+        return [join [list $dstable $html_dump] "\n"]
     }
     namespace export coredump
 

@@ -111,12 +111,6 @@ namespace eval ::rivetweb {
             set argsmap($param) [::rivet::escape_string $value]
         }
 
-        #foreach passthrough $::rivetweb::passthroughs {
-        #    if {[::rivet::var_qs exists $passthrough]} {
-        #        set argsmap($passthrough) [::rivet::var_qs get $passthrough]
-        #    }	
-        #}
-
         set arglist [array get argsmap]
 
         # finally we blend into the arguments possible sticky arguments
@@ -516,10 +510,6 @@ namespace eval ::rivetweb {
         variable passthroughs
         variable rewrite_par
         variable rewrite_links
-
-        # we skip ::rivetweb::rewrite_par if we are alredy rewriting links
-        # as the whole point of link rewriting is charging mod_rewrite rules 
-        # to figure it out
 
         foreach sticky_arg $passthroughs {
 
