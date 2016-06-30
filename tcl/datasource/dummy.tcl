@@ -104,7 +104,7 @@ and failed to reassigned the resource key } \
                     set rkey unknown_error_condition
                 }
 
-                set page_text [subst [dict get $messages $rkey $urlargs]]
+                set page_text [subst [dict get $messages $rkey]]
                 set pobj [::rwpage::RWBasicPage ::#auto $rkey $page_text]
                 $pobj set_title $::rivetweb::default_lang "Error $rkey"
 
