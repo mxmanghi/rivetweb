@@ -7,8 +7,9 @@
 # bearing information
 #
 
-package require tdom
+#package require tdom
 package require rwpage
+package require rwutils
 
 namespace eval ::rwebdb {
 
@@ -203,8 +204,8 @@ namespace eval ::rwebdb {
 
                 if {[string match $key $rkey]} {
 
-                    set rkey wrong_datasource_returned_key
-                    set datasource RWDummy
+                    set rkey        wrong_datasource_returned_key
+                    set datasource  RWDummy
 
                 }
 
@@ -237,11 +238,13 @@ namespace eval ::rwebdb {
 
             }
 
-        } e]} {
+        } e ei]} {
 
 # something else went wrong, it's a rivetweb internal error
 
             $::rivetweb::logger log err "Rivetweb internal error: $e"
+
+            puts [::rivetweb::utils::error_info_formatting $ei] 
 
             set distanceToTop [info level]
             set backtrace     ""

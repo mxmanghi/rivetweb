@@ -32,7 +32,7 @@ namespace eval ::rwdatas {
     ::itcl::class XMLBase {
         inherit Datasource
 
-        private variable sitemap
+        public  variable sitemap
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
         private common   LOCAL_PAGES	    docs
@@ -746,6 +746,7 @@ namespace eval ::rwdatas {
 # -- menu_list
 #
 # XMLBase::menu_list has the special role to provide the base menu 
+#
 
     ::itcl::body XMLBase::menu_list {page} {
 
