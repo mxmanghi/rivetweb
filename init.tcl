@@ -21,8 +21,11 @@ cd $website_root
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
 
 if {[file exists $website_definitions]} { source $website_definitions }
- 
-::rivetweb::init Scripted
+
+# if we want to have this datasource we have to load it within the
+# initialization of a specific application 
+# ::rivetweb::init Scripted
+
 ::rivetweb::init XMLBase
 ::rivetweb::init RWDummy
 
