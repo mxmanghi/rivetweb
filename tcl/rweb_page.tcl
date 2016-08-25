@@ -111,7 +111,7 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::title {language {titletxt ""}} { 
         if {$titletxt != ""} {
-            $this set_title $language $titletext
+            $this set_title $language $titletxt
         }
 
         if {[dict exists $metadata title $language]} {

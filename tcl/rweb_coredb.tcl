@@ -212,11 +212,12 @@ namespace eval ::rwebdb {
                 if {[check $rkey]} {
 
     # page cache hit
-
+                    
                     if {[is_stale $rkey]} {
-                        set pmodel  [fetch_from_source $rkey rkey datasource]
+                        set datasource  [dict get $sitepages $rkey datasource]
+                        set pmodel      [fetch_from_source $rkey rkey datasource]
                     } else {
-                        set pmodel  [dict get $sitepages $rkey object]
+                        set pmodel      [dict get $sitepages $rkey object]
                     }
 
                 } else {
