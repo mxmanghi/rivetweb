@@ -125,21 +125,19 @@ namespace eval ::rwebdb {
 
             if {[is_stale $key]} {
 
-                $::rivetweb::logger log info \
-                        "page for key '$key' was stale"
+                $::rivetweb::logger log info "page for key '$key' was stale"
                 set pmodel [fetch_from_source $key rkey datasource]
-                store $rkey $pmodel $datasource
 
             } else {
 
-                set pmodel [dict get $sitepages $key object]
+                set pmodel      [dict get $sitepages $key object]
+                set datasource  [dict get $sitepages $key datasource]
 
             }
 
         } else {
 
             set pmodel [fetch_from_source $key rkey datasource]
-            store $rkey $pmodel $datasource
 
         }
 
@@ -186,6 +184,35 @@ namespace eval ::rwebdb {
     }
     namespace export erase
 
+# -- dump_core_error
+#
+#
+
+    proc dump_core_error {key e ei} {
+
+        # something else went wrong, it's a rivetweb internal error
+
+        $::rivetweb::logger log err "Rivetweb internal error: $e"
+
+        puts [::rivetweb::utils::error_info_formatting $ei] 
+
+        set distanceToTop [info level]
+        set backtrace     ""
+        for {set i 0} {$i < $distanceToTop} {incr i} {
+            set callerlevel [expr {$distanceToTop - $i}]
+            append backtrace "\n frame $callerlevel: [info level $callerlevel]"
+        }
+
+        set page_text "Error creating page for key '<b>$key</b>'<br /><pre>$e \n $backtrace</pre>"
+
+        set pobj [::rwpage::RWBasicPage ::#auto \
+                                        rw_internal_error \
+                                        $page_text]
+        store rw_internal_error $pobj ::RWDummy
+
+        return $pobj
+    }
+
 # -- fetch_from_source
 #
 #
@@ -213,11 +240,15 @@ namespace eval ::rwebdb {
 
     # page cache hit
                     
+                    set datasource  [dict get $sitepages $rkey datasource]
+                    #$::rivetweb::logger log debug "page for key '$rkey' ($datasource) is cached"
                     if {[is_stale $rkey]} {
-                        set datasource  [dict get $sitepages $rkey datasource]
-                        set pmodel      [fetch_from_source $rkey rkey datasource]
+                        $::rivetweb::logger log debug "page for key '$rkey' is stale"
+                        set pmodel  [fetch $rkey datasource]
+                        store  $rkey $pmodel $datasource
                     } else {
-                        set pmodel      [dict get $sitepages $rkey object]
+                        set pmodel  [dict get $sitepages $rkey object]
+                        $::rivetweb::logger log debug "returning $pmodel for key '$rkey'"
                     }
 
                 } else {
@@ -234,35 +265,14 @@ namespace eval ::rwebdb {
                         }
 
                     }
-
+                    store  $rkey $pmodel $datasource
                 }
-
+            } else {
+                store  $rkey $pmodel $datasource
             }
 
         } e ei]} {
-
-# something else went wrong, it's a rivetweb internal error
-
-            $::rivetweb::logger log err "Rivetweb internal error: $e"
-
-            puts [::rivetweb::utils::error_info_formatting $ei] 
-
-            set distanceToTop [info level]
-            set backtrace     ""
-            for {set i 0} {$i < $distanceToTop} {incr i} {
-                set callerlevel [expr {$distanceToTop - $i}]
-                append backtrace "\n frame $callerlevel: [info level $callerlevel]"
-            }
-
-            set page_text "Error creating page for key '<b>$key</b>'<br /><pre>$e \n $backtrace</pre>"
-
-            set pobj [::rwpage::RWBasicPage ::#auto \
-                                            rw_internal_error \
-                                            $page_text]
-            store rw_internal_error $pobj ::RWDummy
-
-            set pmodel $pobj
-
+            dump_core_error $rkey $e $ei
         } 
         return $pmodel
     }
