@@ -36,12 +36,11 @@ namespace eval ::rwdatas {
 
         public method init {args} {
             set messages [dict create \
-    unknown_error_condition "Unknwon error condition (key: \$key)" \
-    page_not_found_error    "page not found error. key: \$key arglist: \$urlargs" \
-    wrong_datasource_returned_key {
+                unknown_error_condition "Unknwon error condition (key: \$key)" \
+                page_not_found_error    "page not found error. key: \$key arglist: \$urlargs" \
+                wrong_datasource_returned_key {
 A datasource didn't returned a valid page object
 and failed to reassigned the resource key } \
-
 ]
         }
         public method name {} { return "Dummy" }
@@ -110,6 +109,18 @@ and failed to reassigned the resource key } \
 
             }
             return $pobj
+        }
+
+    # -- register_error
+    #
+    # We register to the message dictionary basic error messages
+    # that might be useful in several context within an application
+
+
+        public method register_error {key error_message} {
+
+            dict set messages $key $error_message
+
         }
 
     # -- rivetwebPage
