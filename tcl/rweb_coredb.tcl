@@ -323,7 +323,9 @@ namespace eval ::rwebdb {
             set tbrow "[::rivet::xml $ds td][::rivet::xml [$ds name] td]"
             append dstable [::rivet::xml $tbrow tr]
         }
-        set dstable [::rivet::xml $dstable table]
+        set dstable [string cat "<fieldset>" \
+                        [::rivet::xml "Registered Datasources" legend] \
+                        [::rivet::xml $dstable table] "</fieldset>"]
 
     # page database table
 
@@ -371,7 +373,9 @@ namespace eval ::rwebdb {
             append html_dump [::rivet::xml $data_row tr]
             incr row
         }
-        set html_dump [::rivet::xml $html_dump table]
+        set html_dump [string cat "<fieldset>" \
+                            [::rivet::xml "Stored Pages" legend] \
+                            [::rivet::xml $html_dump table] "</fieldset>"]
 
         return [join [list $dstable $html_dump] "\n"]
     }
