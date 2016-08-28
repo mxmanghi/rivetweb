@@ -36,11 +36,14 @@ namespace eval ::rivetweb {
     variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
+    variable menuclass              ::rwmenu::RWMenu
     variable htmlizer               ::htmlizer
 
     variable is_homepage            0
     variable default_menu_pos       left
     variable template_key           ""
+    variable template_changed       false
+    variable last_selected_template ""
 
 # the procedure should quite easly evolve to have 
 # the ability to handle multilingual contents. 'default_lang' 

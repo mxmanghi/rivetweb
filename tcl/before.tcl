@@ -71,6 +71,13 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
     set ::rivetweb::template_key      $template_key
 
+    if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
+        set ::rivetweb::last_selected_template $template_key
+        set ::rivetweb::template_changed true    
+    } else {
+        set ::rivetweb::template_changed false
+    }
+
 # we determine the language for this request (keep in mind we are running
 # within the ::rivetweb namespace)
 

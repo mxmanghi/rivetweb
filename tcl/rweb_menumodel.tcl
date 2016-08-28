@@ -204,7 +204,7 @@ namespace eval ::rwmenu {
 #
 # 
     proc create_menu { id {parent none} {visibility normal} } {
-        return [RWMenu ::#auto $id $parent $visibility]
+        return [$::rivetweb::menuclass ::#auto $id $parent $visibility]
     }
 
     namespace export create_menu
