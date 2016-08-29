@@ -47,7 +47,7 @@ namespace eval ::rwdatas {
         private method buildPageEntry {key xmldata reassigned_key}
         private method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
-        private method menuclass {menu_o tclclass_v}        
+        private method menuclass {menu_o}        
         private method xmlfile {key} { return [file join $static_pages ${key}.xml] }
 
         public method init {args}
@@ -114,6 +114,8 @@ namespace eval ::rwdatas {
         set xmlpath [file join $::rivetweb::site_base pages]
         set sitemap [::rwsitemap::create ::XMLBase]
         load_sitemap $sitemap
+
+        set menutclclass $::rivetweb::menuclass
     }
 
 #
@@ -462,27 +464,29 @@ namespace eval ::rwdatas {
         $content_o appendChild $pagetxt_o
 
         return $xml_o
-
     }
 
-# -- 
+# -- menuclass
 #
 #
 
-    ::itcl::body XMLBase::menuclass {menu tclclass_v} {
-        upvar $tclclass_v tclclass
+    ::itcl::body XMLBase::menuclass {menu} {
 
         if {[$menu hasAttribute tclclass]} {
-            set tclclass [$menu getAttribute tclclass]
-            return true
+            return [$menu getAttribute tclclass]
         }
+
+        # we may dispose of this...
 
         if {[string length $menutclclass] > 0} {
-            set tclclass $menutclclass
-            return true
+            return $menutclclass
         }
 
-        return false
+        if {[dict exists $::rivetweb::templates_db menuclass]} {
+            return [dict get $::rivetweb::templates_db menuclass]
+        }
+
+        return $::rivetweb::menuclass
     }
 
 
@@ -528,23 +532,16 @@ namespace eval ::rwdatas {
 
                 }
 
-                if {[$this menuclass $menu tclclass]} {
-                    package require $tclclass
+                # let's rely entirely on the inner machinery for
+                # determining the menu classes
 
-                    set menuobj [::rwmenu::$tclclass ::rwmenu::#auto [$menu getAttribute id] $parent $visibility]
+                set tclclass [$this menuclass $menu]
+                package require [string tolower $tclclass]
 
-                } else {
+                set menuobj [::rwmenu::$tclclass ::rwmenu::#auto [$menu getAttribute id] $parent $visibility]
 
-# create_menu returns a 'static' menu of class RWMenu
-
-                    set menuobj [$menumodel create_menu [$menu getAttribute id]  \
-                                                         $parent                 \
-                                                         $visibility]
-
-                }
-
-# Elements within 'menu' are <title lang="..">...</title> and
-# one or more <link>....</link>
+                # Elements within 'menu' are <title lang="..">...</title> and
+                # one or more <link>....</link>
 
                 set headers [$menu getElementsByTagName title]
                 foreach title $headers {

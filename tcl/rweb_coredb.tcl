@@ -7,7 +7,6 @@
 # bearing information
 #
 
-#package require tdom
 package require rwpage
 package require rwutils
 
@@ -245,7 +244,7 @@ namespace eval ::rwebdb {
                     if {[is_stale $rkey]} {
                         $::rivetweb::logger log debug "page for key '$rkey' is stale"
                         set pmodel  [fetch $rkey datasource]
-                        store  $rkey $pmodel $datasource
+                        store $rkey $pmodel $datasource
                     } else {
                         set pmodel  [dict get $sitepages $rkey object]
                         $::rivetweb::logger log debug "returning $pmodel for key '$rkey'"

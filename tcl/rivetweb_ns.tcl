@@ -36,7 +36,10 @@ namespace eval ::rivetweb {
     variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
-    variable menuclass              ::rwmenu::RWMenu
+
+# to menuclass it's given a default in tcl/rivet_init.tcl
+
+    variable menuclass              RWMenu
     variable htmlizer               ::htmlizer
 
     variable is_homepage            0

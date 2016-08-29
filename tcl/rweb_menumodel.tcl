@@ -5,7 +5,6 @@
 #
 #
 
-package require Itcl
 package require rwlogger
 package require rwlink
 
@@ -65,6 +64,7 @@ namespace eval ::rwmenu {
             } else {
                 return ""
             }
+
         }
 
     }
@@ -204,7 +204,7 @@ namespace eval ::rwmenu {
 #
 # 
     proc create_menu { id {parent none} {visibility normal} } {
-        return [$::rivetweb::menuclass ::#auto $id $parent $visibility]
+        return [::rwmenu::$::rivetweb::menuclass ::#auto $id $parent $visibility]
     }
 
     namespace export create_menu

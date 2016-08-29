@@ -11,6 +11,8 @@ lappend auto_path $rweb_root $website_root
 package require rwlogger
 package require rivetweb
 package require rwconf
+package require rwmenu
+package require rwpage
 
 ::rivetweb::setup $rweb_root $website_root 
 
@@ -21,6 +23,12 @@ cd $website_root
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
 
 if {[file exists $website_definitions]} { source $website_definitions }
+
+# site_defs.tcl is supposed to define the default template, we thus
+# assign this key to the last_selected_template variable
+# in order to force a template_chanded signal
+
+set ::rivetweb::last_selected_template rwbase
 
 # if we want to have this datasource we have to load it within the
 # initialization of a specific application 

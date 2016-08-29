@@ -55,6 +55,13 @@ foreach template $templates_dir_list {
 		        if {[info exists ::rwtemplate::pictures]} { 
 		            dict set ::rivetweb::templates_db $template_key pictures $::rwtemplate::pictures
 		        }
+                if {[info exists ::rwtemplate::menuclass]} {
+                    package require [string tolower $::rwtemplate::menuclass]
+                    set ::rivetweb::menuclass $::rwtemplate::menuclass
+                } else {
+                    set ::rivetweb::menuclass RWMenu
+                }
+                dict set ::rivetweb::templates_db $template_key menuclass $::rivetweb::menuclass
             }
 
         } e]} {
