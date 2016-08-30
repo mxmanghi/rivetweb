@@ -57,11 +57,10 @@ foreach template $templates_dir_list {
 		        }
                 if {[info exists ::rwtemplate::menuclass]} {
                     package require [string tolower $::rwtemplate::menuclass]
-                    set ::rivetweb::menuclass $::rwtemplate::menuclass
+                    dict set ::rivetweb::templates_db $template_key menuclass $::rwtemplate::menuclass
                 } else {
-                    set ::rivetweb::menuclass RWMenu
+                    dict set ::rivetweb::templates_db $template_key menuclass $::rivetweb::menuclass
                 }
-                dict set ::rivetweb::templates_db $template_key menuclass $::rivetweb::menuclass
             }
 
         } e]} {
@@ -71,7 +70,7 @@ foreach template $templates_dir_list {
 }
 
 foreach k [dict keys $::rivetweb::templates_db] {
-    apache_log_error notice "$k: [dict get $::rivetweb::templates_db $k]"
+    apache_log_error info "$k: [dict get $::rivetweb::templates_db $k]"
 }
 
 # now we build the hooks database

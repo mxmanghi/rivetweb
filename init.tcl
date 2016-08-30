@@ -24,6 +24,7 @@ set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
 
 if {[file exists $website_definitions]} { source $website_definitions }
 
+
 # site_defs.tcl is supposed to define the default template, we thus
 # assign this key to the last_selected_template variable
 # in order to force a template_chanded signal
@@ -31,6 +32,11 @@ if {[file exists $website_definitions]} { source $website_definitions }
 set ::rivetweb::last_selected_template rwbase
 
 source [file join $::rivetweb::scripts rivetweb_init.tcl]
+
+# we have both the default template and the template database, we proceeded
+# determining the default menuclass
+
+set ::rivetweb::menuclass [dict get $::rivetweb::templates_db $rivetweb::default_template menuclass]
 
 # if we want to have this datasource we have to load it within the
 # initialization of a specific application 
@@ -51,5 +57,4 @@ if {[file exists $website_init]} {
         
     }
 }
-
 
