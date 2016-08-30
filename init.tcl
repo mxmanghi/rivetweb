@@ -30,6 +30,8 @@ if {[file exists $website_definitions]} { source $website_definitions }
 
 set ::rivetweb::last_selected_template rwbase
 
+source [file join $::rivetweb::scripts rivetweb_init.tcl]
+
 # if we want to have this datasource we have to load it within the
 # initialization of a specific application 
 # ::rivetweb::init Scripted
@@ -50,4 +52,4 @@ if {[file exists $website_init]} {
     }
 }
 
-source [file join $::rivetweb::scripts rivetweb_init.tcl]
+
