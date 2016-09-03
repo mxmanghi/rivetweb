@@ -36,7 +36,6 @@ namespace eval ::rwpage {
         public method languages {}
         public method content {language {fmt -reference}}
         public method to_string {}
-        public method title {language}
         public method headline {language}
         public method content_field {language field {default_val ""}}
     }
@@ -265,20 +264,6 @@ namespace eval ::rwpage {
 
     ::itcl::body RWStatic::to_string {} { 
         return [dict merge [RWPage::to_string] $content]
-    }
-
-# -- title
-#
-# concrete implementation that fetches the page title
-# from the 'content' of a static page
-#
-
-    ::itcl::body RWStatic::title {language} {
-        if {[dict exists $content $language title]} {
-            return [dict get $content $language title]
-        } else {
-            return [$this metadata title]
-        }
     }
 
 # -- headline
