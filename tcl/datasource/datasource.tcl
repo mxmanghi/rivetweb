@@ -15,10 +15,11 @@ namespace eval ::rwdatas {
     ::itcl::class Datasource {
 
         private common ALIASDB [dict create]
+        private variable cache [dict create]
 
         public method init {args} {  }
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
-        public method fetchData {key reassigned_key} {}
+        public method fetchData {key reassigned_key} { return "" }
         public method synchData {key data_dict} {}
         public method createData {key data_dict} {}
         public method storeData {key data_dict} {}
@@ -35,7 +36,62 @@ namespace eval ::rwdatas {
         public proc to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}
+
+        public method will_provide {keyword reassigned_key}
+        public method fetch_page {keyworkd reassigned_key}
     }
+
+# -- will_provide
+#
+#
+
+    ::itcl::body Datasource::will_provide {key reassigned_key} {
+        upvar $reassigned_key rkey
+
+        if {[dict exists $cache $key]} {
+            return true
+        } else {
+            set p [$this fetchData $key rkey]
+
+            if {p != ""} {
+                dict set cache $key $p
+                set response true
+            } else {
+                set response false
+            }
+            return $response
+        }
+    }
+
+# -- fetch_page
+#
+#
+
+    ::itcl::body Datasource::fetch_page {keyword reassigned_key} {
+        upvar $reassigned_key rkey
+
+        if {[dict exists $cache $key]} {
+            set rkey $key
+
+            if {[$this is_stale $key]} {
+                set stored_page [dict get $cache $key]
+                set p [$this fetchData $key rkey]
+                dict set cache $key $p
+                $stored_page destroy
+            }
+            return [dict get $catch $key]
+
+        } else {
+
+            set p [$this fetchData $key rkey]
+            if {$p != ""} {
+                dict set cache $key $p
+            }
+            return $p
+
+        }
+    }
+
 
     ::itcl::body Datasource::set_alias {alias aliasdef} {
         dict set ALIASDB $alias $aliasdef
@@ -56,10 +112,6 @@ namespace eval ::rwdatas {
     ::itcl::body Datasource::to_url {lm} {
         return $lm
     }
-
-#    ::itcl::body Datasource::rewrite_url {rwcode urlscript urlargs rewritten_base} {
-#        return -code continue -errorcode rw_continue
-#    }
 
 }
 

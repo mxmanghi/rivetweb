@@ -12,7 +12,8 @@ package require rwutils
 
 namespace eval ::rwebdb {
 
-    variable sitepages [dict create]
+    variable sitepages      [dict create]
+    variable last_fetched   [::rwpage::RWPage ::#auto null_page]
 
     proc pages {} { 
         variable sitepages
@@ -106,42 +107,60 @@ namespace eval ::rwebdb {
     }
     namespace export is_stale
 
-# -- fetch
+
+# -- search_datasources
 #
-# central method for rwebdb. The argument 'key' is passed to the
-# datasource(s) objects until the resource matching the argument is
-# found.
+# recusive search of a page through the datasource
+# list. 
 #
+
+    proc search_datasources {key returned_key datasrc} {
+        upvar $returned_key rkey
+        upvar $datasrc datasource
+
+        # this cycle is guaranteed to return a page, al least 
+        # through the last datasource in the chain (::RWDummy)
+
+        foreach ds $::rivetweb::datasources {
+                              
+            if {[$ds will_provide $key rkey]} {
+                ::rivet::apache_log_error info \
+                    "fetching $key from $ds -> returned values: $rkey, $pmodel"
+
+                set pmodel [$ds fetch_page $key rkey]
+                if {$pmodel != ""} {
+                    set datasource  $ds
+                    return          $pmodel
+                } else {
+     
+                    if {[string match $key $rkey]} {
+                        set rkey wrong_datasource_returned_key
+                        return [::RWDummy fetchData $key rkey]
+                    }
+
+                    return [search_datasources $rkey rkey datasource]
+                }
+            }
+
+        }
+         
+    }
 
     proc fetch {key datasrc} {
         variable sitepages
+        variable last_fetched
         upvar $datasrc datasource
 
         $::rivetweb::logger log info "fetching new page for key '$key'"
-        if {[check $key]} {
 
-# page was in the database, we hand it on to the client
+        set p [search_datasources $key rkey datasource]
 
-            if {[is_stale $key]} {
+        $last_fetched destroy
+        set last_fetched $p
 
-                $::rivetweb::logger log info "page for key '$key' was stale"
-                set pmodel [fetch_from_source $key rkey datasource]
-
-            } else {
-
-                set pmodel      [dict get $sitepages $key object]
-                set datasource  [dict get $sitepages $key datasource]
-
-            }
-
-        } else {
-
-            set pmodel [fetch_from_source $key rkey datasource]
-
-        }
-
-        return $pmodel
+        return $p
     }
+
     namespace export fetch
 
 # -- dispose 
@@ -239,15 +258,19 @@ namespace eval ::rwebdb {
 
     # page cache hit
                     
-                    set datasource  [dict get $sitepages $rkey datasource]
+                    set datasource [dict get $sitepages $rkey datasource]
                     #$::rivetweb::logger log debug "page for key '$rkey' ($datasource) is cached"
                     if {[is_stale $rkey]} {
+
                         $::rivetweb::logger log debug "page for key '$rkey' is stale"
                         set pmodel  [fetch $rkey datasource]
                         store $rkey $pmodel $datasource
+
                     } else {
+
                         set pmodel  [dict get $sitepages $rkey object]
                         $::rivetweb::logger log debug "returning $pmodel for key '$rkey'"
+
                     }
 
                 } else {
@@ -265,7 +288,9 @@ namespace eval ::rwebdb {
 
                     }
                     store  $rkey $pmodel $datasource
+
                 }
+
             } else {
                 store  $rkey $pmodel $datasource
             }
