@@ -529,6 +529,50 @@ namespace eval ::rivetweb {
     }
     namespace export merge_sticky_args
 
+# -- search_datasources
+#
+# recusive search of a page through the datasource
+# list. 
+#
+
+    proc search_datasources {key returned_key datasrc} {
+        upvar $returned_key rkey
+        upvar $datasrc datasource
+
+        # this cycle is guaranteed to return a page, al least 
+        # through the last datasource in the chain (::RWDummy)
+
+        foreach ds $::rivetweb::datasources {
+            ::rivet::apache_log_error info \
+                    "querying $ds for $key"
+
+            set rkey $key           
+            if {[$ds will_provide $key rkey]} {
+                ::rivet::apache_log_error info \
+                    "fetching $key from $ds -> returned values: $rkey"
+
+                set pmodel [$ds fetch_page $key rkey]
+                if {$pmodel != ""} {
+                    set datasource  $ds
+                    return          $pmodel
+                } else {
+     
+                    if {[string match $key $rkey]} {
+                        set rkey wrong_datasource_returned_key
+                        return [::RWDummy fetchData $key rkey]
+                    }
+
+                    return [search_datasources $rkey rkey datasource]
+                }
+            } else {
+                if {($rkey != "") && ($key != $rkey)} {
+                    return [search_datasources $rkey rkey datasource]
+                }
+            }
+        }
+    }
+ 
+
     namespace ensemble create
 }
 

@@ -41,6 +41,7 @@ namespace eval ::rwdatas {
                 wrong_datasource_returned_key {
 A datasource didn't returned a valid page object
 and failed to reassigned the resource key } \
+                postproc_hook_error     "Error in page postprocessing"\
 ]
         }
         public method name {} { return "Dummy" }

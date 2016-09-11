@@ -23,7 +23,7 @@ namespace eval ::rwdatas {
         public method synchData {key data_dict} {}
         public method createData {key data_dict} {}
         public method storeData {key data_dict} {}
-        public method is_stale {key timereference} { return true }
+        public method is_stale {key timereference} { return false }
         public method dispose {key} {}
         public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -53,8 +53,9 @@ namespace eval ::rwdatas {
         } else {
             set p [$this fetchData $key rkey]
 
-            if {p != ""} {
-                dict set cache $key $p
+            if {$p != ""} {
+                dict set cache $key object $p
+                dict set cache $key timestamp [clock seconds]
                 set response true
             } else {
                 set response false
@@ -67,25 +68,31 @@ namespace eval ::rwdatas {
 #
 #
 
-    ::itcl::body Datasource::fetch_page {keyword reassigned_key} {
+    ::itcl::body Datasource::fetch_page {key reassigned_key} {
         upvar $reassigned_key rkey
-
+        ::rivet::apache_log_error info "[namespace current] cache $cache"
         if {[dict exists $cache $key]} {
             set rkey $key
 
-            if {[$this is_stale $key]} {
-                set stored_page [dict get $cache $key]
-                set p [$this fetchData $key rkey]
-                dict set cache $key $p
+            if {[$this is_stale $key [dict get $cache $key timestamp]]} {
+                set stored_page [dict get $cache $key object]
                 $stored_page destroy
+                set p [$this fetchData $key rkey]
+                if {$key == $rkey} {
+                    dict set cache $key object $p
+                    dict set cache $key timestamp [clock seconds]
+                } else {
+                    return [::rivetweb::search_datasource $rkey rkey ::rivetweb::datasource]
+                }
             }
-            return [dict get $catch $key]
+            return [dict get $cache $key object]
 
         } else {
 
             set p [$this fetchData $key rkey]
             if {$p != ""} {
-                dict set cache $key $p
+                dict set cache $key object $p
+                dict set cache $key timestamp [clock seconds]
             }
             return $p
 

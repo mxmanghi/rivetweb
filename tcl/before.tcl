@@ -32,7 +32,7 @@ namespace eval ::rivetweb {
 #   set ::rivetweb::static_links [::rivet::var_qs exists static]
 
     set ::rivetweb::rewrite_links [::rivet::var_qs exists $::rivetweb::rewrite_par]
-    set ::rivetweb::is_homepage   [::rivet::var_qs exists homepage]
+    #set ::rivetweb::is_homepage   [::rivet::var_qs exists homepage]
     
 # when Rivetweb is pretending to be a static site, pages fake their location 
 # to be in the a subdirectory of the site root (default: 'static'), so 
@@ -89,6 +89,13 @@ namespace eval ::rivetweb {
         set language $::rivetweb::default_lang
     }
 
+# site specific 'before' script (if any was created) is evaluated
+
+    if {$::rivetweb::site_before_script != ""} { 
+        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
+        source $::rivetweb::site_before_script
+    }
+
 #
 # the central point is exactly here: we determine which page we have to display
 #
@@ -102,17 +109,11 @@ namespace eval ::rivetweb {
         $ds willHandle $argsqs ::rivetweb::page_key 
 
     }
-
-# site specific 'before' script (if any was created) is evaluated
-
-    if {$::rivetweb::site_before_script != ""} { 
-        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
-        source $::rivetweb::site_before_script
-    }
+    set ::rivetweb::datasource $ds
 
     $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
     set ::rivetweb::page_content $::rivetweb::page_key
-    set ::rivetweb::current_page [$::rivetweb::rwebdb fetch $::rivetweb::page_key ::rivetweb::datasource]
+    set ::rivetweb::current_page [$::rivetweb::datasource fetch_page $::rivetweb::page_key ::rivetweb::page_key]
     set ::rivetweb::current_page [$::rivetweb::current_page prepare $::rivetweb::language $argsqs]
 
 # this variable is deprecated and its retained only for compatibility
@@ -155,20 +156,22 @@ namespace eval ::rivetweb {
         ::rivet::apache_log_error err "Error processing data for page ($e)"
         ::rivet::apache_log_error err $errorInfo
 
-        if {![$::rivetweb::rwebdb check postproc_hook_error]} {
+#        if {![$::rivetweb::rwebdb check postproc_hook_error]} {
+#
+#            set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
+#            $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
+#            $pobj add_metadata header "Postprocessing error"
+#            $pobj add_metadata title  "Postprocessing error"
+#            $::rivetweb::rwebdb store postproc_hook_error $pobj ::RWDummy
+#
+#        } else {
+#
+#            set pobj [$::rivetweb::rwebdb fetch postproc_hook_error ::rivetweb::datasource]
+#            set ::rivetweb::current_page $pobj
+#
+#        }
 
-            set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
-            $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
-            $pobj add_metadata header "Postprocessing error"
-            $pobj add_metadata title  "Postprocessing error"
-            $::rivetweb::rwebdb store postproc_hook_error $pobj ::RWDummy
-
-        } else {
-
-            set pobj [$::rivetweb::rwebdb fetch postproc_hook_error ::rivetweb::datasource]
-            set ::rivetweb::current_page $pobj
-
-        }
+        set ::rivetweb::current_page [::RWDummy fetch_page postproc_hook_error rkey]
 
     }
 
