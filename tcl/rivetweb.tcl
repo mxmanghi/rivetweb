@@ -571,7 +571,7 @@ namespace eval ::rivetweb {
             }
         }
     }
- 
+    namespace export search_datasources
 
     namespace ensemble create
 }

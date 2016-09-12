@@ -37,6 +37,7 @@ namespace eval ::rwdatas {
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}
 
+        public method cache {} { return $cache }
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
     }
@@ -82,7 +83,7 @@ namespace eval ::rwdatas {
                     dict set cache $key object $p
                     dict set cache $key timestamp [clock seconds]
                 } else {
-                    return [::rivetweb::search_datasource $rkey rkey ::rivetweb::datasource]
+                    return [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
                 }
             }
             return [dict get $cache $key object]
@@ -93,6 +94,14 @@ namespace eval ::rwdatas {
             if {$p != ""} {
                 dict set cache $key object $p
                 dict set cache $key timestamp [clock seconds]
+            } else {
+                if {$key != $rkey} {
+                    set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
+                } else {
+                    set ::rivetweb::datasource ::RWDummy 
+
+                    set p [::RWDummy fetchData wrong_datasource_returned_key rkey]
+                }
             }
             return $p
 

@@ -20,7 +20,27 @@ namespace eval ::rwpage {
         constructor {pagekey} {RWPage::constructor $pagekey} {}
 
         public method print_content { language } {
-            puts -nonewline [$::rivetweb::rwebdb coredump]
+            #puts -nonewline [$::rivetweb::rwebdb coredump]
+
+            foreach ds $::rivetweb::datasources {
+                set tbhead "$ds ([$ds name])"
+                set dscache [$ds cache]
+                set tbody ""
+                dict for {key p} $dscache {
+                    dict with p {
+
+                        set rowfields [list <td>$object</td>\
+                                            <td>[clock format $timestamp]</td>\
+                                            <td>[$object info class]<td>]
+
+                        
+                    }
+                    append tbody [::rivet::xml $rowfields tr]
+                }
+                set tbody [::rivet::xml $tbody tbody]
+                set thead [::rivet::xml $tbhead thead [list th colspan 3]]
+                puts [::rivet::xml "$thead $tbody" [list table style "margin: 1em auto;"]]
+            }
         }
     }
 }
