@@ -113,7 +113,7 @@ namespace eval ::rivetweb {
 
         set arglist [array get argsmap]
 
-        # finally we blend into the arguments possible sticky arguments
+        # finally we blend sticky arguments into the arguments 
 
         set arglist [::rivetweb merge_sticky_args $arglist]
         set urlargs {}
@@ -528,6 +528,16 @@ namespace eval ::rivetweb {
         return $urlargs
     }
     namespace export merge_sticky_args
+
+
+    proc strip_sticky_args {urlargs} {
+        variable passthroughs
+
+        set urlargs_d [dict create {*}$urlargs]
+
+        return [dict remove $urlargs_d {*}$::rivetweb::passthroughs]
+    }
+    namespace export strip_sticky_args
 
 # -- search_datasources
 #
