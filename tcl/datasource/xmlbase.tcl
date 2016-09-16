@@ -62,7 +62,7 @@ namespace eval ::rwdatas {
         public method menu_list {page} 
         public method resource_exists {resource_key} 
         public method get_resource_repr {resource_key} 
-        public proc   to_url {lm}
+        public method to_url {lm}
         public proc   makeUrl {reference} 
     }
 

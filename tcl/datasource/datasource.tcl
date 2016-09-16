@@ -33,7 +33,7 @@ namespace eval ::rwdatas {
         public proc   get_alias {alias aliasdef}
         public method resource_exists {resource_key} { return false }
         public method get_resource_repr {resource_key}  { return "" }
-        public proc to_url {lm}
+        public method to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}
 
@@ -71,6 +71,7 @@ namespace eval ::rwdatas {
 
     ::itcl::body Datasource::fetch_page {key reassigned_key} {
         upvar $reassigned_key rkey
+
         ::rivet::apache_log_error info "[namespace current] cache $cache"
         if {[dict exists $cache $key]} {
             set rkey $key

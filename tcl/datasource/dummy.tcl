@@ -60,7 +60,7 @@ namespace eval ::rwdatas {
                 page_not_found_error    "page not found error. key: \$key arglist: \$urlargs" \
                 wrong_datasource_returned_key {
 A datasource didn't returned a valid page object
-and failed to reassigned the resource key } \
+and failed to reassigned the resource key ($key)} \
                 postproc_hook_error     "Error in page postprocessing"\
 ]
         }

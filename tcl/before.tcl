@@ -179,5 +179,33 @@ namespace eval ::rivetweb {
         $::rivetweb::current_page print_binary
     } else {
         ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
+        if {$::rivetweb::version >= 20160915} {
+
+# -- index.rvt
+#
+#           this was shipped in the index.rvt template, but it was unnecessary
+
+# first of all we test the parameter rwinfo. 
+
+            if {[::rivet::var exists rwinfo]} {
+                load_env env
+                parray_table env
+                #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
+                set siteconf [::rivet::inspect]
+
+                foreach k [dict keys $siteconf] {
+                    puts "<pre>$k -> [dict get $siteconf $k]</pre>"
+                }
+
+            } elseif {[::rivet::var exists function]} {
+                set fun [var get function]
+                if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {
+                    puts $e
+                }
+            } else {
+                apache_log_error info "parsing $::rivetweb::running_template"
+                parse $::rivetweb::running_template
+            }
+        }
     }
 }

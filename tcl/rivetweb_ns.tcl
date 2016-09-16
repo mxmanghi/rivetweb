@@ -4,6 +4,10 @@
 
 namespace eval ::rivetweb {
 
+# version 
+
+    variable version                20160915
+
 # this must be the local path to the site's document root
     variable site_base
     variable rivetweb_root
