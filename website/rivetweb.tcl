@@ -3,5 +3,5 @@
 # server initialization script 
 #
 
-
+::rivetweb::init Scripted
 
