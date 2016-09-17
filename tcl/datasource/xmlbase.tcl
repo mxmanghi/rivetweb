@@ -201,7 +201,7 @@ namespace eval ::rwdatas {
                     dict set menu_d menu [$c getAttribute position $position] [$c text]
                 }
                 default {
-                    lappend metadata_l [$c tagName] [escape_shell_command [$c text]]
+                    lappend metadata_l [$c tagName] [::rivet::escape_shell_command [$c text]]
                 }
             }
         }

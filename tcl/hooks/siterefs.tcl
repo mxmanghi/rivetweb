@@ -19,7 +19,7 @@ proc sitereference { datasource tag element_text attribute_list } {
         unset attribs(href)
         $::rivetweb::linkmodel set_attribute lm [array get attribs]
         $::rivetweb::linkmodel set_property lm type internal
-        set translated_link [::rwdatas::${datasource}::to_url $lm]
+        set translated_link [$datasource to_url $lm]
         set attribs(href) [$::rivetweb::linkmodel get_attribute $translated_link href]
 
     }
