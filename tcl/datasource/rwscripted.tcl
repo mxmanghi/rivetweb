@@ -31,7 +31,7 @@ namespace eval ::rwdatas {
         public method fetchData {key reassigned_key}
         public method is_stale {key timereference } { return false }
         public method menu_list {page} 
-        public proc   to_url {lm}
+        public method to_url {lm}
         public method resource_exists {resource_key} 
         public method get_resource_repr {resource_key} 
         public method name {} { return "Scripted" }
