@@ -66,7 +66,7 @@ and failed to reassigned the resource key ($key)} \
         }
         public method name {} { return "Dummy" }
         public method resource_exists {resource_key} { return true }
-        public proc to_url {lm} {
+        public method to_url {lm} {
 
             set linkmodel   $::rivetweb::linkmodel
 
