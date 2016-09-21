@@ -36,7 +36,7 @@ namespace eval ::rwpage {
         public method destroy {}
         public method to_string {}
         public method title {language {txt ""}}
-        public method headline {language}
+        public method headline {language {hdl ""}}
         public method store {var value} { dict set stored_vars $var $value }
         public method lappend {var value} { dict lappend stored_vars $var $value }
         public method erase {var} {
@@ -239,7 +239,15 @@ namespace eval ::rwpage {
 # I add a 'headline' method for sake of simplicity, but there is
 # no compelling reason to make this a base class method. 
 
-    ::itcl::body RWPage::headline {language} { return "" }
+    ::itcl::body RWPage::headline {language {hdl ""}} { 
+        if {$hdl != ""} {
+            dict set metadata headline $language $hdl      
+        } elseif {[dict exists $metadata headline $language]} {
+            return [dict get $metadata headline $language]
+        } else {
+            return ""
+        }
+    }
 
     namespace export create
     namespace ensemble create
