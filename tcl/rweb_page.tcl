@@ -25,7 +25,6 @@ namespace eval ::rwpage {
         public method add_metadata {field value} 
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
-        public method set_title {language title_t}
         public method prepare {language argsqs}
         public method url_args {} { return $stored_vars }
         public method languages { } 
@@ -35,6 +34,7 @@ namespace eval ::rwpage {
         public method print_content { language }
         public method destroy {}
         public method to_string {}
+        public method set_title {language title_t}
         public method title {language {txt ""}}
         public method headline {language {hdl ""}}
         public method store {var value} { dict set stored_vars $var $value }

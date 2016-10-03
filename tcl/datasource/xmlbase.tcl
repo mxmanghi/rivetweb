@@ -200,6 +200,14 @@ namespace eval ::rwdatas {
                     }
                     dict set menu_d menu [$c getAttribute position $position] [$c text]
                 }
+                title -
+                headline {
+                    # we ignore these elements in the page root and
+                    # we'll consider only title and headline in
+                    # the <content>...</content> element
+
+                    continue
+                }
                 default {
                     lappend metadata_l [$c tagName] [::rivet::escape_shell_command [$c text]]
                 }
@@ -228,19 +236,22 @@ namespace eval ::rwdatas {
 # adding content for language '$clang'
 
                 set node_name [$c nodeName]
-
-                if {$node_name == "pagetext"} {
+                switch $node_name {
+                    pagetext {
 
 # creiamo un nuovo dom
 
-                    set cdom [dom parse [$c asXML]]
-                    $::rivetweb::logger log info "Adding content for language $clang ($key)"
-                    $newpage set_content $clang pagetext $cdom
+                        set cdom [dom parse [$c asXML]]
+                        $::rivetweb::logger log info "Adding content for language $clang ($key)"
+                        $newpage set_content $clang pagetext $cdom
 
-                } else {
-
-                    $newpage set_content $clang $node_name [$c text]
-
+                    } 
+                    title {
+                        $newpage title $clang [$c text]
+                    }
+                    default {
+                        $newpage set_content $clang $node_name [$c text]
+                    }
                 }
             }
         }
