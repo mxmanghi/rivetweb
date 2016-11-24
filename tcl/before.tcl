@@ -81,9 +81,9 @@ namespace eval ::rivetweb {
 # we determine the language for this request (keep in mind we are running
 # within the ::rivetweb namespace)
 
-    if {[var exists lang]} {
+    if {[::rivet::var exists lang]} {
         set language [::rivet::var get lang]
-    } elseif {[var exists language]} {
+    } elseif {[::rivet::var exists language]} {
         set language [::rivet::var get language]
     } else {
         set language $::rivetweb::default_lang
@@ -136,7 +136,7 @@ namespace eval ::rivetweb {
     foreach ds $::rivetweb::datasources {
 
         set dsmenu [$ds menu_list $::rivetweb::current_page]
-        apache_log_error debug "got '$dsmenu' from $ds"
+        ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
         dict for {k v} $dsmenu {
             dict lappend ::rivetweb::pagemenus $k {*}$v
         }
@@ -198,13 +198,13 @@ namespace eval ::rivetweb {
                 }
 
             } elseif {[::rivet::var exists function]} {
-                set fun [var get function]
+                set fun [::rivet::var get function]
                 if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {
                     puts $e
                 }
             } else {
-                apache_log_error info "parsing $::rivetweb::running_template"
-                parse $::rivetweb::running_template
+                ::rivet::apache_log_error info "parsing $::rivetweb::running_template"
+                ::rivet::parse $::rivetweb::running_template
             }
         }
     }

@@ -7,7 +7,7 @@
 
 # building an in-memory database of available templates for this website
 
-apache_log_error notice "Initializing Apache child [pid], [pwd]"
+::rivet::apache_log_error notice "Initializing Apache child [pid], [pwd]"
 
 set templates_dir [file join $::rivetweb::site_base $::rivetweb::base_templates]
 set templates_dir_list [glob -directory $templates_dir *]
@@ -25,7 +25,7 @@ foreach template $templates_dir_list {
 
                 source [file join $template rwtemplate.tcl]
                 if {![info exists rwtemplate] || ![info exists rwcss]} {
-                    apache_log_error err "Descrittore template $template incompleto"
+                    ::rivet::apache_log_error err "Descrittore template $template incompleto"
                     continue
                 }
 
@@ -64,13 +64,13 @@ foreach template $templates_dir_list {
             }
 
         } e]} {
-            apache_log_error err "Error reading rwtemplate.tcl from $template ($e)"
+            ::rivet::apache_log_error err "Error reading rwtemplate.tcl from $template ($e)"
         }
     }
 }
 
 foreach k [dict keys $::rivetweb::templates_db] {
-    apache_log_error info "$k: [dict get $::rivetweb::templates_db $k]"
+    ::rivet::apache_log_error info "$k: [dict get $::rivetweb::templates_db $k]"
 }
 
 # now we build the hooks database
@@ -93,7 +93,7 @@ namespace eval ::rivetweb {
         set nhooks 0
         if {[catch {set hooks_list [glob $hooks_dir_fq]} e]} {
 
-            apache_log_error notice "no hooks read from $hooks_dir_fq"
+            ::rivet::apache_log_error notice "no hooks read from $hooks_dir_fq"
 
         } else {
 
@@ -118,8 +118,8 @@ namespace eval ::rivetweb {
                 }
             }
 
-            apache_log_error notice "$nhooks hooks read from $hooks_d"
-            apache_log_error debug   $hooks
+            ::rivet::apache_log_error notice "$nhooks hooks read from $hooks_d"
+            ::rivet::apache_log_error debug   $hooks
         }
     }
 }
