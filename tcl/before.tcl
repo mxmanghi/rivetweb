@@ -51,17 +51,11 @@ namespace eval ::rivetweb {
 
         set template_key [::rivet::var_qs get template]
 
-    } elseif {[string compare $::rivetweb::default_template ""] != 0} {
+    } else { 
 
-        set template_key $::rivetweb::default_template
+        set template_key [::rivetweb::select_template] 
 
-    } else {
-
-# there must be always a definition for the rwbase template
-
-        set template_key rwbase
-
-    }
+    } 
 
     $::rivetweb::logger log info "selected template $template_key: $running_template (css: $running_css)"
 
@@ -183,18 +177,18 @@ namespace eval ::rivetweb {
 
 # -- index.rvt
 #
-#           this was shipped in the index.rvt template, but it was unnecessary
-
 # first of all we test the parameter rwinfo. 
-
+#
             if {[::rivet::var exists rwinfo]} {
-                load_env env
-                parray_table env
+                ::rivet::load_env env
+                ::rivet::parray_table env
                 #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
                 set siteconf [::rivet::inspect]
 
                 foreach k [dict keys $siteconf] {
-                    puts "<pre>$k -> [dict get $siteconf $k]</pre>"
+                    set arrayv "_${k}_"
+                    array set $arrayv [dict get $siteconf $k]
+                    ::rivet::parray_table $arrayv
                 }
 
             } elseif {[::rivet::var exists function]} {
