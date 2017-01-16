@@ -192,7 +192,7 @@ namespace eval ::rivetweb {
 # is to register new datasources
 #
 
-    proc init {ds {position "last"}} {
+    proc init {ds {position "last"} args} {
         variable    site_base
         variable    datasources
         variable    logger
@@ -207,7 +207,7 @@ namespace eval ::rivetweb {
             lappend datasources $dsobj 
         }
 
-        $ds init
+        $ds init $args
     }
 }
 
