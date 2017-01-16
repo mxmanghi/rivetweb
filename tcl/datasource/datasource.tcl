@@ -78,7 +78,13 @@ namespace eval ::rwdatas {
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
                 set stored_page [dict get $cache $key object]
-                $stored_page destroy
+
+                ### catch added for debugging
+                if {[catch {$stored_page destroy} e opts]} {
+                    ::rivet::apache_log_error err "failed to delete $stored_page. Cache dump"
+                    foreach {k page} $cache { ::rivet::apache_log_error err "$k: $page" }
+                }
+
                 set p [$this fetchData $key rkey]
                 if {$key == $rkey} {
                     dict set cache $key object $p
