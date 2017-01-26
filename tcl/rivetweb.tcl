@@ -14,7 +14,6 @@ package require rwlogger
 
 package require rwlink
 package require rwmenu
-package require rwsitemap
 package require htmlizer
 
 namespace eval ::rivetweb {
@@ -31,10 +30,9 @@ namespace eval ::rivetweb {
 #
 
     proc select_datasource {urlencoded_pars resource_key_var} {
-        variable datasources
         upvar $resource_key_var key
 
-        foreach ds $datasources {
+        foreach ds $::rivetweb::datasources {
             $ds willHandle $urlencoded_pars key
         }
 
@@ -553,8 +551,7 @@ namespace eval ::rivetweb {
         # through the last datasource in the chain (::RWDummy)
 
         foreach ds $::rivetweb::datasources {
-            ::rivet::apache_log_error info \
-                    "querying $ds for $key"
+            ::rivet::apache_log_error info "querying $ds for $key"
 
             set rkey $key           
             if {[$ds will_provide $key rkey]} {
@@ -574,10 +571,13 @@ namespace eval ::rivetweb {
 
                     return [search_datasources $rkey rkey datasource]
                 }
+
             } else {
+
                 if {($rkey != "") && ($key != $rkey)} {
                     return [search_datasources $rkey rkey datasource]
                 }
+
             }
         }
     }

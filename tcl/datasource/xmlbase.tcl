@@ -12,7 +12,6 @@ package require rwconf
 package require rwlogger
 package require rwsitemap
 package require rwstatic
-package require rwsitemap
 package require rwmenu
 package require rwlink
 package require Datasource

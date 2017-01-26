@@ -18,6 +18,7 @@ namespace eval ::rwdatas {
         private variable cache [dict create]
 
         public method init {args} {  }
+        public method destroy {}
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
         public method fetchData {key reassigned_key} { return "" }
         public method synchData {key data_dict} {}
@@ -40,7 +41,23 @@ namespace eval ::rwdatas {
         public method cache {} { return $cache }
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
+
     }
+
+    ::itcl::body Datasource::destroy { } {
+
+        dict for {key page_o} $cache {
+            if {[catch {
+                set page [dict get $page_o object]
+                $page destroy
+            } e opts]} {
+                ::rivet::apache_log_error err "Error deleting page $page ($e)"
+            }
+        }
+
+        ::itcl::delete object $this
+    }
+
 
 # -- will_provide
 #
