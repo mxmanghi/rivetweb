@@ -48,7 +48,8 @@ namespace eval ::rwdatas {
         private method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o}        
-        private method xmlfile {key} { return [file join $static_pages ${key}.xml] }
+        protected method xmlfile {key} { return [file join $static_pages ${key}.xml] }
+        protected method xmlsitemaps {sitemap_key} { return [glob -nocomplain [file join $sitemap_key *.xml]] }
 
         public method init {args}
         public method willHandle {arglist keyvar}
@@ -694,7 +695,7 @@ namespace eval ::rwdatas {
 # This object assumes the files to be in the 'sitemap_dir' directory
 # (its existence has been already checked in 'init')
 
-        set xmlmenus [glob -nocomplain [file join $sitemap_dir *.xml]]
+        set xmlmenus [xmlsitemaps $sitemap_dir]
 
 # if there is no menu tree defined we give the database tree 
 # an empty root menu
@@ -862,4 +863,4 @@ namespace eval ::rwdatas {
     }
 }
 
-package provide XMLBase 2.0
+package provide XMLBase 2.1

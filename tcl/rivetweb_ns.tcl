@@ -187,12 +187,12 @@ namespace eval ::rivetweb {
 
 # -- init
 #
-# init used to be the real initialization in Rivetweb 1.0. Most of it's assignements
+# init used to be the real initialization in Rivetweb 1.0. Most of its tasks
 # have been devolved to other components (notably datasources). Its main duty now
-# is to register new datasources
+# is to register new datasources.
 #
 
-    proc init {ds {position "last"}} {
+    proc init {ds {position "bottom"}} {
         variable    site_base
         variable    datasources
         variable    logger
@@ -201,12 +201,16 @@ namespace eval ::rivetweb {
         package require $ds
 
         set dsobj [::rwdatas::${ds} ::${ds}]
-        if {$position == "top"} {
-            set datasources [linsert $datasources 0 $dsobj]
-        } else {
-            lappend datasources $dsobj 
+        switch $position {
+            top {
+                set datasources [linsert $datasources 0 $dsobj]
+            }
+            bottom -
+            last -
+            default {
+                lappend datasources $dsobj 
+            }
         }
-
         $ds init
     }
 }

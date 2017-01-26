@@ -52,10 +52,10 @@ namespace eval ::rwdatas {
         inherit Datasource
 
         private variable urlargs
-        private variable messages
+        private common MESSAGES
 
         public method init {args} {
-            set messages [dict create \
+            set MESSAGES [dict create \
                 unknown_error_condition "Unknwon error condition (key: \$key)" \
                 page_not_found_error    "page not found error. key: \$key arglist: \$urlargs" \
                 wrong_datasource_returned_key {
@@ -120,11 +120,11 @@ and failed to reassigned the resource key ($key)} \
                 
             } else {
 
-                if {![dict exists $messages $key]} {
+                if {![dict exists $MESSAGES $key]} {
                     set rkey unknown_error_condition
                 }
 
-                set page_text [subst [dict get $messages $rkey]]
+                set page_text [subst [dict get $MESSAGES $rkey]]
                 set pobj [::rwpage::RWBasicPage ::#auto $rkey $page_text]
                 $pobj set_title $::rivetweb::default_lang "Error $rkey"
 
@@ -138,9 +138,9 @@ and failed to reassigned the resource key ($key)} \
     # that might be useful in several context within an application
 
 
-        public method register_error {key error_message} {
+        public proc register_error {key error_message} {
 
-            dict set messages $key $error_message
+            dict set MESSAGES $key $error_message
 
         }
 

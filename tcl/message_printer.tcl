@@ -22,10 +22,7 @@ package require Itcl
 #
 #
 
-::itcl::body MessagePrinter::reset_message_queue { } {
-
-    $message_queue clear
-}
+::itcl::body MessagePrinter::reset_message_queue { } { $message_queue clear }
 
 # -- post_message
 #
@@ -70,3 +67,4 @@ package require Itcl
 }
 
 package provide MessagePrinter 0.1
+

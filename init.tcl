@@ -13,6 +13,9 @@ package require rivetweb
 package require rwconf
 package require rwmenu
 package require rwpage
+package require Datasource
+package require RWDummy
+package require XMLBase
 
 ::rivetweb::setup $rweb_root $website_root 
 
@@ -38,13 +41,6 @@ source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
 set ::rivetweb::menuclass [dict get $::rivetweb::templates_db $rivetweb::default_template menuclass]
 
-# if we want to have this datasource we have to load it within the
-# initialization of a specific application 
-# ::rivetweb::init Scripted
-
-::rivetweb::init XMLBase
-::rivetweb::init RWDummy
-
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $website_init]} {
     ::rivet::apache_log_error notice "running website specific initialization $website_init ([pwd])"
@@ -58,3 +54,12 @@ if {[file exists $website_init]} {
     }
 }
 
+# if we want to have the Scripted datasource we have to load it from within the
+# initialization of a specific application 
+# ::rivetweb::init Scripted
+
+::rivetweb::init XMLBase
+
+# this one is guaranteed to be the last datasource
+
+::rivetweb::init RWDummy
