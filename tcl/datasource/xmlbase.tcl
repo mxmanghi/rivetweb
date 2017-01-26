@@ -31,6 +31,7 @@ namespace eval ::rwdatas {
     ::itcl::class XMLBase {
         inherit Datasource
 
+        public  variable menutclclass "" {set forceupdate 1}
         public  variable sitemap
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
@@ -40,8 +41,6 @@ namespace eval ::rwdatas {
         private variable xmlpath
         private variable current
         private variable forceupdate        0
-
-        public variable menutclclass "" {set forceupdate 1}
 
         private method buildPageEntry {key xmldata reassigned_key}
         private method time_reference {xmlbase} 
@@ -342,7 +341,7 @@ namespace eval ::rwdatas {
 
         } else {
 
-            $::rivetweb::logger log debug "page for key '$key' not found"
+            $::rivetweb::logger log notice "page for key '$key' not found ([$this get_resource_repr $key])"
             set pagedbentry ""
             set rkey xml_page_not_found_error
         }

@@ -30,6 +30,7 @@ namespace eval ::rwpage {
                     dict with p {
 
                         set rowfields [list <td>$object</td>\
+                                            <td>[$object key]</td>\
                                             <td>[clock format $timestamp]</td>\
                                             <td>[$object info class]<td>]
 
@@ -38,7 +39,7 @@ namespace eval ::rwpage {
                     append tbody [::rivet::xml $rowfields tr]
                 }
                 set tbody [::rivet::xml $tbody tbody]
-                set thead [::rivet::xml $tbhead thead [list th colspan 3]]
+                set thead [::rivet::xml $tbhead thead [list th colspan 4]]
                 puts [::rivet::xml "$thead $tbody" [list table style "margin: 1em auto;"]]
             }
         }

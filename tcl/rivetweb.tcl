@@ -583,6 +583,15 @@ namespace eval ::rivetweb {
     }
     namespace export search_datasources
 
+    # -- default_template
+    # 
+    # template selection
+    #
+    proc select_template {} {
+        variable default_template
+        return $default_template
+    }
+
     namespace ensemble create
 }
 

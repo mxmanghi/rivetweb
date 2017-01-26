@@ -149,10 +149,12 @@ namespace eval ::rivetweb {
         variable    site_after_script
         variable    site_abort_script
         variable    site_after_every_script
+        variable    default_template 
 
         set rivetweb_root   [file normalize $rweb_root]
         set scripts	        [file join $rivetweb_root tcl]
         set site_base       $website_root        
+        set default_template rwbase
         
         set site_before_script [file normalize [file join $site_base before.tcl]]
         if {![file exists $site_before_script]} {
@@ -192,7 +194,7 @@ namespace eval ::rivetweb {
 # is to register new datasources.
 #
 
-    proc init {ds {position "bottom"}} {
+    proc init {ds {position "last"} args} {
         variable    site_base
         variable    datasources
         variable    logger
@@ -211,7 +213,8 @@ namespace eval ::rivetweb {
                 lappend datasources $dsobj 
             }
         }
-        $ds init
+
+        $ds init $args
     }
 }
 
