@@ -29,10 +29,10 @@ namespace eval ::rwpage {
                 dict for {key p} $dscache {
                     dict with p {
 
-                        set rowfields [list <td>$object</td>\
-                                            <td>[$object key]</td>\
-                                            <td>[clock format $timestamp]</td>\
-                                            <td>[$object info class]<td>]
+                        set rowfields "<td>$object</td>\
+                                       <td>[$object key]</td>\
+                                       <td>[clock format $timestamp]</td>\
+                                       <td>[$object info class]<td>"
 
                         
                     }
