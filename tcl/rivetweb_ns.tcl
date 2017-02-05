@@ -6,11 +6,12 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                20160915
+    variable version                20170129
 
 # this must be the local path to the site's document root
     variable site_base
     variable rivetweb_root
+    variable request
     variable scripts
     variable website_init	        rivetweb.tcl
     variable site_before_script     ""
@@ -143,6 +144,7 @@ namespace eval ::rivetweb {
     proc setup {rweb_root website_root} {
         variable    scripts
         variable    rivetweb_root
+        variable    request
         variable    site_base
         variable    logger
         variable    site_before_script
@@ -153,6 +155,7 @@ namespace eval ::rivetweb {
 
         set rivetweb_root   [file normalize $rweb_root]
         set scripts	        [file join $rivetweb_root tcl]
+        set request         [file join $scripts before.tcl]
         set site_base       $website_root        
         set default_template rwbase
         
