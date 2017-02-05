@@ -100,14 +100,36 @@ namespace eval ::rivetweb {
     foreach ds $::rivetweb::datasources {
 
         set ::rivetweb::datasource $ds
-        $ds willHandle $argsqs ::rivetweb::page_key 
+
+        set dsquery [catch { $ds willHandle $argsqs ::rivetweb::page_key } error_code error_info]
+        $::rivetweb::logger log info "$ds: dsquery, ecode, einfo: $dsquery | $error_code | $error_info"
+
+        switch $dsquery {
+
+            3 {
+                break;
+            }
+            0 -
+            4 {
+                continue
+            }
+
+        }
 
     }
-    set ::rivetweb::datasource $ds
 
+    $::rivetweb::logger log debug "error_code $error_info"
+    if {[dict get $error_info -errorcode] == "rw_restart"} {
+        $::rivetweb::logger log debug "datasource search forced"
+        set ::rivetweb::current_page \
+            [::rivetweb::search_datasources $::rivetweb::page_key ::rivetweb::page_key ::rivetweb::datasource]
+    } else {
+        set ::rivetweb::datasource $ds
+        set ::rivetweb::current_page [$::rivetweb::datasource fetch_page $::rivetweb::page_key ::rivetweb::page_key]
+    } 
     $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
+
     set ::rivetweb::page_content $::rivetweb::page_key
-    set ::rivetweb::current_page [$::rivetweb::datasource fetch_page $::rivetweb::page_key ::rivetweb::page_key]
     set ::rivetweb::current_page [$::rivetweb::current_page prepare $::rivetweb::language $argsqs]
 
 # this variable is deprecated and its retained only for compatibility
