@@ -539,8 +539,7 @@ namespace eval ::rivetweb {
 
 # -- search_datasources
 #
-# recusive search of a page through the datasource
-# list. 
+# recusive search of a page through the datasource list. 
 #
 
     proc search_datasources {key returned_key datasrc} {
@@ -589,6 +588,7 @@ namespace eval ::rivetweb {
     #
     proc select_template {} {
         variable default_template
+
         return $default_template
     }
 

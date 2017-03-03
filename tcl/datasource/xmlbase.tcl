@@ -63,6 +63,7 @@ namespace eval ::rwdatas {
         public method get_resource_repr {resource_key} 
         public method to_url {lm}
         public proc   makeUrl {reference} 
+        public method will_provide {keyword reassigned_key}
     }
 
     ::itcl::body XMLBase::init {args} {
@@ -115,6 +116,10 @@ namespace eval ::rwdatas {
         load_sitemap $sitemap
 
         set menutclclass $::rivetweb::menuclass
+
+        # registering error message
+
+        ::rwdatas::RWDummy::register_error xml_page_not_found_error "XML File not found"
     }
 
 #
@@ -278,7 +283,7 @@ namespace eval ::rwdatas {
 #
     ::itcl::body XMLBase::is_stale {key timereference} {
         
-        if {$key == "xml_page_not_found_error"} { return true }
+        #if {$key == "xml_page_not_found_error"} { return true }
 
         if {[$this resource_exists $key]} {
             set current_timeref [$this time_reference $key]
@@ -295,7 +300,7 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::resource_exists {key} {
 
-        if {$key == "xml_page_not_found_error"} { return 1 }
+        #if {$key == "xml_page_not_found_error"} { return 1 }
 
         return [file exists [$this get_resource_repr $key]]
     }
@@ -304,6 +309,12 @@ namespace eval ::rwdatas {
         return [$this xmlfile $key]
     }
 
+# -- will_provide
+#
+#
+    ::itcl::body XMLBase::will_provide {keyword reassigned_key} {
+        return [$this resource_exists $keyword]
+    }
 
 # -- fetchData 
 # 
@@ -315,11 +326,7 @@ namespace eval ::rwdatas {
         upvar $reassigned_key rkey
         
         set rkey $key
-        if {$key == "xml_page_not_found_error"} {
-
-            set pagedbentry [::rwpage::RWBasicPage ::#auto $key "XML File not found"]
-
-        } elseif {[$this resource_exists $key]} {
+        if {[$this resource_exists $key]} {
 
             set xmlfile [$this get_resource_repr $key]
 

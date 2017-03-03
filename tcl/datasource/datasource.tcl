@@ -66,6 +66,7 @@ namespace eval ::rwdatas {
     ::itcl::body Datasource::will_provide {key reassigned_key} {
         upvar $reassigned_key rkey
 
+        set rkey $key
         if {[dict exists $cache $key]} {
             return true
         } else {
@@ -119,13 +120,14 @@ namespace eval ::rwdatas {
                 dict set cache $key object $p
                 dict set cache $key timestamp [clock seconds]
             } else {
-                if {$key != $rkey} {
-                    set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
-                } else {
-                    set ::rivetweb::datasource ::RWDummy 
-
-                    set p [::RWDummy fetchData wrong_datasource_returned_key rkey]
-                }
+                set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
+                #if {$key != $rkey} {
+                #    set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
+                #} else {
+                #    set ::rivetweb::datasource ::RWDummy 
+                #
+                #    set p [::RWDummy fetchData wrong_datasource_returned_key rkey]
+                #}
             }
             return $p
 

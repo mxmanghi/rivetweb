@@ -57,7 +57,7 @@ namespace eval ::rwdatas {
 
         public method init {args} {
             set MESSAGES [dict create \
-                unknown_error_condition "Unknwon error condition (key: \$key)" \
+                unknown_error_condition "Unknown error condition (key: \$key)" \
                 page_not_found_error    "page not found error. key: \$key arglist: \$urlargs" \
                 wrong_datasource_returned_key {
 A datasource didn't returned a valid page object

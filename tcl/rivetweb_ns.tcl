@@ -35,6 +35,7 @@ namespace eval ::rivetweb {
     variable default_template       rwbase
     variable http_encoding          utf-8
     variable datasources            {}
+    variable datasources_args       [dict create]
     variable datasource             ::XMLBase
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
@@ -200,6 +201,7 @@ namespace eval ::rivetweb {
     proc init {ds {position "last"} args} {
         variable    site_base
         variable    datasources
+        variable    datasources_args
         variable    logger
         variable    default_lang
 
@@ -207,17 +209,20 @@ namespace eval ::rivetweb {
 
         set dsobj [::rwdatas::${ds} ::${ds}]
         switch $position {
+            first -
             top {
                 set datasources [linsert $datasources 0 $dsobj]
             }
             bottom -
             last -
             default {
-                lappend datasources $dsobj 
+                lappend datasources $dsobj
             }
         }
 
-        $ds init $args
+        dict set datasources_args $dsobj $args
+
+        #$ds init $args
     }
 }
 

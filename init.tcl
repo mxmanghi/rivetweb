@@ -61,3 +61,13 @@ if {[file exists $website_init]} {
 # this one is guaranteed to be the last datasource
 
 ::rivetweb::init RWDummy
+
+# this is the very last operation to do after the initialization. We have just
+# instantiated each datasource and we proceed calling the 'init' method for each
+# instance, as listed in ::rivetweb::datasources, in reverse order
+
+foreach ds [lreverse $::rivetweb::datasources] {
+
+    $ds init [dict get $::rivetweb::datasources_args $ds]
+
+}

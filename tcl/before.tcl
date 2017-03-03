@@ -136,64 +136,53 @@ namespace eval ::rivetweb {
 
     set ::rivetweb::current_pmodel $::rivetweb::current_page
 
-# we run metadata hooks for variable that have to be extracted to control the
-# display of our template
-
-    $::rivetweb::current_page metadata_hooks $::rivetweb::hooks
-
-    #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
-
-    ::rivet::apache_log_error debug "-> $::rivetweb::current_page"
-
-# we rebuild the navigation menu dictionary on every request
-
-    set ::rivetweb::pagemenus [dict create]
-
-    foreach ds $::rivetweb::datasources {
-
-        set dsmenu [$ds menu_list $::rivetweb::current_page]
-        ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
-        dict for {k v} $dsmenu {
-            dict lappend ::rivetweb::pagemenus $k {*}$v
-        }
-    }
-
-    ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
-
-    if {[catch {
-
-       $::rivetweb::current_page postproc_hooks   $::rivetweb::datasource   \
-                                                  $::rivetweb::hooks        \
-                                                  xmlpostproc               \
-                                                  $language
-
-    } e]} {
-
-        ::rivet::apache_log_error err "Error processing data for page ($e)"
-        ::rivet::apache_log_error err $errorInfo
-
-#        if {![$::rivetweb::rwebdb check postproc_hook_error]} {
-#
-#            set pobj [::rwpage::RWStatic ::#auto postproc_hook_error]
-#            $pobj set_pagetext $::rivetweb::default_lang "Error in page postprocessing"
-#            $pobj add_metadata header "Postprocessing error"
-#            $pobj add_metadata title  "Postprocessing error"
-#            $::rivetweb::rwebdb store postproc_hook_error $pobj ::RWDummy
-#
-#        } else {
-#
-#            set pobj [$::rivetweb::rwebdb fetch postproc_hook_error ::rivetweb::datasource]
-#            set ::rivetweb::current_page $pobj
-#
-#        }
-
-        set ::rivetweb::current_page [::RWDummy fetch_page postproc_hook_error rkey]
-
-    }
+# let's proceed with the post processing and data generation
 
     if {[$::rivetweb::current_page binary_content]} {
+
         $::rivetweb::current_page print_binary
+
     } else {
+
+    # we run metadata hooks for variables that have to be extracted to control the
+    # display of our template
+
+        $::rivetweb::current_page metadata_hooks $::rivetweb::hooks
+
+        #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
+        #::rivet::apache_log_error debug "-> $::rivetweb::current_page"
+
+    # we rebuild the navigation menu dictionary on every request
+
+        set ::rivetweb::pagemenus [dict create]
+
+        foreach ds $::rivetweb::datasources {
+
+            set dsmenu [$ds menu_list $::rivetweb::current_page]
+            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
+            dict for {k v} $dsmenu {
+                dict lappend ::rivetweb::pagemenus $k {*}$v
+            }
+        }
+
+        ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
+
+        if {[catch {
+
+           $::rivetweb::current_page postproc_hooks   $::rivetweb::datasource   \
+                                                      $::rivetweb::hooks        \
+                                                      xmlpostproc               \
+                                                      $language
+
+        } e]} {
+
+            ::rivet::apache_log_error err "Error processing data for page ($e)"
+            ::rivet::apache_log_error err $errorInfo
+
+            set ::rivetweb::current_page [::RWDummy fetch_page postproc_hook_error rkey]
+
+        }
+
         ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
         if {$::rivetweb::version >= 20160915} {
 

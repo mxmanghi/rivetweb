@@ -82,7 +82,7 @@ namespace eval ::rwlink {
 
     proc create {link_owner reference link_text link_args {link_info ""}} {
 
-        ::rivet::apache_log_error debug "<--- $link_text - ($link_info)<br/>"
+        #::rivet::apache_log_error debug "<--- $link_text - ($link_info)<br/>"
 
         set link_o  [RWLink [namespace current]::#auto $link_owner $reference $link_text $link_args $link_info]
 
