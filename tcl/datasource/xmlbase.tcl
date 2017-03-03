@@ -521,9 +521,9 @@ namespace eval ::rwdatas {
         array set group_menu_list {}
 
         foreach menu [$sm getElementsByTagName menu] {
-            foreach cn [$menu childNodes] {
-                $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
-            }                            
+            #foreach cn [$menu childNodes] {
+            #    $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
+            #}                            
 
 # again, menus without an id are ignored. 
 # How can we be sure to avoid id definition clashes?
