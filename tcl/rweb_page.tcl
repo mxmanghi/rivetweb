@@ -85,13 +85,6 @@ namespace eval ::rwpage {
 
         set metadata [dict merge $metadata $mdlist]
 
-#        while {[llength $mdlist] > 1} {
-#
-#            set mdlist [lassign $mdlist key value]
-#            dict set metadata $key $value
-#
-#        }
-
     }
 
 # -- set_title

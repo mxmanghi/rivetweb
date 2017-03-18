@@ -174,8 +174,8 @@ namespace eval ::rwpage {
                 set language $::rivetweb::default_lang 
             }
 
-# xmlpp is a subdictionary for hooks of 'hooks_class'
-# the keys of the dictionary are the tag names to be manipulated
+            # xmlpp is a subdictionary for hooks of 'hooks_class'
+            # the keys of the dictionary are the tag names to be manipulated
 
             set xmlpp [dict get $hooks_d $hooks_class]
 
@@ -188,10 +188,10 @@ namespace eval ::rwpage {
                     set text_mode [dict get $hkdescr textmode]
                 }
 
-# we must fetch the content for a specific language and get the 
-# elements whose tag name is $hk. Tagname and attributes are then
-# passed as arguments to the hook, which returns a new tag name
-# and a new list of attributes which are to replace the element
+            # we must fetch the content for a specific language and get the 
+            # elements whose tag name is $hk. Tagname and attributes are then
+            # passed as arguments to the hook, which returns a new tag name
+            # and a new list of attributes which are to replace the element
 
                 set page_xml [$this content $language -reference]
                 #set page_xml [dict get $page_content pagetext]
@@ -210,7 +210,7 @@ namespace eval ::rwpage {
                                           [$el2xform text] $attribute_list]
                     }
 
-#                   apache_log_error debug $new_element_d
+                    #::rivet::apache_log_error debug $new_element_d
                     if {[string length $new_element_d]} {
 
                         set new_tag     [dict get $new_element_d tagname]

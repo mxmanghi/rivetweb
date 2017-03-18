@@ -9,6 +9,7 @@ namespace eval ::rivetweb {
     variable version                20170129
 
 # this must be the local path to the site's document root
+
     variable site_base
     variable rivetweb_root
     variable request
@@ -62,7 +63,6 @@ namespace eval ::rivetweb {
 # in site_structure.xml
 
     variable default_lang           en
-
     variable site_defs              site_defs.xml
     variable language               $default_lang
 

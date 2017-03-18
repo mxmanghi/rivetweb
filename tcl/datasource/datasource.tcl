@@ -39,6 +39,7 @@ namespace eval ::rwdatas {
         public method after_request {} {}
 
         public method cache {} { return $cache }
+        public method cache_query { key }
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
 
@@ -81,6 +82,16 @@ namespace eval ::rwdatas {
             }
             return $response
         }
+    }
+
+# -- cache_query
+#
+#
+
+    ::itcl::body Datasource::cache_query {key} {
+
+        return [dict exists $cache $key]
+
     }
 
 # -- fetch_page

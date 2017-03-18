@@ -525,9 +525,9 @@ namespace eval ::rwdatas {
             #    $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
             #}                            
 
-# again, menus without an id are ignored. 
-# How can we be sure to avoid id definition clashes?
-# This is an issue still to be solved....
+            # again, menus without an id are ignored. 
+            # How can we be sure to avoid id definition clashes?
+            # This is an issue still to be solved....
 
             if {[$menu hasAttribute id]} {
 
@@ -576,8 +576,8 @@ namespace eval ::rwdatas {
 
                 $menuobj assign parent $parent_mg
 
-        # links are interpreted here. A link obj should be created
-        # for each of them using the linkmodel interface
+                # links are interpreted here. A link obj should be created
+                # for each of them using the linkmodel interface
 
                 set links [$menu getElementsByTagName link]
                 set lm    $::rivetweb::linkmodel
@@ -593,9 +593,9 @@ namespace eval ::rwdatas {
                     set lowner    [$this name]
                     foreach linkdata [$l childNodes] {
 
-        # In order not to replicate the same snippet of code
-        # we anyway try to determine the language of the link, 
-        # regardless it's meaninful or not
+                        # In order not to replicate the same snippet of code
+                        # we anyway try to determine the language of the link, 
+                        # regardless it's meaninful or not
                     
                         if {[$linkdata hasAttribute lang]} {
                             set language [$linkdata getAttribute lang]
@@ -605,9 +605,10 @@ namespace eval ::rwdatas {
                             set language $::rivetweb::default_lang
                         }
 
-        # XMLBase assumes every tag not explicitly handled to be an attribute
-        # of the <a ...> tag. This comes from the subsequent adjustments done
-        # on the XML sitemap definition, but are arguably correct or well designed.
+                        # XMLBase assumes every tag not explicitly handled to be an attribute
+                        # of the <a ...> tag. This comes from the subsequent adjustments done
+                        # on the XML sitemap definition, but are arguably correct or well 
+                        # designed.
 
                         set tagname   [$linkdata tagName]
                         switch $tagname {
@@ -649,13 +650,16 @@ namespace eval ::rwdatas {
 
                     set attributes [string trim $attributes]
 
-                    #::rivet::apache_log_error err "Attributes: $attributes [::rivet::lempty $attributes] [llength $attributes]"
+                    #::rivet::apache_log_error err \
+                    # "Attributes: $attributes [::rivet::lempty $attributes] [llength $attributes]"
+
                     if { [llength $attributes] > 0 } { $lm set_attribute linkobj $attributes }
                     $menuobj add_link $linkobj
+
                     ### coredump here !!!! #### ::rivet::apache_log_error notice "adding link for [$this to_url $linkobj]"
                 }
 
-            # checking 'position' attribute
+                # checking 'position' attribute
 
                 if {[$menu hasAttribute position]} {
                     set position [$menu getAttribute position]
