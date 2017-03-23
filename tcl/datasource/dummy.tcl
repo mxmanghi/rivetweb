@@ -32,7 +32,7 @@ namespace eval ::rwpage {
                         set rowfields "<td>$object</td>\
                                        <td>[$object key]</td>\
                                        <td>[clock format $timestamp]</td>\
-                                       <td>[$object info class]<td>"
+                                       <td>[$object info class]</td>"
 
                         
                     }
