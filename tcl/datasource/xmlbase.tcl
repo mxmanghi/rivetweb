@@ -525,6 +525,8 @@ namespace eval ::rwdatas {
             #    $::rivetweb::logger log debug "  $menu: [$cn nodeName] - [$cn asXML]"
             #}                            
 
+            if {[$menu getAttribute status "normal"] == "disabled"} { continue }
+
             # again, menus without an id are ignored. 
             # How can we be sure to avoid id definition clashes?
             # This is an issue still to be solved....
