@@ -72,6 +72,16 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_url
 
+# -- rewrite_pict_path
+#
+#
+    proc rewrite_pict_path {rwcode urlscript pict_path rewritten_pict_uri} {
+        upvar $rewritten_pict_uri rewritten_uri
+
+        set rewritten_uri $urlscript
+    }
+    namespace export rewrite_pict_path
+
 # -- scriptName 
 #
 #
@@ -207,13 +217,21 @@ namespace eval ::rivetweb {
     }
     namespace export css
 
+
 # -- makePictsPath
 #
 # search 'picts_file' in the graphic files search path sequence
 #
 
     proc makePictsPath {picts_file {style_dir ""}} {
-        return [file join / [findPictureFile $picts_file $style_dir]]
+        set pict_file [findPictureFile $picts_file $style_dir] 
+        if {$::rivetweb::rewrite_links} {
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            ::rivetweb::rewrite_pict_path $rwcode [::rivetweb::scriptName] $pict_file rewritten_path
+            return $rewritten_path
+        } else {
+            return [file join / $pict_file]
+        }
     }
     namespace export makePictsPath
 
