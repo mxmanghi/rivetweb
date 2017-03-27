@@ -89,9 +89,10 @@ namespace eval ::rivetweb {
 #
 #
 
-    proc rewrite_as_relative {path_to_file} {
+    proc rewrite_as_relative {rwcode urlscript path_to_file rw_path} {
+        upvar $rwn_path rewritten_path
 
-        return $path_to_file
+        set rewritten_path $path_to_file
     }
 
 # -- rewrite_generic_path
@@ -102,7 +103,7 @@ namespace eval ::rivetweb {
 
         if {$::rivetweb::rewrite_links} {
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_as_relative $rwcode [::rivetweb::scriptName] rewritten_url
+            ::rivetweb::rewrite_as_relative $rwcode [::rivetweb::scriptName] $path_to_file rewritten_url
         } else {
             set rewritten_url $path_to_file
         }
@@ -241,7 +242,6 @@ namespace eval ::rivetweb {
         set xhtml "<link href=\"$css_path\" rel=\"stylesheet\" type=\"text/css\""
         foreach {attrb attrv} $attributes { append xhtml " ${attrb}=\"${attrv}\"" }
         return "${xhtml} />"
-#       return [::rivet::xml "" [concat link rel "stylesheet" type "text/css" href $css_path $attributes]]
 
     }
     namespace export css
@@ -425,11 +425,8 @@ namespace eval ::rivetweb {
     proc javascript {script {attributes ""}} {
 
         set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
-        return [::rivet::xml "" [concat script type "text/javascript" src [::rivetweb jscript_path $jscript_file] $attributes]]
-        
-        #set xhtml "<script type=\"text/javascript\" src=\"[jscript_path $jscript_file]\""
-        #foreach {attrb attrv} $attributes { append xhtml " ${attrb}=${attrv}" }
-        #return "$xhtml></script>"
+        return [::rivet::xml "" \
+            [concat script type "text/javascript" src [::rivetweb jscript_path $jscript_file] $attributes]]
 
     }
     namespace export javascript
