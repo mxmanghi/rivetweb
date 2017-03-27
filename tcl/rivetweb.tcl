@@ -82,6 +82,35 @@ namespace eval ::rivetweb {
     }
     namespace export rewrite_pict_path
 
+# -- rewrite_as_relative
+#
+# this procedure must be superseded by application an application
+# specific procedure.
+#
+#
+
+    proc rewrite_as_relative {path_to_file} {
+
+        return $path_to_file
+    }
+
+# -- rewrite_generic_path
+#
+#
+
+    proc rewrite_generic_path {path_to_file} {
+
+        if {$::rivetweb::rewrite_links} {
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            ::rivetweb::rewrite_as_relative $rwcode [::rivetweb::scriptName] rewritten_url
+        } else {
+            set rewritten_url $path_to_file
+        }
+
+        return $rewritten_url
+    }
+
+
 # -- scriptName 
 #
 #
