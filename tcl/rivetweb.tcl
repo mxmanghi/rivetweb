@@ -39,49 +39,6 @@ namespace eval ::rivetweb {
         return $ds
     }
 
-
-# base methods for url rewriting. This procedures can be 
-# superseded by application specific code and should
-# go into a class to preserve the basic functionality and
-# extend them through subclassing
-
-    proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
-        upvar $rewritten_css_url rwcss
-
-        set rwcss "/$css_path"
-    }
-    namespace export rewrite_css_url
-
-# rewrite_js_url
-
-    proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
-        upvar $rewritten_js_url rwjs
-
-        set rwjs "/${js_path}"
-    }
-    namespace export rewrite_js_url
-
-# -- rewrite_url
-#
-#
-
-    proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
-        upvar $rewritten_base rrbase
-
-        set rrbase $urlscript
-    }
-    namespace export rewrite_url
-
-# -- rewrite_pict_path
-#
-#
-    proc rewrite_pict_path {rwcode urlscript pict_path rewritten_pict_uri} {
-        upvar $rewritten_pict_uri rewritten_uri
-
-        set rewritten_uri $urlscript
-    }
-    namespace export rewrite_pict_path
-
 # -- rewrite_as_relative
 #
 # this procedure must be superseded by application an application
@@ -94,6 +51,54 @@ namespace eval ::rivetweb {
 
         set rewritten_path $path_to_file
     }
+
+# base methods for url rewriting. This procedures can be 
+# superseded by application specific code and should
+# go into a class to preserve the basic functionality and
+# extend them through subclassing
+
+    proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
+        upvar $rewritten_css_url rwcss
+
+        #set rwcss "/$css_path"
+        
+        rewrite_as_relative $rwcode $urlscript $css_path rwcss
+    }
+    namespace export rewrite_css_url
+
+# rewrite_js_url
+
+    proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
+        upvar $rewritten_js_url rwjs
+
+        #set rwjs "/${js_path}"
+
+        rewrite_as_relative $rwcode $urlscript $js_path rwjs
+    }
+    namespace export rewrite_js_url
+
+# -- rewrite_url
+#
+#
+
+    proc rewrite_url {rwcode urlscript urlargs rewritten_base} {
+        upvar $rewritten_base rrbase
+
+        set rrbase $urlscript
+
+    }
+    namespace export rewrite_url
+
+# -- rewrite_pict_path
+#
+#
+    proc rewrite_pict_path {rwcode urlscript pict_path rewritten_pict_uri} {
+        upvar $rewritten_pict_uri rewritten_uri
+
+        #set rewritten_uri $urlscript
+        rewrite_as_relative $rwcode $urlscript $pict_path rewritten_uri
+    }
+    namespace export rewrite_pict_path
 
 # -- rewrite_generic_path
 #
