@@ -50,7 +50,7 @@ proc programlisting { datasource tag element_text attribute_list} {
 
         if {[string length $code_file] && [file exists $code_file]} {
 
-            set code_text [read_file $code_file]
+            set code_text [::rivet::read_file $code_file]
 
         } else {
 
