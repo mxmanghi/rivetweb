@@ -41,14 +41,17 @@ namespace eval ::rivetweb {
 
 # -- rewrite_as_relative
 #
-# this procedure must be superseded by application an application
-# specific procedure.
+# If an application has to rewrite rules most likely this procedure 
+# must be superseded by the application's specific procedure.
 #
 #
 
     proc rewrite_as_relative {rwcode urlscript path_to_file rw_path} {
         upvar $rwn_path rewritten_path
 
+        if {[string index $path_to_file 0] == "/"} {
+            set path_to_file [string range $path_to_file 1 end]
+        }
         set rewritten_path $path_to_file
     }
 

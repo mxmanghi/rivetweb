@@ -816,9 +816,9 @@ namespace eval ::rwdatas {
             local {
                 set lref [$linkmodel reference $lm]
                 if {[::rwdatas::Datasource::get_alias $lref lref]} {
-                    set href $lref
+                    set href [::rivetweb::rewrite_generic_path $lref]
                 } else {
-                    set href [file join "/" $LOCAL_PAGES $lref]
+                    set href [::rivetweb::rewrite_generic_path [file join "/" $LOCAL_PAGES $lref]]
                 }
                 $linkmodel set_attribute lm [list href $href]
             }
@@ -826,7 +826,6 @@ namespace eval ::rwdatas {
                 $linkmodel set_attribute lm [list href [$linkmodel reference $lm]]
             }
             default {
-
                 ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"
                 $::rivetweb::linkmodel set_attribute lm {href ""}
             }

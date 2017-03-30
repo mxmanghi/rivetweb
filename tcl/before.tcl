@@ -107,7 +107,7 @@ namespace eval ::rivetweb {
         switch $dsquery {
 
             3 {
-                break;
+                break
             }
             0 -
             4 {
