@@ -238,7 +238,7 @@ namespace eval ::rwpage {
         } elseif {[dict exists $metadata headline $language]} {
             return [dict get $metadata headline $language]
         } else {
-            return ""
+            return [$this title $language]
         }
     }
 

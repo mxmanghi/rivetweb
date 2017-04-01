@@ -43,8 +43,6 @@ namespace eval ::rwpage {
 
         }
 
-        public method headline {language} { return [$this title $language] }
-
         public method print_content {language} {
             puts -nonewline [::rivet::xml [$this pagetext $language] $rootelement]
         }
