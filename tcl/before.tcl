@@ -83,17 +83,18 @@ namespace eval ::rivetweb {
         set language $::rivetweb::default_lang
     }
 
+#
+# the central point is exactly here: we determine which page we have to display
+#
+    set argsqs [dict create {*}[::rivet::var_qs all]]
+    set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
+
 # site specific 'before' script (if any was created) is evaluated
 
     if {$::rivetweb::site_before_script != ""} { 
         ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
     }
-
-#
-# the central point is exactly here: we determine which page we have to display
-#
-    set argsqs [dict create {*}[::rivet::var_qs all]]
 
     $::rivetweb::logger log debug "registered datasources: $::rivetweb::datasources"
     $::rivetweb::logger log debug "argsqs: $argsqs"

@@ -47,7 +47,7 @@ namespace eval ::rivetweb {
 #
 
     proc rewrite_as_relative {rwcode urlscript path_to_file rw_path} {
-        upvar $rwn_path rewritten_path
+        upvar $rw_path rewritten_path
 
         if {[string index $path_to_file 0] == "/"} {
             set path_to_file [string range $path_to_file 1 end]
@@ -570,8 +570,11 @@ namespace eval ::rivetweb {
             if {$rewrite_links && \
                 ($sticky_arg == $rewrite_par)} { continue }
 
-            if {[::rivet::var_qs exists $sticky_arg] & ![dict exists $urlargs $sticky_arg]} {
+            if { [::rivet::var_qs exists $sticky_arg] & \
+                ![dict exists $urlargs $sticky_arg]} {
+
                 dict set urlargs $sticky_arg [::rivet::var_qs get $sticky_arg]
+
             }
         }
 
