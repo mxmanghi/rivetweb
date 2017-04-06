@@ -570,8 +570,11 @@ namespace eval ::rivetweb {
             if {$rewrite_links && \
                 ($sticky_arg == $rewrite_par)} { continue }
 
-            if {[::rivet::var_qs exists $sticky_arg] & ![dict exists $urlargs $sticky_arg]} {
+            if { [::rivet::var_qs exists $sticky_arg] & \
+                ![dict exists $urlargs $sticky_arg]} {
+
                 dict set urlargs $sticky_arg [::rivet::var_qs get $sticky_arg]
+
             }
         }
 
