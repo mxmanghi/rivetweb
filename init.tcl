@@ -62,12 +62,14 @@ if {[file exists $website_init]} {
 
 ::rivetweb::init RWDummy
 
+::rivet::apache_log_error debug "[pwd] - Registered handlers $::rivetweb::datasources"
+
 # this is the very last operation to do after the initialization. We have just
 # instantiated each datasource and we proceed calling the 'init' method for each
 # instance, as listed in ::rivetweb::datasources, in reverse order
 
 foreach ds [lreverse $::rivetweb::datasources] {
 
+    ::rivet::apache_log_error debug "Running init for handler $ds"
     $ds init [dict get $::rivetweb::datasources_args $ds]
-
 }
