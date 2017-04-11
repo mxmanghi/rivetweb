@@ -15,7 +15,8 @@ namespace eval ::rwpage {
         inherit RWPage
 
         protected   variable binary_file
-        public	    variable chunk_size   8192
+        public	    variable chunk_size   [expr 4*8192]
+        private     variable count
 
         constructor {pagekey binfile} {RWPage::constructor $pagekey} { 
 	        set binary_file $binfile
@@ -69,10 +70,12 @@ namespace eval ::rwpage {
             ::rivet::headers add Content-Disposition "attachment; filename=\"$fname\""
             ::rivet::headers add Content-Length	     $file_size
 
+            #set mylog [open "/tmp/bin-[pid]-[incr count].log" w]
+
             set nrecs	    0
             set sent_data   0
-            while {1} {
-
+            set loop        1
+            while {$loop} {
                 set chunk	    [read $file_handle $chunk_size]
                 incr sent_data	[string length $chunk]
 
@@ -80,15 +83,27 @@ namespace eval ::rwpage {
                     close $file_handle
                     puts -nonewline $chunk
                     flush stdout
-                    apache_log_error debug "$fname downloaded: $sent_data bytes sent in $nrecs chunks"
-                    break
+
+                    ::rivet::apache_log_error debug "$fname downloaded: $sent_data bytes sent in $nrecs chunks"
+
+                    set loop 0
+                } else {
+                    puts -nonewline $chunk
+                    incr nrecs
+
+                    #::rivet::apache_log_error debug "download $fname: $sent_data bytes sent in $nrecs chunks"
+                    #puts $mylog "download $fname: $sent_data bytes sent in $nrecs chunks"
+                    #flush $mylog
                 } 
-                puts -nonewline $chunk
-                incr nrecs
 
             }
             
-            fconfigure stdout   -translation $stored_translation -encoding $stored_encoding
+            fconfigure stdout -translation $stored_translation -encoding $stored_encoding
+
+            #puts $mylog "$fname downloaded: $sent_data bytes sent in $nrecs chunks"
+            #flush $mylog
+            #close $mylog
+
         } else {
             ::rivet::apache_log_error err "not existing file $binary_file in class RWBinary"
         }
