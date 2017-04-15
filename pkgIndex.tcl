@@ -28,8 +28,10 @@ package ifneeded rwstatic 0.1 [list source [file join $rivetweb_dir tcl rweb_sta
 package ifneeded rwscripted 0.1 [list source [file join $rivetweb_dir tcl rweb_scripted.tcl]]
 package ifneeded ScriptBase 0.1 [list source [file join $rivetweb_dir tcl rweb_scriptbase.tcl]]
 package ifneeded RWDummy 1.1 [list source [file join $rivetweb_dir tcl datasource dummy.tcl]]
-package ifneeded rwbinary 0.1 [list source [file join $rivetweb_dir tcl rweb_binary.tcl]]
+package ifneeded rwbinary 1.0 [list source [file join $rivetweb_dir tcl rweb_binary.tcl]]
 package ifneeded Datasource 1.0 [list source [file join $rivetweb_dir tcl datasource datasource.tcl]]
 package ifneeded MessagePrinter 0.1 [list source [file join $rivetweb_dir tcl message_printer.tcl]]
 package ifneeded rwbasicpage 0.1 [list source [file join $rivetweb_dir tcl rweb_basicpage.tcl]]
 package ifneeded rwutils 1.0 [list source [file join $rivetweb_dir tcl utils.tcl]]
+package ifneeded downloadbin 1.0 [list source [file join $rivetweb_dir tcl downloadbin.tcl]]
+
