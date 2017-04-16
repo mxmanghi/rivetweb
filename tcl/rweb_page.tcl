@@ -62,6 +62,7 @@ namespace eval ::rwpage {
         public method get_resource_repr {resource_key} {return ""}
     }
 
+
 # -- add_metadata 
 #
 # method to store in a page instance the metadata associated

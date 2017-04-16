@@ -182,7 +182,9 @@ namespace eval ::rivetweb {
 
         }
 
+        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
         ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
+
         if {$::rivetweb::version >= 20160915} {
 
 # -- index.rvt

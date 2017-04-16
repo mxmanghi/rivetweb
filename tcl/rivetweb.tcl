@@ -647,6 +647,24 @@ namespace eval ::rivetweb {
         return $default_template
     }
 
+    proc restore_channel_status {} {
+        variable channel_xlation 
+        variable channel_encoding
+
+        fconfigure stdout -translation $stored_translation -encoding $stored_encoding
+    }
+    namespace export restore_channel_status
+
+    proc save_channel_status {} {
+        variable channel_xlation 
+        variable channel_encoding
+
+        set channel_xlation  [fconfigure stdout -translation]
+        set channel_encoding [fconfigure stdout -encoding]
+
+    }
+    namespace export save_channel_status
+
     namespace ensemble create
 }
 

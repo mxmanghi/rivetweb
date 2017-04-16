@@ -22,21 +22,6 @@ namespace eval ::rwpage {
         public method mimetype {} { return "application/octet-stream" }
         public method content_disposition {} { return "" }
         public method content_length {} { return "" }
-        protected method save_channel_status {}
-        protected method restore_channel_status {}
-    }
-
-    ::itcl::body RWBinary::save_channel_status {} {
-
-        set stored_translation  [fconfigure stdout -translation]
-        set stored_encoding     [fconfigure stdout -encoding]
-
-    }
-
-    ::itcl::body RWBinary::restore_channel_status {} {
-
-        fconfigure stdout -translation $stored_translation -encoding $stored_encoding
-
     }
 
     ::itcl::body RWBinary::print_binary {language} {
@@ -53,7 +38,7 @@ namespace eval ::rwpage {
             ::rivet::headers add Content-Length	$content_length
         }
 
-        $this save_channel_status 
+        ::rivetweb::save_channel_status 
             
         fconfigure stdout -translation binary
         if {[catch { $this binary_data $language } err einfo]} {
@@ -61,7 +46,7 @@ namespace eval ::rwpage {
             ::rivet::apache_log_error err "Error in binary_data"
 
         }
-        $this restore_channel_status
+        ::rivetweb::restore_channel_status
 
     }
 
