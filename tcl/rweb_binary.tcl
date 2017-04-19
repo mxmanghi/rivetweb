@@ -4,110 +4,52 @@
 # page model for a binary transfer function
 #
 #
-
-package require Itcl
 package require rwpage
-package require fileutil::magic::mimetype
+package require Itcl
 
 namespace eval ::rwpage {
 
     ::itcl::class RWBinary {
         inherit RWPage
 
-        protected   variable binary_file
-        public	    variable chunk_size   [expr 4*8192]
         private     variable count
 
-        constructor {pagekey binfile} {RWPage::constructor $pagekey} { 
-	        set binary_file $binfile
-	    }
+        constructor {pagekey} {RWPage::constructor $pagekey} { }
 
-        public method binary_content { } { return true }
-        public method print_binary { } 
-
+        public method binary_content {} { return true }
+        public method binary_data {language} {}
+        public method print_binary {language}
+        public method mimetype {} { return "application/octet-stream" }
+        public method content_disposition {} { return "" }
+        public method content_length {} { return "" }
     }
 
-# --print_binary
-#
-# 
+    ::itcl::body RWBinary::print_binary {language} {
 
-    ::itcl::body RWBinary::print_binary {} {
-        ::rivet::apache_log_error notice "attempting to download $binary_file"
-        if {[file exists $binary_file]} {
-            
-            set fname	    [file tail $binary_file]
-            set file_size   [file size $binary_file]
+        ::rivet::headers type [$this mimetype]
 
-            set proposed_mimetype [::fileutil::magic::mimetype $binary_file]
-            #set mimetype    [exec xdg-mime query filetype $binary_file]
-
-            if {$proposed_mimetype == "application/zip" && [regexp {^.+\.odp} $fname]} {
-
-                # we assume it's an OpenDocument Presentation
-
-                set mimetype "application/vnd.oasis.opendocument.presentation"
-
-            } elseif {(($proposed_mimetype == "") || ($proposed_mimetype == "Microsoft Office Document")) && \
-                         [regexp {^.+\.ppt$} $fname]} {
-
-                set mimetype "application/vnd.ms-powerpoint"
-
-            } elseif {$proposed_mimetype == ""} {
-                set mimetype "application/octet-stream"
-            } else {
-                set mimetype $proposed_mimetype
-            }
-
-            ::rivet::apache_log_error info "Downloading file $binary_file ($mimetype)"
-            set file_handle [open $binary_file r]
-            fconfigure $file_handle -translation binary
-
-            set stored_translation  [fconfigure stdout -translation]
-            set stored_encoding     [fconfigure stdout -encoding]
-            fconfigure stdout       -translation binary
-
-            ::rivet::headers type                    $mimetype
-            ::rivet::headers add Content-Disposition "attachment; filename=\"$fname\""
-            ::rivet::headers add Content-Length	     $file_size
-
-            #set mylog [open "/tmp/bin-[pid]-[incr count].log" w]
-
-            set nrecs	    0
-            set sent_data   0
-            set loop        1
-            while {$loop} {
-                set chunk	    [read $file_handle $chunk_size]
-                incr sent_data	[string length $chunk]
-
-                if {[eof $file_handle]} {
-                    close $file_handle
-                    puts -nonewline $chunk
-                    flush stdout
-
-                    ::rivet::apache_log_error debug "$fname downloaded: $sent_data bytes sent in $nrecs chunks"
-
-                    set loop 0
-                } else {
-                    puts -nonewline $chunk
-                    incr nrecs
-
-                    #::rivet::apache_log_error debug "download $fname: $sent_data bytes sent in $nrecs chunks"
-                    #puts $mylog "download $fname: $sent_data bytes sent in $nrecs chunks"
-                    #flush $mylog
-                } 
-
-            }
-            
-            fconfigure stdout -translation $stored_translation -encoding $stored_encoding
-
-            #puts $mylog "$fname downloaded: $sent_data bytes sent in $nrecs chunks"
-            #flush $mylog
-            #close $mylog
-
-        } else {
-            ::rivet::apache_log_error err "not existing file $binary_file in class RWBinary"
+        set content_disposition [$this content_disposition] 
+        if {$content_disposition != ""} {
+            ::rivet::headers add Content-Disposition $content_disposition
         }
+
+        set content_length      [$this content_length]
+        if {$content_length != ""} {
+            ::rivet::headers add Content-Length	$content_length
+        }
+
+        ::rivetweb::save_channel_status 
+            
+        fconfigure stdout -translation binary
+        if {[catch { $this binary_data $language } err einfo]} {
+
+            ::rivet::apache_log_error err "Error in binary_data"
+
+        }
+        ::rivetweb::restore_channel_status
+
     }
+
 }
 
-package provide rwbinary 0.1
+package provide rwbinary 1.0

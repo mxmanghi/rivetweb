@@ -142,6 +142,11 @@ namespace eval ::rivetweb {
     variable hooks_dir              hooks
     variable hooks                  [dict create]
 
+# channel status
+
+    variable channel_xlation
+    variable channel_encoding
+
     proc setup {rweb_root website_root} {
         variable    scripts
         variable    rivetweb_root
@@ -160,6 +165,8 @@ namespace eval ::rivetweb {
         set site_base       $website_root        
         set default_template rwbase
         
+        ::rivetweb save_channel_status
+
         set site_before_script [file normalize [file join $site_base before.tcl]]
         if {![file exists $site_before_script]} {
             set site_before_script ""

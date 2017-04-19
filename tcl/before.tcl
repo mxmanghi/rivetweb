@@ -140,9 +140,7 @@ namespace eval ::rivetweb {
 # let's proceed with the post processing and data generation
 
     if {[$::rivetweb::current_page binary_content]} {
-
-        $::rivetweb::current_page print_binary
-
+        $::rivetweb::current_page print_binary $language
     } else {
 
     # we run metadata hooks for variables that have to be extracted to control the
@@ -184,7 +182,9 @@ namespace eval ::rivetweb {
 
         }
 
+        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
         ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
+
         if {$::rivetweb::version >= 20160915} {
 
 # -- index.rvt
