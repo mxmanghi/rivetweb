@@ -19,8 +19,8 @@ namespace eval ::rwpage {
         constructor {pagekey} {RWPage::constructor $pagekey} {
             set content [dict create]
 
-    # we store an initial text object. The content variable 
-    # cannot fail to return a pagetext value
+            # we store an initial text object. The content variable 
+            # cannot fail to return a pagetext value
 
             set page_dom  [dom createDocument pagetext]
             set page_o    [$page_dom documentElement]
@@ -32,14 +32,15 @@ namespace eval ::rwpage {
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {language field value} 
         public method postproc_hooks {ds hooks_d hooks_class {language ""}}
+        public method metadata_hooks { hooks_d } 
         public method print_content {language}
         public method languages {}
         public method content {language {fmt -reference}}
         public method to_string {}
         public method headline {language}
         public method content_field {language field {default_val ""}}
+        public method postprocessing {} {}
     }
-
 
     ::itcl::body RWStatic::destroy { } {
         foreach l [dict keys $content] {
@@ -239,6 +240,35 @@ namespace eval ::rwpage {
                 }
             }
         }
+    }
+
+# -- metadata_hooks
+#
+# metadata hooks are processed in a similar wayto xml postproc hooks, 
+# but they apply in slightly different manner
+#
+
+    ::itcl::body RWStatic::metadata_hooks { hooks_d } {
+
+        if {[dict exists $hooks_d metadata]} {
+            set ppp [dict get $hooks_d metadata]
+            foreach hk [dict keys $ppp] {
+                $::rivetweb::logger log info "processing hook: [dict get $ppp $hk descrip]"
+                set processor [dict get $ppp $hk function]
+                
+                ::rivetweb::$processor $this
+            }
+        }
+    }
+
+    ::itcl::body RWStatic::hooks {hooks_class} {
+
+    }
+
+
+    ::itcl::body RWStatic::postprocessing {} {
+        $this hooks postproc
+        $this hooks metadata
     }
 
 # -- print_content

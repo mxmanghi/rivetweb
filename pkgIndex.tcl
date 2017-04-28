@@ -23,7 +23,7 @@ package ifneeded rwlogger 1.0 [list source [file join $rivetweb_dir tcl rwlogger
 package ifneeded rwmenu 1.0 [list source [file join $rivetweb_dir tcl rweb_menumodel.tcl]]
 package ifneeded rwsitemap 1.0 [list source [file join $rivetweb_dir tcl sitemap.tcl]]
 package ifneeded rwterm 0.1 [list source [file join $rivetweb_dir tcl terminal.tcl]]
-package ifneeded rwpage 0.1 [list source [file join $rivetweb_dir tcl rweb_page.tcl]]
+package ifneeded rwpage 2.0 [list source [file join $rivetweb_dir tcl rweb_page.tcl]]
 package ifneeded rwstatic 0.1 [list source [file join $rivetweb_dir tcl rweb_static.tcl]]
 package ifneeded rwscripted 0.1 [list source [file join $rivetweb_dir tcl rweb_scripted.tcl]]
 package ifneeded ScriptBase 0.1 [list source [file join $rivetweb_dir tcl rweb_scriptbase.tcl]]
@@ -34,4 +34,5 @@ package ifneeded MessagePrinter 0.1 [list source [file join $rivetweb_dir tcl me
 package ifneeded rwbasicpage 0.1 [list source [file join $rivetweb_dir tcl rweb_basicpage.tcl]]
 package ifneeded rwutils 1.0 [list source [file join $rivetweb_dir tcl utils.tcl]]
 package ifneeded downloadbin 1.0 [list source [file join $rivetweb_dir tcl downloadbin.tcl]]
+package ifneeded rwcontent 1.0 [list source [file join $rivetweb_dir tcl rweb_content.tcl]]
 
