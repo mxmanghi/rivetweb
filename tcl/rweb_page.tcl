@@ -26,12 +26,17 @@ namespace eval ::rwpage {
         public method clear_metadata { } { set metadata [dict create] }
         public method languages { } { return $::rivetweb::default_lang } 
         public method metadata {{key ""}}
-        public method postproc_hooks { ds hooks_d hooks_class {language ""}}
+        public method postproc_hooks { ds hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d } 
         public method to_string {} { return [dict create metadata $metadata hits $hits key $key] }
-        public method set_title {language title_t}{ $this title $language $title_t } ; #DEPRECATED 
+        public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
         public method title {language {txt ""}}
         public method headline {language {hdl ""}}
+
+        #####
+
+        # interface designed for the Scripted datasource. Can be moved into
+        # application specific code
 
         public method store {var value} { dict set stored_vars $var $value }
         public method lappend {var value} { dict lappend stored_vars $var $value }
@@ -51,10 +56,60 @@ namespace eval ::rwpage {
                 return false
             }
         }
+
+        ##### 
+
         public method binary_content { } { return false }
         public method content_field {language field {default_val ""}} {return ""}
         public method resource_exists {resource_key} { return false }
         public method get_resource_repr {resource_key} {return ""}
+        protected method postprocessing {urlhandler}
+    }
+
+# -- postprocessing
+#
+
+    ::itcl::body RWPage::postprocessing {urlhandler} {
+        RWContent::postprocessing $urlhandler
+
+        if {[catch {
+
+           $this postproc_hooks   $urlhandler               \
+                                  $::rivetweb::hooks        \
+                                  xmlpostproc               \
+                                  $::rivetweb::language
+
+           $this metadata_hooks $::rivetweb::hooks
+
+        } e]} {
+
+            ::rivet::apache_log_error err "Error processing data for page ($e)"
+            ::rivet::apache_log_error err $errorInfo
+
+            set ::rivetweb::current_page [::RWDummy fetch_page postproc_hook_error rkey]
+
+        }
+
+    }
+
+# -- metadata_hooks
+#
+# metadata hooks are processed in a similar wayto xml postproc hooks, 
+# but they apply in slightly different manner
+#
+
+    ::itcl::body RWPage::metadata_hooks { hooks_d } {
+
+        if {[dict exists $hooks_d metadata]} {
+            set ppp [dict get $hooks_d metadata]
+            foreach hk [dict keys $ppp] {
+
+                $::rivetweb::logger log info "processing hook: [dict get $ppp $hk descrip]"
+                set processor [dict get $ppp $hk function]
+                
+                ::rivetweb::$processor $this
+            }
+        }
     }
 
 # -- title

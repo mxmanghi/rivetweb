@@ -17,13 +17,19 @@ namespace eval ::rwdatas {
         private common ALIASDB [dict create]
         private variable cache [dict create]
 
-        public method init {args} {  }
+        public method init {args} { }
         public method destroy {}
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
         public method fetchData {key reassigned_key} { return "" }
+
+        ### unimplemented interface (to be removed?)
+
         public method synchData {key data_dict} {}
         public method createData {key data_dict} {}
         public method storeData {key data_dict} {}
+
+        ###
+
         public method is_stale {key timereference} { return false }
         public method dispose {key} {}
         public method has_updates {} { return false }

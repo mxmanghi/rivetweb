@@ -1,22 +1,20 @@
 #
 # -- rweb_binary
 #
-# page model for a binary transfer function
+# page model for a binary data transfer function
 #
 #
-package require rwpage
-package require Itcl
+package require rwcontent
 
 namespace eval ::rwpage {
 
     ::itcl::class RWBinary {
-        inherit RWPage
+        inherit RWContent
 
-        private     variable count
+        protected variable sent_data
 
-        constructor {pagekey} {RWPage::constructor $pagekey} { }
+        constructor {pagekey} {RWPage::constructor $pagekey} { set sent_data 0 }
 
-        public method binary_content {} { return true }
         public method binary_data {language} {}
         public method print_binary {language}
         public method mimetype {} { return "application/octet-stream" }
@@ -43,7 +41,7 @@ namespace eval ::rwpage {
         fconfigure stdout -translation binary
         if {[catch { $this binary_data $language } err einfo]} {
 
-            ::rivet::apache_log_error err "Error in binary_data"
+            ::rivet::apache_log_error err "Error in RWBinary::binary_data"
 
         }
         ::rivetweb::restore_channel_status

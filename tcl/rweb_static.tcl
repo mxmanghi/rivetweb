@@ -39,7 +39,7 @@ namespace eval ::rwpage {
         public method to_string {}
         public method headline {language}
         public method content_field {language field {default_val ""}}
-        public method postprocessing {} {}
+        protected method postprocessing {urlhandler}
     }
 
     ::itcl::body RWStatic::destroy { } {
@@ -242,33 +242,10 @@ namespace eval ::rwpage {
         }
     }
 
-# -- metadata_hooks
-#
-# metadata hooks are processed in a similar wayto xml postproc hooks, 
-# but they apply in slightly different manner
-#
+    ::itcl::body RWStatic::postprocessing {urlhandler} {
+        RWPage::postprocessing $urlhandler
 
-    ::itcl::body RWStatic::metadata_hooks { hooks_d } {
-
-        if {[dict exists $hooks_d metadata]} {
-            set ppp [dict get $hooks_d metadata]
-            foreach hk [dict keys $ppp] {
-                $::rivetweb::logger log info "processing hook: [dict get $ppp $hk descrip]"
-                set processor [dict get $ppp $hk function]
-                
-                ::rivetweb::$processor $this
-            }
-        }
-    }
-
-    ::itcl::body RWStatic::hooks {hooks_class} {
-
-    }
-
-
-    ::itcl::body RWStatic::postprocessing {} {
-        $this hooks postproc
-        $this hooks metadata
+        $this hooks postproc 
     }
 
 # -- print_content
