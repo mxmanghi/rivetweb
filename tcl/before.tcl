@@ -133,25 +133,27 @@ namespace eval ::rivetweb {
     set ::rivetweb::page_content $::rivetweb::page_key
     set ::rivetweb::current_page [$::rivetweb::current_page prepare $::rivetweb::language $argsqs]
 
-# this variable is deprecated and its retained only for compatibility
+        # this variable is deprecated and its retained only for compatibility
 
     set ::rivetweb::current_pmodel $::rivetweb::current_page
 
-# let's proceed with the post processing and data generation
+        # let's proceed with the post processing and data generation
 
     if {[$::rivetweb::current_page binary_content]} {
+
         $::rivetweb::current_page print_binary $language
+
     } else {
 
-    # we run metadata hooks for variables that have to be extracted to control the
-    # display of our template
+        # we run metadata hooks for variables that have to be extracted to control the
+        # display of our template
 
         $::rivetweb::current_page metadata_hooks $::rivetweb::hooks
 
         #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
         #::rivet::apache_log_error debug "-> $::rivetweb::current_page"
 
-    # we rebuild the navigation menu dictionary on every request
+        # we rebuild the navigation menu dictionary on every request
 
         set ::rivetweb::pagemenus [dict create]
 
@@ -192,6 +194,7 @@ namespace eval ::rivetweb {
 # first of all we test the parameter rwinfo. 
 #
             if {[::rivet::var exists rwinfo]} {
+
                 ::rivet::load_env env
                 ::rivet::parray_table env
                 #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
@@ -204,13 +207,17 @@ namespace eval ::rivetweb {
                 }
 
             } elseif {[::rivet::var exists function]} {
+
                 set fun [::rivet::var get function]
                 if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {
                     puts $e
                 }
+
             } else {
+
                 ::rivet::apache_log_error info "parsing $::rivetweb::running_template"
                 ::rivet::parse $::rivetweb::running_template
+
             }
         }
     }
