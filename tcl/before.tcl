@@ -137,7 +137,9 @@ namespace eval ::rivetweb {
 # let's proceed with the post processing and data generation
 
     if {[$::rivetweb::current_page binary_content]} {
+
         $::rivetweb::current_page print_binary $language
+
     } else {
 
         #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }

@@ -11,9 +11,9 @@ namespace eval ::rwpage {
     ::itcl::class RWBinary {
         inherit RWContent
 
-        protected variable sent_data
+        protected variable data_transmitted
 
-        constructor {pagekey} {RWPage::constructor $pagekey} { set sent_data 0 }
+        constructor {pagekey} {RWContent::constructor $pagekey} { set data_transmitted 0 }
 
         public method binary_data {language} {}
         public method print_binary {language}
@@ -39,13 +39,14 @@ namespace eval ::rwpage {
         ::rivetweb::save_channel_status 
             
         fconfigure stdout -translation binary
-        if {[catch { $this binary_data $language } err einfo]} {
+        if {[catch { set data_transmitted [$this binary_data $language] } err einfo]} {
 
             ::rivet::apache_log_error err "Error in RWBinary::binary_data"
 
         }
         ::rivetweb::restore_channel_status
 
+        return $data_transmitted
     }
 
 }

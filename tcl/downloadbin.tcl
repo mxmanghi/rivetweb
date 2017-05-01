@@ -11,6 +11,7 @@ namespace eval ::rwpage {
         inherit RWBinary
 
         private variable file_name
+        private variable data_sent
         public	variable chunk_size   [expr 8*8192]
 
         constructor {key filen} {RWBinary::constructor $key} {
@@ -39,11 +40,11 @@ namespace eval ::rwpage {
         #set mylog [open "/tmp/bin-[pid]-[incr count].log" w]
 
         set nrecs	    0
-        set sent_data   0
+        set data_sent   0
         set loop        1
         while {$loop} {
             set chunk	    [read $file_handle $chunk_size]
-            incr sent_data	[string length $chunk]
+            incr data_sent	[string length $chunk]
 
             if {[eof $file_handle]} {
                 close $file_handle
@@ -51,7 +52,7 @@ namespace eval ::rwpage {
                 flush stdout
 
                 ::rivet::apache_log_error debug \
-                    "[file tail $file_name] downloaded: $sent_data bytes sent in $nrecs chunks"
+                    "[file tail $file_name] downloaded: $data_sent bytes sent in $nrecs chunks"
 
                 set loop 0
 
@@ -62,6 +63,8 @@ namespace eval ::rwpage {
 
             } 
         }
+
+        return $data_sent
     }
 }
 

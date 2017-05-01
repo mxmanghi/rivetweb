@@ -32,14 +32,12 @@ namespace eval ::rwpage {
         public method set_pagetext {language page_text {rootel "p"}} 
         public method set_content {language field value} 
         public method postproc_hooks {ds hooks_d hooks_class {language ""}}
-        public method metadata_hooks { hooks_d } 
         public method print_content {language}
         public method languages {}
         public method content {language {fmt -reference}}
         public method to_string {}
         public method headline {language}
         public method content_field {language field {default_val ""}}
-        protected method postprocessing {urlhandler}
     }
 
     ::itcl::body RWStatic::destroy { } {
@@ -240,12 +238,6 @@ namespace eval ::rwpage {
                 }
             }
         }
-    }
-
-    ::itcl::body RWStatic::postprocessing {urlhandler} {
-        RWPage::postprocessing $urlhandler
-
-        $this hooks postproc 
     }
 
 # -- print_content

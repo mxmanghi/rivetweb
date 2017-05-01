@@ -26,7 +26,7 @@ namespace eval ::rwpage {
         public method destroy {}
         public method url_args {} { return $stored_vars }
         public method prepare_content { urlhandler language argsqs }
-        public method prepare { language argsqs } {}
+        public method prepare { language argsqs } { return $this }
         public method binary_content { } { return true }
         public method resource_exists {resource_key} { return false }
         public method get_resource_repr {resource_key} {return ""}
@@ -39,7 +39,7 @@ namespace eval ::rwpage {
 # releases objects which may hold data stored in the pool (e.g.
 # tdom objects). Abstract method for this class
 
-    ::itcl::body RWPage::destroy { } {
+    ::itcl::body RWContent::destroy { } {
         ::itcl::delete object $this
     }
 
@@ -47,16 +47,16 @@ namespace eval ::rwpage {
 #
 #
 # 
-    ::itcl::body RWPage::prepare_content {urlhandler language argsqs} { 
+    ::itcl::body RWContent::prepare_content {urlhandler language argsqs} { 
         set stored_vars $argsqs 
         incr hits
 
         set url_handler $urlhandler
 
-        $this prepare $language $argsqs
-        $this postprocessing $urlhandler
+        set pobject [$this prepare $language $argsqs]
+        $pobject postprocessing $urlhandler
 
-        return $this
+        return $pobject
     }
 }
 package provide rwcontent 1.0

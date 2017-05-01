@@ -14,7 +14,7 @@ namespace eval ::rwpage {
         private variable title
         private variable headline
 
-        constructor {pagekey} {RWContent::costructor $pagekey} {
+        constructor {pagekey} {RWContent::constructor $pagekey} {
             set metadata    [dict create]
             set title       [dict create]
             set headline    [dict create]
@@ -61,8 +61,7 @@ namespace eval ::rwpage {
 
         public method binary_content { } { return false }
         public method content_field {language field {default_val ""}} {return ""}
-        public method resource_exists {resource_key} { return false }
-        public method get_resource_repr {resource_key} {return ""}
+        public method prepare {language argqs} { return [RWContent::prepare $language $argqs] }
         protected method postprocessing {urlhandler}
     }
 
@@ -81,10 +80,10 @@ namespace eval ::rwpage {
 
            $this metadata_hooks $::rivetweb::hooks
 
-        } e]} {
+        } e einfo]} {
 
             ::rivet::apache_log_error err "Error processing data for page ($e)"
-            ::rivet::apache_log_error err $errorInfo
+            ::rivet::apache_log_error err $einfo
 
             set ::rivetweb::current_page [::RWDummy fetch_page postproc_hook_error rkey]
 
