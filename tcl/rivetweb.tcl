@@ -363,36 +363,6 @@ namespace eval ::rivetweb {
 #
     proc picture {pict_name} { return [::rivetweb::findPictureFile $pict_name $::rivetweb::template_key] }
 
-# -- template_path
-#
-# 
-
-    proc template_path {template_name {template_dir ""}} {
-
-        return [file join $::rivetweb::base_templates $template_dir $template_name]
-
-    }
-    namespace export template_path
-
-# -- template
-#
-#
-    proc template {template_key} {
-
-        return [::rivetweb template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
-
-    }
-    namespace export template
-
-# -- select_template
-#
-#   template selection mechanism encapsulated within this function
-#   to allow applications to implement their own template selection
-#
-
-    proc select_template {template_key} {  }
-    namespace export select_template
-
 # -- jscript_path
 #
 # the rationale behind this method is similar to make_css_path. By now the
@@ -637,15 +607,39 @@ namespace eval ::rivetweb {
     }
     namespace export search_datasources
 
-    # -- default_template
-    # 
-    # template selection
-    #
+# -- template_path
+#
+# 
+
+    proc template_path {template_name {template_dir ""}} {
+
+        return [file join $::rivetweb::base_templates $template_dir $template_name]
+
+    }
+    namespace export template_path
+
+# -- template
+#
+#
+    proc template {template_key} {
+        return [::rivetweb template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
+
+    }
+    namespace export template
+
+
+# -- select_template
+#
+#   template selection mechanism encapsulated within this function
+#   to allow applications to implement their own template selection
+#
+
     proc select_template {} {
         variable default_template
 
         return $default_template
     }
+    namespace export select_template
 
     proc restore_channel_status {} {
         variable channel_xlation 

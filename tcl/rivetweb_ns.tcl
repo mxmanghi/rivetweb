@@ -6,7 +6,7 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                20170129
+    variable version                "20170503-bcontentroot"
 
 # this must be the local path to the site's document root
 
