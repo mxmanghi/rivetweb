@@ -80,8 +80,8 @@ namespace eval ::rivetweb {
     variable index                  index
     variable page_content           0
 
-# we assume we are running dynamic. A static parameter in the url
-# would emulate a static site 
+# we assume we are running dynamic. A $rewrite_par argument in the url
+# would force rewrite of all the web site internal links
 
     variable rewrite_links          false
     variable rewrite_code
@@ -89,11 +89,15 @@ namespace eval ::rivetweb {
 # rewrite_par is the name of the urlencoded parameter used
 # to signal which form of rewriting was detected
 
-    variable rewrite_par            static
+#    variable rewrite_par            rwrw
 
 # URL encoded parameters to be replicated by makeUrl and composeUrl
 
-    variable passthroughs           [list lang language reset template $rewrite_par]
+#    variable sticky_args            [list lang language reset template $rewrite_par]
+
+# url composer instance
+
+    variable url_composer
 
 # 'picts_path' and 'css_path' are paths relative to the 
 # website root. 'running_*_paths' are needed because paths
@@ -117,14 +121,6 @@ namespace eval ::rivetweb {
     array set html_menu             {}
     array set content               {}
     array set sitemenus_a           {}
-
-    variable page_headline          ""
-    variable page_title             ""
-    variable page_content_html      ""
-    variable last_modified          ""
-    variable page_authors           ""
-    variable ident                  ""
-    variable site_structure_mtime   0
 
 # dictionary defining tags and class attributes for elements a menu
 # is made of

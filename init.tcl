@@ -19,6 +19,8 @@ package require XMLBase
 
 ::rivetweb::setup $rweb_root $website_root 
 
+set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto]
+
 cd $website_root
 
 # rivetweb initialization 

@@ -32,6 +32,8 @@ namespace eval ::rivetweb {
 #   set ::rivetweb::static_links [::rivet::var_qs exists static]
 
     set ::rivetweb::rewrite_links [::rivet::var_qs exists $::rivetweb::rewrite_par]
+    if {$::rivetweb::rewrite_links} {
+        set ::rivetweb::rewrite_code [::rivet::var_qs get $::rivetweb::rewrite_par]
     #set ::rivetweb::is_homepage   [::rivet::var_qs exists homepage]
     
 # when Rivetweb is pretending to be a static site, pages fake their location 
