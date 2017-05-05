@@ -34,4 +34,4 @@ package ifneeded MessagePrinter 0.1 [list source [file join $rivetweb_dir tcl me
 package ifneeded rwbasicpage 0.1 [list source [file join $rivetweb_dir tcl rweb_basicpage.tcl]]
 package ifneeded rwutils 1.0 [list source [file join $rivetweb_dir tcl utils.tcl]]
 package ifneeded downloadbin 1.0 [list source [file join $rivetweb_dir tcl downloadbin.tcl]]
-
+package ifneeded urlcomposer 1.0 [list source [file join $rivetweb_dir tcl urlcomposer.tcl]]

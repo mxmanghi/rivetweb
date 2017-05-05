@@ -82,17 +82,12 @@ namespace eval ::rivetweb {
 
         public method compose_url {arglist current_url_args {rewrite_code ""}} {
 
-            set rewrite_links [string match $rewrite_code ""]
-
-            if {$rewrite_links} {
-
-                set rwcode $rewrite_code
-                ::rivetweb::rewrite_url $rewrite_code [::rivetweb::scriptName] arglist rewritten_url
-
-            } else {
-
+            if {[string match $rewrite_code ""]} {
+                set rewrite_links 0
                 set rewritten_url [::rivetweb::scriptName]
-
+            } else {
+                set rewrite_links 1
+                ::rivetweb::rewrite_url $rewrite_code [::rivetweb::scriptName] arglist rewritten_url
             }
 
             array set argsmap {}
@@ -135,3 +130,4 @@ namespace eval ::rivetweb {
 
 }
 
+package provide urlcomposer 1.0

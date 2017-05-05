@@ -31,9 +31,12 @@ namespace eval ::rivetweb {
 
 #   set ::rivetweb::static_links [::rivet::var_qs exists static]
 
-    set ::rivetweb::rewrite_links [::rivet::var_qs exists $::rivetweb::rewrite_par]
+    set ::rivetweb::rewrite_links [::rivet::var_qs exists [$::rivetweb::url_composer get_rewrite_par]]
     if {$::rivetweb::rewrite_links} {
-        set ::rivetweb::rewrite_code [::rivet::var_qs get $::rivetweb::rewrite_par]
+        set ::rivetweb::rewrite_code [::rivet::var_qs get [$::rivetweb::url_composer get_rewrite_par]]
+    } else {
+        set ::rivetweb::rewrite_code ""
+    }
     #set ::rivetweb::is_homepage   [::rivet::var_qs exists homepage]
     
 # when Rivetweb is pretending to be a static site, pages fake their location 
@@ -53,7 +56,7 @@ namespace eval ::rivetweb {
 
         set template_key [::rivet::var_qs get template]
 
-    } else { 
+    } else {
 
         set template_key [::rivetweb::select_template] 
 

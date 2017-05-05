@@ -13,6 +13,7 @@ package require rivetweb
 package require rwconf
 package require rwmenu
 package require rwpage
+package require urlcomposer
 package require Datasource
 package require RWDummy
 package require XMLBase
