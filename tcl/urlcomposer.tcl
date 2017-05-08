@@ -13,8 +13,7 @@ namespace eval ::rivetweb {
         # should be a 'private common' instead?
 
         private variable sticky_args
-        private variable rewrite_par    rwrw
-
+        private variable rewrite_par    static
 
         constructor {} {
             set sticky_args [subst $immutable_sticky_args]
@@ -117,8 +116,11 @@ namespace eval ::rivetweb {
                     lappend urlargs "${param}=${value}"
                 }
                 set final_url "${rewritten_url}?[join $urlargs "&"]"
+
             } else {
+
                 set final_url $rewritten_url
+
             }
 
             if {$hash != ""} {append final_url "#$hash" }

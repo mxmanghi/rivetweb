@@ -31,9 +31,10 @@ namespace eval ::rivetweb {
 
 #   set ::rivetweb::static_links [::rivet::var_qs exists static]
 
-    set ::rivetweb::rewrite_links [::rivet::var_qs exists [$::rivetweb::url_composer get_rewrite_par]]
+    set rewrite_par [$::rivetweb::url_composer get_rewrite_par]
+    set ::rivetweb::rewrite_links [::rivet::var_qs exists $rewrite_par]
     if {$::rivetweb::rewrite_links} {
-        set ::rivetweb::rewrite_code [::rivet::var_qs get [$::rivetweb::url_composer get_rewrite_par]]
+        set ::rivetweb::rewrite_code [::rivet::var_qs get $rewrite_par]
     } else {
         set ::rivetweb::rewrite_code ""
     }

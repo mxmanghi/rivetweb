@@ -171,7 +171,7 @@ namespace eval ::rivetweb {
         if {$::rivetweb::rewrite_links} {
             
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_css_url $rwcode [::rivet::env SCRIPT_NAME] $css_uri css_uri
+            ::rivetweb::rewrite_css_url $rwcode [::rivetweb::scriptName] $css_uri css_uri
 
             return $css_uri
         }
