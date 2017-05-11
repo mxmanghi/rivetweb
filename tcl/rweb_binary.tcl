@@ -46,6 +46,7 @@ namespace eval ::rwpage {
             ::rivet::apache_log_error err "Error in binary_data"
 
         }
+
         ::rivetweb::restore_channel_status
 
     }
