@@ -651,7 +651,7 @@ namespace eval ::rivetweb {
         variable channel_xlation 
         variable channel_encoding
 
-        fconfigure stdout -translation $stored_translation -encoding $stored_encoding
+        fconfigure stdout -translation $channel_xlation -encoding $channel_encoding
     }
     namespace export restore_channel_status
 
