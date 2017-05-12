@@ -22,19 +22,20 @@ namespace eval ::rwpage {
         public method content_disposition {} { return "" }
         public method content_length {}
         public method filename {} { return $file_name }
+        public method setfilename {fn} { set file_name $fn }
     }
 
     ::itcl::body DownloadBin::content_disposition {} {
-        return "attachment; filename=\"[file tail $file_name]\""
+        return "attachment; filename=\"[file tail [$this filename]]\""
     }
 
     ::itcl::body DownloadBin::content_length {} {
-        return [file size $file_name]
+        return [file size [$this filename]]
     }
 
     ::itcl::body DownloadBin::binary_data {language} {
         ::rivet::apache_log_error notice "attempting to download $file_name"
-        set file_handle [open $file_name r]
+        set file_handle [open [$this filename] r]
         fconfigure $file_handle -translation binary
 
         #set mylog [open "/tmp/bin-[pid]-[incr count].log" w]
@@ -47,6 +48,7 @@ namespace eval ::rwpage {
             incr data_sent	[string length $chunk]
 
             if {[eof $file_handle]} {
+
                 close $file_handle
                 puts -nonewline $chunk
                 flush stdout
