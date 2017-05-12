@@ -135,27 +135,18 @@ namespace eval ::rwdatas {
         upvar $keyvar key 
 
         ## debug puts "<pre>arglist = $arglist</pre>"
-        set key         index
+        set key index
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
         } elseif {[dict exists $arglist store]} {
             set key [dict get $arglist store]
         } else {
 
-            set ag $arglist
-            ### puts "<pre>ag = $ag ($::rivetweb::passthroughs)</pre>"
-            foreach {urlarg argval} $arglist {
-                if {[lsearch $::rivetweb::passthroughs $urlarg] < 0} {
-                    continue
-                } else {
-                    set ag [lassign $ag a b]
-                }
-            }
-
+            set ag [::rivetweb strip_sticky_args $arglist]
             if {[llength $ag] > 0 } {
-                return -code continue -errorcode rw_continue
+                set key index
+                #return -code continue -errorcode rw_continue
             }
-            ### puts "<pre>ag = $ag</pre>"
         } 
         if {$key == "index"} { set ::rivetweb::is_homepage 1 }
 

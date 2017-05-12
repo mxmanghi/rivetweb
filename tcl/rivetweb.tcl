@@ -513,7 +513,7 @@ namespace eval ::rivetweb {
     proc set_rewrite_par {rw_par} {
         variable url_composer
 
-        ::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb set_rewrite_par"
+        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb set_rewrite_par"
         $url_composer set_rewrite_par $rw_par
     }
     namespace export set_rewrite_par
@@ -525,7 +525,7 @@ namespace eval ::rivetweb {
         variable url_composer
         variable rewrite_links
         
-        ::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb merge_sticky_args"
+        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb merge_sticky_args"
         return [$url_composer merge_sticky_args $urlargs [::rivet::var_qs all] $rewrite_link
     }
     namespace export merge_sticky_args
@@ -534,7 +534,7 @@ namespace eval ::rivetweb {
     proc strip_sticky_args {urlargs} {
         variable url_composer
 
-        ::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb strip_sticky_par"
+        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb strip_sticky_par"
         return [$url_composer strip_sticky_args $urlargs] 
     }
     namespace export strip_sticky_args
