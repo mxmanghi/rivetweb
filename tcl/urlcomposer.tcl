@@ -8,50 +8,65 @@ namespace eval ::rivetweb {
 
     ::itcl::class UrlComposer {
 
-        private variable immutable_sticky_args {language reset template $rewrite_par lang}
+        private variable rewrite_par
+        
+        # shouldn't they be declared as 'private common' instead?
 
-        # should be a 'private common' instead?
+        private variable sticky_args                {language reset template $rewrite_par lang}
+        private variable conditioned_sticky_args    {$rewrite_par}
 
-        private variable sticky_args
-        private variable rewrite_par    static
+        constructor {rewrite_par_def} {
+            set rewrite_par                 $rewrite_par_def
+            set sticky_args                 [subst $sticky_args]
+            set conditioned_sticky_args     [subst $conditioned_sticky_args]
+        }
 
-        constructor {} {
-            set sticky_args [subst $immutable_sticky_args]
+        # taken from the Tcl'er wiki (http://wiki.tcl.tk/15659)
+
+        private method clean_list {target args} {
+            set res $target
+            foreach unwant $args {
+              # suchenwirth idea
+              set res [lsearch -all -inline -not -exact $res $unwant ]
+            }
+            return $res
         }
 
         public method get_sticky_args {} { return $sticky_args }
 
-        public method add_sticky_arg {new_sticky_arg} {
-            lappend immutable_sticky_args $new_sticky_arg
-            set sticky_args [subst $immutable_sticky_args]
+        public method add_sticky_args {new_sticky_args} {
+            lappend sticky_args {*}$new_sticky_args
+
             return $sticky_args
         }
 
-        private method recreate_sticky_args_list {} {
-            set sticky_args [subst $immutable_sticky_args]
-        }
-
-        public method set_rewrite_par {rw_par} {
-            set rewrite_par $rw_par
-            $this recreate_sticky_args_list
+        public method add_conditioned_sticky_args {conditioned_sa} {
+            lappend conditioned_sticky_args {*}$conditioned_sa
         }
 
         public method get_rewrite_par {} { return $rewrite_par }
 
-        public method merge_sticky_args {urlargs {current_url_args ""} {keep_rewrite_par 0}} {
+        public method merge_sticky_args {urlargs {current_url_args ""} {rewrite_flag 0}} {
 
             set url_arguments [dict create {*}$urlargs]
 
-            foreach sticky_arg $sticky_args {
+            # we skip ::rivetweb::rewrite_par (and any other conditioned sticky arg) 
+            # if we are alredy rewriting links
+            # as the whole point of link rewriting is charging mod_rewrite rules 
+            # to figure it out
 
-                # we skip ::rivetweb::rewrite_par if we are alredy rewriting links
-                # as the whole point of link rewriting is charging mod_rewrite rules 
-                # to figure it out
+            if {$rewrite_flag} {
+                set sas [$this clean_list $sticky_args {*}$conditioned_sticky_args]
+            } else {
+                set sas $sticky_args
+            }
 
-                if {$keep_rewrite_par && \
-                    ($sticky_arg == $rewrite_par)} { continue }
+            foreach sticky_arg $sas {
 
-                if { [dict exists $current_url_args $sticky_arg] & \
+                #if {$keep_rewrite_par && \
+                #    ($sticky_arg == $rewrite_par)} { continue }
+
+                if { [dict exists $current_url_args $sticky_arg] && \
                     ![dict exists $urlargs $sticky_arg]} {
 
                     dict set urlargs $sticky_arg [dict get $current_url_args $sticky_arg]
@@ -63,9 +78,7 @@ namespace eval ::rivetweb {
         }
 
         public method strip_sticky_args {urlargs} {
-
             set urlargs_d [dict create {*}$urlargs]
-
             return [dict remove $urlargs_d {*}$sticky_args]
         }
 

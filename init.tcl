@@ -20,15 +20,14 @@ package require XMLBase
 
 ::rivetweb::setup $rweb_root $website_root 
 
-set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto]
-
 cd $website_root
 
 # rivetweb initialization 
 
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
-
 if {[file exists $website_definitions]} { source $website_definitions }
+
+set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
 
 # site_defs.tcl is supposed to define the default template, we thus assign this key to the 
 # last_selected_template variable in order to force a template_chanded signal
@@ -43,7 +42,7 @@ source [file join $::rivetweb::scripts rivetweb_init.tcl]
 set ::rivetweb::menuclass [dict get $::rivetweb::templates_db $rivetweb::default_template menuclass]
 
 set website_init [file join $website_root $::rivetweb::website_init]
-if {[file exists $website_init]} {
+if {[file exists $::rivetweb::website_init]} {
     ::rivet::apache_log_error notice "running website specific initialization $website_init ([pwd])"
     if {[catch {source $website_init} e]} {
 

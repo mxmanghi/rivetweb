@@ -506,17 +506,17 @@ namespace eval ::rivetweb {
 
 # -- set_rewrite_par
 #
-#   method to change the url argument that triggers the URI rewriting
+#  method to change the url argument that triggers the URI rewriting
 #  We need a method, not just a variable because the 'sticky_args' 
 #  list need update (a strong indication that we need to move to a class)
 #
-    proc set_rewrite_par {rw_par} {
-        variable url_composer
-
-        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb set_rewrite_par"
-        $url_composer set_rewrite_par $rw_par
-    }
-    namespace export set_rewrite_par
+#    proc set_rewrite_par {rw_par} {
+#        variable url_composer
+#
+#        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb set_rewrite_par"
+#        $url_composer set_rewrite_par $rw_par
+#    }
+#    namespace export set_rewrite_par
 
 # -- merge_sticky_pars
 #

@@ -86,10 +86,10 @@ namespace eval ::rivetweb {
     variable rewrite_links          false
     variable rewrite_code
 
-# rewrite_par is the name of the urlencoded parameter used
-# to signal which form of rewriting was detected
+# default name of the urlencoded parameter used
+# to signal which rewriting rule was detected (if any)
 
-#    variable rewrite_par            rwrw
+    variable rewrite_par            static
 
 # URL encoded parameters to be replicated by makeUrl and composeUrl
 
