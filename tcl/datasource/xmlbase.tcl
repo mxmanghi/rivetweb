@@ -143,9 +143,16 @@ namespace eval ::rwdatas {
         } else {
 
             set ag [::rivetweb strip_sticky_args $arglist]
-            if {[llength $ag] > 0 } {
-                set key index
-                #return -code continue -errorcode rw_continue
+            if {[llength $ag] == 0 } {
+
+                if {[$this resource_exists index]} {
+                    set key index
+                } else {
+                    return -code continue -errorcode rw_continue
+                }
+
+            } else {
+                return -code continue -errorcode rw_continue
             }
         } 
         if {$key == "index"} { set ::rivetweb::is_homepage 1 }
