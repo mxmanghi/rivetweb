@@ -371,6 +371,7 @@ namespace eval ::rwdatas {
         if {($sitemap_stat(mtime) > $timestamp)} { 
 
             return true
+
         }
 
         return false
@@ -771,8 +772,8 @@ namespace eval ::rwdatas {
 #       puts "<br/><b>pmodel</b>: $page"
 #       puts "<br/><b>ds</b>: [$page metadata datasource]"
 
-        if {[has_updates]} {
-            load_sitemap $sitemap
+        if {[$this has_updates]} {
+            $this load_sitemap $sitemap
         }
 
         if {[$page metadata datasource] == "::XMLBase"} {

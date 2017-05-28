@@ -6,7 +6,7 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                20170508
+    variable version                20170526
 
 # this must be the local path to the site's document root
 
@@ -14,16 +14,23 @@ namespace eval ::rivetweb {
     variable rivetweb_root
     variable request
     variable scripts
-    variable website_init	        rivetweb.tcl
-    variable site_before_script     ""
-    variable site_after_script      ""
-    variable site_abort_script      ""
-    variable site_after_every_script ""
-    variable default_menu           main
+    variable website_init	            rivetweb.tcl
+    variable site_before_script         ""
+    variable site_after_script          ""
+    variable site_abort_script          ""
+    variable site_after_every_script    ""
     variable pagemenus
 
-# these paths are relative to the DocumentRoot, so we don't need
-# to normalize them
+# -- rivetweb default 
+#
+# These values are the very last fallback values for the defaults
+
+    variable default_template       rwbase
+    variable default_menu           main
+    variable default_menu_pos       left
+    variable default_lang           en
+
+# these paths are relative to the DocumentRoot, so we don't need to normalize them
 
     variable site_url_base          /
     variable picts_path             picts
@@ -33,7 +40,6 @@ namespace eval ::rivetweb {
     variable newsite_templates      rwtemplates
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
-    variable default_template       rwbase
     variable http_encoding          utf-8
     variable datasources            {}
     variable datasources_args       [dict create]
@@ -50,7 +56,6 @@ namespace eval ::rivetweb {
     variable htmlizer               ::htmlizer
 
     variable is_homepage            0
-    variable default_menu_pos       left
     variable template_key           ""
     variable template_changed       false
     variable last_selected_template ""
@@ -62,7 +67,6 @@ namespace eval ::rivetweb {
 # here but it will be assigned by the element <default_language>
 # in site_structure.xml
 
-    variable default_lang           en
     variable site_defs              site_defs.xml
     variable language               $default_lang
 
@@ -153,13 +157,11 @@ namespace eval ::rivetweb {
         variable    site_after_script
         variable    site_abort_script
         variable    site_after_every_script
-        variable    default_template 
 
         set rivetweb_root   [file normalize $rweb_root]
         set scripts	        [file join $rivetweb_root tcl]
         set request         [file join $scripts before.tcl]
         set site_base       $website_root        
-        set default_template rwbase
         
         ::rivetweb save_channel_status
 

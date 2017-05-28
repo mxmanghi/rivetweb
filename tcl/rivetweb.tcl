@@ -309,16 +309,16 @@ namespace eval ::rivetweb {
 
 # it's rather weird we have this case. No template directory should be hanging from site_base
 
-        set fn [file join   $::rivetweb::site_base          \
-                            $::rivetweb::picts_path         \
-                            $::rivetweb::default_template   \
-                            $picts_file]
+        set fn [file join $::rivetweb::site_base            \
+                          $::rivetweb::picts_path           \
+                          [::rivetweb default template]     \
+                          $picts_file]
 
         ::rivet::apache_log_error debug "4 pict file: >$fn<"
         if {[file exists $fn]} {
-            return [file join   $::rivetweb::running_picts_path   \
-                                $::rivetweb::default_template     \
-                                $picts_file]
+            return [file join $::rivetweb::running_picts_path   \
+                              [::rivetweb default template]     \
+                              $picts_file]
         }
 
         return ""
@@ -586,13 +586,44 @@ namespace eval ::rivetweb {
 
     # -- default_template
     # 
-    # template selection
+    # template selection. Accessor to the default database for the
+    # current template definition
     #
+
     proc select_template {} {
         variable default_template
 
         return $default_template
     }
+
+    proc select_menu {} {
+        variable default_menu
+
+        return $default_menu
+    }
+
+    proc select_menu_position {} {
+        variable default_menu_pos
+
+        return $default_menu_pos
+    }
+
+    proc select_language {} {
+        variable default_lang
+
+        return $default_lang
+    }
+
+    proc default {site_default} {
+
+        set procname "::rivetweb::select_${site_default}"
+        if {[info procs $procname] == ""} {
+            return ""
+        }
+
+        return [eval [namespace current]::${procname}]
+    }
+    namespace export default
 
     proc restore_channel_status {} {
         variable channel_xlation 
