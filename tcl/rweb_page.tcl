@@ -21,6 +21,7 @@ namespace eval ::rwpage {
             set hits        0
         }
 
+        public method set_key {k} { set key $k }
         public method key {} { return $key }
         public method add_metadata {field value} 
         public method set_metadata {mdlist}

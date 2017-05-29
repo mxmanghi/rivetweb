@@ -42,7 +42,7 @@ namespace eval ::rwdatas {
         private variable current
         private variable forceupdate        0
 
-        private method buildPageEntry {key xmldata reassigned_key}
+        protected method buildPageEntry {key xmldata reassigned_key}
         private method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o}        
@@ -269,7 +269,7 @@ namespace eval ::rwdatas {
 #
     ::itcl::body XMLBase::time_reference {key} {
 
-        file stat [$this xmlfile $key] file_stat
+        file stat [$this get_resource_repr $key] file_stat
         return $file_stat(mtime)
 
     }
@@ -298,9 +298,8 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::resource_exists {key} {
 
-        #if {$key == "xml_page_not_found_error"} { return 1 }
-
         return [file exists [$this get_resource_repr $key]]
+
     }
 
     ::itcl::body XMLBase::get_resource_repr {key} {   
@@ -327,8 +326,8 @@ namespace eval ::rwdatas {
         if {[$this resource_exists $key]} {
 
             set xmlfile [$this get_resource_repr $key]
+            $::rivetweb::logger log info "->opening $xmlfile ($rkey)" 
 
-            $::rivetweb::logger log info "->opening $xmlfile" 
             if {[catch {
                 set xmlfp    [open $xmlfile r]
                 set xmldata  [read $xmlfp]
@@ -346,9 +345,10 @@ namespace eval ::rwdatas {
 
         } else {
 
-            $::rivetweb::logger log notice "page for key '$key' not found ([$this get_resource_repr $key])"
+            $::rivetweb::logger log notice "page for key '$key' not found"
             set pagedbentry ""
             set rkey xml_page_not_found_error
+
         }
 
         return $pagedbentry
@@ -415,7 +415,6 @@ namespace eval ::rwdatas {
         set elem_o [$msgdom createElement author]
         if {[dict exists $page_data author]} {
             set dom_txt [$msgdom createTextNode [dict get $page_data author]]]
-
         } else {
             set dom_txt [$msgdom createTextNode ""]
         }
