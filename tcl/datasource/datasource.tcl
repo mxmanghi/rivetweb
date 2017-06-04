@@ -133,6 +133,7 @@ namespace eval ::rwdatas {
         } else {
 
             set p [$this fetchData $key rkey]
+            ::rivet::apache_log_error debug "fetchData returns $rkey in response of key $key"
             if {$p != ""} {
                 dict set cache $key object $p
                 dict set cache $key timestamp [clock seconds]

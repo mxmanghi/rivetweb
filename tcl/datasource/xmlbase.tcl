@@ -42,7 +42,7 @@ namespace eval ::rwdatas {
         private variable current
         private variable forceupdate        0
 
-        private method buildPageEntry {key xmldata reassigned_key}
+        protected method buildPageEntry {key xmldata reassigned_key}
         private method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o}        
@@ -135,27 +135,25 @@ namespace eval ::rwdatas {
         upvar $keyvar key 
 
         ## debug puts "<pre>arglist = $arglist</pre>"
-        set key         index
+        set key index
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
         } elseif {[dict exists $arglist store]} {
             set key [dict get $arglist store]
         } else {
 
-            set ag $arglist
-            ### puts "<pre>ag = $ag ($::rivetweb::passthroughs)</pre>"
-            foreach {urlarg argval} $arglist {
-                if {[lsearch $::rivetweb::passthroughs $urlarg] < 0} {
-                    continue
-                } else {
-                    set ag [lassign $ag a b]
-                }
-            }
+            set ag [::rivetweb strip_sticky_args $arglist]
+            if {[llength $ag] == 0 } {
 
-            if {[llength $ag] > 0 } {
+                if {[$this resource_exists index]} {
+                    set key index
+                } else {
+                    return -code continue -errorcode rw_continue
+                }
+
+            } else {
                 return -code continue -errorcode rw_continue
             }
-            ### puts "<pre>ag = $ag</pre>"
         } 
         if {$key == "index"} { set ::rivetweb::is_homepage 1 }
 
@@ -271,7 +269,7 @@ namespace eval ::rwdatas {
 #
     ::itcl::body XMLBase::time_reference {key} {
 
-        file stat [$this xmlfile $key] file_stat
+        file stat [$this get_resource_repr $key] file_stat
         return $file_stat(mtime)
 
     }
@@ -300,9 +298,8 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::resource_exists {key} {
 
-        #if {$key == "xml_page_not_found_error"} { return 1 }
-
         return [file exists [$this get_resource_repr $key]]
+
     }
 
     ::itcl::body XMLBase::get_resource_repr {key} {   
@@ -329,8 +326,8 @@ namespace eval ::rwdatas {
         if {[$this resource_exists $key]} {
 
             set xmlfile [$this get_resource_repr $key]
+            $::rivetweb::logger log info "->opening $xmlfile ($rkey)" 
 
-            $::rivetweb::logger log info "->opening $xmlfile" 
             if {[catch {
                 set xmlfp    [open $xmlfile r]
                 set xmldata  [read $xmlfp]
@@ -348,9 +345,10 @@ namespace eval ::rwdatas {
 
         } else {
 
-            $::rivetweb::logger log notice "page for key '$key' not found ([$this get_resource_repr $key])"
+            $::rivetweb::logger log notice "page for key '$key' not found"
             set pagedbentry ""
             set rkey xml_page_not_found_error
+
         }
 
         return $pagedbentry
@@ -373,6 +371,7 @@ namespace eval ::rwdatas {
         if {($sitemap_stat(mtime) > $timestamp)} { 
 
             return true
+
         }
 
         return false
@@ -416,7 +415,6 @@ namespace eval ::rwdatas {
         set elem_o [$msgdom createElement author]
         if {[dict exists $page_data author]} {
             set dom_txt [$msgdom createTextNode [dict get $page_data author]]]
-
         } else {
             set dom_txt [$msgdom createTextNode ""]
         }
@@ -773,8 +771,8 @@ namespace eval ::rwdatas {
 #       puts "<br/><b>pmodel</b>: $page"
 #       puts "<br/><b>ds</b>: [$page metadata datasource]"
 
-        if {[has_updates]} {
-            load_sitemap $sitemap
+        if {[$this has_updates]} {
+            $this load_sitemap $sitemap
         }
 
         if {[$page metadata datasource] == "::XMLBase"} {

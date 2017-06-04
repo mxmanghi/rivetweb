@@ -35,4 +35,4 @@ package ifneeded rwbasicpage 0.1 [list source [file join $rivetweb_dir tcl rweb_
 package ifneeded rwutils 1.0 [list source [file join $rivetweb_dir tcl utils.tcl]]
 package ifneeded downloadbin 1.0 [list source [file join $rivetweb_dir tcl downloadbin.tcl]]
 package ifneeded rwcontent 1.0 [list source [file join $rivetweb_dir tcl rweb_content.tcl]]
-
+package ifneeded urlcomposer 1.0 [list source [file join $rivetweb_dir tcl urlcomposer.tcl]]

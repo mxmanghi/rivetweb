@@ -25,6 +25,8 @@ namespace eval ::rwpage {
             foreach ds $::rivetweb::datasources {
                 set tbhead "$ds ([$ds name])"
                 set dscache [$ds cache]
+
+                #puts "<pre>$dscache</pre>"
                 set tbody ""
                 dict for {key p} $dscache {
                     dict with p {

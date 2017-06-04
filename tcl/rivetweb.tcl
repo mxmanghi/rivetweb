@@ -132,53 +132,19 @@ namespace eval ::rivetweb {
 # this function should consistently build links 
 #
     proc composeUrl {args} {
+        variable rewrite_links
+        variable rewrite_code
+        variable url_composer
 
         set arglist $args
-        if {$::rivetweb::rewrite_links} {
 
-            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_url $rwcode [::rivetweb::scriptName] arglist rewritten_url
-
+        if {$rewrite_links} {
+            set rwcode $rewrite_code
         } else {
-
-            set rewritten_url [::rivetweb::scriptName]
-
+            set rwcode ""
         }
-
-        array set argsmap {}
-        set hash ""
-        while {[llength $arglist]} {
-            set arglist [lassign $arglist param value]
-            if {$param == "#"} { 
-                set hash $value 
-                continue
-            }
-
-            set argsmap($param) [::rivet::escape_string $value]
-        }
-
-        set arglist [array get argsmap]
-
-        # finally we blend sticky arguments into the arguments 
-
-        set arglist [::rivetweb merge_sticky_args $arglist]
-        set urlargs {}
-
-        ::rivet::apache_log_error debug "URL $rewritten_url -> $arglist"
-        if {[llength $arglist]} {
-
-            while {[llength $arglist]} {
-                set arglist [lassign $arglist param value]
-                lappend urlargs "${param}=${value}"
-            }
-            set final_url "${rewritten_url}?[join $urlargs "&"]"
-        } else {
-            set final_url $rewritten_url
-        }
-
-        if {$hash != ""} {append final_url "#$hash" }
-
-        return $final_url
+            
+        return [$url_composer compose_url $arglist [::rivet::var_qs all] $rwcode]
     }
     namespace export composeUrl
 
@@ -205,7 +171,7 @@ namespace eval ::rivetweb {
         if {$::rivetweb::rewrite_links} {
             
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_css_url $rwcode [::rivet::env SCRIPT_NAME] $css_uri css_uri
+            ::rivetweb::rewrite_css_url $rwcode [::rivetweb::scriptName] $css_uri css_uri
 
             return $css_uri
         }
@@ -343,16 +309,16 @@ namespace eval ::rivetweb {
 
 # it's rather weird we have this case. No template directory should be hanging from site_base
 
-        set fn [file join   $::rivetweb::site_base          \
-                            $::rivetweb::picts_path         \
-                            $::rivetweb::default_template   \
-                            $picts_file]
+        set fn [file join $::rivetweb::site_base            \
+                          $::rivetweb::picts_path           \
+                          [::rivetweb default template]     \
+                          $picts_file]
 
         ::rivet::apache_log_error debug "4 pict file: >$fn<"
         if {[file exists $fn]} {
-            return [file join   $::rivetweb::running_picts_path   \
-                                $::rivetweb::default_template     \
-                                $picts_file]
+            return [file join $::rivetweb::running_picts_path   \
+                              [::rivetweb default template]     \
+                              $picts_file]
         }
 
         return ""
@@ -447,7 +413,7 @@ namespace eval ::rivetweb {
 #
 
     proc isDebugging { } {
-        return [expr $::rivetweb::debug && [var exists debug]]
+        return [expr $::rivetweb::debug && [::rivet::var exists debug]]
     }
 
  
@@ -510,55 +476,36 @@ namespace eval ::rivetweb {
 
 # -- set_rewrite_par
 #
-#   method to change the url argument that triggers the URI rewriting
-#  We need a method, not just a variable because the 'passthroughs' 
+#  method to change the url argument that triggers the URI rewriting
+#  We need a method, not just a variable because the 'sticky_args' 
 #  list need update (a strong indication that we need to move to a class)
 #
-    proc set_rewrite_par {rw_par} {
-        variable rewrite_par
-        variable passthroughs
-
-        set rewrite_par     $rw_par
-        set passthroughs    [list lang language reset template $rewrite_par]
-    }
-    namespace export set_rewrite_par
+#    proc set_rewrite_par {rw_par} {
+#        variable url_composer
+#
+#        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb set_rewrite_par"
+#        $url_composer set_rewrite_par $rw_par
+#    }
+#    namespace export set_rewrite_par
 
 # -- merge_sticky_pars
 #
 #
     proc merge_sticky_args {urlargs} {
-        variable passthroughs
-        variable rewrite_par
+        variable url_composer
         variable rewrite_links
-
-        foreach sticky_arg $passthroughs {
-
-            # we skip ::rivetweb::rewrite_par if we are alredy rewriting links
-            # as the whole point of link rewriting is charging mod_rewrite rules 
-            # to figure it out
-
-            if {$rewrite_links && \
-                ($sticky_arg == $rewrite_par)} { continue }
-
-            if { [::rivet::var_qs exists $sticky_arg] & \
-                ![dict exists $urlargs $sticky_arg]} {
-
-                dict set urlargs $sticky_arg [::rivet::var_qs get $sticky_arg]
-
-            }
-        }
-
-        return $urlargs
+        
+        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb merge_sticky_args"
+        return [$url_composer merge_sticky_args $urlargs [::rivet::var_qs all] $rewrite_link
     }
     namespace export merge_sticky_args
 
 
     proc strip_sticky_args {urlargs} {
-        variable passthroughs
+        variable url_composer
 
-        set urlargs_d [dict create {*}$urlargs]
-
-        return [dict remove $urlargs_d {*}$::rivetweb::passthroughs]
+        #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb strip_sticky_par"
+        return [$url_composer strip_sticky_args $urlargs] 
     }
     namespace export strip_sticky_args
 
@@ -628,11 +575,11 @@ namespace eval ::rivetweb {
     namespace export template
 
 
-# -- select_template
-#
-#   template selection mechanism encapsulated within this function
-#   to allow applications to implement their own template selection
-#
+    # -- default_template
+    # 
+    # template selection. Accessor to the default database for the
+    # current template definition
+    #
 
     proc select_template {} {
         variable default_template
@@ -640,6 +587,35 @@ namespace eval ::rivetweb {
         return $default_template
     }
     namespace export select_template
+
+    proc select_menu {} {
+        variable default_menu
+
+        return $default_menu
+    }
+
+    proc select_menu_position {} {
+        variable default_menu_pos
+
+        return $default_menu_pos
+    }
+
+    proc select_language {} {
+        variable default_lang
+
+        return $default_lang
+    }
+
+    proc default {site_default} {
+
+        set procname "::rivetweb::select_${site_default}"
+        if {[info procs $procname] == ""} {
+            return ""
+        }
+
+        return [eval [namespace current]::${procname}]
+    }
+    namespace export default
 
     proc restore_channel_status {} {
         variable channel_xlation 

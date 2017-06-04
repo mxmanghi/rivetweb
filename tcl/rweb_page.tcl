@@ -20,6 +20,8 @@ namespace eval ::rwpage {
             set headline    [dict create]
         }
 
+        public method set_key {k} { set key $k }
+        public method key {} { return $key }
         public method add_metadata {field value} 
         public method set_metadata {mdlist}
         public method put_metadata {dictionary} 
