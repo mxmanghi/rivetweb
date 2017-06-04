@@ -69,6 +69,9 @@ namespace eval ::rwpage {
 
 # -- postprocessing
 #
+# method to store in a page instance the metadata associated
+# with the keyword 'field' and whose value is 'value'
+#
 
     ::itcl::body RWPage::postprocessing {urlhandler} {
         RWContent::postprocessing $urlhandler
