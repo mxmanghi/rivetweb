@@ -22,6 +22,7 @@ namespace eval ::rwpage {
 
         protected method postprocessing { urlhandler } {}
 
+        public method set_key {k} { set key $k }
         public method key {} { return $key }
         public method destroy {}
         public method url_args {} { return $stored_vars }
