@@ -17,7 +17,9 @@ namespace eval ::rwpage {
     ::itcl::class RWDumpPage {
         inherit RWPage
 
-        constructor {pagekey} {RWPage::constructor $pagekey} {}
+        constructor {pagekey} {RWPage::constructor $pagekey} {
+            $this title $::rivetweb::default_lang "URL handlers database"
+        }
 
         public method print_content { language } {
             #puts -nonewline [$::rivetweb::rwebdb coredump]
@@ -89,7 +91,7 @@ and failed to reassigned the resource key ($key)} \
         public method is_stale {key timereference} {
 
             switch $key {
-                rw_coredump {
+                rw_dbdump {
                     return false
                 }
                 default {
@@ -103,8 +105,8 @@ and failed to reassigned the resource key ($key)} \
             upvar $keyvar key 
 
             set urlargs [dict create {*}$arglist]
-            if {[dict exists $urlargs coredump]} { 
-                set key rw_coredump
+            if {[dict exists $urlargs dbdump]} { 
+                set key rw_dbdump
             } else {
                 set key page_not_found_error
             }
@@ -115,11 +117,10 @@ and failed to reassigned the resource key ($key)} \
             upvar $reassigned_key rkey
 
             set rkey $key
-            if {$key == "rw_coredump"} {
+            if {$key == "rw_dbdump"} {
 
                 #set pobj [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
-                set pobj [::rwpage::RWDumpPage ::#auto rw_coredump]
-                $pobj set_title $::rivetweb::default_lang "Core database dump"
+                set pobj [::rwpage::RWDumpPage ::#auto $key]
                 
             } else {
 
