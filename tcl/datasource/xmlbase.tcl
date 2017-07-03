@@ -740,15 +740,22 @@ namespace eval ::rwdatas {
                     set group_menu_id   [$sm getAttribute id]
                     set group_parent    [$sm getAttribute parent root]
                     
-# it seems the position isn't used in any way....
+# the attribute 'position' refers to the position within the menu group
+# This is wrong, as the position can't be absolute. This also dependent
+# on the specific implementation of the concept of ordering within the
+# RWSitemap class (currently based on Tcllib's struct::tree objects)
 
                     if {[$sm hasAttribute position]} {
                         set position [$sm getAttribute position]
                         if {![string is integer $position]} { set position end }
+                    } else {
+                        set position end
                     }
 
-                    $sitemap_mgr add_menu_group $group_parent $group_menu_id \
-                                            [listStaticMenus $sm $group_parent]
+                    $sitemap_mgr add_menu_group     $group_parent \
+                                                    $group_menu_id \
+                                                    [listStaticMenus $sm $group_parent] \
+                                                    $position
                     
                     $logger log notice "adding $group_menu_id to $group_parent"
 
