@@ -129,7 +129,7 @@ namespace eval ::rwsitemap {
 
         set disconnected [$sitemap_tree children disconnected]
         foreach menu_group $disconnected {
-            $::rivetweb::logger log debug "$group_id -> $menu_group"
+            $::rivetweb::logger log debug "moving $menu_group into menu_group $group_id"
 
             set parent [$sitemap_tree get $menu_group parent]
             if {[string match $group_id $parent]} {
@@ -140,7 +140,7 @@ namespace eval ::rwsitemap {
             }
         }
 
-#       apache_log_error notice "sitemap ---> [$sitemap_tree nodes]"
+        ::rivet::apache_log_error debug "sitemap ---> [$sitemap_tree nodes]"
     }
 
 # -- menu_list: walks the tree of menus and returns a list of menu objs
