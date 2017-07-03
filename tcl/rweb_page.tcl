@@ -1,6 +1,6 @@
 # -- rweb_page.tcl
 #
-# base class for every HTML page 
+# base class for every HTML page
 #
 
 package require rwcontent
@@ -26,7 +26,7 @@ namespace eval ::rwpage {
         public method clear_metadata { } { set metadata [dict create] }
         public method languages { } { return $::rivetweb::default_lang } 
         public method metadata {{key ""}}
-        public method postproc_hooks { ds hooks_d hooks_class {language ""}} {}
+        public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d } 
         public method to_string {} { return [dict create metadata $metadata hits $hits key $key] }
         public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 

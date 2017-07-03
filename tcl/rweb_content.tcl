@@ -1,7 +1,10 @@
 # -- rweb_content.tcl
 #
 # content generator root class. Each page or any other content
-# generator should subclass this class
+# generator should subclass this class. 
+#
+# with this class we inaugurate the term "urlhandler" which
+# is meant to replace "datasource"
 #
 
 package require Itcl
@@ -44,7 +47,7 @@ namespace eval ::rwpage {
         ::itcl::delete object $this
     }
 
-# -- prepare
+# -- prepare_content
 #
 #
 # 
