@@ -142,53 +142,55 @@ namespace eval ::rivetweb {
 
 # let's proceed with the post processing and data generation
 
-    if {[$::rivetweb::current_page binary_content]} {
+    $::rivetweb::current_page send_output $language
 
-        $::rivetweb::current_page print_binary $language
-
-    } else {
-
-        #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
-        #::rivet::apache_log_error debug "-> $::rivetweb::current_page"
-
-    # we rebuild the navigation menu dictionary on every request
-
-        set ::rivetweb::pagemenus [dict create]
-
-        foreach ds $::rivetweb::datasources {
-
-            set dsmenu [$ds menu_list $::rivetweb::current_page]
-            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
-            dict for {k v} $dsmenu {
-                dict lappend ::rivetweb::pagemenus $k {*}$v
-            }
-        }
-
-        ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
-
-        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
-        ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
-
-        if {[::rivet::var exists rwinfo]} {
-            ::rivet::load_env env
-            ::rivet::parray_table env
-            #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
-            set siteconf [::rivet::inspect]
-
-            foreach k [dict keys $siteconf] {
-                set arrayv "_${k}_"
-                array set $arrayv [dict get $siteconf $k]
-                ::rivet::parray_table $arrayv
-            }
-
-        } elseif {[::rivet::var exists function]} {
-            set fun [::rivet::var get function]
-            if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {
-                puts $e
-            }
-        } else {
-            ::rivet::apache_log_error info "parsing $::rivetweb::running_template"
-            ::rivet::parse $::rivetweb::running_template
-        }
-    }
+#    if {[$::rivetweb::current_page binary_content]} {
+#
+#        $::rivetweb::current_page print_binary $language
+#
+#    } else {
+#
+#        #if {[isDebugging]} { puts "<pre>[escape_sgml_chars [$page_xml asXML]]</pre>" }
+#        #::rivet::apache_log_error debug "-> $::rivetweb::current_page"
+#
+#    # we rebuild the navigation menu dictionary on every request
+#
+#        set ::rivetweb::pagemenus [dict create]
+#
+#        foreach ds $::rivetweb::datasources {
+#
+#            set dsmenu [$ds menu_list $::rivetweb::current_page]
+#            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
+#            dict for {k v} $dsmenu {
+#                dict lappend ::rivetweb::pagemenus $k {*}$v
+#            }
+#        }
+#
+#        ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
+#
+#        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
+#        ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
+#
+#        if {[::rivet::var exists rwinfo]} {
+#            ::rivet::load_env env
+#            ::rivet::parray_table env
+#            #parse [file join $::rivetweb::scripts rivetweb_inspector.rvt]
+#            set siteconf [::rivet::inspect]
+#
+#            foreach k [dict keys $siteconf] {
+#                set arrayv "_${k}_"
+#                array set $arrayv [dict get $siteconf $k]
+#                ::rivet::parray_table $arrayv
+#            }
+#
+#        } elseif {[::rivet::var exists function]} {
+#            set fun [::rivet::var get function]
+#            if {[catch {eval source [file join $::rivetweb::scripts $fun]} e]} {
+#                puts $e
+#            }
+#        } else {
+#            ::rivet::apache_log_error info "parsing $::rivetweb::running_template"
+#            ::rivet::parse $::rivetweb::running_template
+#        }
+#    }
 }

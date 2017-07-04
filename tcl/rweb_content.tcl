@@ -36,6 +36,7 @@ namespace eval ::rwpage {
         public method get_resource_repr {resource_key} {return ""}
         public method print_content { language } { }
         public method current_handler { return $url_handler }
+        public method send_output {lang} { }
     }
 
 # -- destroy

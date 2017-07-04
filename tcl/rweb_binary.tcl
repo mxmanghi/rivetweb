@@ -20,6 +20,7 @@ namespace eval ::rwpage {
         public method mimetype {} { return "application/octet-stream" }
         public method content_disposition {} { return "" }
         public method content_length {} { return "" }
+        public method send_output {language} { $this print_binary $language }
     }
 
     ::itcl::body RWBinary::print_binary {language} {

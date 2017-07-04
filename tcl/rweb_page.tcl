@@ -63,6 +63,7 @@ namespace eval ::rwpage {
         public method content_field {language field {default_val ""}} {return ""}
         public method prepare {language argqs} { return [RWContent::prepare $language $argqs] }
         protected method postprocessing {urlhandler}
+        public method send_output {language} { }
     }
 
 # -- postprocessing
@@ -206,9 +207,44 @@ namespace eval ::rwpage {
 
     }
 
+# -- send_output
+#
+# this is the method that actually builds the page out of its template.
+# In the current design the method accesses variables in the ::rivetweb
+# namespace to read the template database and page menu database
+
+    ::itcl::body RWPage::send_output {language} {
+
+        # we rebuild the navigation menu dictionary on every request
+
+        set ::rivetweb::pagemenus [dict create]
+
+        foreach ds $::rivetweb::datasources {
+
+            set dsmenu [$ds menu_list $::rivetweb::current_page]
+            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
+            dict for {k v} $dsmenu {
+                dict lappend ::rivetweb::pagemenus $k {*}$v
+            }
+        }
+
+        ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
+
+        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
+        ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
+
+        ::rivet::apache_log_error debug "parsing $::rivetweb::running_template"
+        ::rivet::parse $::rivetweb::running_template
+
+    }
+
+
     proc create {key {class RWStatic}} {
         return [$class ::#auto $key]
     }
+
+
+
 
     namespace export create
     namespace ensemble create
