@@ -136,9 +136,21 @@ namespace eval ::rivetweb {
     } 
     $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
 
+#
+# The three stage generation of a page
+#   
+#     * page content preparation
+#     * HTTP header generation and transmission
+#     * page data transmission
+#
+
     set ::rivetweb::page_content $::rivetweb::page_key
     set ::rivetweb::current_page \
         [$::rivetweb::current_page prepare_content $::rivetweb::datasource $::rivetweb::language $argsqs]
+
+# sending headers 
+
+    $::rivetweb::current_page send_headers 
 
 # let's proceed with the post processing and data generation
 

@@ -17,15 +17,16 @@ namespace eval ::rwpage {
 
         public method binary_data {language} {}
         public method print_binary {language}
-        public method mimetype {} { return "application/octet-stream" }
         public method content_disposition {} { return "" }
         public method content_length {} { return "" }
         public method send_output {language} { $this print_binary $language }
+        public method send_headers {} 
+
     }
 
-    ::itcl::body RWBinary::print_binary {language} {
+    ::itcl::body RWBinary::send_headers {} {
 
-        ::rivet::headers type [$this mimetype]
+        RWContent::send_headers 
 
         set content_disposition [$this content_disposition] 
         if {$content_disposition != ""} {
@@ -36,6 +37,11 @@ namespace eval ::rwpage {
         if {$content_length != ""} {
             ::rivet::headers add Content-Length	$content_length
         }
+
+    }
+
+
+    ::itcl::body RWBinary::print_binary {language} {
 
         ::rivetweb::save_channel_status 
             

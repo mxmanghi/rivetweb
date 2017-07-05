@@ -16,11 +16,13 @@ namespace eval ::rwpage {
         private variable hits
         private variable stored_vars
         private variable url_handler
+        private variable mimetype 
 
-        constructor {pagekey} {
+        constructor {pagekey {mime "application/octet-stream"}} {
             set key         $pagekey
             set stored_vars [dict create]
             set hits        0
+            set mimetype    $mime
         }
 
         protected method postprocessing { urlhandler } {}
@@ -36,7 +38,9 @@ namespace eval ::rwpage {
         public method get_resource_repr {resource_key} {return ""}
         public method print_content { language } { }
         public method current_handler { return $url_handler }
-        public method send_output {lang} { }
+        public method mimetype {} { return $mimetype }
+        public method send_headers {} { ::rivet::headers type $mimetype }
+        public method send_output {language} { $this print_content $language}
     }
 
 # -- destroy

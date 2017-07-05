@@ -57,14 +57,45 @@ namespace eval ::rwpage {
             }
         }
 
-        ##### 
-
         public method binary_content { } { return false }
         public method content_field {language field {default_val ""}} {return ""}
-        public method prepare {language argqs} { return [RWContent::prepare $language $argqs] }
+        public method prepare {language argqs} { return [ }
         protected method postprocessing {urlhandler}
         public method send_output {language} { }
+        public method mimetype {} { return "text/html" }
+        public method send_headers {} { 
+            ::rivet::headers type "[$this mimetype]; charset=$::rivetweb::http_encoding"
+        }
     }
+
+
+# -- prepare
+#
+# this method's purpose is to generate the content of the page, navigation
+# menus are part of the whole page setup and are collected here
+
+    ::itcl::body RWPage::prepare {language argsqs} {
+
+        RWContent::prepare $language $argsqs
+
+        # we rebuild the navigation menu dictionary on every request
+
+        set ::rivetweb::pagemenus [dict create]
+
+        foreach ds $::rivetweb::datasources {
+
+            set dsmenu [$ds menu_list $::rivetweb::current_page]
+            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
+            dict for {k v} $dsmenu {
+                dict lappend ::rivetweb::pagemenus $k {*}$v
+            }
+        }
+
+        ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
+
+        return $this
+    }
+
 
 # -- postprocessing
 #
@@ -215,25 +246,8 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::send_output {language} {
 
-        # we rebuild the navigation menu dictionary on every request
-
-        set ::rivetweb::pagemenus [dict create]
-
-        foreach ds $::rivetweb::datasources {
-
-            set dsmenu [$ds menu_list $::rivetweb::current_page]
-            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
-            dict for {k v} $dsmenu {
-                dict lappend ::rivetweb::pagemenus $k {*}$v
-            }
-        }
-
-        ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
-
-        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
-        ::rivet::headers type "text/html; charset=$::rivetweb::http_encoding"
-
         ::rivet::apache_log_error debug "parsing $::rivetweb::running_template"
+        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
         ::rivet::parse $::rivetweb::running_template
 
     }
@@ -242,9 +256,6 @@ namespace eval ::rwpage {
     proc create {key {class RWStatic}} {
         return [$class ::#auto $key]
     }
-
-
-
 
     namespace export create
     namespace ensemble create

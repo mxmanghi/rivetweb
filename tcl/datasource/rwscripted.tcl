@@ -165,7 +165,7 @@ namespace eval ::rwdatas {
 
         #set href [::rivet::env SCRIPT_NAME]
         set urlargs [$linkmodel arguments $lm]
-        set urlargs [::rivetweb merge_sticky_args $urlargs]
+        # set urlargs [::rivetweb merge_sticky_args $urlargs]
         #::rivet::html "base href: $href ($urlargs)" div b
 
         set href [::rivetweb::composeUrl {*}$urlargs]

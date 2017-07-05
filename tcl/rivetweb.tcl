@@ -488,7 +488,7 @@ namespace eval ::rivetweb {
 #    }
 #    namespace export set_rewrite_par
 
-# -- merge_sticky_pars
+# -- merge_sticky_args
 #
 #
     proc merge_sticky_args {urlargs} {
@@ -496,7 +496,7 @@ namespace eval ::rivetweb {
         variable rewrite_links
         
         #::rivet::apache_log_error notice "Calling deprecated procedure ::rivetweb merge_sticky_args"
-        return [$url_composer merge_sticky_args $urlargs [::rivet::var_qs all] $rewrite_link
+        return [$url_composer merge_sticky_args $urlargs [::rivet::var_qs all] $rewrite_links]
     }
     namespace export merge_sticky_args
 

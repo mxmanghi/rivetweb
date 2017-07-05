@@ -51,9 +51,8 @@ namespace eval ::rivetweb {
             set url_arguments [dict create {*}$urlargs]
 
             # we skip ::rivetweb::rewrite_par (and any other conditioned sticky arg) 
-            # if we are alredy rewriting links
-            # as the whole point of link rewriting is charging mod_rewrite rules 
-            # to figure it out
+            # if we are alredy rewriting links as the whole point of link rewriting 
+            # is charging mod_rewrite rules to figure it out
 
             if {$rewrite_flag} {
                 set sas [$this clean_list $sticky_args {*}$conditioned_sticky_args]

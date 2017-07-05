@@ -76,7 +76,7 @@
             <datasource>RWDummy</datasource>
             <text>Embedded Database Dump<info>Testing basic scripting in Rivetweb</info></text>
             <args>
-                <param value="1">coredump</param>
+                <param value="1">dbdump</param>
             </args>
         </link>
 
