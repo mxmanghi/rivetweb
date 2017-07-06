@@ -1,9 +1,2 @@
 <?
-# -- index.rvt
-#
-# This template is actually just a basic handler of a request. It select
-# code execution for the template. It should evolve to handle dynamic page
-# generation, but for the time present it's just able to run rivetweb
-# scripts like download.tcl (binary file download)
-#
 ?>

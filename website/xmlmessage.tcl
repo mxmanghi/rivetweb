@@ -12,16 +12,20 @@ namespace eval ::rwpage {
 
         public method print_content { language } { 
 
+            puts "<?xml version=\"1.0\" encoding=\"$::rivetweb::http_encoding\"?>"
+
             switch [$this key] {
 
                 timeinfo {
                     set exectime [time {
                         set current_time [::rivet::xml [clock format [clock seconds] -format "%D %T"] curtime]
-                        set uptime       [::rivet::xml [string trim [exec "/usr/bin/uptime"]] utime]
+                        set uptime       [::rivet::xml [string trim [exec /usr/bin/uptime]] utime]
+                        set uname        [::rivet::xml [string trim [exec /bin/uname -a]] uname]
+                        set hname        [::rivet::xml [string trim [exec /bin/hostname]] hostname]
                     }]
                     set exec_time [::rivet::xml $exectime exectime]
 
-                    puts [::rivet::xml [join [list $current_time $uptime $exec_time] "\n"] xmlmessage]
+                    puts [::rivet::xml [join [list $current_time $uptime $uname $exec_time $hname] "\n"] xmlmessage]
 
                 }
                 default {
