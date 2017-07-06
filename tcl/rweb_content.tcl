@@ -39,9 +39,31 @@ namespace eval ::rwpage {
         public method print_content { language } { }
         public method current_handler { return $url_handler }
         public method mimetype {} { return $mimetype }
-        public method send_headers {} { ::rivet::headers type $mimetype }
+        public method content_disposition {} { return "" }
+        public method content_length {} { return "" }
+        public method send_headers {} 
         public method send_output {language} { $this print_content $language}
     }
+
+# -- send_headers
+#
+#
+    ::itcl::body RWContent::send_headers {} {
+
+        ::rivet::headers type [$this mimetype]
+
+        set content_disposition [$this content_disposition] 
+        if {$content_disposition != ""} {
+            ::rivet::headers add Content-Disposition $content_disposition
+        }
+
+        set content_length      [$this content_length]
+        if {$content_length != ""} {
+            ::rivet::headers add Content-Length	$content_length
+        }
+
+    }
+
 
 # -- destroy
 #

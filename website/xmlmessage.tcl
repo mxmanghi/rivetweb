@@ -8,11 +8,15 @@ namespace eval ::rwpage {
     ::itcl::class XMLResponse {
         inherit RWContent
 
+        private variable xmlbuffer
+
         constructor {key} {RWContent::constructor $key "text/xml"} {}
 
-        public method print_content { language } { 
+        public method content_length {} { return [string length $xmlbuffer] }
 
-            puts "<?xml version=\"1.0\" encoding=\"$::rivetweb::http_encoding\"?>"
+        public method prepare { language argsqs } {
+
+            set xmlbuffer "<?xml version=\"1.0\" encoding=\"$::rivetweb::http_encoding\"?>"
 
             switch [$this key] {
 
@@ -25,15 +29,20 @@ namespace eval ::rwpage {
                     }]
                     set exec_time [::rivet::xml $exectime exectime]
 
-                    puts [::rivet::xml [join [list $current_time $uptime $uname $exec_time $hname] "\n"] xmlmessage]
+                    append xmlbuffer [::rivet::xml [join [list $current_time $uptime $uname $exec_time $hname] "\n"] xmlmessage]
 
                 }
                 default {
-                    puts "<xmlerror>unrecognized command</xmlerror>"
+                    set xmlbuffer "<xmlerror>unrecognized command</xmlerror>"
                 }
 
             }
 
+            return $this
+        }
+
+        public method print_content { language } { 
+            puts $xmlbuffer
         }
     }
 }

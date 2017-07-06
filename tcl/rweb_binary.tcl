@@ -17,29 +17,9 @@ namespace eval ::rwpage {
 
         public method binary_data {language} {}
         public method print_binary {language}
-        public method content_disposition {} { return "" }
-        public method content_length {} { return "" }
         public method send_output {language} { $this print_binary $language }
-        public method send_headers {} 
 
     }
-
-    ::itcl::body RWBinary::send_headers {} {
-
-        RWContent::send_headers 
-
-        set content_disposition [$this content_disposition] 
-        if {$content_disposition != ""} {
-            ::rivet::headers add Content-Disposition $content_disposition
-        }
-
-        set content_length      [$this content_length]
-        if {$content_length != ""} {
-            ::rivet::headers add Content-Length	$content_length
-        }
-
-    }
-
 
     ::itcl::body RWBinary::print_binary {language} {
 

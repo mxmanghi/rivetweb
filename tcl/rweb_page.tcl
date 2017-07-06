@@ -14,7 +14,7 @@ namespace eval ::rwpage {
         private variable title
         private variable headline
 
-        constructor {pagekey} {RWContent::constructor $pagekey} {
+        constructor {pagekey} {RWContent::constructor $pagekey "text/html"} {
             set metadata    [dict create]
             set title       [dict create]
             set headline    [dict create]
@@ -56,16 +56,14 @@ namespace eval ::rwpage {
                 return false
             }
         }
+        #####
 
         public method binary_content { } { return false }
-        public method content_field {language field {default_val ""}} {return ""}
-        public method prepare {language argqs} { return [ }
-        protected method postprocessing {urlhandler}
+        public method content_field {language field {default_val ""}} { return "" }
+        public method prepare {language argqs} { return $this }
+        protected method postprocessing { urlhandler }
         public method send_output {language} { }
-        public method mimetype {} { return "text/html" }
-        public method send_headers {} { 
-            ::rivet::headers type "[$this mimetype]; charset=$::rivetweb::http_encoding"
-        }
+        public method mimetype {} { return "[RWContent::mimetype]; charset=$::rivetweb::http_encoding"  }
     }
 
 
@@ -210,7 +208,9 @@ namespace eval ::rwpage {
 # 
 
     ::itcl::body RWPage::put_metadata {dictionary} {
+
         set metadata $dictionary
+
     }
 
 
