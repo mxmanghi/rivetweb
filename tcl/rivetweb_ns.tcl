@@ -227,7 +227,10 @@ namespace eval ::rivetweb {
 
         dict set datasources_args $dsobj $args
 
-        #$ds init $args
+        #if {[catch {$ds init $args} e einfo]} {
+        #    ::rivet::apache_log_error err "Error initializing $ds ($e)"
+        #    ::rivet::apache_log_error err "Error info: $einfo"
+        #}
     }
 }
 

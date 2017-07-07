@@ -74,4 +74,5 @@ foreach ds [lreverse $::rivetweb::datasources] {
 
     ::rivet::apache_log_error debug "Running init for handler $ds"
     $ds init [dict get $::rivetweb::datasources_args $ds]
+
 }

@@ -2,8 +2,8 @@
 # -- test
 #
 #+
-# Can I stretch Rivetweb capabilities and make it suitable
-# for dynamic website generation?
+# early attempts to stretch Rivetweb capabilities and make it suitable
+# for dynamic website generation.
 #-
 #
 
