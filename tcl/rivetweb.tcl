@@ -613,7 +613,7 @@ namespace eval ::rivetweb {
             return ""
         }
 
-        return [eval [namespace current]::${procname}]
+        return [eval $procname]
     }
     namespace export default
 

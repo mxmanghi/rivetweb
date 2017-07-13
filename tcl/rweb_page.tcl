@@ -115,7 +115,7 @@ namespace eval ::rwpage {
 
         } e einfo]} {
 
-            ::rivet::apache_log_error err "Error processing data for page ($e)"
+            ::rivet::apache_log_error err "Error in postprocessing page ($e)"
             ::rivet::apache_log_error err $einfo
 
             set ::rivetweb::current_page [::RWDummy fetch_page postproc_hook_error rkey]
