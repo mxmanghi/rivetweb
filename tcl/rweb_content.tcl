@@ -35,7 +35,7 @@ namespace eval ::rwpage {
         public method prepare { language argsqs } { return $this }
         public method binary_content { } { return true }
         public method resource_exists {resource_key} { return false }
-        public method get_resource_repr {resource_key} {return ""}
+        public method get_resource_repr {resource_key} { return "" }
         public method print_content { language } { }
         public method current_handler { return $url_handler }
         public method mimetype {} { return $mimetype }
