@@ -71,6 +71,7 @@ namespace eval ::rwpage {
 # tdom objects). Abstract method for this class
 
     ::itcl::body RWContent::destroy { } {
+        ::rivetweb::notify_url_handlers $this being_removed
         ::itcl::delete object $this
     }
 

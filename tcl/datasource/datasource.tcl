@@ -48,6 +48,7 @@ namespace eval ::rwdatas {
         public method cache_query { key }
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
+        public method signal {notifying_page signal_code}
 
     }
 
@@ -65,6 +66,14 @@ namespace eval ::rwdatas {
         ::itcl::delete object $this
     }
 
+    ::itcl::body Datasource::signal {notifying_page signal_code} {
+        set key [$notifying_page key]
+        if {$signal_code == "being_removed"} {
+            if {[dict exists $cache $key]} {
+                dict unset cache key
+            }
+        }
+    }
 
 # -- will_provide
 #

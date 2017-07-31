@@ -18,6 +18,18 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+# -- notify_url_handlers
+#
+# Method to be used by pages needing to send signals to URL handlers
+
+    proc notify_url_handlers {notifier signal} {
+        foreach ds $::rivetweb::datasources {
+            
+            $ds signal $notifier $signal
+            
+        }
+    }
+
 # -- select_datasource
 #
 # this function is the central mechanism for selecting

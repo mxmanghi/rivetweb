@@ -60,12 +60,11 @@ namespace eval ::rwpage {
 
         public method binary_content { } { return false }
         public method content_field {language field {default_val ""}} { return "" }
-        public method prepare {language argqs} { return $this }
+        public method prepare {language argqs}
         protected method postprocessing { urlhandler }
         public method send_output {language} { }
         public method mimetype {} { return "[RWContent::mimetype]; charset=$::rivetweb::http_encoding"  }
     }
-
 
 # -- prepare
 #
@@ -247,7 +246,7 @@ namespace eval ::rwpage {
     ::itcl::body RWPage::send_output {language} {
 
         ::rivet::apache_log_error debug "parsing $::rivetweb::running_template"
-        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
+        #fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
         ::rivet::parse $::rivetweb::running_template
 
     }
