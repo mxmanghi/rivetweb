@@ -66,13 +66,22 @@ namespace eval ::rwdatas {
         ::itcl::delete object $this
     }
 
+    # -- signal
+
     ::itcl::body UrlHandler::signal {notifying_page signal_code} {
+
         set key [$notifying_page key]
         if {$signal_code == "being_removed"} {
+
+            # this signal means that the object is already being
+            # deleted, we don't need to delete this instance
+            # ourselves, we just remove it from the cache
+
             if {[dict exists $cache $key]} {
                 dict unset cache key
             }
         }
+
     }
 
 # -- will_provide
@@ -121,12 +130,20 @@ namespace eval ::rwdatas {
             set rkey $key
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
-                set stored_page [dict get $cache $key object]
+                
+                # is_stale might well delete the entire class
+                # thus triggering a sequence of deletes of its
+                # instances. As such we may get here and the object
+                # could have already be removed for the cache
 
-                ### catch added for debugging
-                if {[catch {$stored_page destroy} e opts]} {
-                    ::rivet::apache_log_error err "failed to delete $stored_page. Cache dump"
-                    foreach {k page} $cache { ::rivet::apache_log_error err "$k: $page" }
+                if {[dict exists $cache $key]} {
+                    set stored_page [dict get $cache $key object]
+
+                    ### catch added for debugging
+                    if {[catch {$stored_page destroy} e opts]} {
+                        ::rivet::apache_log_error err "failed to delete $stored_page. Cache dump"
+                        foreach {k page} $cache { ::rivet::apache_log_error err "$k: $page" }
+                    }
                 }
 
                 set p [$this fetchData $key rkey]
