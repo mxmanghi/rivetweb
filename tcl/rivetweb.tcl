@@ -526,7 +526,7 @@ namespace eval ::rivetweb {
 # recusive search of a page through the datasource list. 
 #
 
-    proc search_datasources {key returned_key datasrc} {
+    proc search_datasources {key returned_key datasrc {excluded_handler ""}} {
         upvar $returned_key rkey
         upvar $datasrc datasource
 
@@ -534,6 +534,11 @@ namespace eval ::rivetweb {
         # through the last datasource in the chain (::RWDummy)
 
         foreach ds $::rivetweb::datasources {
+            if {$ds == $excluded_handler} { 
+                ::rivet::apache_log_error info "excluding $ds from search for $key"
+                continue
+            }
+
             ::rivet::apache_log_error info "querying $ds for $key"
 
             set rkey $key           
@@ -552,13 +557,13 @@ namespace eval ::rivetweb {
                         return [::RWDummy fetchData $key rkey]
                     }
 
-                    return [search_datasources $rkey rkey datasource]
+                    return [search_datasources $rkey rkey datasource $ds]
                 }
 
             } else {
 
                 if {($rkey != "") && ($key != $rkey)} {
-                    return [search_datasources $rkey rkey datasource]
+                    return [search_datasources $rkey rkey datasource $ds]
                 }
 
             }
