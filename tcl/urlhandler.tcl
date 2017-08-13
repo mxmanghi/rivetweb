@@ -46,12 +46,18 @@ namespace eval ::rwdatas {
 
         public method cache {} { return $cache }
         public method cache_query { key }
+        public method get_page_object { key } 
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
         public method signal {notifying_page signal_code}
 
     }
 
+    # -- destroy
+    #
+    # application level destruction method
+    #
+    
     ::itcl::body UrlHandler::destroy { } {
 
         dict for {key page_o} $cache {
@@ -118,6 +124,10 @@ namespace eval ::rwdatas {
 
     }
 
+    ::itcl::body UrlHandler::get_page_object {key} {
+        returb [dict get $cache $key object]
+    }
+
 # -- fetch_page
 #
 #
@@ -126,7 +136,7 @@ namespace eval ::rwdatas {
         upvar $reassigned_key rkey
 
         ::rivet::apache_log_error info "[namespace current] cache $cache"
-        if {[dict exists $cache $key]} {
+        if {[$this cache_query $key]} {
             set rkey $key
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
@@ -136,8 +146,8 @@ namespace eval ::rwdatas {
                 # instances. As such we may get here and the object
                 # could have already be removed for the cache
 
-                if {[dict exists $cache $key]} {
-                    set stored_page [dict get $cache $key object]
+                if {$this cache_query $key]} {
+                    set stored_page [$this get_page_object $key]
 
                     ### catch added for debugging
                     if {[catch {$stored_page destroy} e opts]} {
@@ -154,7 +164,7 @@ namespace eval ::rwdatas {
                     return [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource $this]
                 }
             }
-            return [dict get $cache $key object]
+            return [$this get_page_object $key]
 
         } else {
 

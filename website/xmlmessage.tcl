@@ -88,7 +88,6 @@ namespace eval ::rwdatas {
         public method has_updates {} { return true }
         public method fetchData {key reassigned_key}
 
-
     }
 
     ::itcl::body XMLMessage::willHandle {arglist keyvar} {

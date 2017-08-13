@@ -43,6 +43,7 @@ namespace eval ::rwpage {
         public method content_length {} { return "" }
         public method send_headers {} 
         public method send_output {language} { $this print_content $language}
+        public method refresh {timereference} { return true }
     }
 
 # -- send_headers
