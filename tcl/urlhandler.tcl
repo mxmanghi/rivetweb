@@ -125,7 +125,7 @@ namespace eval ::rwdatas {
     }
 
     ::itcl::body UrlHandler::get_page_object {key} {
-        returb [dict get $cache $key object]
+        return [dict get $cache $key object]
     }
 
 # -- fetch_page
@@ -146,7 +146,7 @@ namespace eval ::rwdatas {
                 # instances. As such we may get here and the object
                 # could have already be removed for the cache
 
-                if {$this cache_query $key]} {
+                if {[$this cache_query $key]} {
                     set stored_page [$this get_page_object $key]
 
                     ### catch added for debugging
@@ -169,7 +169,7 @@ namespace eval ::rwdatas {
         } else {
 
             set p [$this fetchData $key rkey]
-            ::rivet::apache_log_error debug "fetchData returns $rkey in response of key $key"
+            ::rivet::apache_log_error debug "\[$this fetchData\] returns $rkey in response of key $key"
             if {$p != ""} {
                 dict set cache $key object $p
                 dict set cache $key timestamp [clock seconds]
