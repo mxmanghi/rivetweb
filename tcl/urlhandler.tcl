@@ -143,8 +143,9 @@ namespace eval ::rwdatas {
                 
                 # is_stale might well delete the entire class
                 # thus triggering a sequence of deletes of its
-                # instances. As such we may get here and the object
-                # could have already be removed for the cache
+                # instances. As a matter of fact we may get here 
+                # and the object could have already been removed from 
+                # the cache
 
                 if {[$this cache_query $key]} {
                     set stored_page [$this get_page_object $key]

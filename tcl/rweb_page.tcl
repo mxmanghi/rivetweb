@@ -62,7 +62,7 @@ namespace eval ::rwpage {
         public method content_field {language field {default_val ""}} { return "" }
         public method prepare {language argqs}
         protected method postprocessing { urlhandler }
-        public method send_output {language} { }
+        public method send_output {language}
         public method mimetype {} { return "[RWContent::mimetype]; charset=$::rivetweb::http_encoding"  }
     }
 

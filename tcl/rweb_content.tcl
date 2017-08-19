@@ -25,6 +25,8 @@ namespace eval ::rwpage {
             set mimetype    $mime
         }
 
+        public method init {args} {}
+
         protected method postprocessing { urlhandler } {}
 
         public method set_key {k} { set key $k }
