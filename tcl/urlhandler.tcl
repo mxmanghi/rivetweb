@@ -30,7 +30,7 @@ namespace eval ::rwdatas {
 
         ###
 
-        public method is_stale {key timereference} { return false }
+        public method is_stale {key timereference}
         public method dispose {key} {}
         public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -71,6 +71,22 @@ namespace eval ::rwdatas {
 
         ::itcl::delete object $this
     }
+
+    # -- is_stale
+    #
+    # the key is guaranteed to point to an existing page
+    # in the cache, as is_stale is called from 'fetch_page'
+    # which checks for the existence of this page (otherwise
+    # a page object would have been created)
+
+    ::itcl::body UrlHandler::is_stale {key timereference} {
+
+        set page [$this get_page_object $key]
+        return [$page refresh $timereference]
+
+    }
+
+
 
     # -- signal
 
