@@ -18,6 +18,17 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+# -- registered_handlers
+#
+# we now try to phase in a management of URL handlers
+# that eventually will make them an opaque informatio
+# of the rivetweb status
+
+    proc registered_handlers {} {
+        return $::rivetweb::datasources
+    }
+    namespace export registered_handlers
+
 # -- notify_url_handlers
 #
 # Method to be used by pages needing to send signals to URL handlers
