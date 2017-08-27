@@ -80,7 +80,7 @@ namespace eval ::rwpage {
 
         set ::rivetweb::pagemenus [dict create]
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
 
             set dsmenu [$ds menu_list $::rivetweb::current_page]
             ::rivet::apache_log_error debug "got '$dsmenu' from $ds"

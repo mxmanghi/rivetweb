@@ -34,7 +34,7 @@ namespace eval ::rivetweb {
 # Method to be used by pages needing to send signals to URL handlers
 
     proc notify_url_handlers {notifier signal} {
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
             
             $ds signal $notifier $signal
             
@@ -55,7 +55,7 @@ namespace eval ::rivetweb {
     proc select_datasource {urlencoded_pars resource_key_var} {
         upvar $resource_key_var key
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
             $ds willHandle $urlencoded_pars key
         }
 
@@ -532,19 +532,19 @@ namespace eval ::rivetweb {
     }
     namespace export strip_sticky_args
 
-# -- search_datasources
+# -- search_handler
 #
-# recusive search of a page through the datasource list. 
+# recusive search of a page through the URL handler list. 
 #
 
-    proc search_datasources {key returned_key datasrc {excluded_handler ""}} {
+    proc search_handler {key returned_key datasrc {excluded_handler ""}} {
         upvar $returned_key rkey
         upvar $datasrc datasource
 
         # this cycle is guaranteed to return a page, al least 
         # through the last datasource in the chain (::RWDummy)
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
             if {$ds == $excluded_handler} { 
                 ::rivet::apache_log_error info "excluding $ds from search for $key"
                 continue
@@ -568,19 +568,19 @@ namespace eval ::rivetweb {
                         return [::RWDummy fetchData $key rkey]
                     }
 
-                    return [search_datasources $rkey rkey datasource $ds]
+                    return [search_handler $rkey rkey datasource $ds]
                 }
 
             } else {
 
                 if {($rkey != "") && ($key != $rkey)} {
-                    return [search_datasources $rkey rkey datasource $ds]
+                    return [search_handler $rkey rkey datasource $ds]
                 }
 
             }
         }
     }
-    namespace export search_datasources
+    namespace export search_handler
 
 # -- template_path
 #

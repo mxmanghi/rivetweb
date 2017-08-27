@@ -50,6 +50,7 @@ namespace eval ::rwdatas {
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
         public method signal {notifying_page signal_code}
+        public method cleanup {} {}
 
     }
 
@@ -69,6 +70,10 @@ namespace eval ::rwdatas {
             }
         }
 
+        # specific instance clean up
+
+        $this cleanup 
+
         ::itcl::delete object $this
     }
 
@@ -86,9 +91,9 @@ namespace eval ::rwdatas {
 
     }
 
-
-
     # -- signal
+    #
+    #
 
     ::itcl::body UrlHandler::signal {notifying_page signal_code} {
 
@@ -192,13 +197,6 @@ namespace eval ::rwdatas {
                 dict set cache $key timestamp [clock seconds]
             } else {
                 set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource $this]
-                #if {$key != $rkey} {
-                #    set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
-                #} else {
-                #    set ::rivetweb::datasource ::RWDummy 
-                #
-                #    set p [::RWDummy fetchData wrong_datasource_returned_key rkey]
-                #}
             }
             return $p
 
