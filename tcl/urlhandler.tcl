@@ -183,7 +183,7 @@ namespace eval ::rwdatas {
                     dict set cache $key object $p
                     dict set cache $key timestamp [clock seconds]
                 } else {
-                    return [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource $this]
+                    return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
                 }
             }
             return [$this get_page_object $key]
@@ -196,7 +196,7 @@ namespace eval ::rwdatas {
                 dict set cache $key object $p
                 dict set cache $key timestamp [clock seconds]
             } else {
-                set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource $this]
+                set p [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
             }
             return $p
 

@@ -431,6 +431,24 @@ namespace eval ::rivetweb {
         return [::rivetweb::thisClass [$page_obj key] $page_reference $class_selected $class_unselected]
     }
 
+# -- hightlighted_item
+#
+#   Procedure to generated XHTML code for a list item having the 
+#   CSS class selected when the link contained is the one of the
+#   page being displayed (will replace thisClass)
+
+    proc highlighted_item {item_xml selected_page selected_url selected_class {unselected_class ""} {item_tag "li"}} {
+
+        if {$selected_page == $::rivetweb::page_key} { 
+            return [::rivet::xml $item_xml [list $item_tag class $selected_class] [list a href $selected_url]]
+        } elseif { $unselected_class != ""} {
+            return [::rivet::xml $item_xml [list $item_tag class $unselected_class] [list a href $selected_url]]
+        } else {
+            return [::rivet::xml $item_xml [list $item_tag] [list a href $selected_url]]
+        }
+    }
+    namespace export highlighted_item
+
 # -- isDebugging 
 #
 #
