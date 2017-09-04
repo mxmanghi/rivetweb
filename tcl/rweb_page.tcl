@@ -247,7 +247,7 @@ namespace eval ::rwpage {
     ::itcl::body RWPage::send_output {language} {
 
         ::rivet::apache_log_error debug "parsing $::rivetweb::running_template"
-        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
+        #fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
         ::rivet::parse $::rivetweb::running_template
 
     }
