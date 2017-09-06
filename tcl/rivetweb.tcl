@@ -141,7 +141,7 @@ namespace eval ::rivetweb {
 
         return $rewritten_url
     }
-
+    namespace export rewrite_generic_path
 
 # -- scriptName 
 #
