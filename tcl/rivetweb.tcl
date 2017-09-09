@@ -218,7 +218,7 @@ namespace eval ::rivetweb {
     
         if {$specific_file == ""} {
 
-            set css_file_name [dict get $::rivetweb::templates_db $template_key css]
+            set css_file_name [RWTemplate::template $template_key css]
             set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
 
         } else {
@@ -267,6 +267,7 @@ namespace eval ::rivetweb {
 #
 
     proc findPictureFile {picts_file style_dir} {
+        variable template_key
 
         ::rivet::apache_log_error debug \
         "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
@@ -281,8 +282,8 @@ namespace eval ::rivetweb {
 # we have to deceive static links (relative to the ::rivetweb::static_path variable)
 # but still we must be aware we are running from /index.rvt
 
-        if {[dict exists $::rivetweb::templates_db $::rivetweb::template_key pictures]} {
-            set template_picts [dict get $::rivetweb::templates_db $::rivetweb::template_key pictures]
+        set template_picts [::rivetweb::RWTemplate templates $template_key pictures]
+        if { $pictures_dir != ""} {
             set fn [file join   $::rivetweb::site_base      \
                                 $::rivetweb::base_templates \
                                 $style_dir                  \
@@ -491,7 +492,8 @@ namespace eval ::rivetweb {
 # -- build_html_menu 
 #
 # central function returning a menu of link as an HTML fragment. The markup
-# is described withing the dictionary 'templates_db'
+# *was* described withing the dictionary 'templates_db', now managed through
+# the (common) public interface of the RWTemplate class
 #
 # Arguments:
 #
@@ -502,7 +504,7 @@ namespace eval ::rivetweb {
 
     proc build_html_menu { pagemenus template_key position } {
 
-        set htmldefs [dict get $::rivetweb::templates_db $template_key]
+        set htmldefs [[::rivetweb::RWTemplate $template_key] serialize]
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
@@ -615,7 +617,7 @@ namespace eval ::rivetweb {
 #
 #
     proc template {template_key} {
-        return [::rivetweb template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
+        return [::rivetweb template_path [::rivetweb::RWTemplate template $template_key template]
 
     }
     namespace export template

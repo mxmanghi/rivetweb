@@ -24,10 +24,17 @@ namespace eval ::rivetweb {
         private variable link_class     navitem
         private variable menuclass      RWMenu
 
+        private variable template_key
+
+        constructor {key} {
+            set template_key $key
+        }
+
         public method init {descriptor} 
         public method getprop {prop}
         public method serialize {}
         public method register_formatter {formatter}
+        public method formatters_ns {}
 
         public proc load_templates {templates_root}
         public proc template {template_key {prop ""}}
@@ -61,8 +68,10 @@ namespace eval ::rivetweb {
     }
 
     ::itcl::body RWTemplate::register_formatter {formatter} {
-        namespace eval [namespace current]::formatters $formatter 
+        namespace eval [$this formatters_ns] $formatter 
     }
+
+    ::itcl::body RWTemplate::formatters_ns {} { return "[namespace current]::${template_key}" }
 
     ::itcl::body RWTemplate::load_templates {templates_dir} {
 
@@ -71,17 +80,25 @@ namespace eval ::rivetweb {
 
                 set template_key [file tail $template]
 
-                #puts "searching for [file join $template rwtemplate.tcl]"
+                puts "searching for [file join $template rwtemplate.tcl]"
 
                 set base_descriptor [file join $template rwtemplate.tcl]
                 if {[file exists $base_descriptor]} {
-                    set template_o [::rivetweb::RWTemplate [namespace current]::${template_key}]
+                    set template_o [::rivetweb::RWTemplate [namespace current]::${template_key} $template_key]
                     $template_o init $base_descriptor
 
                     dict set templates_db $template_key $template_o
                 }
 
                 set formatters [file join $template formatters.tcl]
+                if {[file exists $formatters]} {
+                    puts "reading formatters $formatters"
+                    set fp [open $formatters r]
+                    set formatters_code [read $fp]
+                    close $fp
+
+                    $template_o register_formatter $formatters_code
+                }
             }
         }
 
@@ -91,7 +108,7 @@ namespace eval ::rivetweb {
         if {![dict exists $templates_db $template_key]} { return "" }
         set template_o [dict get $templates_db $template_key]
         if {$prop == ""} {
-            return [$template_o as_dict]
+            return $template_o
         } else {
             return [$template_o getprop $prop]
         }
