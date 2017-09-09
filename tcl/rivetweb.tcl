@@ -504,7 +504,7 @@ namespace eval ::rivetweb {
 
     proc build_html_menu { pagemenus template_key position } {
 
-        set htmldefs [[::rivetweb::RWTemplate $template_key] serialize]
+        set htmldefs [[::rivetweb::RWTemplate::template $template_key] serialize]
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
@@ -617,7 +617,7 @@ namespace eval ::rivetweb {
 #
 #
     proc template {template_key} {
-        return [::rivetweb template_path [::rivetweb::RWTemplate template $template_key template]
+        return [::rivetweb template_path [::rivetweb::RWTemplate::template $template_key template] $template_key]
 
     }
     namespace export template

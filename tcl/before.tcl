@@ -63,7 +63,8 @@ namespace eval ::rivetweb {
 
     } 
 
-    $::rivetweb::logger log info "selected template $template_key: $running_template (css: $running_css)"
+    $::rivetweb::logger log info "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
+    $::rivetweb::logger log info "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
 
 # let's build the full path to the template and css files through the Rivetweb specific calls
 
@@ -71,6 +72,9 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
     set ::rivetweb::template_key      $template_key
 
+	$::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
+
+	
     if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
         set ::rivetweb::last_selected_template $template_key
         set ::rivetweb::template_changed true    

@@ -80,7 +80,7 @@ namespace eval ::rivetweb {
 
                 set template_key [file tail $template]
 
-                puts "searching for [file join $template rwtemplate.tcl]"
+                #puts "searching for [file join $template rwtemplate.tcl]"
 
                 set base_descriptor [file join $template rwtemplate.tcl]
                 if {[file exists $base_descriptor]} {
@@ -92,7 +92,7 @@ namespace eval ::rivetweb {
 
                 set formatters [file join $template formatters.tcl]
                 if {[file exists $formatters]} {
-                    puts "reading formatters $formatters"
+                    #puts "reading formatters $formatters"
                     set fp [open $formatters r]
                     set formatters_code [read $fp]
                     close $fp

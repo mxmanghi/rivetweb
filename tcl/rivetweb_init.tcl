@@ -12,4 +12,3 @@ catch { package require Rivet }
 ::rivet::apache_log_error info "templates database: $::rivetweb::base_templates ([pwd])"
 
 source [file join $::rivetweb::scripts rivet_init.tcl]
-

@@ -28,6 +28,8 @@ cd $website_root
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
 if {[file exists $website_definitions]} { source $website_definitions }
 
+::rivet::apache_log_error info "default_template: $::rivetweb::default_template"
+
 set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
 
 # site_defs.tcl is supposed to define the default template, we thus assign this key to the 

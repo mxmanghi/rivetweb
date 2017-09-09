@@ -15,6 +15,13 @@ set templates_dir_list  [glob -directory $templates_dir *]
 ::rivetweb::RWTemplate::load_templates $templates_dir
 
 ::rivet::apache_log_error info "registered templates: $::rivetweb::RWTemplate::templates_db"
+	
+::rivet::apache_log_error debug "template database dump"
+
+dict for {key templ} $::rivetweb::RWTemplate::templates_db {
+	::rivet::apache_log_error debug "template $key: $templ"
+}
+
 
 # now we build the hooks database
 
