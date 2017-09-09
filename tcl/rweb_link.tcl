@@ -26,7 +26,7 @@ namespace eval ::rwlink {
             set text        [dict create text [dict create {*}$ltext]] 
            
             if {![dict exists $text text $::rivetweb::default_lang]} {
-                return -code error -errcode default_lang_missing  "Default language text required for link $lref"
+                return -code error -errcode default_lang_missing "Default language text required for link $lref"
             }
 
             if {$linfo != ""} { dict set text info [dict create {*}$linfo]}
@@ -49,8 +49,9 @@ namespace eval ::rwlink {
         }
         public method attributes { } { return $attributes }
         public method link_text {language} {
-            if {[dict exists $text text $language]} { return [dict get $text text $language] }
-
+            if {[dict exists $text text $language]} { 
+                return [dict get $text text $language] 
+            }
             return [dict get $text text $::rivetweb::default_lang]
         }
         public method link_info {language} {

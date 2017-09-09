@@ -30,7 +30,7 @@ namespace eval ::rwdatas {
 
         ###
 
-        public method is_stale {key timereference} { return false }
+        public method is_stale {key timereference}
         public method dispose {key} {}
         public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -46,12 +46,19 @@ namespace eval ::rwdatas {
 
         public method cache {} { return $cache }
         public method cache_query { key }
+        public method get_page_object { key } 
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
         public method signal {notifying_page signal_code}
+        public method cleanup {} {}
 
     }
 
+    # -- destroy
+    #
+    # application level destruction method
+    #
+    
     ::itcl::body UrlHandler::destroy { } {
 
         dict for {key page_o} $cache {
@@ -63,10 +70,30 @@ namespace eval ::rwdatas {
             }
         }
 
+        # specific instance clean up
+
+        $this cleanup 
+
         ::itcl::delete object $this
     }
 
+    # -- is_stale
+    #
+    # the key is guaranteed to point to an existing page
+    # in the cache, as is_stale is called from 'fetch_page'
+    # which checks for the existence of this page (otherwise
+    # a page object would have been created)
+
+    ::itcl::body UrlHandler::is_stale {key timereference} {
+
+        set page [$this get_page_object $key]
+        return [$page refresh $timereference]
+
+    }
+
     # -- signal
+    #
+    #
 
     ::itcl::body UrlHandler::signal {notifying_page signal_code} {
 
@@ -118,6 +145,10 @@ namespace eval ::rwdatas {
 
     }
 
+    ::itcl::body UrlHandler::get_page_object {key} {
+        return [dict get $cache $key object]
+    }
+
 # -- fetch_page
 #
 #
@@ -126,18 +157,19 @@ namespace eval ::rwdatas {
         upvar $reassigned_key rkey
 
         ::rivet::apache_log_error info "[namespace current] cache $cache"
-        if {[dict exists $cache $key]} {
+        if {[$this cache_query $key]} {
             set rkey $key
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
                 
                 # is_stale might well delete the entire class
                 # thus triggering a sequence of deletes of its
-                # instances. As such we may get here and the object
-                # could have already be removed for the cache
+                # instances. As a matter of fact we may get here 
+                # and the object could have already been removed from 
+                # the cache
 
-                if {[dict exists $cache $key]} {
-                    set stored_page [dict get $cache $key object]
+                if {[$this cache_query $key]} {
+                    set stored_page [$this get_page_object $key]
 
                     ### catch added for debugging
                     if {[catch {$stored_page destroy} e opts]} {
@@ -151,27 +183,20 @@ namespace eval ::rwdatas {
                     dict set cache $key object $p
                     dict set cache $key timestamp [clock seconds]
                 } else {
-                    return [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
+                    return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
                 }
             }
-            return [dict get $cache $key object]
+            return [$this get_page_object $key]
 
         } else {
 
             set p [$this fetchData $key rkey]
-            ::rivet::apache_log_error debug "fetchData returns $rkey in response of key $key"
+            ::rivet::apache_log_error debug "\[$this fetchData\] returns $rkey in response of key $key"
             if {$p != ""} {
                 dict set cache $key object $p
                 dict set cache $key timestamp [clock seconds]
             } else {
-                set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
-                #if {$key != $rkey} {
-                #    set p [::rivetweb::search_datasources $rkey rkey ::rivetweb::datasource]
-                #} else {
-                #    set ::rivetweb::datasource ::RWDummy 
-                #
-                #    set p [::RWDummy fetchData wrong_datasource_returned_key rkey]
-                #}
+                set p [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
             }
             return $p
 

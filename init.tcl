@@ -15,6 +15,7 @@ package require rwmenu
 package require rwpage
 package require urlcomposer
 package require Datasource
+package require RWTemplate
 package require RWDummy
 package require XMLBase
 
@@ -39,7 +40,8 @@ source [file join $::rivetweb::scripts rivetweb_init.tcl]
 # we have both the default template and the template database, we proceeded
 # determining the default menuclass
 
-set ::rivetweb::menuclass [dict get $::rivetweb::templates_db $rivetweb::default_template menuclass]
+#set ::rivetweb::menuclass [dict get $::rivetweb::templates_db $rivetweb::default_template menuclass]
+set ::rivetweb::menuclass [::rivetweb::RWTemplate::template $rivetweb::default_template menuclass]
 
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $::rivetweb::website_init]} {

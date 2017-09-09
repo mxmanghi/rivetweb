@@ -102,9 +102,9 @@ namespace eval ::rivetweb {
         source $::rivetweb::site_before_script
     }
 
-    $::rivetweb::logger log debug "registered datasources: $::rivetweb::datasources"
+    $::rivetweb::logger log debug "registered handlers: [::rivetweb registered_handlers] "
     $::rivetweb::logger log debug "argsqs: $argsqs"
-    foreach ds $::rivetweb::datasources {
+    foreach ds [::rivetweb registered_handlers] {
 
         set ::rivetweb::datasource $ds
 
@@ -129,7 +129,7 @@ namespace eval ::rivetweb {
     if {[dict get $error_info -errorcode] == "rw_restart"} {
         $::rivetweb::logger log debug "datasource search forced"
         set ::rivetweb::current_page \
-            [::rivetweb::search_datasources $::rivetweb::page_key ::rivetweb::page_key ::rivetweb::datasource]
+            [::rivetweb::search_handler $::rivetweb::page_key ::rivetweb::page_key ::rivetweb::datasource]
     } else {
         set ::rivetweb::datasource $ds
         set ::rivetweb::current_page [$::rivetweb::datasource fetch_page $::rivetweb::page_key ::rivetweb::page_key]

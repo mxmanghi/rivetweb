@@ -9,69 +9,12 @@
 
 ::rivet::apache_log_error notice "Initializing Apache child [pid], [pwd]"
 
-set templates_dir [file join $::rivetweb::site_base $::rivetweb::base_templates]
-set templates_dir_list [glob -directory $templates_dir *]
+set templates_dir       [file join $::rivetweb::site_base $::rivetweb::base_templates]
+set templates_dir_list  [glob -directory $templates_dir *]
 
-foreach template $templates_dir_list {
+::rivetweb::RWTemplate::load_templates $templates_dir
 
-    if {[file isdirectory $template]} {
-
-        if {[catch {
-
-# we prepare a clean namespace where variables will be stored
-
-            catch { namespace delete ::rwtemplate }
-            namespace eval ::rwtemplate {
-
-                source [file join $template rwtemplate.tcl]
-                if {![info exists rwtemplate] || ![info exists rwcss]} {
-                    ::rivet::apache_log_error err "Descrittore template $template incompleto"
-                    continue
-                }
-
-                set template_key [file tail $template]
-
-                dict set ::rivetweb::templates_db $template_key template $rwtemplate 
-                dict set ::rivetweb::templates_db $template_key css $rwcss
-
-# along with template name and css file name, we build also a database of definitions
-# for the menu definitions variables.
-
-                if {[info exists ::rwtemplate::menu_html]} {
-                    dict set ::rivetweb::templates_db $template_key menu_html $::rwtemplate::menu_html
-                }
-                if {[info exists ::rwtemplate::title_html]} {
-                    dict set ::rivetweb::templates_db $template_key title_html $::rwtemplate::title_html
-                }
-                if {[info exists ::rwtemplate::it_cont_html]} {
-                    dict set ::rivetweb::templates_db $template_key it_cont_html $::rwtemplate::it_cont_html
-                }
-                if {[info exists ::rwtemplate::item_html]} {
-                    dict set ::rivetweb::templates_db $template_key item_html $::rwtemplate::item_html
-                }
-                if {[info exists ::rwtemplate::link_class]} {
-                    dict set ::rivetweb::templates_db $template_key link_class $::rwtemplate::link_class
-                }
-		        if {[info exists ::rwtemplate::pictures]} { 
-		            dict set ::rivetweb::templates_db $template_key pictures $::rwtemplate::pictures
-		        }
-                if {[info exists ::rwtemplate::menuclass]} {
-                    package require [string tolower $::rwtemplate::menuclass]
-                    dict set ::rivetweb::templates_db $template_key menuclass $::rwtemplate::menuclass
-                } else {
-                    dict set ::rivetweb::templates_db $template_key menuclass $::rivetweb::menuclass
-                }
-            }
-
-        } e]} {
-            ::rivet::apache_log_error err "Error reading rwtemplate.tcl from $template ($e)"
-        }
-    }
-}
-
-foreach k [dict keys $::rivetweb::templates_db] {
-    ::rivet::apache_log_error info "$k: [dict get $::rivetweb::templates_db $k]"
-}
+::rivet::apache_log_error info "registered templates: $::rivetweb::RWTemplate::templates_db"
 
 # now we build the hooks database
 

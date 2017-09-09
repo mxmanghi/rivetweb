@@ -8,3 +8,9 @@
 
 $::rivetweb::logger log notice "Rivetweb: child [pwd] is leaving"
 
+foreach handler [::rivetweb registered_handlers] {
+
+    $handler destroy
+
+}
+

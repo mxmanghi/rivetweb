@@ -37,3 +37,4 @@ package ifneeded downloadbin 1.0 [list source [file join $rivetweb_dir tcl downl
 package ifneeded rwcontent 1.0 [list source [file join $rivetweb_dir tcl rweb_content.tcl]]
 package ifneeded urlcomposer 1.0 [list source [file join $rivetweb_dir tcl urlcomposer.tcl]]
 package ifneeded UrlHandler 1.0 [list source [file join $rivetweb_dir tcl urlhandler.tcl]]
+package ifneeded RWTemplate 1.0 [list source [file join $rivetweb_dir tcl rweb_template.tcl]]

@@ -18,12 +18,23 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+# -- registered_handlers
+#
+# we now try to phase in a management of URL handlers
+# that eventually will make them an opaque informatio
+# of the rivetweb status
+
+    proc registered_handlers {} {
+        return $::rivetweb::datasources
+    }
+    namespace export registered_handlers
+
 # -- notify_url_handlers
 #
 # Method to be used by pages needing to send signals to URL handlers
 
     proc notify_url_handlers {notifier signal} {
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
             
             $ds signal $notifier $signal
             
@@ -44,7 +55,7 @@ namespace eval ::rivetweb {
     proc select_datasource {urlencoded_pars resource_key_var} {
         upvar $resource_key_var key
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
             $ds willHandle $urlencoded_pars key
         }
 
@@ -130,7 +141,7 @@ namespace eval ::rivetweb {
 
         return $rewritten_url
     }
-
+    namespace export rewrite_generic_path
 
 # -- scriptName 
 #
@@ -207,7 +218,7 @@ namespace eval ::rivetweb {
     
         if {$specific_file == ""} {
 
-            set css_file_name [dict get $::rivetweb::templates_db $template_key css]
+            set css_file_name [RWTemplate::template $template_key css]
             set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
 
         } else {
@@ -256,6 +267,7 @@ namespace eval ::rivetweb {
 #
 
     proc findPictureFile {picts_file style_dir} {
+        variable template_key
 
         ::rivet::apache_log_error debug \
         "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
@@ -270,8 +282,8 @@ namespace eval ::rivetweb {
 # we have to deceive static links (relative to the ::rivetweb::static_path variable)
 # but still we must be aware we are running from /index.rvt
 
-        if {[dict exists $::rivetweb::templates_db $::rivetweb::template_key pictures]} {
-            set template_picts [dict get $::rivetweb::templates_db $::rivetweb::template_key pictures]
+        set template_picts [::rivetweb::RWTemplate templates $template_key pictures]
+        if { $pictures_dir != ""} {
             set fn [file join   $::rivetweb::site_base      \
                                 $::rivetweb::base_templates \
                                 $style_dir                  \
@@ -420,6 +432,24 @@ namespace eval ::rivetweb {
         return [::rivetweb::thisClass [$page_obj key] $page_reference $class_selected $class_unselected]
     }
 
+# -- hightlighted_item
+#
+#   Procedure to generated XHTML code for a list item having the 
+#   CSS class selected when the link contained is the one of the
+#   page being displayed (will replace thisClass)
+
+    proc highlighted_item {item_xml selected_page selected_url selected_class {unselected_class ""} {item_tag "li"}} {
+
+        if {$selected_page == $::rivetweb::page_key} { 
+            return [::rivet::xml $item_xml [list $item_tag class $selected_class] [list a href $selected_url]]
+        } elseif { $unselected_class != ""} {
+            return [::rivet::xml $item_xml [list $item_tag class $unselected_class] [list a href $selected_url]]
+        } else {
+            return [::rivet::xml $item_xml [list $item_tag] [list a href $selected_url]]
+        }
+    }
+    namespace export highlighted_item
+
 # -- isDebugging 
 #
 #
@@ -462,7 +492,8 @@ namespace eval ::rivetweb {
 # -- build_html_menu 
 #
 # central function returning a menu of link as an HTML fragment. The markup
-# is described withing the dictionary 'templates_db'
+# *was* described withing the dictionary 'templates_db', now managed through
+# the (common) public interface of the RWTemplate class
 #
 # Arguments:
 #
@@ -473,7 +504,7 @@ namespace eval ::rivetweb {
 
     proc build_html_menu { pagemenus template_key position } {
 
-        set htmldefs [dict get $::rivetweb::templates_db $template_key]
+        set htmldefs [[::rivetweb::RWTemplate $template_key] serialize]
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
@@ -521,19 +552,24 @@ namespace eval ::rivetweb {
     }
     namespace export strip_sticky_args
 
-# -- search_datasources
+# -- search_handler
 #
-# recusive search of a page through the datasource list. 
+# recusive search of a page through the URL handler list. 
 #
 
-    proc search_datasources {key returned_key datasrc} {
+    proc search_handler {key returned_key datasrc {excluded_handler ""}} {
         upvar $returned_key rkey
         upvar $datasrc datasource
 
         # this cycle is guaranteed to return a page, al least 
         # through the last datasource in the chain (::RWDummy)
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
+            if {$ds == $excluded_handler} { 
+                ::rivet::apache_log_error info "excluding $ds from search for $key"
+                continue
+            }
+
             ::rivet::apache_log_error info "querying $ds for $key"
 
             set rkey $key           
@@ -552,19 +588,19 @@ namespace eval ::rivetweb {
                         return [::RWDummy fetchData $key rkey]
                     }
 
-                    return [search_datasources $rkey rkey datasource]
+                    return [search_handler $rkey rkey datasource $ds]
                 }
 
             } else {
 
                 if {($rkey != "") && ($key != $rkey)} {
-                    return [search_datasources $rkey rkey datasource]
+                    return [search_handler $rkey rkey datasource $ds]
                 }
 
             }
         }
     }
-    namespace export search_datasources
+    namespace export search_handler
 
 # -- template_path
 #
@@ -581,7 +617,7 @@ namespace eval ::rivetweb {
 #
 #
     proc template {template_key} {
-        return [::rivetweb template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
+        return [::rivetweb template_path [::rivetweb::RWTemplate template $template_key template]
 
     }
     namespace export template
