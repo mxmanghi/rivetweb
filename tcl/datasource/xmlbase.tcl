@@ -824,7 +824,7 @@ namespace eval ::rwdatas {
             }
             local {
                 set lref [$linkmodel reference $lm]
-                if {[::rwdatas::Datasource::get_alias $lref lref]} {
+                if {[::rwdatas::UrlHandler::get_alias $lref lref]} {
                     set href [::rivetweb::rewrite_generic_path $lref]
                 } else {
                     set href [::rivetweb::rewrite_generic_path [file join "/" $LOCAL_PAGES $lref]]

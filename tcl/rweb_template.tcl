@@ -22,6 +22,7 @@ namespace eval ::rivetweb {
         private variable it_cont_html   {ul ""}
         private variable item_html      {li ""}
         private variable link_class     navitem
+        private variable pictures       images
         private variable menuclass      RWMenu
 
         private variable template_key
@@ -53,13 +54,14 @@ namespace eval ::rivetweb {
     }
 
     ::itcl::body RWTemplate::serialize {} {
-        return [dict create css             $rwcss \
-                            template        $rwtemplate \
-                            menu_html       $menu_html  \
-                            title_html      $title_html \
-                            it_cont_html    $it_cont_html \
-                            item_html       $item_html \
-                            link_class      $link_class \
+        return [dict create css             $rwcss          \
+                            template        $rwtemplate     \
+                            menu_html       $menu_html      \
+                            title_html      $title_html     \
+                            it_cont_html    $it_cont_html   \
+                            item_html       $item_html      \
+                            link_class      $link_class     \
+                            pictures        $pictures       \
                             menuclass       $menuclass]
     }
 
@@ -92,7 +94,7 @@ namespace eval ::rivetweb {
 
                 set formatters [file join $template formatters.tcl]
                 if {[file exists $formatters]} {
-                    #puts "reading formatters $formatters"
+                    puts "reading formatters $formatters"
                     set fp [open $formatters r]
                     set formatters_code [read $fp]
                     close $fp

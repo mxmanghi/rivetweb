@@ -282,69 +282,60 @@ namespace eval ::rivetweb {
 # we have to deceive static links (relative to the ::rivetweb::static_path variable)
 # but still we must be aware we are running from /index.rvt
 
-        set template_picts [::rivetweb::RWTemplate templates $template_key pictures]
-        if { $pictures_dir != ""} {
-            set fn [file join   $::rivetweb::site_base      \
-                                $::rivetweb::base_templates \
-                                $style_dir                  \
-                                $template_picts $picts_file]
+        set template_picts [::rivetweb::RWTemplate::template $template_key pictures]
 
-            ::rivet::apache_log_error debug "0 pict file: >$fn<"
-            if {[file exists $fn]} {
-                return [file join $::rivetweb::base_templates $style_dir $template_picts $picts_file]
+        for {set pathn 0} {$pathn < 5} {incr pathn} {
+            switch $pathn {
+                0 {
+                    set uri [list $::rivetweb::base_templates     \
+                                  $style_dir                      \
+                                  $template_picts $picts_file]
+                }
+                1 {
+
+                # pictures directory within the template directory, style_dir is
+                # usually the template_key variable but we keep this case to make
+                # room to other repositories of pictures
+
+                    set uri [list   $::rivetweb::base_templates   \
+                                    $style_dir  $picts_file]
+
+                }
+                2 {
+
+                # website pictures directory combined with a template 
+                # specific directory: <site_base>/<site_picts>/<template_key> 
+
+                    set uri [list   $::rivetweb::picts_path \
+                                    $style_dir              \
+                                    $picts_file]
+                }
+                3 {
+
+                # searching in the ordinary <site_base>/<site_picts> directory
+
+                    set uri [list   $::rivetweb::picts_path   \
+                                    $picts_file]
+
+                }
+                4 {
+
+                # it's rather weird we have this case. No template directory
+                # should be hanging from site_base
+
+                    set uri [list $::rivetweb::picts_path           \
+                                  [::rivetweb default template]     \
+                                  $picts_file]
+
+                }
+
             }
+            set fn [file join $::rivetweb::site_base {*}$uri]
+            ::rivet::apache_log_error debug "0 pict file: >$fn<"
+            if {[file exists $fn]} { return [join $uri "/"] } 
         }
 
-# pictures directory within the template directory, style_dir is usually the template_key variable
-# but we keep this case to make room to other repositories of pictures
-
-        set fn [file join   $::rivetweb::site_base      \
-                            $::rivetweb::base_templates \
-                            $style_dir                  \
-                            $picts_file]
-
-        ::rivet::apache_log_error debug "1 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::base_templates $style_dir $picts_file]
-        } 
-
-# website pictures directory combined with a template specific directory: <site_base>/<site_picts>/<template_key> 
-
-        set fn [file join   $::rivetweb::site_base  \
-                            $::rivetweb::picts_path \
-                            $style_dir              \
-                            $picts_file]
-
-        ::rivet::apache_log_error debug "2 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::running_picts_path $style_dir $picts_file]
-        } 
-
-# searching in the ordinary <site_base>/<site_picts> directory
-
-        set fn [file join   $::rivetweb::site_base    \
-                            $::rivetweb::picts_path   \
-                            $picts_file]
-
-        ::rivet::apache_log_error debug "3 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::running_picts_path $picts_file]
-        } 
-
-# it's rather weird we have this case. No template directory should be hanging from site_base
-
-        set fn [file join $::rivetweb::site_base            \
-                          $::rivetweb::picts_path           \
-                          [::rivetweb default template]     \
-                          $picts_file]
-
-        ::rivet::apache_log_error debug "4 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::running_picts_path   \
-                              [::rivetweb default template]     \
-                              $picts_file]
-        }
-
+        ::rivet::apache_log_error debug "Image file for: >$picts_file< not found"
         return ""
     }
 
