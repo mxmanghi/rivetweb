@@ -94,7 +94,7 @@ namespace eval ::rivetweb {
 
                 set formatters [file join $template formatters.tcl]
                 if {[file exists $formatters]} {
-                    puts "reading formatters $formatters"
+                    #puts "reading formatters $formatters"
                     set fp [open $formatters r]
                     set formatters_code [read $fp]
                     close $fp

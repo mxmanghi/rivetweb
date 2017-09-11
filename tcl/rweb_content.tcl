@@ -46,6 +46,7 @@ namespace eval ::rwpage {
         public method send_headers {} 
         public method send_output {language} { $this print_content $language}
         public method refresh {timereference} { return true }
+        public method to_string {} { return [dict create hits $hits key $key] }
     }
 
 # -- send_headers

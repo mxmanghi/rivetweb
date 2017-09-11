@@ -1,6 +1,6 @@
-# -- rivetweb
+# -- rivetweb.tcl
 #
-# The core functions of Rivetweb
+# The framework's set of core functions 
 #
 #
 

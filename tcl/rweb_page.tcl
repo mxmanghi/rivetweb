@@ -28,10 +28,11 @@ namespace eval ::rwpage {
         public method metadata {{key ""}}
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d } 
-        public method to_string {} { return [dict create metadata $metadata hits $hits key $key] }
         public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
         public method title {language {txt ""}}
         public method headline {language {hdl ""}}
+        public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
+
 
         #####
 
