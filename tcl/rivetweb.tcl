@@ -331,7 +331,7 @@ namespace eval ::rivetweb {
 
             }
             set fn [file join $::rivetweb::site_base {*}$uri]
-            ::rivet::apache_log_error debug "0 pict file: >$fn<"
+            ::rivet::apache_log_error debug "$pathn pict file: >$fn<"
             if {[file exists $fn]} { return [join $uri "/"] } 
         }
 
