@@ -37,12 +37,12 @@ namespace eval ::rivetweb {
         public method register_formatter {formatter}
         public method formatters_ns {}
         public method setprop {prop value}
+        public method build {args}
 
-        public proc   read_custom_data {dir}
         public proc   read_template_data {dir}
         public proc   read_formatters {dir template_o}
         public proc   make_template_object {template_key}
-        public proc   load_templates {templates_root}
+        public proc   load_templates {templates_root args}
         public proc   template {template_key {prop ""}}
     }
 
@@ -61,11 +61,16 @@ namespace eval ::rivetweb {
     ::itcl::body RWTemplate::setprop {prop value} {
         if {$prop == "css"} { 
             set prop "rwcss" 
-        } else {
-            set prop "template"
+        } elseif {$prop == "template"} {
+            set prop "rwtemplate"
         }
 
         set $prop $value
+
+    }
+
+    ::itcl::body RWTemplate::build {args} {
+        foreach {prop propvalue} $args { $this setprop $prop $propvalue }
     }
 
     ::itcl::body RWTemplate::serialize {} {
@@ -98,13 +103,9 @@ namespace eval ::rivetweb {
         return [::rivetweb::RWTemplate [namespace current]::${template_key} $template_key]
     }
 
-    ::itcl::body RWTemplate::read_custom_data {dir} { }
-
     ::itcl::body RWTemplate::read_template_data {dir} {
         set template_key [file tail $dir]
 
-        #puts "searching for [file join $template rwtemplate.tcl]"
-        
         set template_o [RWTemplate::make_template_object $template_key]
 
         set base_descriptor [file join $dir rwtemplate.tcl]
@@ -112,14 +113,11 @@ namespace eval ::rivetweb {
             $template_o init $base_descriptor
         }
 
-        RWTemplate::read_formatters $dir $template_o
-
-        RWTemplate::read_custom_data $dir
-
-        dict set templates_db $template_key $template_o
+        return $template_o
     }
 
     ::itcl::body RWTemplate::read_formatters {dir template_o} {
+
         set formatters [file join $dir formatters.tcl]
         if {[file exists $formatters]} {
             #puts "reading formatters $formatters"
@@ -132,12 +130,16 @@ namespace eval ::rivetweb {
 
     }
 
-
-    ::itcl::body RWTemplate::load_templates {templates_dir} {
+    ::itcl::body RWTemplate::load_templates {templates_dir args} {
 
         foreach template [glob -directory $templates_dir *] {
             if {[file isdirectory $template]} {
-                RWTemplate::read_template_data $template
+
+                set template_o [RWTemplate::read_template_data $template]
+                
+                RWTemplate::read_formatters $template $template_o
+
+                dict set templates_db [file tail $template] $template_o
             }
         }
 

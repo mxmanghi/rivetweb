@@ -141,9 +141,7 @@ namespace eval ::rivetweb {
 # -- scriptName 
 #
 #
-
     proc scriptName {} { return [::rivet::env SCRIPT_NAME] }
-
 
 # -- composeUrl
 # 

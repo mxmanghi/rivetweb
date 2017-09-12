@@ -73,7 +73,6 @@ namespace eval ::rivetweb {
     set ::rivetweb::template_key      $template_key
 
 	$::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
-
 	
     if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
         set ::rivetweb::last_selected_template $template_key
