@@ -8,8 +8,8 @@ lappend auto_path $rweb_root $website_root
 
 ::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
 
-package require rwlogger
 package require rivetweb
+package require rwlogger
 package require rwconf
 package require rwmenu
 package require rwpage

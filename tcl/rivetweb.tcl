@@ -86,8 +86,6 @@ namespace eval ::rivetweb {
     proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
         upvar $rewritten_css_url rwcss
 
-        #set rwcss "/$css_path"
-        
         rewrite_as_relative $rwcode $urlscript $css_path rwcss
     }
     namespace export rewrite_css_url
@@ -96,8 +94,6 @@ namespace eval ::rivetweb {
 
     proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
         upvar $rewritten_js_url rwjs
-
-        #set rwjs "/${js_path}"
 
         rewrite_as_relative $rwcode $urlscript $js_path rwjs
     }
@@ -111,7 +107,6 @@ namespace eval ::rivetweb {
         upvar $rewritten_base rrbase
 
         set rrbase $urlscript
-
     }
     namespace export rewrite_url
 
@@ -299,7 +294,6 @@ namespace eval ::rivetweb {
 
                     set uri [list   $::rivetweb::base_templates   \
                                     $style_dir  $picts_file]
-
                 }
                 2 {
 
@@ -316,7 +310,6 @@ namespace eval ::rivetweb {
 
                     set uri [list   $::rivetweb::picts_path   \
                                     $picts_file]
-
                 }
                 4 {
 
@@ -326,7 +319,6 @@ namespace eval ::rivetweb {
                     set uri [list $::rivetweb::picts_path           \
                                   [::rivetweb default template]     \
                                   $picts_file]
-
                 }
 
             }

@@ -36,9 +36,14 @@ namespace eval ::rivetweb {
         public method serialize {}
         public method register_formatter {formatter}
         public method formatters_ns {}
+        public method setprop {prop value}
 
-        public proc load_templates {templates_root}
-        public proc template {template_key {prop ""}}
+        public proc   read_custom_data {dir}
+        public proc   read_template_data {dir}
+        public proc   read_formatters {dir template_o}
+        public proc   make_template_object {template_key}
+        public proc   load_templates {templates_root}
+        public proc   template {template_key {prop ""}}
     }
 
     ::itcl::body RWTemplate::getprop {prop} {
@@ -51,6 +56,16 @@ namespace eval ::rivetweb {
         } else {
             return ""
         }
+    }
+
+    ::itcl::body RWTemplate::setprop {prop value} {
+        if {$prop == "css"} { 
+            set prop "rwcss" 
+        } else {
+            set prop "template"
+        }
+
+        set $prop $value
     }
 
     ::itcl::body RWTemplate::serialize {} {
@@ -75,32 +90,54 @@ namespace eval ::rivetweb {
 
     ::itcl::body RWTemplate::formatters_ns {} { return "[namespace current]::${template_key}" }
 
+    # -- make_template_object
+    #
+    #
+
+    ::itcl::body RWTemplate::make_template_object {template_key} {
+        return [::rivetweb::RWTemplate [namespace current]::${template_key} $template_key]
+    }
+
+    ::itcl::body RWTemplate::read_custom_data {dir} { }
+
+    ::itcl::body RWTemplate::read_template_data {dir} {
+        set template_key [file tail $dir]
+
+        #puts "searching for [file join $template rwtemplate.tcl]"
+        
+        set template_o [RWTemplate::make_template_object $template_key]
+
+        set base_descriptor [file join $dir rwtemplate.tcl]
+        if {[file exists $base_descriptor]} {
+            $template_o init $base_descriptor
+        }
+
+        RWTemplate::read_formatters $dir $template_o
+
+        RWTemplate::read_custom_data $dir
+
+        dict set templates_db $template_key $template_o
+    }
+
+    ::itcl::body RWTemplate::read_formatters {dir template_o} {
+        set formatters [file join $dir formatters.tcl]
+        if {[file exists $formatters]} {
+            #puts "reading formatters $formatters"
+            set fp [open $formatters r]
+            set formatters_code [read $fp]
+            close $fp
+
+            $template_o register_formatter $formatters_code
+        }
+
+    }
+
+
     ::itcl::body RWTemplate::load_templates {templates_dir} {
 
         foreach template [glob -directory $templates_dir *] {
             if {[file isdirectory $template]} {
-
-                set template_key [file tail $template]
-
-                #puts "searching for [file join $template rwtemplate.tcl]"
-
-                set base_descriptor [file join $template rwtemplate.tcl]
-                if {[file exists $base_descriptor]} {
-                    set template_o [::rivetweb::RWTemplate [namespace current]::${template_key} $template_key]
-                    $template_o init $base_descriptor
-
-                    dict set templates_db $template_key $template_o
-                }
-
-                set formatters [file join $template formatters.tcl]
-                if {[file exists $formatters]} {
-                    #puts "reading formatters $formatters"
-                    set fp [open $formatters r]
-                    set formatters_code [read $fp]
-                    close $fp
-
-                    $template_o register_formatter $formatters_code
-                }
+                RWTemplate::read_template_data $template
             }
         }
 
