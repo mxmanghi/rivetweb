@@ -236,6 +236,7 @@ namespace eval ::rwpage {
 
                     }
                 }
+                #::rivet::apache_log_error debug "hook '$hk' processed"
             }
         }
     }

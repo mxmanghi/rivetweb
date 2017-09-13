@@ -247,7 +247,14 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::send_output {language} {
 
-        ::rivet::apache_log_error debug "parsing $::rivetweb::running_template"
+        set class [$this info class]
+
+        ::rivet::apache_log_error debug "parsing $::rivetweb::running_template (${this}: $class)"
+
+        if {$class == "::rwpage::RWBasic"} {
+            puts [::rivet::xml [$this pagetext $language] pre]
+        }
+
         #fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
         ::rivet::parse $::rivetweb::running_template
 

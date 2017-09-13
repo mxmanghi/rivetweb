@@ -207,18 +207,14 @@ namespace eval ::rivetweb {
 # same name as the template key.
 #
 
-    proc csspath {template_key {specific_file ""}} {
+    proc csspath {template_key {css_file_name ""}} {
     
-        if {$specific_file == ""} {
+        if {$css_file_name == ""} {
 
             set css_file_name [RWTemplate::template $template_key css]
-            set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
 
-        } else {
-
-            set css_file_path [file join $::rivetweb::css_path $template_key $specific_file]
-
-        }
+        } 
+        set css_file_path [join [list $::rivetweb::css_path $template_key $css_file_name] "/"]
         return [::rivetweb::make_css_path $css_file_path]
     }
     namespace export csspath
@@ -245,8 +241,9 @@ namespace eval ::rivetweb {
     proc makePictsPath {picts_file {style_dir ""}} {
         set pict_file [findPictureFile $picts_file $style_dir] 
         if {$::rivetweb::rewrite_links} {
-            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_pict_path $rwcode [::rivetweb::scriptName] $pict_file rewritten_path
+            ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code \
+                                          [::rivetweb::scriptName]  \
+                                            $pict_file rewritten_path
             return $rewritten_path
         } else {
             return [file join / $pict_file]
@@ -259,11 +256,11 @@ namespace eval ::rivetweb {
 # searching various directories to determine the path to the file 
 #
 
-    proc findPictureFile {picts_file style_dir} {
+    proc findPictureFile {picts_file temp_key} {
         variable template_key
 
         ::rivet::apache_log_error debug \
-        "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
+        "style $temp_key $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
 
 # search list for a picts file. 
 #
@@ -275,13 +272,15 @@ namespace eval ::rivetweb {
 # we have to deceive static links (relative to the ::rivetweb::static_path variable)
 # but still we must be aware we are running from /index.rvt
 
-        set template_picts [::rivetweb::RWTemplate::template $template_key pictures]
+        set template_picts [::rivetweb::RWTemplate::template $temp_key pictures]
+        set template_dir   [::rivetweb::RWTemplate::template $temp_key dir]
 
-        for {set pathn 0} {$pathn < 5} {incr pathn} {
+        for {set pathn 0} {$pathn < 4} {incr pathn} {
+
             switch $pathn {
                 0 {
-                    set uri [list $::rivetweb::base_templates     \
-                                  $style_dir                      \
+                    set uri [list $::rivetweb::base_templates   \
+                                  $template_dir                 \
                                   $template_picts $picts_file]
                 }
                 1 {
@@ -290,33 +289,33 @@ namespace eval ::rivetweb {
                 # usually the template_key variable but we keep this case to make
                 # room to other repositories of pictures
 
-                    set uri [list   $::rivetweb::base_templates   \
-                                    $style_dir  $picts_file]
+                    set uri [list $::rivetweb::base_templates   \
+                                  $template_dir                 \
+                                  $picts_file]
                 }
                 2 {
 
                 # website pictures directory combined with a template 
                 # specific directory: <site_base>/<site_picts>/<template_key> 
 
-                    set uri [list   $::rivetweb::picts_path \
-                                    $style_dir              \
-                                    $picts_file]
+                    set uri [list $::rivetweb::picts_path     \
+                                  $temp_key               \
+                                  $picts_file]
                 }
                 3 {
 
                 # searching in the ordinary <site_base>/<site_picts> directory
 
-                    set uri [list   $::rivetweb::picts_path   \
-                                    $picts_file]
+                    set uri [list $::rivetweb::picts_path $picts_file]
                 }
                 4 {
 
                 # it's rather weird we have this case. No template directory
                 # should be hanging from site_base
 
-                    set uri [list $::rivetweb::picts_path           \
-                                  [::rivetweb default template]     \
-                                  $picts_file]
+                    #set uri [list $::rivetweb::picts_path           \
+                    #              [::rivetweb default template]     \
+                    #              $picts_file]
                 }
 
             }
@@ -583,9 +582,9 @@ namespace eval ::rivetweb {
     }
     namespace export search_handler
 
-# -- template_path
-#
-# 
+    # -- template_path
+    #
+    # 
 
     proc template_path {template_name {template_dir ""}} {
 
@@ -594,9 +593,10 @@ namespace eval ::rivetweb {
     }
     namespace export template_path
 
-# -- template
-#
-#
+    # -- template
+    #
+    #
+
     proc template {template_key} {
         return [::rivetweb template_path [::rivetweb::RWTemplate::template $template_key template] $template_key]
 

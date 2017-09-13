@@ -24,11 +24,14 @@ namespace eval ::rivetweb {
         private variable link_class     navitem
         private variable pictures       images
         private variable menuclass      RWMenu
+        private variable dir            ""
+        private variable auxiliary      [dict create]
 
         private variable template_key
 
         constructor {key} {
             set template_key $key
+            set dir          $key
         }
 
         public method init {descriptor} 
@@ -39,11 +42,11 @@ namespace eval ::rivetweb {
         public method setprop {prop value}
         public method build {args}
 
-        public proc   read_template_data {dir}
-        public proc   read_formatters {dir template_o}
-        public proc   make_template_object {template_key}
-        public proc   load_templates {templates_root args}
-        public proc   template {template_key {prop ""}}
+        public proc read_template_data {dir}
+        public proc read_formatters {dir template_o}
+        public proc make_template_object {template_key}
+        public proc load_templates {templates_root args}
+        public proc template {template_key {prop ""}}
     }
 
     ::itcl::body RWTemplate::getprop {prop} {
@@ -53,6 +56,8 @@ namespace eval ::rivetweb {
 
         if {[info exists $prop]} {
             return [set $prop]
+        } elseif {[dict exists $auxiliary $prop]} {
+            return [dict get $auxiliary $prop]
         } else {
             return ""
         }
@@ -65,7 +70,11 @@ namespace eval ::rivetweb {
             set prop "rwtemplate"
         }
 
-        set $prop $value
+        if {[info exists $prop]} {
+            set $prop $value
+        } else {
+            dict set auxiliary $prop $value
+        }
 
     }
 
@@ -82,6 +91,7 @@ namespace eval ::rivetweb {
                             item_html       $item_html      \
                             link_class      $link_class     \
                             pictures        $pictures       \
+                            dir             $dir            \
                             menuclass       $menuclass]
     }
 
