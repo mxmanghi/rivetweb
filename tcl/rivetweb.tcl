@@ -360,7 +360,7 @@ namespace eval ::rivetweb {
 #
     proc js {jscript_file {attributes ""}} {
 
-        return [::rivet::xml "" [concat script type "text/javascript" src $jscript_file $attributes]]
+        return [::rivet::xml "" [concat script type "text/javascript" src $jscript_file {*}$attributes]]
 
     }
     namespace export js
@@ -373,8 +373,9 @@ namespace eval ::rivetweb {
     proc javascript {script {attributes ""}} {
 
         set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
-        return [::rivet::xml "" \
-            [concat script type "text/javascript" src [::rivetweb jscript_path $jscript_file] $attributes]]
+        return [::rivet::xml "" [concat script 	type "text/javascript" \
+											    src  [::rivetweb jscript_path $jscript_file] \
+												{*}$attributes]]
 
     }
     namespace export javascript
