@@ -197,7 +197,7 @@ namespace eval ::rivetweb {
     namespace export make_css_path
 
 
-# -- csspath 
+# -- csspath
 #
 # the templates database is supposed to store the whole dataset needed to build 
 # any reference to a theme related piece of information, thus we can fetch the css

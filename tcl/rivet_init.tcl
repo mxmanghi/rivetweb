@@ -22,7 +22,6 @@ dict for {key templ} $::rivetweb::RWTemplate::templates_db {
 	::rivet::apache_log_error debug "template $key: $templ"
 }
 
-
 # now we build the hooks database
 
 namespace eval ::rivetweb {
@@ -69,7 +68,7 @@ namespace eval ::rivetweb {
             }
 
             ::rivet::apache_log_error notice "$nhooks hooks read from $hooks_d"
-            ::rivet::apache_log_error debug   $hooks
+            #::rivet::apache_log_error debug   $hooks
         }
     }
 }

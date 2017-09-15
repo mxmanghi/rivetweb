@@ -103,7 +103,7 @@ namespace eval ::rivetweb {
         namespace eval [$this formatters_ns] $formatter 
     }
 
-    ::itcl::body RWTemplate::formatters_ns {} { return "[namespace current]::${template_key}" }
+    ::itcl::body RWTemplate::formatters_ns {} { return "[namespace current]::${dir}" }
 
     # -- make_template_object
     #
@@ -117,6 +117,8 @@ namespace eval ::rivetweb {
         set template_key [file tail $dir]
 
         set template_o [RWTemplate::make_template_object $template_key]
+        
+        $template_o setprop dir $template_key
 
         set base_descriptor [file join $dir rwtemplate.tcl]
         if {[file exists $base_descriptor]} {
@@ -130,12 +132,14 @@ namespace eval ::rivetweb {
 
         set formatters [file join $dir formatters.tcl]
         if {[file exists $formatters]} {
-            #puts "reading formatters $formatters"
+            $::rivetweb::logger log info "reading formatters $formatters"
             set fp [open $formatters r]
             set formatters_code [read $fp]
             close $fp
 
             $template_o register_formatter $formatters_code
+        } else {
+            $::rivetweb::logger log err "Impossibile leggere $formatters"
         }
 
     }
@@ -146,10 +150,9 @@ namespace eval ::rivetweb {
             if {[file isdirectory $template]} {
 
                 set template_o [RWTemplate::read_template_data $template]
-                
                 RWTemplate::read_formatters $template $template_o
-
                 dict set templates_db [file tail $template] $template_o
+
             }
         }
 

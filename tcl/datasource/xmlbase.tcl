@@ -297,12 +297,10 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::resource_exists {key} {
-
         return [file exists [$this get_resource_repr $key]]
-
     }
 
-    ::itcl::body XMLBase::get_resource_repr {key} {   
+    ::itcl::body XMLBase::get_resource_repr {key} {
         return [$this xmlfile $key]
     }
 
