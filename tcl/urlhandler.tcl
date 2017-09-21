@@ -46,7 +46,7 @@ namespace eval ::rwdatas {
 
         public method cache {} { return $cache }
         public method cache_query { key }
-        public method get_page_object { key } 
+        private method get_page_object { key } 
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
         public method signal {notifying_page signal_code}
@@ -162,10 +162,9 @@ namespace eval ::rwdatas {
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
                 
-                # is_stale might well delete the entire class
-                # thus triggering a sequence of deletes of its
-                # instances. As a matter of fact we may get here 
-                # and the object could have already been removed from 
+                # is_stale might well delete the entire class thus triggering a 
+                # sequence of deletes of its instances. As a matter of fact we 
+                # may get here and the object could have already been removed from 
                 # the cache
 
                 if {[$this cache_query $key]} {
@@ -182,11 +181,12 @@ namespace eval ::rwdatas {
                 if {$key == $rkey} {
                     dict set cache $key object $p
                     dict set cache $key timestamp [clock seconds]
+                    return $p
                 } else {
                     return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
                 }
             }
-            return [$this get_page_object $key]
+            #return [$this get_page_object $key]
 
         } else {
 

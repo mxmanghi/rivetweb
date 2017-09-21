@@ -44,8 +44,8 @@ namespace eval ::rwpage {
         public method content_disposition {} { return "" }
         public method content_length {} { return "" }
         public method send_headers {} 
-        public method send_output {language} { $this print_content $language}
-        public method refresh {timereference} { return true }
+        public method send_output {language} { $this print_content $language }
+        public method refresh {timereference} { return true } 
         public method to_string {} { return [dict create hits $hits key $key] }
     }
 
