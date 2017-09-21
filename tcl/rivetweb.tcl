@@ -546,7 +546,7 @@ namespace eval ::rivetweb {
         # through the last datasource in the chain (::RWDummy)
 
         foreach ds [::rivetweb registered_handlers] {
-            if {$ds == $excluded_handler} { 
+            if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
                 ::rivet::apache_log_error info "excluding $ds from search for $key"
                 continue
             }

@@ -156,12 +156,16 @@ namespace eval ::rwdatas {
     ::itcl::body UrlHandler::fetch_page {key reassigned_key} {
         upvar $reassigned_key rkey
 
-        ::rivet::apache_log_error info "[namespace current] cache $cache"
+        ::rivet::apache_log_error debug "[$this info class] cache '$cache'"
+        ::rivet::apache_log_error debug "[$this info class] fetching key '$key'"
+
         if {[$this cache_query $key]} {
             set rkey $key
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
                 
+                ::rivet::apache_log_error debug "[$this info class]::fetch_page refetching page for $key"
+
                 # is_stale might well delete the entire class thus triggering a 
                 # sequence of deletes of its instances. As a matter of fact we 
                 # may get here and the object could have already been removed from 
@@ -172,7 +176,8 @@ namespace eval ::rwdatas {
 
                     ### catch added for debugging
                     if {[catch {$stored_page destroy} e opts]} {
-                        ::rivet::apache_log_error err "failed to delete $stored_page. Cache dump"
+                        ::rivet::apache_log_error err \
+                        "[$this info class]::fetch_page failed to delete $stored_page. Cache dump"
                         foreach {k page} $cache { ::rivet::apache_log_error err "$k: $page" }
                     }
                 }
@@ -186,12 +191,12 @@ namespace eval ::rwdatas {
                     return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
                 }
             }
-            #return [$this get_page_object $key]
+            return [$this get_page_object $key]
 
         } else {
 
             set p [$this fetchData $key rkey]
-            ::rivet::apache_log_error debug "\[$this fetchData\] returns $rkey in response of key $key"
+            ::rivet::apache_log_error debug "[$this info class]::fetch_page returns $rkey in response of key $key"
             if {$p != ""} {
                 dict set cache $key object $p
                 dict set cache $key timestamp [clock seconds]

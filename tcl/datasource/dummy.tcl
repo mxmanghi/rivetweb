@@ -125,7 +125,7 @@ and failed to reassigned the resource key ($key)} \
             } else {
 
                 if {![dict exists $MESSAGES $key]} {
-                    set rkey unknown_error_condition
+                    set rkey page_not_found_error
                 }
 
                 set urlargs [::rivet::var_qs all]
