@@ -28,10 +28,11 @@ namespace eval ::rwpage {
         public method metadata {{key ""}}
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d } 
-        public method to_string {} { return [dict create metadata $metadata hits $hits key $key] }
         public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
         public method title {{language ""} {txt ""}}
         public method headline {language {hdl ""}}
+        public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
+
 
         #####
 
@@ -62,7 +63,7 @@ namespace eval ::rwpage {
         public method content_field {language field {default_val ""}} { return "" }
         public method prepare {language argqs}
         protected method postprocessing { urlhandler }
-        public method send_output {language} { }
+        public method send_output {language}
         public method mimetype {} { return "[RWContent::mimetype]; charset=$::rivetweb::http_encoding"  }
     }
 
@@ -80,7 +81,7 @@ namespace eval ::rwpage {
 
         set ::rivetweb::pagemenus [dict create]
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
 
             set dsmenu [$ds menu_list $::rivetweb::current_page]
             ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
@@ -250,8 +251,15 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::send_output {language} {
 
-        ::rivet::apache_log_error debug "parsing $::rivetweb::running_template"
-        fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
+        set class [$this info class]
+
+        ::rivet::apache_log_error debug "parsing $::rivetweb::running_template (${this}: $class)"
+
+        if {$class == "::rwpage::RWBasic"} {
+            puts [::rivet::xml [$this pagetext $language] pre]
+        }
+
+        #fconfigure stdout -translation lf -encoding $::rivetweb::http_encoding
         ::rivet::parse $::rivetweb::running_template
 
     }

@@ -120,7 +120,7 @@ namespace eval ::rivetweb {
             set arglist [$this merge_sticky_args $arglist $current_url_args $rewrite_links]
             set urlargs {}
 
-            ::rivet::apache_log_error debug "URL $rewritten_url -> $arglist"
+            #::rivet::apache_log_error debug "URL $rewritten_url -> $arglist"
             if {[llength $arglist]} {
 
                 while {[llength $arglist]} {

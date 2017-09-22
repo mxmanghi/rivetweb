@@ -297,12 +297,10 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::resource_exists {key} {
-
         return [file exists [$this get_resource_repr $key]]
-
     }
 
-    ::itcl::body XMLBase::get_resource_repr {key} {   
+    ::itcl::body XMLBase::get_resource_repr {key} {
         return [$this xmlfile $key]
     }
 
@@ -493,13 +491,17 @@ namespace eval ::rwdatas {
 
         # we may dispose of this...
 
-        if {[string length $menutclclass] > 0} {
-            return $menutclclass
-        }
+        #if {[string length $menutclclass] > 0} {
+        #    return $menutclclass
+        #}
 
-        if {[dict exists $::rivetweb::templates_db menuclass]} {
-            return [dict get $::rivetweb::templates_db menuclass]
-        }
+        # this one was wrong, in case it had to query the database
+        # through the template_key but this model has been superseded
+        # by the RWTemplate broker
+        #
+        #if {[dict exists $::rivetweb::templates_db menuclass]} {
+        #    return [dict get $::rivetweb::templates_db menuclass]
+        #}
 
         return $::rivetweb::menuclass
     }
@@ -820,7 +822,7 @@ namespace eval ::rwdatas {
             }
             local {
                 set lref [$linkmodel reference $lm]
-                if {[::rwdatas::Datasource::get_alias $lref lref]} {
+                if {[::rwdatas::UrlHandler::get_alias $lref lref]} {
                     set href [::rivetweb::rewrite_generic_path $lref]
                 } else {
                     set href [::rivetweb::rewrite_generic_path [file join "/" $LOCAL_PAGES $lref]]

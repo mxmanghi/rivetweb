@@ -8,13 +8,14 @@ lappend auto_path $rweb_root $website_root
 
 ::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
 
-package require rwlogger
 package require rivetweb
+package require rwlogger
 package require rwconf
 package require rwmenu
 package require rwpage
 package require urlcomposer
 package require Datasource
+package require RWTemplate
 package require RWDummy
 package require XMLBase
 
@@ -26,6 +27,8 @@ cd $website_root
 
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
 if {[file exists $website_definitions]} { source $website_definitions }
+
+::rivet::apache_log_error info "default_template: $::rivetweb::default_template"
 
 set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
 
@@ -39,7 +42,8 @@ source [file join $::rivetweb::scripts rivetweb_init.tcl]
 # we have both the default template and the template database, we proceeded
 # determining the default menuclass
 
-set ::rivetweb::menuclass [dict get $::rivetweb::templates_db $rivetweb::default_template menuclass]
+#set ::rivetweb::menuclass [dict get $::rivetweb::templates_db $rivetweb::default_template menuclass]
+set ::rivetweb::menuclass [::rivetweb::RWTemplate::template $rivetweb::default_template menuclass]
 
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $::rivetweb::website_init]} {

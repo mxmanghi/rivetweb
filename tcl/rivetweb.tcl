@@ -1,6 +1,6 @@
-# -- rivetweb
+# -- rivetweb.tcl
 #
-# The core functions of Rivetweb
+# The framework's set of core functions 
 #
 #
 
@@ -18,12 +18,23 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
+# -- registered_handlers
+#
+# we now try to phase in a management of URL handlers
+# that eventually will make them an opaque informatio
+# of the rivetweb status
+
+    proc registered_handlers {} {
+        return $::rivetweb::datasources
+    }
+    namespace export registered_handlers
+
 # -- notify_url_handlers
 #
 # Method to be used by pages needing to send signals to URL handlers
 
     proc notify_url_handlers {notifier signal} {
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
             
             $ds signal $notifier $signal
             
@@ -44,7 +55,7 @@ namespace eval ::rivetweb {
     proc select_datasource {urlencoded_pars resource_key_var} {
         upvar $resource_key_var key
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
             $ds willHandle $urlencoded_pars key
         }
 
@@ -75,8 +86,6 @@ namespace eval ::rivetweb {
     proc rewrite_css_url {rwcode urlscript css_path rewritten_css_url} {
         upvar $rewritten_css_url rwcss
 
-        #set rwcss "/$css_path"
-        
         rewrite_as_relative $rwcode $urlscript $css_path rwcss
     }
     namespace export rewrite_css_url
@@ -85,8 +94,6 @@ namespace eval ::rivetweb {
 
     proc rewrite_js_url {rwcode urlscript js_path rewritten_js_url} {
         upvar $rewritten_js_url rwjs
-
-        #set rwjs "/${js_path}"
 
         rewrite_as_relative $rwcode $urlscript $js_path rwjs
     }
@@ -100,7 +107,6 @@ namespace eval ::rivetweb {
         upvar $rewritten_base rrbase
 
         set rrbase $urlscript
-
     }
     namespace export rewrite_url
 
@@ -130,14 +136,12 @@ namespace eval ::rivetweb {
 
         return $rewritten_url
     }
-
+    namespace export rewrite_generic_path
 
 # -- scriptName 
 #
 #
-
     proc scriptName {} { return [::rivet::env SCRIPT_NAME] }
-
 
 # -- composeUrl
 # 
@@ -193,7 +197,7 @@ namespace eval ::rivetweb {
     namespace export make_css_path
 
 
-# -- csspath 
+# -- csspath
 #
 # the templates database is supposed to store the whole dataset needed to build 
 # any reference to a theme related piece of information, thus we can fetch the css
@@ -203,18 +207,14 @@ namespace eval ::rivetweb {
 # same name as the template key.
 #
 
-    proc csspath {template_key {specific_file ""}} {
+    proc csspath {template_key {css_file_name ""}} {
     
-        if {$specific_file == ""} {
+        if {$css_file_name == ""} {
 
-            set css_file_name [dict get $::rivetweb::templates_db $template_key css]
-            set css_file_path [file join $::rivetweb::css_path $template_key $css_file_name] 
+            set css_file_name [RWTemplate::template $template_key css]
 
-        } else {
-
-            set css_file_path [file join $::rivetweb::css_path $template_key $specific_file]
-
-        }
+        } 
+        set css_file_path [join [list $::rivetweb::css_path $template_key $css_file_name] "/"]
         return [::rivetweb::make_css_path $css_file_path]
     }
     namespace export csspath
@@ -241,8 +241,9 @@ namespace eval ::rivetweb {
     proc makePictsPath {picts_file {style_dir ""}} {
         set pict_file [findPictureFile $picts_file $style_dir] 
         if {$::rivetweb::rewrite_links} {
-            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
-            ::rivetweb::rewrite_pict_path $rwcode [::rivetweb::scriptName] $pict_file rewritten_path
+            ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code \
+                                          [::rivetweb::scriptName]  \
+                                            $pict_file rewritten_path
             return $rewritten_path
         } else {
             return [file join / $pict_file]
@@ -255,10 +256,11 @@ namespace eval ::rivetweb {
 # searching various directories to determine the path to the file 
 #
 
-    proc findPictureFile {picts_file style_dir} {
+    proc findPictureFile {picts_file temp_key} {
+        variable template_key
 
         ::rivet::apache_log_error debug \
-        "style $style_dir $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
+        "style $temp_key $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
 
 # search list for a picts file. 
 #
@@ -270,69 +272,59 @@ namespace eval ::rivetweb {
 # we have to deceive static links (relative to the ::rivetweb::static_path variable)
 # but still we must be aware we are running from /index.rvt
 
-        if {[dict exists $::rivetweb::templates_db $::rivetweb::template_key pictures]} {
-            set template_picts [dict get $::rivetweb::templates_db $::rivetweb::template_key pictures]
-            set fn [file join   $::rivetweb::site_base      \
-                                $::rivetweb::base_templates \
-                                $style_dir                  \
-                                $template_picts $picts_file]
+        set template_picts [::rivetweb::RWTemplate::template $temp_key pictures]
+        set template_dir   [::rivetweb::RWTemplate::template $temp_key dir]
 
-            ::rivet::apache_log_error debug "0 pict file: >$fn<"
-            if {[file exists $fn]} {
-                return [file join $::rivetweb::base_templates $style_dir $template_picts $picts_file]
+        for {set pathn 0} {$pathn < 4} {incr pathn} {
+
+            switch $pathn {
+                0 {
+                    set uri [list $::rivetweb::base_templates   \
+                                  $template_dir                 \
+                                  $template_picts $picts_file]
+                }
+                1 {
+
+                # pictures directory within the template directory, style_dir is
+                # usually the template_key variable but we keep this case to make
+                # room to other repositories of pictures
+
+                    set uri [list $::rivetweb::base_templates   \
+                                  $template_dir                 \
+                                  $picts_file]
+                }
+                2 {
+
+                # website pictures directory combined with a template 
+                # specific directory: <site_base>/<site_picts>/<template_key> 
+
+                    set uri [list $::rivetweb::picts_path     \
+                                  $temp_key               \
+                                  $picts_file]
+                }
+                3 {
+
+                # searching in the ordinary <site_base>/<site_picts> directory
+
+                    set uri [list $::rivetweb::picts_path $picts_file]
+                }
+                4 {
+
+                # it's rather weird we have this case. No template directory
+                # should be hanging from site_base
+
+                    #set uri [list $::rivetweb::picts_path           \
+                    #              [::rivetweb default template]     \
+                    #              $picts_file]
+                }
+
             }
+            set fn [file join $::rivetweb::site_base {*}$uri]
+            ::rivet::apache_log_error debug "$pathn pict file: >$fn<"
+            if {[file exists $fn]} { return [join $uri "/"] } 
         }
 
-# pictures directory within the template directory, style_dir is usually the template_key variable
-# but we keep this case to make room to other repositories of pictures
-
-        set fn [file join   $::rivetweb::site_base      \
-                            $::rivetweb::base_templates \
-                            $style_dir                  \
-                            $picts_file]
-
-        ::rivet::apache_log_error debug "1 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::base_templates $style_dir $picts_file]
-        } 
-
-# website pictures directory combined with a template specific directory: <site_base>/<site_picts>/<template_key> 
-
-        set fn [file join   $::rivetweb::site_base  \
-                            $::rivetweb::picts_path \
-                            $style_dir              \
-                            $picts_file]
-
-        ::rivet::apache_log_error debug "2 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::running_picts_path $style_dir $picts_file]
-        } 
-
-# searching in the ordinary <site_base>/<site_picts> directory
-
-        set fn [file join   $::rivetweb::site_base    \
-                            $::rivetweb::picts_path   \
-                            $picts_file]
-
-        ::rivet::apache_log_error debug "3 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::running_picts_path $picts_file]
-        } 
-
-# it's rather weird we have this case. No template directory should be hanging from site_base
-
-        set fn [file join $::rivetweb::site_base            \
-                          $::rivetweb::picts_path           \
-                          [::rivetweb default template]     \
-                          $picts_file]
-
-        ::rivet::apache_log_error debug "4 pict file: >$fn<"
-        if {[file exists $fn]} {
-            return [file join $::rivetweb::running_picts_path   \
-                              [::rivetweb default template]     \
-                              $picts_file]
-        }
-
+        ::rivet::apache_log_error debug "Image file for: >$picts_file< not found"
         return ""
     }
 
@@ -368,7 +360,7 @@ namespace eval ::rivetweb {
 #
     proc js {jscript_file {attributes ""}} {
 
-        return [::rivet::xml "" [concat script type "text/javascript" src $jscript_file $attributes]]
+        return [::rivet::xml "" [concat script type "text/javascript" src $jscript_file {*}$attributes]]
 
     }
     namespace export js
@@ -381,8 +373,9 @@ namespace eval ::rivetweb {
     proc javascript {script {attributes ""}} {
 
         set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
-        return [::rivet::xml "" \
-            [concat script type "text/javascript" src [::rivetweb jscript_path $jscript_file] $attributes]]
+        return [::rivet::xml "" [concat script 	type "text/javascript" \
+											    src  [::rivetweb jscript_path $jscript_file] \
+												{*}$attributes]]
 
     }
     namespace export javascript
@@ -419,6 +412,24 @@ namespace eval ::rivetweb {
     proc select_html_class {page_obj page_reference class_selected {class_unselected ""}} {
         return [::rivetweb::thisClass [$page_obj key] $page_reference $class_selected $class_unselected]
     }
+
+# -- hightlighted_item
+#
+#   Procedure to generated XHTML code for a list item having the 
+#   CSS class selected when the link contained is the one of the
+#   page being displayed (will replace thisClass)
+
+    proc highlighted_item {item_xml selected_page selected_url selected_class {unselected_class ""} {item_tag "li"}} {
+
+        if {$selected_page == $::rivetweb::page_key} { 
+            return [::rivet::xml $item_xml [list $item_tag class $selected_class] [list a href $selected_url]]
+        } elseif { $unselected_class != ""} {
+            return [::rivet::xml $item_xml [list $item_tag class $unselected_class] [list a href $selected_url]]
+        } else {
+            return [::rivet::xml $item_xml [list $item_tag] [list a href $selected_url]]
+        }
+    }
+    namespace export highlighted_item
 
 # -- isDebugging 
 #
@@ -462,7 +473,8 @@ namespace eval ::rivetweb {
 # -- build_html_menu 
 #
 # central function returning a menu of link as an HTML fragment. The markup
-# is described withing the dictionary 'templates_db'
+# *was* described withing the dictionary 'templates_db', now managed through
+# the (common) public interface of the RWTemplate class
 #
 # Arguments:
 #
@@ -473,7 +485,7 @@ namespace eval ::rivetweb {
 
     proc build_html_menu { pagemenus template_key position } {
 
-        set htmldefs [dict get $::rivetweb::templates_db $template_key]
+        set htmldefs [[::rivetweb::RWTemplate::template $template_key] serialize]
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
@@ -521,19 +533,24 @@ namespace eval ::rivetweb {
     }
     namespace export strip_sticky_args
 
-# -- search_datasources
+# -- search_handler
 #
-# recusive search of a page through the datasource list. 
+# recusive search of a page through the URL handler list. 
 #
 
-    proc search_datasources {key returned_key datasrc} {
+    proc search_handler {key returned_key datasrc {excluded_handler ""}} {
         upvar $returned_key rkey
         upvar $datasrc datasource
 
         # this cycle is guaranteed to return a page, al least 
         # through the last datasource in the chain (::RWDummy)
 
-        foreach ds $::rivetweb::datasources {
+        foreach ds [::rivetweb registered_handlers] {
+            if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
+                ::rivet::apache_log_error info "excluding $ds from search for $key"
+                continue
+            }
+
             ::rivet::apache_log_error info "querying $ds for $key"
 
             set rkey $key           
@@ -552,23 +569,23 @@ namespace eval ::rivetweb {
                         return [::RWDummy fetchData $key rkey]
                     }
 
-                    return [search_datasources $rkey rkey datasource]
+                    return [search_handler $rkey rkey datasource $ds]
                 }
 
             } else {
 
                 if {($rkey != "") && ($key != $rkey)} {
-                    return [search_datasources $rkey rkey datasource]
+                    return [search_handler $rkey rkey datasource $ds]
                 }
 
             }
         }
     }
-    namespace export search_datasources
+    namespace export search_handler
 
-# -- template_path
-#
-# 
+    # -- template_path
+    #
+    # 
 
     proc template_path {template_name {template_dir ""}} {
 
@@ -577,11 +594,12 @@ namespace eval ::rivetweb {
     }
     namespace export template_path
 
-# -- template
-#
-#
+    # -- template
+    #
+    #
+
     proc template {template_key} {
-        return [::rivetweb template_path [dict get $::rivetweb::templates_db $template_key template] $template_key]
+        return [::rivetweb template_path [::rivetweb::RWTemplate::template $template_key template] $template_key]
 
     }
     namespace export template

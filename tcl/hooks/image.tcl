@@ -16,7 +16,19 @@ proc imagehandler { datasource tag element_text attribute_list } {
 
     array set attributes $attribute_list
     if {[info exists attributes(src)]} {
-        set attributes(src) [::rivetweb::makePictsPath $attributes(src) $::rivetweb::template_key]
+        set pict_file [::rivetweb::findPictureFile $attributes(src) $::rivetweb::template_key]
+
+        if {$pict_file != ""} {
+
+            if {$::rivetweb::rewrite_links} {
+                ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code [::rivetweb::scriptName] $pict_file attributes(src)
+            } else {
+                set attributes(src) [file join / $pict_file]
+            }
+
+        } else {
+            set attributes(src) ""
+        }
     }
     if {[info exists attributes(float)] } {
         append attributes(style) "float: $attributes(float);"
