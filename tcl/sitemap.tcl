@@ -202,7 +202,7 @@ namespace eval ::rwsitemap {
 
 
     proc create { ds } {
-        return [RWSitemap ::#auto $ds]
+        return [$::rivetweb::sitemap ::#auto $ds]
     }
     namespace export create 
     namespace ensemble create

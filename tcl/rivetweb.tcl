@@ -148,19 +148,10 @@ namespace eval ::rivetweb {
 # this function should consistently build links 
 #
     proc composeUrl {args} {
-        variable rewrite_links
         variable rewrite_code
         variable url_composer
-
-        set arglist $args
-
-        if {$rewrite_links} {
-            set rwcode $rewrite_code
-        } else {
-            set rwcode ""
-        }
             
-        return [$url_composer compose_url $arglist [::rivet::var_qs all] $rwcode]
+        return [$url_composer compose_url $args [::rivet::var_qs all] $rewrite_code]
     }
     namespace export composeUrl
 
@@ -236,10 +227,12 @@ namespace eval ::rivetweb {
 # -- makePictsPath
 #
 # search 'picts_file' in the graphic files search path sequence
-#
+# DEPRECATED INTERFACE adopt 'picture_path'
 
-    proc makePictsPath {picts_file {style_dir ""}} {
-        set pict_file [findPictureFile $picts_file $style_dir] 
+    proc makePictsPath {picts_file {style ""}} { return [::rivetweb::picture_path $picts_file $style] }
+
+    proc picture_path {picts_file {template_dir ""}} {
+        set pict_file [findPictureFile $picts_file $template_dir] 
         if {$::rivetweb::rewrite_links} {
             ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code \
                                           [::rivetweb::scriptName]  \
@@ -257,8 +250,6 @@ namespace eval ::rivetweb {
 #
 
     proc findPictureFile {picts_file temp_key} {
-        variable template_key
-
         ::rivet::apache_log_error debug \
         "style $temp_key $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
 

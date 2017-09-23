@@ -93,13 +93,11 @@ namespace eval ::rivetweb {
 
         public method compose_url {arglist current_url_args {rewrite_code ""}} {
 
-            if {[string match $rewrite_code ""]} {
-                set rewrite_links 0
-                set rewritten_url [::rivetweb::scriptName]
-            } else {
-                set rewrite_links 1
-                ::rivetweb::rewrite_url $rewrite_code [::rivetweb::scriptName] arglist rewritten_url
-            }
+            set rewrite_links [string compare $rewrite_code ""]
+            # finally we blend sticky arguments into the arguments 
+
+            set arglist [$this merge_sticky_args $arglist $current_url_args $rewrite_links]
+            #::rivet::apache_log_error debug "post args merge -> $arglist"
 
             array set argsmap {}
             set hash ""
@@ -115,12 +113,13 @@ namespace eval ::rivetweb {
 
             set arglist [array get argsmap]
 
-            # finally we blend sticky arguments into the arguments 
+            if {$rewrite_links} {
+                ::rivetweb::rewrite_url $rewrite_code [::rivetweb::scriptName] arglist rewritten_url
+            } else {
+                set rewritten_url [::rivetweb::scriptName]
+            }
 
-            set arglist [$this merge_sticky_args $arglist $current_url_args $rewrite_links]
             set urlargs {}
-
-            #::rivet::apache_log_error debug "URL $rewritten_url -> $arglist"
             if {[llength $arglist]} {
 
                 while {[llength $arglist]} {
