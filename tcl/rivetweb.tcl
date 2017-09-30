@@ -232,6 +232,9 @@ namespace eval ::rivetweb {
     proc makePictsPath {picts_file {style ""}} { return [::rivetweb::picture_path $picts_file $style] }
 
     proc picture_path {picts_file {template_dir ""}} {
+
+        if {$template_dir == ""} { set template_dir $::rivetweb::template_key }
+
         set pict_file [findPictureFile $picts_file $template_dir] 
         if {$::rivetweb::rewrite_links} {
             ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code \
@@ -251,7 +254,7 @@ namespace eval ::rivetweb {
 
     proc findPictureFile {picts_file temp_key} {
         ::rivet::apache_log_error debug \
-        "style $temp_key $::rivetweb::running_picts_path [pwd] (site_base: $::rivetweb::site_base)"
+        "style $temp_key $::rivetweb::running_picts_path (site_base: $::rivetweb::site_base)"
 
 # search list for a picts file. 
 #
@@ -266,53 +269,23 @@ namespace eval ::rivetweb {
         set template_picts [::rivetweb::RWTemplate::template $temp_key pictures]
         set template_dir   [::rivetweb::RWTemplate::template $temp_key dir]
 
-        for {set pathn 0} {$pathn < 4} {incr pathn} {
-
-            switch $pathn {
-                0 {
-                    set uri [list $::rivetweb::base_templates   \
+        foreach uri [list   [list $::rivetweb::base_templates   \
                                   $template_dir                 \
-                                  $template_picts $picts_file]
-                }
-                1 {
-
-                # pictures directory within the template directory, style_dir is
-                # usually the template_key variable but we keep this case to make
-                # room to other repositories of pictures
-
-                    set uri [list $::rivetweb::base_templates   \
+                                  $template_picts $picts_file]  \
+                            [list $::rivetweb::base_templates   \
                                   $template_dir                 \
-                                  $picts_file]
-                }
-                2 {
+                                  $picts_file]                  \
+                            [list $::rivetweb::picts_path       \
+                                  $temp_key                     \
+                                  $picts_file]                  \
+                            [list $::rivetweb::picts_path $picts_file]] {
 
-                # website pictures directory combined with a template 
-                # specific directory: <site_base>/<site_picts>/<template_key> 
-
-                    set uri [list $::rivetweb::picts_path     \
-                                  $temp_key               \
-                                  $picts_file]
-                }
-                3 {
-
-                # searching in the ordinary <site_base>/<site_picts> directory
-
-                    set uri [list $::rivetweb::picts_path $picts_file]
-                }
-                4 {
-
-                # it's rather weird we have this case. No template directory
-                # should be hanging from site_base
-
-                    #set uri [list $::rivetweb::picts_path           \
-                    #              [::rivetweb default template]     \
-                    #              $picts_file]
-                }
-
-            }
             set fn [file join $::rivetweb::site_base {*}$uri]
-            ::rivet::apache_log_error debug "$pathn pict file: >$fn<"
-            if {[file exists $fn]} { return [join $uri "/"] } 
+            ::rivet::apache_log_error debug "[incr pathn] pict file: >$fn<"
+            
+            if {[file exists $fn]} { 
+                return [join $uri "/"] 
+            } 
         }
 
         ::rivet::apache_log_error debug "Image file for: >$picts_file< not found"
