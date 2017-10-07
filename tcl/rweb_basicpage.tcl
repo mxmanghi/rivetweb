@@ -21,7 +21,7 @@ namespace eval ::rwpage {
             set rootelement $rootel
         }
 
-        public method pagetext_append {$language $t} {
+        public method pagetext_append {language t} {
             dict append pagetext $language $t
         }
 

@@ -49,6 +49,7 @@ namespace eval ::rivetweb {
     variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
+    variable sitemap                RWSitemap
 
 # to menuclass it's given a default in tcl/rivet_init.tcl
 

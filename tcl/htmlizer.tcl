@@ -92,14 +92,14 @@ namespace eval ::htmlizer {
         if {[string length $menuid]} {
             $htmlmenu_o setAttribute id [$menuobj id]
         }
-
-        if {[string length $menu_class]} { 
-            $htmlmenu_o setAttribute class $menu_class 
-        }
+        
+        # determine the CSS class of the menu top level container
 
         set cssclass [$menuobj peek cssclass]
         if {[string length $cssclass]} {
             $htmlmenu_o setAttribute class $cssclass 
+        } elseif {[string length $menu_class]} { 
+            $htmlmenu_o setAttribute class $menu_class 
         }
 
 # we set aside the handling of the 'notitle' attribute
