@@ -41,6 +41,7 @@ namespace eval ::rwdatas {
         private variable xmlpath
         private variable current
         private variable forceupdate        0
+        private variable xmldom             ""
 
         protected method buildPageEntry {key xmldata reassigned_key}
         private method time_reference {xmlbase} 
@@ -62,9 +63,17 @@ namespace eval ::rwdatas {
         public method resource_exists {resource_key} 
         public method get_resource_repr {resource_key} 
         public method to_url {lm}
-        public proc   makeUrl {reference} 
         public method will_provide {keyword reassigned_key}
+        public method cleanup {}
+
+        public proc   makeUrl {reference} 
     }
+
+    ::itcl::body XMLBase::cleanup {} {
+        if {$xmldom != ""} { $xmldom delete }
+        chain 
+    }
+
 
     ::itcl::body XMLBase::init {args} {
 
@@ -173,8 +182,10 @@ namespace eval ::rwdatas {
 
         $::rivetweb::logger log debug "getting data for key $key"
 
+        catch {$xmldom delete}
+
         set xmldom [dom parse $xmldata]
-        set domroot [$xmldom documentElement root]
+        set domroot [$xmldom documentElement]
         if {[$domroot hasAttribute id]} {
             set rkey [$domroot getAttribute id]
             set key  $rkey
@@ -204,6 +215,7 @@ namespace eval ::rwdatas {
                 }
                 title -
                 headline {
+
                     # we ignore these elements in the page root and
                     # we'll consider only title and headline in
                     # the <content>...</content> element
@@ -217,13 +229,15 @@ namespace eval ::rwdatas {
         }
 
         set newpage [::rwpage::RWStatic ::#auto $key]
+
 #       puts "<br/>[html $metadata_l b u]"
 #       $::rivetweb::pmodel set_metadata newpage $metadata_l
+
         set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
         $newpage put_metadata $menu_d
         $newpage add_metadata datasource ::XMLBase
 
-# data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
+        # data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
 
         foreach content [$domroot getElementsByTagName content] {
 
@@ -235,13 +249,13 @@ namespace eval ::rwdatas {
 
             foreach c [$content childNodes] {
 
-# adding content for language '$clang'
+                # adding content for language '$clang'
 
                 set node_name [$c nodeName]
                 switch $node_name {
                     pagetext {
 
-# creiamo un nuovo dom
+                        # creiamo un nuovo dom
 
                         set cdom [dom parse [$c asXML]]
                         $::rivetweb::logger log info "Adding content for language $clang ($key)"
@@ -380,11 +394,9 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body XMLBase::storeData {key data_dict} {
-
         set xmldata [$this create $key $data_dict]
         
         return [$this buildPageEntry $key $data_dict reassigned_key]
-
     }
     
 

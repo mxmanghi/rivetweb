@@ -147,7 +147,6 @@ namespace eval ::htmlizer {
         set links [$menuobj links]
         foreach link $links {
 
-
             set ds    [$linkmodel owner $link]
             set link  [${ds} to_url $link]
 

@@ -79,7 +79,9 @@ namespace eval ::rivetweb {
     }
 
     ::itcl::body RWTemplate::build {args} {
-        foreach {prop propvalue} $args { $this setprop $prop $propvalue }
+        foreach {prop propvalue} $args { 
+            $this setprop $prop $propvalue 
+        }
     }
 
     ::itcl::body RWTemplate::serialize {} {
