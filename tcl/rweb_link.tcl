@@ -68,6 +68,7 @@ namespace eval ::rwlink {
         public method arguments {} { return $arguments }
         public method set_target { t } { set target $t }
         public method target {} { return $target }
+        public method destroy {} {  ::itcl::delete object $this }
     }
 
 

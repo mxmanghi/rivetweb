@@ -45,6 +45,12 @@ namespace eval ::rwmenu {
         public method links {}
         public method id {}
         public method toHTML {htmldefs}
+        public method destroy_links {}
+    }
+
+    ::itcl::body RWMenu::destroy_links { } {
+        foreach l $links { $l destroy }
+        set links {}
     }
 
     ::itcl::body RWMenu::get_title {language} {

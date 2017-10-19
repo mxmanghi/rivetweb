@@ -128,7 +128,7 @@ namespace eval ::rivetweb {
 
     }
 
-    $::rivetweb::logger log debug "error_code $error_info"
+    #$::rivetweb::logger log debug "error_code $error_info"
     if {[dict get $error_info -errorcode] == "rw_restart"} {
         $::rivetweb::logger log debug "datasource search forced"
         set ::rivetweb::current_page \
