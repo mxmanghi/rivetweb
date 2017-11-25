@@ -17,6 +17,7 @@ namespace eval ::rwdatas {
         private common ALIASDB [dict create]
         private variable cache [dict create]
 
+        private method get_page_object { key } 
         public method init {args} { }
         public method destroy {}
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
@@ -46,7 +47,6 @@ namespace eval ::rwdatas {
 
         public method cache {} { return $cache }
         public method cache_query { key }
-        private method get_page_object { key } 
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
         public method signal {notifying_page signal_code}

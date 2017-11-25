@@ -200,10 +200,10 @@ namespace eval ::rwmenu {
 #
 #
     ::itcl::body RWMenu::toHTML {htmldefs} {
-        return  [$::rivetweb::htmlizer  html_menu               \
-                                        $this                   \
-                                        $::rivetweb::language   \
-                                        $htmldefs]
+        return  [$::rivetweb::htmlizer html_menu               \
+                                       $this                   \
+                                       $::rivetweb::language   \
+                                       $htmldefs]
     }
 
 # -- create <id> ?<parent> none? ?<visibility> normal?
