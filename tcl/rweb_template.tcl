@@ -1,10 +1,17 @@
+#
 # -- rweb_template.tcl
 #
-#
-#
+# About formatters:
+#   Formatters are scoped into the [formatters_ns] namespace
+#   and are free form procedures specialized to format specific
+#   content. Only exception is by now [formatters_ns]::menu_to_html
+#   which will by design be the template specific menu formatter
+#   thus eliminating the ugly approach of subclassing menus
+#   just for the need of matching different templates
 #
 
 package require Itcl
+package require htmlizer
 
 namespace eval ::rivetweb {
 
@@ -34,13 +41,18 @@ namespace eval ::rivetweb {
             set dir          $key
         }
 
+        private method register_formatter {formatter}
+        private method formatters_ns {}
+        private method is_registered {formatter_name}
+
         public method init {descriptor} 
         public method getprop {prop}
         public method serialize {}
-        public method register_formatter {formatter}
-        public method formatters_ns {}
         public method setprop {prop value}
         public method build {args}
+        public method to_html {object}
+
+        protected method menu_to_html {menu_o}
 
         public proc read_template_data {dir}
         public proc read_formatters {dir template_o}
@@ -79,7 +91,7 @@ namespace eval ::rivetweb {
     }
 
     ::itcl::body RWTemplate::build {args} {
-        foreach {prop propvalue} $args { 
+        foreach {prop propvalue} $args {
             $this setprop $prop $propvalue 
         }
     }
@@ -99,6 +111,11 @@ namespace eval ::rivetweb {
 
     ::itcl::body RWTemplate::init {descriptor_file} {
         source $descriptor_file
+    }
+
+    ::itcl::body RWTemplate::is_registered {formatter} {
+        set formatter_qn "[$this formatters_ns]::${formatter}" 
+        return [info commands $formatter_qn]
     }
 
     ::itcl::body RWTemplate::register_formatter {formatter} {
@@ -160,7 +177,14 @@ namespace eval ::rivetweb {
 
     }
 
+    # -- template
+    #
+    # Returns the current template object based on template key.
+    # This is a static procedure as the template determination
+    # mechanism is application wide.
+
     ::itcl::body RWTemplate::template {template_key {prop ""}} {
+
         if {![dict exists $templates_db $template_key]} { return "" }
         set template_o [dict get $templates_db $template_key]
         if {$prop == ""} {
@@ -168,7 +192,36 @@ namespace eval ::rivetweb {
         } else {
             return [$template_o getprop $prop]
         }
+
     }
+
+    # -- menu_to_html
+    #
+    # The Rivetweb default formatter is the htmlizer function
+    #
+
+    ::itcl::body RWTemplate::menu_to_html {menu_o} {
+        return [$::rivetweb::htmlizer html_menu \
+                                      $menu_o   \
+                                      $::rivetweb::language \
+                                      [$this serialize]]
+    }
+
+    # -- to_html
+    #
+    # generic object formatter 
+    #
+
+    ::itcl::body RWTemplate::to_html {object} {
+
+        if {[$object isa ::rwmenu::RWMenu]} {
+            return [$this menu_to_html $object]
+        } else {
+            return ""
+        }
+
+    }
+
 }
 
 package provide RWTemplate 1.0

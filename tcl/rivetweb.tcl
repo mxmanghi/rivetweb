@@ -309,10 +309,8 @@ namespace eval ::rivetweb {
         set js_uri $script_path
 
         if {$::rivetweb::rewrite_links} {
-            
             set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
             ::rivetweb::rewrite_js_url $rwcode [::rivet::env SCRIPT_NAME] $js_uri js_uri
-
         } 
 
         return $js_uri
@@ -449,13 +447,13 @@ namespace eval ::rivetweb {
 
     proc build_html_menu { pagemenus template_key position } {
 
-        set htmldefs [[::rivetweb::RWTemplate::template $template_key] serialize]
+        set template [::rivetweb::RWTemplate::template $template_key] 
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
 #           puts "<div style=\"border: 1px solid red;\">$menus</div>"
             foreach menuobj $menus {    
-                append htmltext [$menuobj toHTML $htmldefs]    
+                append htmltext [$template to_html $menuobj]    
             }
         }
         return $htmltext
