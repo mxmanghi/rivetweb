@@ -563,7 +563,7 @@ namespace eval ::rwdatas {
 
                 }
 
-                # let's rely entirely on the inner machinery for
+                # let's rely entirely on the class inner machinery for
                 # determining the menu classes
 
                 set tclclass [$this menuclass $menu]

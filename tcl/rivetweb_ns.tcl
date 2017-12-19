@@ -14,7 +14,7 @@ namespace eval ::rivetweb {
     variable rivetweb_root
     variable request
     variable scripts
-    variable website_init	            rivetweb.tcl
+    variable website_init               rivetweb.tcl
     variable site_before_script         ""
     variable site_after_script          ""
     variable site_abort_script          ""
@@ -137,7 +137,7 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase it_cont_html   {div itemcontainer}
     dict set templates_db rwbase item_html      {span menuitem}
     dict set templates_db rwbase link_class     navitem
-    dict set templates_db rwbase pictures	    picts
+    dict set templates_db rwbase pictures       picts
 
     variable debug                  1
     variable hooks_dir              hooks

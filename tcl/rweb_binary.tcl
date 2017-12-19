@@ -13,7 +13,7 @@ namespace eval ::rwpage {
 
         protected variable data_transmitted
 
-        constructor {pagekey} {RWContent::constructor $pagekey} { set data_transmitted 0 }
+        constructor {pagekey {contenttype "application/octet-stream"}} {RWContent::constructor $pagekey $contenttype} { set data_transmitted 0 }
 
         public method binary_data {language} {}
         public method print_binary {language}
@@ -27,9 +27,7 @@ namespace eval ::rwpage {
             
         fconfigure stdout -translation binary
         if {[catch { set data_transmitted [$this binary_data $language] } err einfo]} {
-
             ::rivet::apache_log_error err "Error in RWBinary::binary_data"
-
         }
 
         ::rivetweb::restore_channel_status
