@@ -33,9 +33,7 @@ namespace eval ::rwpage {
         public method headline {language {hdl ""}}
         public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
 
-
         #####
-
         # interface designed for the Scripted datasource. Can be moved into
         # application specific code
 
@@ -64,7 +62,7 @@ namespace eval ::rwpage {
         public method prepare {language argqs}
         protected method postprocessing { urlhandler }
         public method send_output {language}
-        public method mimetype {} { return "[RWContent::mimetype]; charset=$::rivetweb::http_encoding"  }
+        public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding"  }
     }
 
 

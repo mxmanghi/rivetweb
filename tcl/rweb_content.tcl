@@ -16,13 +16,13 @@ namespace eval ::rwpage {
         private variable hits
         private variable stored_vars
         private variable url_handler
-        private variable mimetype 
+        private variable ctype 
 
-        constructor {pagekey {mime "application/octet-stream"}} {
+        constructor {pagekey {contenttype "application/octet-stream"}} {
             set key         $pagekey
             set stored_vars [dict create]
             set hits        0
-            set mimetype    $mime
+            set ctype       $contenttype
         }
 
         public method init {args} {}
@@ -40,7 +40,9 @@ namespace eval ::rwpage {
         public method get_resource_repr {resource_key} { return "" }
         public method print_content { language } { }
         public method current_handler { return $url_handler }
-        public method mimetype {} { return $mimetype }
+        public method mimetype {} { return [$this content_type] }
+        public method set_content_type {ct} { set ctype $ct }
+        public method content_type {} { return $ctype }
         public method content_disposition {} { return "" }
         public method content_length {} { return "" }
         public method send_headers {} 
@@ -54,20 +56,19 @@ namespace eval ::rwpage {
 #
     ::itcl::body RWContent::send_headers {} {
 
-        ::rivet::headers type [$this mimetype]
+        ::rivet::headers type [$this content_type]
 
         set content_disposition [$this content_disposition] 
         if {$content_disposition != ""} {
             ::rivet::headers add Content-Disposition $content_disposition
         }
 
-        set content_length      [$this content_length]
+        set content_length [$this content_length]
         if {$content_length != ""} {
-            ::rivet::headers add Content-Length	$content_length
+            ::rivet::headers add Content-Length $content_length
         }
 
     }
-
 
 # -- destroy
 #
