@@ -132,6 +132,7 @@ namespace eval ::rwdatas {
                 set response false
             }
             return $response
+
         }
     }
 
@@ -140,9 +141,7 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body UrlHandler::cache_query {key} {
-
         return [dict exists $cache $key]
-
     }
 
     ::itcl::body UrlHandler::get_page_object {key} {
@@ -163,7 +162,7 @@ namespace eval ::rwdatas {
             set rkey $key
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
-                
+
                 ::rivet::apache_log_error debug "[$this info class]::fetch_page refetching page for $key"
 
                 # is_stale might well delete the entire class thus triggering a 
@@ -191,6 +190,7 @@ namespace eval ::rwdatas {
                     return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
                 }
             }
+
             return [$this get_page_object $key]
 
         } else {
@@ -207,11 +207,16 @@ namespace eval ::rwdatas {
 
         }
     }
-
+    
+    # -- set_alias
+    #
 
     ::itcl::body UrlHandler::set_alias {alias aliasdef} {
         dict set ALIASDB $alias $aliasdef
     }
+
+    # -- get_alias
+    #
 
     ::itcl::body UrlHandler::get_alias {alias aliasdef} {
         upvar $aliasdef alias_definition

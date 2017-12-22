@@ -511,13 +511,13 @@ namespace eval ::rivetweb {
 
         foreach ds [::rivetweb registered_handlers] {
             if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
-                ::rivet::apache_log_error info "excluding $ds from search for $key"
+                ::rivet::apache_log_error debug "excluding $ds from search for $key"
                 continue
             }
 
             ::rivet::apache_log_error info "querying $ds for $key"
 
-            set rkey $key           
+            set rkey $key
             if {[$ds will_provide $key rkey]} {
                 ::rivet::apache_log_error info \
                     "fetching $key from $ds -> returned values: $rkey"
