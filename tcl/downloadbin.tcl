@@ -12,14 +12,14 @@ namespace eval ::rwpage {
 
         private variable file_name
         private variable data_sent
-        public	variable chunk_size   [expr 8*8192]
+        public  variable chunk_size   [expr 8*8192]
 
         constructor {key filen} {RWBinary::constructor $key} {
             set file_name $filen 
         }
 
         public method binary_data {language}
-        public method content_disposition {} { return "" }
+        public method content_disposition {}
         public method content_length {}
         public method filename {} { return $file_name }
         public method setfilename {fn} { set file_name $fn }
@@ -40,12 +40,12 @@ namespace eval ::rwpage {
 
         #set mylog [open "/tmp/bin-[pid]-[incr count].log" w]
 
-        set nrecs	    0
+        set nrecs       0
         set data_sent   0
         set loop        1
         while {$loop} {
-            set chunk	    [read $file_handle $chunk_size]
-            incr data_sent	[string length $chunk]
+            set chunk       [read $file_handle $chunk_size]
+            incr data_sent  [string length $chunk]
 
             if {[eof $file_handle]} {
 
