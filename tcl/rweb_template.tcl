@@ -42,8 +42,8 @@ namespace eval ::rivetweb {
         }
 
         private method register_formatter {formatter}
-        private method formatters_ns {}
         private method is_registered {formatter_name}
+        public  method formatters_ns {}
 
         public method init {descriptor} 
         public method getprop {prop}
