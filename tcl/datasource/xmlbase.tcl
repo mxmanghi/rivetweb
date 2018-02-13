@@ -44,6 +44,7 @@ namespace eval ::rwdatas {
         private variable xmldom             ""
 
         protected method buildPageEntry {key xmldata reassigned_key}
+        protected method read_xml_data {xmlfilename}
         private method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o}        
@@ -73,7 +74,6 @@ namespace eval ::rwdatas {
         if {$xmldom != ""} { $xmldom delete }
         chain 
     }
-
 
     ::itcl::body XMLBase::init {args} {
 
@@ -325,6 +325,19 @@ namespace eval ::rwdatas {
         return [$this resource_exists $keyword]
     }
 
+# -- read_xml_data
+#
+#
+    ::itcl::body XMLBase::read_xml_data {xmlfilename} {
+
+        set xmlfp    [open $xmlfilename r]
+        set xmldata  [read $xmlfp]
+ #      puts stderr $xmldata
+        close $xmlfp
+        return $xmldata
+
+    }
+
 # -- fetchData 
 # 
 # This method retrieves a page content from the backend. This implementation
@@ -341,12 +354,11 @@ namespace eval ::rwdatas {
             $::rivetweb::logger log info "->opening $xmlfile ($rkey)" 
 
             if {[catch {
-                set xmlfp    [open $xmlfile r]
-                set xmldata  [read $xmlfp]
-                set xmldata  [regsub -all {<\?} $xmldata {\&lt;?}]
-                set xmldata  [regsub -all {\?>} $xmldata {?\&gt;}]
-#               puts stderr $xmldata
-                close $xmlfp
+
+                set xmldata [$this read_xml_data $xmlfile]
+                set xmldata [regsub -all {<\?} $xmldata {\&lt;?}]
+                set xmldata [regsub -all {\?>} $xmldata {?\&gt;}]
+
             } fileioerr]} {
                 set page_error_msg "Impossible to read page '$key' ($fileioerr)"
                 $::rivetweb::logger err "[$this name] $page_error_msg"
