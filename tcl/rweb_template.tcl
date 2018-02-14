@@ -161,6 +161,11 @@ namespace eval ::rivetweb {
 
     }
 
+    # -- load_templates
+    #
+    # the whole templates hierarchy is read and a templates
+    # database (templates_db) built out of it
+
     ::itcl::body RWTemplate::load_templates {templates_dir args} {
 
         foreach template [glob -directory $templates_dir *] {
