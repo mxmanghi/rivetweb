@@ -132,7 +132,7 @@ namespace eval ::htmlizer {
 
         }
 
-# we now create the element which is to contain the menu items
+        # we now create the element which is to contain the menu items
 
         set item_container_o [$menudom createElement $it_cont_tag]
         if {[string length $it_cont_class]} {
@@ -140,10 +140,10 @@ namespace eval ::htmlizer {
         }
         $htmlmenu_o appendChild $item_container_o
 
-# and finally we create a node for each link in the menu.
-# We scan each link in the menu and gather the information
-# stored in it filling a link_o (domeNode) object instance
-#
+        # and finally we create a node for each link in the menu.
+        # We scan each link in the menu and gather the information
+        # stored in it filling a link_o (domeNode) object instance
+
         set links [$menuobj links]
         foreach link $links {
 
@@ -171,7 +171,7 @@ namespace eval ::htmlizer {
                 $link_o setAttribute title $link_info
             }
 
-# this should set also href as it's part of the link object attributes
+        # this should set also href as it's part of the link object attributes
 
             if {[dict size [$link attributes]] > 0} {
                 $link_o setAttribute {*}[$link attributes]

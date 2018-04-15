@@ -437,7 +437,7 @@ namespace eval ::rivetweb {
 # -- build_html_menu 
 #
 # central function returning a menu of link as an HTML fragment. The markup
-# *was* described withing the dictionary 'templates_db', now managed through
+# *was* described within the dictionary 'templates_db', now managed through
 # the (common) public interface of the RWTemplate class
 #
 # Arguments:
