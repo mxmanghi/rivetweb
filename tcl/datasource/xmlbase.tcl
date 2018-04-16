@@ -45,7 +45,7 @@ namespace eval ::rwdatas {
 
         protected method buildPageEntry {key xmldata reassigned_key}
         protected method read_xml_data {xmlfilename}
-        private method time_reference {xmlbase} 
+        protected method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o}        
         protected method xmlfile {key} { return [file join $static_pages ${key}.xml] }
@@ -734,13 +734,13 @@ namespace eval ::rwdatas {
 
         array unset xmlmenu
 
-# This object assumes the files to be in the 'sitemap_dir' directory
-# (its existence has been already checked in 'init')
+        # This object assumes the files to be in the 'sitemap_dir' directory
+        # (its existence has been already checked in 'init')
 
         set xmlmenus [xmlsitemaps $sitemap_dir]
 
-# if there is no menu tree defined we give the database tree 
-# an empty root menu
+        # if there is no menu tree defined we give the database tree 
+        # an empty root menu
 
         if {[llength $xmlmenus] == 0} {
             $logger log notice "no menu file found"
@@ -789,7 +789,7 @@ namespace eval ::rwdatas {
                                                     $group_menu_id \
                                                     [listStaticMenus $sm $group_parent] \
                                                     $position
-                    
+
                     $logger log notice "adding $group_menu_id to $group_parent"
 
                 } else {

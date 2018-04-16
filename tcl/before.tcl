@@ -11,7 +11,7 @@
 #-
 #
 
-namespace eval ::rivetweb { 
+namespace eval ::rivetweb {
 
     # let's load the environment into array ::request::env
 
@@ -107,10 +107,10 @@ namespace eval ::rivetweb {
 
     $::rivetweb::logger log debug "registered handlers: [::rivetweb registered_handlers] "
     $::rivetweb::logger log debug "argsqs: $argsqs"
+    set error_info [dict create]
     foreach ds [::rivetweb registered_handlers] {
 
         set ::rivetweb::datasource $ds
-
         set dsquery [catch { $ds willHandle $argsqs ::rivetweb::page_key } error_code error_info]
         $::rivetweb::logger log info "$ds: dsquery, ecode, einfo: $dsquery | $error_code | $error_info"
 
