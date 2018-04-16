@@ -2,6 +2,7 @@
 # -- downloadbin.tcl
 #
 #
+#
 
 package require rwbinary
 
@@ -14,8 +15,8 @@ namespace eval ::rwpage {
         private variable data_sent
         public  variable chunk_size   [expr 8*8192]
 
-        constructor {key filen} {RWBinary::constructor $key} {
-            set file_name $filen 
+        constructor {key filename} {RWBinary::constructor $key} {
+            set file_name $filename
         }
 
         public method binary_data {language}

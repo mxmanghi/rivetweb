@@ -13,7 +13,8 @@ namespace eval ::rwpage {
 
         protected variable data_transmitted
 
-        constructor {pagekey {contenttype "application/octet-stream"}} {RWContent::constructor $pagekey $contenttype} { set data_transmitted 0 }
+        constructor {pagekey {contenttype "application/octet-stream"}} \
+                    {RWContent::constructor $pagekey $contenttype} { set data_transmitted 0 }
 
         public method binary_data {language} {}
         public method print_binary {language}

@@ -29,7 +29,7 @@ namespace eval ::rwpage {
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d } 
         public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
-        public method title {language {txt ""}}
+        public method title {{language ""} {txt ""}}
         public method headline {language {hdl ""}}
         public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
 
@@ -150,14 +150,18 @@ namespace eval ::rwpage {
 # section of a page and it's part of the standard HTML ever since
 #
 
-    ::itcl::body RWPage::title {language {titletxt ""}} { 
-        if {$titletxt != ""} {
-            dict set title $language $titletxt
-            return $titletxt
-        } elseif {[dict exists $title $language]} {
-            return [dict get $title $language]
+    ::itcl::body RWPage::title {{language ""} {titletxt ""}} { 
+        if {$language == ""} {
+            return $title
         } else {
-            return ""
+            if {$titletxt != ""} {
+                dict set title $language $titletxt
+                return $titletxt
+            } elseif {[dict exists $title $language]} {
+                return [dict get $title $language]
+            } else {
+                return ""
+            }
         }
     }
 

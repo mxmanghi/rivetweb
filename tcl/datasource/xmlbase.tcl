@@ -195,7 +195,10 @@ namespace eval ::rwdatas {
             set rkey $key
         }
 
-        set menu_d      [dict create]
+        # we give a default to the pageclass key. It's needed in
+        # order to create an instance of page
+
+        set menu_d      [dict create pageclass ::rwpage::RWStatic]
         set metadata_l  {}
 
         # metadata are stored accordingly. <menu>...</menu> elements
@@ -215,6 +218,11 @@ namespace eval ::rwdatas {
                     }
                     dict set menu_d menu [$c getAttribute position $position] [$c text]
                 }
+                pageclass {
+
+                    dict set menu_d pageclass "::rwpage::[$c text]"
+
+                }
                 title -
                 headline {
 
@@ -230,7 +238,8 @@ namespace eval ::rwdatas {
             }
         }
 
-        set newpage [::rwpage::RWStatic ::#auto $key]
+        set pageclass [dict get $menu_d pageclass]
+        set newpage [$pageclass ::#auto $key]
 
         # puts "<br/>[html $metadata_l b u]"
         # $::rivetweb::pmodel set_metadata newpage $metadata_l
