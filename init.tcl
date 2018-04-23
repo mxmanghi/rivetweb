@@ -74,6 +74,10 @@ if {[file exists $::rivetweb::website_init]} {
 # instantiated each datasource and we proceed calling the 'init' method for each
 # instance, as listed in ::rivetweb::datasources, in reverse order
 
+# the main reason for deferring this stage is that 'init' method register error
+# messages within the RWDummy messages database, but RWDummy has to be instantiated for
+# the method 'register_error' to exist
+
 foreach ds [lreverse $::rivetweb::datasources] {
 
     ::rivet::apache_log_error debug "Running init for handler $ds"
