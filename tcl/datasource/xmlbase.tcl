@@ -14,7 +14,7 @@ package require rwsitemap
 package require rwstatic
 package require rwmenu
 package require rwlink
-package require Datasource
+package require UrlHandler
 package require struct::stack
 package require rwbasicpage
 
@@ -29,10 +29,12 @@ package require rwbasicpage
 namespace eval ::rwdatas {
 
     ::itcl::class XMLBase {
-        inherit Datasource
+        inherit UrlHandler
 
-        public  variable menutclclass "" {set forceupdate 1}
+        public  variable menutclclass ""    {set forceupdate 1}
         public  variable sitemap
+
+        private variable pageclass          ::rwpage::RWStatic 
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
         private common   LOCAL_PAGES        docs
@@ -66,7 +68,6 @@ namespace eval ::rwdatas {
         public method to_url {lm}
         public method will_provide {keyword reassigned_key}
         public method cleanup {}
-
         public proc   makeUrl {reference} 
     }
 
@@ -77,15 +78,30 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::init {args} {
 
-        $::rivetweb::logger log debug "working from directory $::rivetweb::site_base"
+        # processing args. This handler wants 'args' to
+        # be a even length list of 'variable name - variable value'
+
+        if {[llength $args] > 0} {
+
+            $::rivetweb::logger log info "init args: $args ([llength $args])"
+            foreach {pn pv} $args {
+
+                set pv "::rwpage::${pv}"
+
+                $::rivetweb::logger log info "evaluating: eval set $pn [set pv]"
+                eval set $pn [set pv]
+            }
+
+        }
+
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $LOCAL_PAGES
 
-    # we first set up the variables controlling the sitemap
+        # we first set up the variables controlling the sitemap
 
         array set sitemap_stat {}
 
-    # let's rewrite the path to the sitemap
+        # let's rewrite the path to the sitemap
 
         set sitemap_dir  [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
         if {![file exists $sitemap_dir]} {
@@ -118,7 +134,7 @@ namespace eval ::rwdatas {
             $::rivetweb::logger log notice "setting pages path as $static_pages"
         }
         
-    # and the we set the path to the XML pages
+        # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
         set sitemap [::rwsitemap::create ::XMLBase]
@@ -198,7 +214,7 @@ namespace eval ::rwdatas {
         # we give a default to the pageclass key. It's needed in
         # order to create an instance of page
 
-        set menu_d      [dict create pageclass ::rwpage::RWStatic]
+        set menu_d      [dict create pageclass $pageclass]
         set metadata_l  {}
 
         # metadata are stored accordingly. <menu>...</menu> elements
@@ -238,8 +254,8 @@ namespace eval ::rwdatas {
             }
         }
 
-        set pageclass [dict get $menu_d pageclass]
-        set newpage [$pageclass ::#auto $key]
+        set pagetclclass [dict get $menu_d pageclass]
+        set newpage [$pagetclclass ::#auto $key]
 
         # puts "<br/>[html $metadata_l b u]"
         # $::rivetweb::pmodel set_metadata newpage $metadata_l
