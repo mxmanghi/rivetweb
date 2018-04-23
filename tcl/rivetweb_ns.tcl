@@ -42,7 +42,7 @@ namespace eval ::rivetweb {
     variable running_css            [file join $base_templates base.css]
     variable http_encoding          utf-8
     variable datasources            {}
-    variable datasources_args       [dict create]
+    variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
     variable datasource             ::XMLBase
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
@@ -197,37 +197,51 @@ namespace eval ::rivetweb {
         ::rivet::apache_log_error notice "rivetweb_root set as $rivetweb_root"
     }
 
+# -- set_handler_args
+#
+#
+
+    proc set_handler_args {handler args} {
+        variable datasources_args
+        
+        dict set datasources_args $handler $args
+    }
+
 # -- init
 #
 # init used to be the real initialization in Rivetweb 1.0. Most of its tasks
-# have been devolved to other components (notably datasources). Its main duty now
-# is to register new datasources.
+# have been devolved to other components (notably url handlers). Its main duty now
+# is to register new url handlers.
 #
 
-    proc init {ds {position "last"} args} {
+    proc init {urlhandler {position "last"} args} {
         variable    site_base
         variable    datasources
         variable    datasources_args
         variable    logger
         variable    default_lang
 
-        package require $ds
+        package require $urlhandler
 
-        set dsobj [::rwdatas::${ds} ::${ds}]
+        set urlhobj [::rwdatas::${urlhandler} ::${urlhandler}]
         switch $position {
             first -
             top {
-                set datasources [linsert $datasources 0 $dsobj]
+                set datasources [linsert $datasources 0 $urlhobj]
             }
             bottom -
             last -
             default {
-                lappend datasources $dsobj
+                lappend datasources $urlhobj
             }
         }
 
-        dict set datasources_args $dsobj $args
+        # lappend because we don't want to override XMLBase and RWDummy
+        # application specific settings
 
+        if {[llength $args] > 0} {
+            dict set datasources_args $urlhobj $args
+        }
         #if {[catch {$ds init $args} e einfo]} {
         #    ::rivet::apache_log_error err "Error initializing $ds ($e)"
         #    ::rivet::apache_log_error err "Error info: $einfo"

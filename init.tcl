@@ -78,9 +78,13 @@ if {[file exists $::rivetweb::website_init]} {
 # messages within the RWDummy messages database, but RWDummy has to be instantiated for
 # the method 'register_error' to exist
 
+::rivet::apache_log_error debug "Url handlers init $::rivetweb::datasources_args"
+
 foreach ds [lreverse $::rivetweb::datasources] {
 
-    ::rivet::apache_log_error debug "Running init for handler $ds"
-    $ds init [dict get $::rivetweb::datasources_args $ds]
+    if {[dict exists $::rivetweb::datasources_args $ds]} {
+        ::rivet::apache_log_error debug "Running init for handler $ds ([dict get $::rivetweb::datasources_args $ds])"
+        $ds init {*}[dict get $::rivetweb::datasources_args $ds]
+    }
 
 }
