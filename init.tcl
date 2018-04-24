@@ -85,6 +85,8 @@ foreach ds [lreverse $::rivetweb::datasources] {
     if {[dict exists $::rivetweb::datasources_args $ds]} {
         ::rivet::apache_log_error debug "Running init for handler $ds ([dict get $::rivetweb::datasources_args $ds])"
         $ds init {*}[dict get $::rivetweb::datasources_args $ds]
+    } else {
+        $ds init        
     }
 
 }
