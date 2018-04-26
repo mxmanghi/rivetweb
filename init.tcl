@@ -13,6 +13,7 @@ package require rwlogger
 package require rwconf
 package require rwmenu
 package require rwpage
+package require rwlink
 package require urlcomposer
 package require Datasource
 package require RWTemplate
