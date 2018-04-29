@@ -1,8 +1,8 @@
 #
 # -- rweb_static.tcl
 #
-# Class for static pages whose content is represented 
-# as a tdom object instance
+# Class for static pages whose content is represented as a tdom
+# object instance
 # 
 
 package require Itcl
@@ -39,6 +39,10 @@ namespace eval ::rwpage {
         public method headline {language}
         public method content_field {language field {default_val ""}}
     }
+
+# -- destroy
+#
+#
 
     ::itcl::body RWStatic::destroy { } {
         foreach l [dict keys $content] {
@@ -253,7 +257,7 @@ namespace eval ::rwpage {
 #
 #
     ::itcl::body RWStatic::languages { } {
-	    return [dict keys $content]
+        return [dict keys $content]
     }
 
 # -- to_string 

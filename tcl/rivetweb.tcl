@@ -435,7 +435,7 @@ namespace eval ::rivetweb {
 # -- build_html_menu 
 #
 # central function returning a menu of link as an HTML fragment. The markup
-# *was* described withing the dictionary 'templates_db', now managed through
+# *was* described within the dictionary 'templates_db', now managed through
 # the (common) public interface of the RWTemplate class
 #
 # Arguments:
@@ -509,13 +509,13 @@ namespace eval ::rivetweb {
 
         foreach ds [::rivetweb registered_handlers] {
             if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
-                ::rivet::apache_log_error info "excluding $ds from search for $key"
+                ::rivet::apache_log_error debug "excluding $ds from search for $key"
                 continue
             }
 
             ::rivet::apache_log_error info "querying $ds for $key"
 
-            set rkey $key           
+            set rkey $key
             if {[$ds will_provide $key rkey]} {
                 ::rivet::apache_log_error info \
                     "fetching $key from $ds -> returned values: $rkey"

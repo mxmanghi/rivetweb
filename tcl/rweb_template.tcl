@@ -23,7 +23,7 @@ namespace eval ::rivetweb {
         # defaults taken from rwbase/rwtemplate.tcl
 
         private variable rwtemplate	    xhtml10.rvt
-        private variable rwcss	        xhtml10.css
+        private variable rwcss          xhtml10.css
         private variable menu_html      {li ""}
         private variable title_html     {h2 ""}
         private variable it_cont_html   {ul ""}
@@ -31,7 +31,7 @@ namespace eval ::rivetweb {
         private variable link_class     navitem
         private variable pictures       images
         private variable menuclass      RWMenu
-        private variable dir            ""
+        private variable dir            rwbase
         private variable auxiliary      [dict create]
 
         private variable template_key
@@ -132,11 +132,18 @@ namespace eval ::rivetweb {
         return [::rivetweb::RWTemplate [namespace current]::${template_key} $template_key]
     }
 
+    # -- read_template_data
+    #
+    # template object construction procedure. We don't just create
+    # an instance of RWTemplate, we fill it's variables with
+    # the definitions shipped rwtemplate.tcl and we assign
+    # the 'dir' property, fundamental for retriving the
+    # formatters.tcl file and more template specific resources
+
     ::itcl::body RWTemplate::read_template_data {dir} {
         set template_key [file tail $dir]
 
         set template_o [RWTemplate::make_template_object $template_key]
-        
         $template_o setprop dir $template_key
 
         set base_descriptor [file join $dir rwtemplate.tcl]
@@ -147,10 +154,18 @@ namespace eval ::rivetweb {
         return $template_o
     }
 
+    # read_formatters
+    #
+    # legge un file contenente le procedure di formattazione
+    # di parti di un template e quindi ne registra il contenuto
+    # con una chiamata a register_formatter che tiene
+    # un database di formatters
+
     ::itcl::body RWTemplate::read_formatters {dir template_o} {
 
         set formatters [file join $dir formatters.tcl]
         if {[file exists $formatters]} {
+
             $::rivetweb::logger log info "reading formatters $formatters"
             set fp [open $formatters r]
             set formatters_code [read $fp]
@@ -162,6 +177,11 @@ namespace eval ::rivetweb {
         }
 
     }
+
+    # -- load_templates
+    #
+    # the whole templates hierarchy is read and a templates
+    # database (templates_db) built out of it
 
     ::itcl::body RWTemplate::load_templates {templates_dir args} {
 

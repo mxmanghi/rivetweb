@@ -17,6 +17,7 @@ namespace eval ::rwdatas {
         private common ALIASDB [dict create]
         private variable cache [dict create]
 
+        private method get_page_object { key } 
         public method init {args} { }
         public method destroy {}
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
@@ -46,7 +47,6 @@ namespace eval ::rwdatas {
 
         public method cache {} { return $cache }
         public method cache_query { key }
-        private method get_page_object { key } 
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
         public method signal {notifying_page signal_code}
@@ -132,6 +132,7 @@ namespace eval ::rwdatas {
                 set response false
             }
             return $response
+
         }
     }
 
@@ -140,9 +141,7 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body UrlHandler::cache_query {key} {
-
         return [dict exists $cache $key]
-
     }
 
     ::itcl::body UrlHandler::get_page_object {key} {
@@ -163,7 +162,7 @@ namespace eval ::rwdatas {
             set rkey $key
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
-                
+
                 ::rivet::apache_log_error debug "[$this info class]::fetch_page refetching page for $key"
 
                 # is_stale might well delete the entire class thus triggering a 
@@ -191,6 +190,7 @@ namespace eval ::rwdatas {
                     return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
                 }
             }
+
             return [$this get_page_object $key]
 
         } else {
@@ -207,11 +207,16 @@ namespace eval ::rwdatas {
 
         }
     }
-
+    
+    # -- set_alias
+    #
 
     ::itcl::body UrlHandler::set_alias {alias aliasdef} {
         dict set ALIASDB $alias $aliasdef
     }
+
+    # -- get_alias
+    #
 
     ::itcl::body UrlHandler::get_alias {alias aliasdef} {
         upvar $aliasdef alias_definition

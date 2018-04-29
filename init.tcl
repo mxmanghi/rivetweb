@@ -13,6 +13,7 @@ package require rwlogger
 package require rwconf
 package require rwmenu
 package require rwpage
+package require rwlink
 package require urlcomposer
 package require Datasource
 package require RWTemplate
@@ -74,9 +75,19 @@ if {[file exists $::rivetweb::website_init]} {
 # instantiated each datasource and we proceed calling the 'init' method for each
 # instance, as listed in ::rivetweb::datasources, in reverse order
 
+# the main reason for deferring this stage is that 'init' method register error
+# messages within the RWDummy messages database, but RWDummy has to be instantiated for
+# the method 'register_error' to exist
+
+::rivet::apache_log_error debug "Url handlers init $::rivetweb::datasources_args"
+
 foreach ds [lreverse $::rivetweb::datasources] {
 
-    ::rivet::apache_log_error debug "Running init for handler $ds"
-    $ds init [dict get $::rivetweb::datasources_args $ds]
+    if {[dict exists $::rivetweb::datasources_args $ds]} {
+        ::rivet::apache_log_error debug "Running init for handler $ds ([dict get $::rivetweb::datasources_args $ds])"
+        $ds init {*}[dict get $::rivetweb::datasources_args $ds]
+    } else {
+        $ds init        
+    }
 
 }

@@ -11,7 +11,7 @@
 #-
 #
 
-namespace eval ::rivetweb { 
+namespace eval ::rivetweb {
 
     # let's load the environment into array ::request::env
 
@@ -72,8 +72,8 @@ namespace eval ::rivetweb {
     set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
     set ::rivetweb::template_key      $template_key
 
-	$::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
-	
+    $::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
+
     if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
         set ::rivetweb::last_selected_template $template_key
         set ::rivetweb::template_changed true    
@@ -107,10 +107,10 @@ namespace eval ::rivetweb {
 
     $::rivetweb::logger log debug "registered handlers: [::rivetweb registered_handlers] "
     $::rivetweb::logger log debug "argsqs: $argsqs"
+    set error_info [dict create]
     foreach ds [::rivetweb registered_handlers] {
 
         set ::rivetweb::datasource $ds
-
         set dsquery [catch { $ds willHandle $argsqs ::rivetweb::page_key } error_code error_info]
         $::rivetweb::logger log info "$ds: dsquery, ecode, einfo: $dsquery | $error_code | $error_info"
 

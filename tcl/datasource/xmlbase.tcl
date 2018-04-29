@@ -14,7 +14,7 @@ package require rwsitemap
 package require rwstatic
 package require rwmenu
 package require rwlink
-package require Datasource
+package require UrlHandler
 package require struct::stack
 package require rwbasicpage
 
@@ -29,13 +29,15 @@ package require rwbasicpage
 namespace eval ::rwdatas {
 
     ::itcl::class XMLBase {
-        inherit Datasource
+        inherit UrlHandler
 
-        public  variable menutclclass "" {set forceupdate 1}
+        public  variable menutclclass ""    {set forceupdate 1}
         public  variable sitemap
+
+        private variable pageclass          ::rwpage::RWStatic 
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
-        private common   LOCAL_PAGES	    docs
+        private common   LOCAL_PAGES        docs
         private variable timestamp          0
         private variable sitemap_stat   
         private variable xmlpath
@@ -44,7 +46,8 @@ namespace eval ::rwdatas {
         private variable xmldom             ""
 
         protected method buildPageEntry {key xmldata reassigned_key}
-        private method time_reference {xmlbase} 
+        protected method read_xml_data {xmlfilename}
+        protected method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o}        
         protected method xmlfile {key} { return [file join $static_pages ${key}.xml] }
@@ -65,7 +68,6 @@ namespace eval ::rwdatas {
         public method to_url {lm}
         public method will_provide {keyword reassigned_key}
         public method cleanup {}
-
         public proc   makeUrl {reference} 
     }
 
@@ -74,18 +76,32 @@ namespace eval ::rwdatas {
         chain 
     }
 
-
     ::itcl::body XMLBase::init {args} {
 
-        $::rivetweb::logger log debug "working from directory $::rivetweb::site_base"
+        # processing args. This handler wants 'args' to
+        # be a even length list of 'variable name - variable value'
+
+        if {[llength $args] > 0} {
+
+            $::rivetweb::logger log info "init args: $args ([llength $args])"
+            foreach {pn pv} $args {
+
+                set pv "::rwpage::${pv}"
+
+                $::rivetweb::logger log info "evaluating: eval set $pn [set pv]"
+                eval set $pn [set pv]
+            }
+
+        }
+
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $LOCAL_PAGES
 
-    # we first set up the variables controlling the sitemap
+        # we first set up the variables controlling the sitemap
 
         array set sitemap_stat {}
 
-    # let's rewrite the path to the sitemap
+        # let's rewrite the path to the sitemap
 
         set sitemap_dir  [file normalize [file join $::rivetweb::site_base $sitemap_dir]]
         if {![file exists $sitemap_dir]} {
@@ -118,7 +134,7 @@ namespace eval ::rwdatas {
             $::rivetweb::logger log notice "setting pages path as $static_pages"
         }
         
-    # and the we set the path to the XML pages
+        # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
         set sitemap [::rwsitemap::create ::XMLBase]
@@ -184,6 +200,8 @@ namespace eval ::rwdatas {
 
         catch {$xmldom delete}
 
+        #puts "<pre>[::rivet::escape_sgml_chars $xmldata]</pre>"
+
         set xmldom [dom parse $xmldata]
         set domroot [$xmldom documentElement]
         if {[$domroot hasAttribute id]} {
@@ -193,12 +211,15 @@ namespace eval ::rwdatas {
             set rkey $key
         }
 
-        set menu_d      [dict create]
+        # we give a default to the pageclass key. It's needed in
+        # order to create an instance of page
+
+        set menu_d      [dict create pageclass $pageclass]
         set metadata_l  {}
 
-# metadata are stored accordingly. <menu>...</menu> elements
-# receive a special treatment and go into the menu_d dictionary
-# before they get into the page metadata
+        # metadata are stored accordingly. <menu>...</menu> elements
+        # receive a special treatment and go into the menu_d dictionary
+        # before they get into the page metadata
 
         foreach c [$domroot child all] {
             switch [$c tagName] {
@@ -212,6 +233,11 @@ namespace eval ::rwdatas {
                         set position $::rivetweb::menu_default_pos
                     }
                     dict set menu_d menu [$c getAttribute position $position] [$c text]
+                }
+                pageclass {
+
+                    dict set menu_d pageclass "::rwpage::[$c text]"
+
                 }
                 title -
                 headline {
@@ -228,16 +254,18 @@ namespace eval ::rwdatas {
             }
         }
 
-        set newpage [::rwpage::RWStatic ::#auto $key]
+        set pagetclclass [dict get $menu_d pageclass]
+        set newpage [$pagetclclass ::#auto $key]
 
-#       puts "<br/>[html $metadata_l b u]"
-#       $::rivetweb::pmodel set_metadata newpage $metadata_l
+        # puts "<br/>[html $metadata_l b u]"
+        # $::rivetweb::pmodel set_metadata newpage $metadata_l
 
         set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
         $newpage put_metadata $menu_d
         $newpage add_metadata datasource ::XMLBase
 
-        # data are scanned for <content>...</content> elements to be stored in the page object 'newpage'
+        # data are scanned for <content>...</content> elements to be
+        # stored in the page object 'newpage'
 
         foreach content [$domroot getElementsByTagName content] {
 
@@ -325,6 +353,19 @@ namespace eval ::rwdatas {
         return [$this resource_exists $keyword]
     }
 
+# -- read_xml_data
+#
+#
+    ::itcl::body XMLBase::read_xml_data {xmlfilename} {
+
+        set xmlfp    [open $xmlfilename r]
+        set xmldata  [read $xmlfp]
+ #      puts stderr $xmldata
+        close $xmlfp
+        return $xmldata
+
+    }
+
 # -- fetchData 
 # 
 # This method retrieves a page content from the backend. This implementation
@@ -341,15 +382,18 @@ namespace eval ::rwdatas {
             $::rivetweb::logger log info "->opening $xmlfile ($rkey)" 
 
             if {[catch {
-                set xmlfp    [open $xmlfile r]
-                set xmldata  [read $xmlfp]
-                set xmldata  [regsub -all {<\?} $xmldata {\&lt;?}]
-                set xmldata  [regsub -all {\?>} $xmldata {?\&gt;}]
-#               puts stderr $xmldata
-                close $xmlfp
-            } fileioerr]} {
-                set page_error_msg "Impossible to read page '$key' ($fileioerr)"
-                $::rivetweb::logger err "[$this name] $page_error_msg"
+
+                set xmldata [$this read_xml_data $xmlfile]
+                set xmldata [regsub -all {<\?} $xmldata {\&lt;?}]
+                set xmldata [regsub -all {\?>} $xmldata {?\&gt;}]
+
+            } fileioerr einfo]} {
+                set page_error_msg "Impossible to read page '$key' ($fileioerr)<br/><ul>"
+                dict for {k v} $einfo {
+                    append page_error_msg "<li>$k: $v</li>"
+                }
+                append page_error_msg "</ul>"
+                $::rivetweb::logger log err "[$this name] $page_error_msg"
                 set pagedbentry [::rwpage::RWBasicPage ::#auto xmlbase_error_reading_data $page_error_msg]
             } else {
                 set pagedbentry [$this buildPageEntry $key $xmldata rkey]
@@ -563,7 +607,7 @@ namespace eval ::rwdatas {
 
                 }
 
-                # let's rely entirely on the inner machinery for
+                # let's rely entirely on the class inner machinery for
                 # determining the menu classes
 
                 set tclclass [$this menuclass $menu]
@@ -715,13 +759,13 @@ namespace eval ::rwdatas {
 
         array unset xmlmenu
 
-# This object assumes the files to be in the 'sitemap_dir' directory
-# (its existence has been already checked in 'init')
+        # This object assumes the files to be in the 'sitemap_dir' directory
+        # (its existence has been already checked in 'init')
 
         set xmlmenus [xmlsitemaps $sitemap_dir]
 
-# if there is no menu tree defined we give the database tree 
-# an empty root menu
+        # if there is no menu tree defined we give the database tree 
+        # an empty root menu
 
         if {[llength $xmlmenus] == 0} {
             $logger log notice "no menu file found"
@@ -770,7 +814,7 @@ namespace eval ::rwdatas {
                                                     $group_menu_id \
                                                     [listStaticMenus $sm $group_parent] \
                                                     $position
-                    
+
                     $logger log notice "adding $group_menu_id to $group_parent"
 
                 } else {
