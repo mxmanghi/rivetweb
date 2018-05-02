@@ -18,7 +18,6 @@ namespace eval ::rivetweb {
     ::rivet::load_env env
     ::rivet::apache_log_error debug "running tcl/before.tcl"
 
-
 # let's assign the controlling variables with the corresponding parameters 
 # definitions.
 #

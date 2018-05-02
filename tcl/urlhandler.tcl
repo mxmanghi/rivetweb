@@ -83,6 +83,10 @@ namespace eval ::rwdatas {
     # in the cache, as is_stale is called from 'fetch_page'
     # which checks for the existence of this page (otherwise
     # a page object would have been created)
+    #
+    # This assumption requires the method to be 'private' but
+    # it's 'public' instead. TODO
+    #
 
     ::itcl::body UrlHandler::is_stale {key timereference} {
 
