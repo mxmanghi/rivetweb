@@ -628,6 +628,64 @@ namespace eval ::rivetweb {
 
     }
     namespace export save_channel_status
+    
+    proc make_error_page {e einfo} {
+        set msg "<h4>$e</h4>"
+        dict for {f v} $einfo {
+            switch $f {
+                -errorstack {
+                    append msg "<ul>"
+                    foreach {level dump} $v {
+                        append msg "<li>$level: <pre>$dump</pre></li>"
+                    }
+                    append msg "</ul>"
+                }
+                -errorinfo {
+                    append msg "<pre>$v</pre>"
+                }
+                default {
+                    append msg "<hr/>$f: $v"
+                }
+            }
+            
+        }
+        return $msg
+    }
+    namespace export make_error_page
+    
+    proc simple_page {key ptext} {
+        variable language 
+
+        if {[::RWDummy cache_query $key]} {
+            set pobj [::RWDummy get_page_object $key]
+            if {[$pobj info class] == "::rwpage::BasicPage"} {
+                $pobj pagetext $language $ptext
+            }
+        } else {
+            set pobj [::rwpage::RWBasicPage ::#auto $key $ptext]
+            ::RWDummy store_page $key $pobj
+        }
+        return $pobj
+    }
+    namespace export simple_page
+    
+    proc stacktrace {} {
+        set stack "Stack trace:\n"
+        for {set i 1} {$i < [info level]} {incr i} {
+            set lvl [info level -$i]
+            set pname [lindex $lvl 0]
+            append stack [string repeat " " $i]$pname
+            foreach value [lrange $lvl 1 end] arg [info args $pname] {
+                if {$value eq ""} {
+                    info default $pname $arg value
+                }
+                append stack " $arg='$value'"
+            }
+            append stack \n
+        }
+        return $stack
+    }
+    namespace export stacktrace
 
     namespace ensemble create
 }
