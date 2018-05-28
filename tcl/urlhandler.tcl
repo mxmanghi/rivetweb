@@ -44,7 +44,9 @@ namespace eval ::rwdatas {
         public method to_url {lm}
         #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}
-
+        
+        public method store_page {key pobj}
+        public method clear_cache_entry {key}
         public method cache {} { return $cache }
         public method cache_query { key }
         public method will_provide {keyword reassigned_key}
@@ -151,6 +153,27 @@ namespace eval ::rwdatas {
     ::itcl::body UrlHandler::get_page_object {key} {
         return [dict get $cache $key object]
     }
+    
+# -- store_page
+#
+#
+
+    ::itcl::body UrlHandler::store_page {key pageobj} {
+
+        dict set cache $key object      $pageobj
+        dict set cache $key timestamp   [clock seconds]
+
+    }
+
+# -- clear_cache_entry
+#
+#
+
+    ::itcl::body UrlHandler::clear_cache_entry {key} {
+        catch {
+            dict unset cache $key
+        }
+    }
 
 # -- fetch_page
 #
@@ -178,7 +201,10 @@ namespace eval ::rwdatas {
                     set stored_page [$this get_page_object $key]
 
                     ### catch added for debugging
-                    if {[catch {$stored_page destroy} e opts]} {
+                    if {[catch {
+                            $this clear_cache_entry $key
+                            $stored_page destroy
+                        } e opts]} {
                         ::rivet::apache_log_error err \
                         "[$this info class]::fetch_page failed to delete $stored_page. Cache dump"
                         foreach {k page} $cache { ::rivet::apache_log_error err "$k: $page" }
@@ -187,9 +213,12 @@ namespace eval ::rwdatas {
 
                 set p [$this fetchData $key rkey]
                 if {$key == $rkey} {
-                    dict set cache $key object $p
-                    dict set cache $key timestamp [clock seconds]
+
+                    #dict set cache $key object $p
+                    #dict set cache $key timestamp [clock seconds]
+                    $this store_page $key $p
                     return $p
+
                 } else {
                     return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
                 }
