@@ -99,7 +99,7 @@ namespace eval ::rivetweb {
 
 # site specific 'before' script (if any was created) is evaluated
 
-    if {$::rivetweb::site_before_script != ""} { 
+    if {$::rivetweb::site_before_script != ""} {
         ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
     }
@@ -134,7 +134,9 @@ namespace eval ::rivetweb {
             [::rivetweb::search_handler $::rivetweb::page_key ::rivetweb::page_key ::rivetweb::datasource]
     } else {
         set ::rivetweb::datasource $ds
-        set ::rivetweb::current_page [$::rivetweb::datasource fetch_page $::rivetweb::page_key ::rivetweb::page_key]
+        if {[catch {set ::rivetweb::current_page [$::rivetweb::datasource fetch_page $::rivetweb::page_key ::rivetweb::page_key]} e einfo]} {
+            set ::rivetweb::current_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
+        }
     } 
     $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
 
@@ -150,7 +152,7 @@ namespace eval ::rivetweb {
     set ::rivetweb::current_page \
         [$::rivetweb::current_page prepare_content $::rivetweb::datasource $::rivetweb::language $argsqs]
 
-# sending headers 
+# sending headers
 
     $::rivetweb::current_page send_headers 
 
