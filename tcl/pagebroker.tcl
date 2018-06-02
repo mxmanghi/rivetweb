@@ -12,7 +12,7 @@ namespace eval ::rivetweb {
         private variable class_db       [dict create]
         private variable keyclassmap    [dict create]
 
-        private method check_class_loaded {class_name oosys}
+        public method check_class_loaded {class_name oosys}
         public method key_class_map {key {ooclass ""} {itcl_file ""} {oosys itcl}}
         public method register_class {class_name {itcl_file ""} {oosys itcl}}
         public method check_class {class_name}
@@ -27,17 +27,24 @@ namespace eval ::rivetweb {
 
         set proposed_file_name "[string tolower [namespace tail $class_name]].tcl"
         if {$itcl_file == ""} {
+            set itcl_file_found 0
             foreach subd {tcl class} {
-                set itcl_file [file join  $::rivetweb::site_base \
-                                          $subd \
-                                          $proposed_file_name]
+                set itcl_file [file join $::rivetweb::site_base \
+                                         $subd \
+                                         $proposed_file_name]
 
-                if {[file exists $itcl_file]} {
-                    break
+                if {[file exists $itcl_file]} { 
+                    set itcl_file_found 1
+                    break 
                 }
 
             }
+            if {$itcl_file_found == 0} {
+                return -code error -errorcode class_file_not_found \
+                                              "File for class '$class_name' not found"
+            }
         }
+
 
         if {[dict exists $class_db $class_name]} {
             ::rwlogger log info "(register_class) registering $class_name twice ($itcl_file)"
@@ -80,8 +87,9 @@ namespace eval ::rivetweb {
 
     # -- create_page_obj
     #
-    # sulla base della chiave si crea una pagina se esiste una defizione
-    # di classe associata ad essa tramite il metodod key_class_map
+    # sulla base della chiave si crea una pagina se esiste 
+    # una definizione di classe associata ad essa tramite il 
+    # metodo key_class_map
     #
 
     ::itcl::body PageBroker::create_page_obj {key ooclass reassigned_key args} {    
@@ -131,8 +139,12 @@ namespace eval ::rivetweb {
 
     ::itcl::body PageBroker::check_class {class_name} {
 
-        set itcl_file   [dict get $class_db $class_name file]
-        set oosys       [dict get $class_db $class_name oosys]
+        if {[dict exists $class_db $class_name]} {
+            set itcl_file   [dict get $class_db $class_name file]
+            set oosys       [dict get $class_db $class_name oosys]
+        } else {
+            return false
+        }
 
         if {[$this check_class_loaded $class_name $oosys] == 0} {
 
@@ -145,15 +157,11 @@ namespace eval ::rivetweb {
 
         } else {
 
-
-            #set class_name [$this key_class_map $key]
-            if {$class_name == ""} { return false }
-
             set current_mtime   [file mtime $itcl_file]
             set last_mtime      [dict get $class_db $class_name mtime]
             if {$last_mtime < $current_mtime} {
                 
-                :rwlogger log info \
+                ::rwlogger log info \
                 "class $class_name stale, deleting and then reading from $itcl_file"
 
                 ::itcl::delete class $class_name
@@ -168,4 +176,4 @@ namespace eval ::rivetweb {
     }
 }
 
-package provide PageBroker 1.0
+package provide rwpagebroker 1.0

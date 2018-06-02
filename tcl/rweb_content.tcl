@@ -94,7 +94,7 @@ namespace eval ::rwpage {
         set stored_vars $argsqs 
         incr hits
 
-        # this establishes a context relatioship between this
+        # this establishes a context relationship between this
         # instance of a web content and a urlhandler (formerly
         # known as Datasource)
 
