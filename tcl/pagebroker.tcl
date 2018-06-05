@@ -128,8 +128,6 @@ namespace eval ::rivetweb {
 #
 
     ::itcl::body PageBroker::check_registered_classes {} {
-        variable class_db
-
         foreach class_name [dict keys $class_db] { $this check_class $class_name }
     }
 
