@@ -96,7 +96,8 @@ namespace eval ::rivetweb {
         upvar $reassigned_key rkey
 
         set rkey $key
-        set pobj [$ooclass ::rwpage::#auto $key {*}$args]
+
+        set pobj [eval $ooclass ::rwpage::#auto $key {*}$args]
 
         if {[dict exists $keyclassmap $key configure]} {
             eval $pobj configure [dict get $keyclassmap $key configure]
