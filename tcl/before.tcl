@@ -97,6 +97,8 @@ namespace eval ::rivetweb {
     set argsqs [dict create {*}[::rivet::var_qs all]]
     set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
 
+    #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
+
 # site specific 'before' script (if any was created) is evaluated
 
     if {$::rivetweb::site_before_script != ""} {

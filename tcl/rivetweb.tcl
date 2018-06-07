@@ -686,6 +686,9 @@ namespace eval ::rivetweb {
         return $stack
     }
     namespace export stacktrace
+    
+    proc handlers_list_tampering {urlhandlers} { return $urlhandlers }
+    namespace export handlers_list_tampering
 
     namespace ensemble create
 }

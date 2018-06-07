@@ -69,6 +69,10 @@ if {[file exists $::rivetweb::website_init]} {
 
 ::rivetweb::init RWDummy
 
+# Application replaceable procedure for the handler list tampering
+
+set ::rivetweb::datasources [::rivetweb::handlers_list_tampering $::rivetweb::datasources]
+
 ::rivet::apache_log_error debug "[pwd] - Registered handlers $::rivetweb::datasources"
 
 # this is the very last operation to do after the initialization. We have just
