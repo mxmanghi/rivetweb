@@ -37,8 +37,22 @@ namespace eval ::rivetweb {
     } else {
         set ::rivetweb::rewrite_code ""
     }
-    #set ::rivetweb::is_homepage   [::rivet::var_qs exists homepage]
-    
+
+# we collect the URL-specified arguments and then we move on determining
+# whether this has to be considered the home page of the web site (mostly
+# to allow template specific determination
+
+    set argsqs [dict create {*}[::rivet::var_qs all]]
+    set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
+    # site specific 'before' script (if any was created) is evaluated
+
+# site specific 'before' script (if any) runs here
+
+    if {$::rivetweb::site_before_script != ""} {
+        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
+        source $::rivetweb::site_before_script
+    }
+
 # when Rivetweb is pretending to be a static site, pages fake their location 
 # to be in the a subdirectory of the site root (default: 'static'), so 
 # 'running_picts_path' and running_css_path have to be set accordingly
@@ -94,17 +108,8 @@ namespace eval ::rivetweb {
 #
 # the central point is exactly here: we determine which page we have to display
 #
-    set argsqs [dict create {*}[::rivet::var_qs all]]
-    set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
 
     #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
-
-# site specific 'before' script (if any was created) is evaluated
-
-    if {$::rivetweb::site_before_script != ""} {
-        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
-        source $::rivetweb::site_before_script
-    }
 
     $::rivetweb::logger log debug "registered handlers: [::rivetweb registered_handlers] "
     $::rivetweb::logger log debug "argsqs: $argsqs"
