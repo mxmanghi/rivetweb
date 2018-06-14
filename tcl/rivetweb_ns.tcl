@@ -56,6 +56,7 @@ namespace eval ::rivetweb {
     variable menuclass              RWMenu
     variable htmlizer               ::htmlizer
 
+    variable argsqs                 {}
     variable is_homepage            0
     variable template_key           ""
     variable template_changed       false

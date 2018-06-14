@@ -76,6 +76,12 @@ namespace eval ::rwpage {
 # tdom objects). Abstract method for this class
 
     ::itcl::body RWContent::destroy { } {
+        ::rivet::apache_log_error debug "RWContent::destroy deleting $this"
+        
+#        foreach l [split [::rivetweb::stacktrace] "\n"] {
+#            ::rivet::apache:log_error debug $l
+#        }
+        
         ::rivetweb::notify_url_handlers $this being_removed
         ::itcl::delete object $this
     }
@@ -88,7 +94,7 @@ namespace eval ::rwpage {
         set stored_vars $argsqs 
         incr hits
 
-        # this establishes a context relatioship between this
+        # this establishes a context relationship between this
         # instance of a web content and a urlhandler (formerly
         # known as Datasource)
 
