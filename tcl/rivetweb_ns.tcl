@@ -109,14 +109,14 @@ namespace eval ::rivetweb {
 # website root. 'running_*_paths' are needed because paths
 # change when pages are simulating a static website.
 
-    variable running_picts_path     $picts_path
-    variable running_css_path       $css_path
+#    variable running_picts_path     $picts_path
+#    variable running_css_path       $css_path
 
 # static pages will pretend to be stored in this directory
 # (mirroring tools like 'wget' will actually store them
 # in the 'static' subdirectory)
 
-    variable static_path            static
+#   variable static_path            static
 
 # page variables used to pass parameters between procs and pages
 
