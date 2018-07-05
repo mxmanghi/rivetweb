@@ -94,7 +94,8 @@ namespace eval ::rivetweb {
                             link_class      $link_class     \
                             pictures        $pictures       \
                             dir             $dir            \
-                            menuclass       $menuclass]
+                            menuclass       $menuclass      \
+                            auxiliary       $auxiliary]
     }
 
     ::itcl::body RWTemplate::init {descriptor_file} {
@@ -145,18 +146,17 @@ namespace eval ::rivetweb {
     # un database di formatters
 
     ::itcl::body RWTemplate::read_formatters {dir template_o} {
-
+        $::rivetweb::logger log info "read_formatters [pwd] $dir $template_o"
         set formatters [file join $dir formatters.tcl]
         if {[file exists $formatters]} {
-
-            $::rivetweb::logger log info "reading formatters $formatters"
+            $::rivetweb::logger log debug "reading formatters $formatters"
             set fp [open $formatters r]
             set formatters_code [read $fp]
             close $fp
 
             $template_o register_formatter $formatters_code
         } else {
-            $::rivetweb::logger log err "Impossibile leggere $formatters"
+            $::rivetweb::logger log debug "unable to read formatters definitions $formatters"
         }
 
     }

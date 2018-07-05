@@ -40,13 +40,15 @@ namespace eval ::rivetweb {
 
 # we collect the URL-specified arguments and then we move on determining
 # whether this has to be considered the home page of the web site (mostly
-# to allow template specific determination
+# to allow template specific determination)
+# The is_homepage determination can be overridden in the site specific
+# before script
 
     set argsqs [dict create {*}[::rivet::var_qs all]]
     set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
     # site specific 'before' script (if any was created) is evaluated
 
-# site specific 'before' script (if any) runs here
+# site specific 'before' script (if any) runs here.
 
     if {$::rivetweb::site_before_script != ""} {
         ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
@@ -67,13 +69,9 @@ namespace eval ::rivetweb {
     set running_css      base.css 
 
     if {[::rivet::var exists template]} {
-
         set template_key [::rivet::var_qs get template]
-
     } else {
-
         set template_key [::rivetweb::select_template] 
-
     } 
 
     $::rivetweb::logger log info "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
