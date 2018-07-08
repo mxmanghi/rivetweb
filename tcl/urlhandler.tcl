@@ -56,6 +56,7 @@ namespace eval ::rwdatas {
 
     }
 
+
     # -- destroy
     #
     # application level destruction method
@@ -110,9 +111,10 @@ namespace eval ::rwdatas {
             # deleted, we don't need to delete this instance
             # ourselves, we just remove it from the cache
 
-            if {[dict exists $cache $key]} {
-                dict unset cache key
+            if {[$this cache_query $key]} {
+                $this clear_cache_entry $key
             }
+
         }
 
     }

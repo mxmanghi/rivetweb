@@ -11,6 +11,7 @@ namespace eval ::rivetweb {
     ::itcl::class PageBroker {
         private variable class_db       [dict create]
         private variable keyclassmap    [dict create]
+        private variable log_prefix     "\[[namespace current]\]"
 
         public method check_class_loaded {class_name oosys}
         public method key_class_map {key {ooclass ""} {itcl_file ""} {oosys itcl}}
@@ -148,7 +149,7 @@ namespace eval ::rivetweb {
         if {[$this check_class_loaded $class_name $oosys] == 0} {
 
            ::rwlogger log info \
-                "class $class_name not loaded, reading from $itcl_file"
+                "$log_prefix: class $class_name not loaded, reading from $itcl_file"
 
             source $itcl_file
             dict set class_db $class_name mtime [file mtime $itcl_file]
@@ -159,9 +160,9 @@ namespace eval ::rivetweb {
             set current_mtime   [file mtime $itcl_file]
             set last_mtime      [dict get $class_db $class_name mtime]
             if {$last_mtime < $current_mtime} {
-                
+
                 ::rwlogger log info \
-                "class $class_name stale, deleting and then reading from $itcl_file"
+                "$log_prefix: class $class_name stale, deleting and then reading from $itcl_file"
 
                 ::itcl::delete class $class_name
                 source $itcl_file
