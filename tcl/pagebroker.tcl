@@ -161,9 +161,9 @@ namespace eval ::rivetweb {
             set last_mtime      [dict get $class_db $class_name mtime]
             if {$last_mtime < $current_mtime} {
 
-                ::rwlogger log info \
+                ::rwlogger log notice \
                 "$log_prefix: class $class_name stale, deleting and then reading from $itcl_file"
-
+                ::rivetweb::notify_url_handlers class_being_deleted $class_name
                 ::itcl::delete class $class_name
                 source $itcl_file
                 dict set class_db $class_name mtime [file mtime $itcl_file]

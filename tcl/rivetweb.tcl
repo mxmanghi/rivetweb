@@ -33,12 +33,12 @@ namespace eval ::rivetweb {
 #
 # Method to be used by pages needing to send signals to URL handlers
 
-    proc notify_url_handlers {notifier signal} {
+    proc notify_url_handlers {signal signal_arguments} {
+        
         foreach ds [::rivetweb registered_handlers] {
-            
-            $ds signal $notifier $signal
-            
+            $ds signal $signal $signal_arguments
         }
+
     }
 
 # -- select_datasource
