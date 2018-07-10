@@ -150,8 +150,6 @@ namespace eval ::rwdatas {
 
             if {$p != ""} {
                 $this store_page $key $p
-                #dict set cache $key object $p
-                #dict set cache $key timestamp [clock seconds]
                 set response true
             } else {
                 set response false
@@ -178,11 +176,9 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body UrlHandler::store_page {key pageobj} {
-
         dict set cache $key object      $pageobj
         dict set cache $key timestamp   [clock seconds]
         dict set cache $key class       [$pageobj info class]
-
     }
 
 # -- clear_cache_entry
