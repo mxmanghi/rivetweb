@@ -118,7 +118,6 @@ namespace eval ::rwdatas {
 
                 dict for {key cache_entry} $cache {
                     if {[dict get $cache_entry class] == $signal_arg} {
-                        #::rwlogger log notice "marking $cache_entry for deletion"
                         lappend to_be_removed $key
                     }
                 }
@@ -126,9 +125,10 @@ namespace eval ::rwdatas {
                 foreach k $to_be_removed { $this clear_cache_entry $k }
             }
             page_being_removed {
-                
                 $this clear_cache_entry $signal_arg
-
+            }
+            page_obj_being_removed {
+                $this clear_cache_entry [$signal_arg key]
             }
 
         }
