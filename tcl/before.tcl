@@ -49,7 +49,7 @@ namespace eval ::rivetweb {
     if {[::rivet::var exists template]} {
         set template_key [::rivet::var_qs get template]
     } else {
-        set template_key [::rivetweb::select_template]
+        set template_key [::rivetweb::select_template] 
     } 
 
     $::rivetweb::logger log info "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"

@@ -56,6 +56,7 @@ namespace eval ::rwdatas {
 
     }
 
+
     # -- destroy
     #
     # application level destruction method
@@ -101,18 +102,35 @@ namespace eval ::rwdatas {
     #
     #
 
-    ::itcl::body UrlHandler::signal {notifying_page signal_code} {
+    ::itcl::body UrlHandler::signal {signal_code signal_arg} {
 
-        set key [$notifying_page key]
-        if {$signal_code == "being_removed"} {
+        $::rivetweb::logger log notice "$this signal $signal_code $signal_arg"
 
-            # this signal means that the object is already being
-            # deleted, we don't need to delete this instance
-            # ourselves, we just remove it from the cache
+        switch $signal_code {
 
-            if {[dict exists $cache $key]} {
-                dict unset cache key
+            class_being_deleted {
+
+                # this signal means that the class is already being
+                # deleted. we don't need to delete the page instances
+                # ourselves, we just remove it from the cache
+
+                set to_be_removed {}
+
+                dict for {key cache_entry} $cache {
+                    if {[dict get $cache_entry class] == $signal_arg} {
+                        lappend to_be_removed $key
+                    }
+                }
+
+                foreach k $to_be_removed { $this clear_cache_entry $k }
             }
+            page_being_removed {
+                $this clear_cache_entry $signal_arg
+            }
+            page_obj_being_removed {
+                $this clear_cache_entry [$signal_arg key]
+            }
+
         }
 
     }
@@ -131,8 +149,7 @@ namespace eval ::rwdatas {
             set p [$this fetchData $key rkey]
 
             if {$p != ""} {
-                dict set cache $key object $p
-                dict set cache $key timestamp [clock seconds]
+                $this store_page $key $p
                 set response true
             } else {
                 set response false
@@ -159,10 +176,9 @@ namespace eval ::rwdatas {
 #
 
     ::itcl::body UrlHandler::store_page {key pageobj} {
-
         dict set cache $key object      $pageobj
         dict set cache $key timestamp   [clock seconds]
-
+        dict set cache $key class       [$pageobj info class]
     }
 
 # -- clear_cache_entry
@@ -214,8 +230,6 @@ namespace eval ::rwdatas {
                 set p [$this fetchData $key rkey]
                 if {$key == $rkey} {
 
-                    #dict set cache $key object $p
-                    #dict set cache $key timestamp [clock seconds]
                     $this store_page $key $p
                     return $p
 
@@ -231,8 +245,7 @@ namespace eval ::rwdatas {
             set p [$this fetchData $key rkey]
             ::rivet::apache_log_error debug "[$this info class]::fetch_page returns $rkey in response of key $key"
             if {$p != ""} {
-                dict set cache $key object $p
-                dict set cache $key timestamp [clock seconds]
+                $this store_page $key $p
             } else {
                 set p [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
             }
