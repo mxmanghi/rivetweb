@@ -17,6 +17,7 @@ package require rwlink
 package require urlcomposer
 package require Datasource
 package require RWTemplate
+package require UrlHandler
 package require RWDummy
 package require XMLBase
 
@@ -63,33 +64,37 @@ if {[file exists $::rivetweb::website_init]} {
 # initialization of a specific application 
 # ::rivetweb::init Scripted
 
-::rivetweb::init XMLBase
+::rivetweb::init XMLBase last
 
 # this one is guaranteed to be the last datasource
 
-::rivetweb::init RWDummy
+::rivetweb::init RWDummy last
 
 # Application replaceable procedure for the handler list tampering
 
-set ::rivetweb::datasources [::rivetweb::handlers_list_tampering $::rivetweb::datasources]
+::UrlHandler::set_installed_handlers \
+    [::rivetweb::handlers_list_tampering [::UrlHandler::registered_handlers]]
 
-::rivet::apache_log_error debug "[pwd] - Registered handlers $::rivetweb::datasources"
+::rivet::apache_log_error debug "[pwd] - Registered handlers [::UrlHandler::registered_handlers]"
 
 # this is the very last operation to do after the initialization. We have just
 # instantiated each datasource and we proceed calling the 'init' method for each
-# instance, as listed in ::rivetweb::datasources, in reverse order
+# instance in reverse order in the list of handlers. Application level models 
+# different from the default list based model should provide a meanining about
+# the idea of 'reverse order'
 
 # the main reason for deferring this stage is that 'init' method register error
 # messages within the RWDummy messages database, but RWDummy has to be instantiated for
 # the method 'register_error' to exist
 
-::rivet::apache_log_error debug "Url handlers init $::rivetweb::datasources_args"
+::rivet::apache_log_error debug "Url handlers init [::UrlHandler::handlers_arguments]"
 
-foreach ds [lreverse $::rivetweb::datasources] {
+set handlers_arguments [::UrlHandler::handlers_arguments]
+foreach ds [lreverse [::UrlHandler::registered_handlers]] {
 
-    if {[dict exists $::rivetweb::datasources_args $ds]} {
-        ::rivet::apache_log_error debug "Running init for handler $ds ([dict get $::rivetweb::datasources_args $ds])"
-        $ds init {*}[dict get $::rivetweb::datasources_args $ds]
+    if {[dict exists $hanlers_arguments $ds]} {
+        ::rivet::apache_log_error debug "Running init for handler $ds ([dict get $handlers_arguments $ds])"
+        $ds init {*}[dict get $handlers_arguments $ds]
     } else {
         $ds init        
     }

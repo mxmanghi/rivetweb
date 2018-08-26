@@ -51,7 +51,7 @@ namespace eval ::rivetweb {
                 array unset hook_descriptor
                 source $hook_file
 
-# we assume everything has been stored in the hook_descriptor array
+                # we assume everything has been stored in the hook_descriptor array
 
                 if {![info exists hook_descriptor(textmode)]} {
                     set hook_descriptor(textmode)   text
@@ -68,7 +68,6 @@ namespace eval ::rivetweb {
             }
 
             ::rivet::apache_log_error notice "$nhooks hooks read from $hooks_d"
-            #::rivet::apache_log_error debug   $hooks
         }
     }
 }

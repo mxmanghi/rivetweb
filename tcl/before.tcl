@@ -66,8 +66,10 @@ namespace eval ::rivetweb {
         set template_key [::rivetweb::select_template] 
     } 
 
-    $::rivetweb::logger log info "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
-    $::rivetweb::logger log info "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
+    $::rivetweb::logger log info \
+                "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
+    $::rivetweb::logger log info \
+                "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
 
 # let's build the full path to the template and css files through the Rivetweb specific calls
 
@@ -101,10 +103,13 @@ namespace eval ::rivetweb {
 
     #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
 
-    $::rivetweb::logger log debug "registered handlers: [::rivetweb registered_handlers] "
+    $::rivetweb::logger log debug "registered handlers: [::UrlHandler::registered_handlers] "
     $::rivetweb::logger log debug "argsqs: $argsqs"
     set error_info [dict create]
-    foreach ds [::rivetweb registered_handlers] {
+
+    set ds [::UrlHandler::start_scan]
+
+    while {$ds != ""} {
 
         set ::rivetweb::datasource $ds
         set dsquery [catch { $ds willHandle $argsqs ::rivetweb::page_key } error_code error_info]
@@ -122,11 +127,12 @@ namespace eval ::rivetweb {
 
         }
 
+        set ds [$ds next_handler]
     }
 
     #$::rivetweb::logger log debug "error_code $error_info"
     if {[dict get $error_info -errorcode] == "rw_restart"} {
-        $::rivetweb::logger log debug "datasource search forced"
+        $::rivetweb::logger log debug "url handler search forced"
         set ::rivetweb::current_page \
             [::rivetweb::search_handler $::rivetweb::page_key ::rivetweb::page_key ::rivetweb::datasource]
     } else {

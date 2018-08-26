@@ -10,8 +10,9 @@ namespace eval ::rivetweb {
 
 # this must be the local path to the site's document root
 
-    variable site_base
     variable rivetweb_root
+
+    variable site_base
     variable request
     variable scripts
     variable website_init               rivetweb.tcl
@@ -41,8 +42,8 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable http_encoding          utf-8
-    variable datasources            {}
-    variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
+    #variable datasources            {}
+    #variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
     variable datasource             ::XMLBase
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
@@ -217,36 +218,14 @@ namespace eval ::rivetweb {
 
     proc init {urlhandler {position "last"} args} {
         variable    site_base
-        variable    datasources
-        variable    datasources_args
         variable    logger
         variable    default_lang
 
         package require $urlhandler
 
         set urlhobj [::rwdatas::${urlhandler} ::${urlhandler}]
-        switch $position {
-            first -
-            top {
-                set datasources [linsert $datasources 0 $urlhobj]
-            }
-            bottom -
-            last -
-            default {
-                lappend datasources $urlhobj
-            }
-        }
 
-        # lappend because we don't want to override XMLBase and RWDummy
-        # application specific settings
-
-        if {[llength $args] > 0} {
-            dict set datasources_args $urlhobj $args
-        }
-        #if {[catch {$ds init $args} e einfo]} {
-        #    ::rivet::apache_log_error err "Error initializing $ds ($e)"
-        #    ::rivet::apache_log_error err "Error info: $einfo"
-        #}
+        ::UrlHandler::register_handler $urlobj $position $args
     }
 }
 

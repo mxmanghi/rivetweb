@@ -1,8 +1,9 @@
 #
-# -- root class for datasources
+# -- root class for URL handlers (formerly named datasources)
 #
 #
-# abstract class defining the common interface for all datasources
+# abstract class defining the common interface for all URL handlers
+#
 #
 #
 
@@ -14,7 +15,17 @@ namespace eval ::rwdatas {
 
     ::itcl::class UrlHandler {
 
-        private common ALIASDB [dict create]
+        private common URLHANDLERS
+        private common URLHANDLERS_ARGS
+        private common ALIASDB
+        private common HANDLER_SCAN
+
+        set ALIASDB             [dict create]
+        set URLHANDLERS         {}
+        set URLHANDLERS_ARGS    [dict create ::XMLBase {} ::RWDummy {}]
+
+        private variable scan_context ""
+
         private variable cache [dict create]
 
         private method get_page_object { key } 
@@ -54,6 +65,13 @@ namespace eval ::rwdatas {
         public method signal {notifying_page signal_code}
         public method cleanup {} {}
 
+        public proc register_handler {handler {position top} args}
+        public proc registered_handlers {} { return $URLHANDLERS }
+        public proc handlers_arguments {} { return $URLHANDLERS_ARGS }
+        public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
+        public proc start_scan { set HANDLER_SCAN [lindex $URLHANDLERS 0] }
+        public proc start_scan_reverse { set HANDLER_SCAN [lindex $URLHANDLERS end] }
+        public proc next_handler {}
     }
 
 
@@ -68,9 +86,7 @@ namespace eval ::rwdatas {
             if {[catch {
                 set page [dict get $page_o object]
                 $page destroy
-            } e opts]} {
-                ::rivet::apache_log_error err "Error deleting page $page ($e)"
-            }
+            } e opts]} { ::rivet::apache_log_error err "Error deleting page $page ($e)" }
         }
 
         # specific instance clean up
@@ -78,6 +94,46 @@ namespace eval ::rwdatas {
         $this cleanup 
 
         ::itcl::delete object $this
+    }
+
+    # -- register_handler
+    #
+    #
+
+    ::itcl::body UrlHandler::register_handler {handler {position top} args} {
+
+        switch $position {
+            first -
+            top {
+                set URLHANDLERS [linsert $URLHANDLERS 0 $handler]
+            }
+            bottom -
+            last -
+            default {
+                lappend URLHANDLER $handler
+            }
+        }
+        
+        dict set URLHANDLERS_ARGS $handler $args
+
+    }
+
+    ::itcl::body UrlHandler::next_handler {} {
+        if {$scan_context == ""} {
+            set scan_context [lsearch $URLHANDLERS $this]
+        }
+        set p $scan_context
+        incr p
+        if {$p >= [llength $URLHANDLER]} {
+
+            # in normal operations it shouldn't get 
+            # as far as here, as RWDummy is supposed
+            # to always respond to some request of data
+
+            return ""
+        }
+
+        return [lindex $URLHANDLERS $p]
     }
 
     # -- is_stale

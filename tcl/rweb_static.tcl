@@ -169,7 +169,7 @@ namespace eval ::rwpage {
 #       <processor_name> { element_text attributes }
 #
 
-    ::itcl::body RWStatic::postproc_hooks { datasource hooks_d hooks_class {language ""}} {
+    ::itcl::body RWStatic::postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {
 
         if {[dict exists $hooks_d $hooks_class]} {
 
@@ -206,10 +206,10 @@ namespace eval ::rwpage {
                     }
 
                     if {[string tolower $text_mode] == "xml"} {
-                        set new_element_d [::rivetweb::$processor $datasource $hk \
+                        set new_element_d [::rivetweb::$processor $urlhandler $hk \
                                           [$el2xform asXML -indent 2] $attribute_list]
                     } else {
-                        set new_element_d [::rivetweb::$processor $datasource $hk \
+                        set new_element_d [::rivetweb::$processor $urlhandler $hk \
                                           [$el2xform text] $attribute_list]
                     }
 
