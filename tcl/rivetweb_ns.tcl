@@ -204,9 +204,7 @@ namespace eval ::rivetweb {
 #
 
     proc set_handler_args {handler args} {
-        variable datasources_args
-        
-        dict set datasources_args $handler $args
+        ::rwdatas::UrlHandler::set_handler_arguments $handler $args
     }
 
 # -- init
@@ -223,11 +221,10 @@ namespace eval ::rivetweb {
 
         package require $urlhandler
 
-        set urlhobj [::rwdatas::${urlhandler} ::${urlhandler}]
+        set urlobj [::rwdatas::${urlhandler} ::${urlhandler}]
 
-        ::UrlHandler::register_handler $urlobj $position $args
+        ::rwdatas::UrlHandler::register_handler $urlobj $position {*}$args
     }
 }
 
 package provide rwconf 2.1
-

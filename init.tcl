@@ -72,10 +72,14 @@ if {[file exists $::rivetweb::website_init]} {
 
 # Application replaceable procedure for the handler list tampering
 
-::UrlHandler::set_installed_handlers \
-    [::rivetweb::handlers_list_tampering [::UrlHandler::registered_handlers]]
+# The handler list tampering is deprecated in favour of overriding the method
+# UrlHandler::next_handler
 
-::rivet::apache_log_error debug "[pwd] - Registered handlers [::UrlHandler::registered_handlers]"
+::rivet::apache_log_error debug "[pwd] - Registered handlers pre tampering [::rwdatas::UrlHandler::registered_handlers]"
+::rwdatas::UrlHandler::set_installed_handlers \
+    [::rivetweb::handlers_list_tampering [::rwdatas::UrlHandler::registered_handlers]]
+
+::rivet::apache_log_error debug "[pwd] - Registered handlers [::rwdatas::UrlHandler::registered_handlers]"
 
 # this is the very last operation to do after the initialization. We have just
 # instantiated each datasource and we proceed calling the 'init' method for each
@@ -87,12 +91,12 @@ if {[file exists $::rivetweb::website_init]} {
 # messages within the RWDummy messages database, but RWDummy has to be instantiated for
 # the method 'register_error' to exist
 
-::rivet::apache_log_error debug "Url handlers init [::UrlHandler::handlers_arguments]"
+::rivet::apache_log_error debug "Url handlers init [::rwdatas::UrlHandler::handlers_arguments]"
 
-set handlers_arguments [::UrlHandler::handlers_arguments]
-foreach ds [lreverse [::UrlHandler::registered_handlers]] {
+set handlers_arguments [::rwdatas::UrlHandler::handlers_arguments]
+foreach ds [lreverse [::rwdatas::UrlHandler::registered_handlers]] {
 
-    if {[dict exists $hanlers_arguments $ds]} {
+    if {[dict exists $handlers_arguments $ds]} {
         ::rivet::apache_log_error debug "Running init for handler $ds ([dict get $handlers_arguments $ds])"
         $ds init {*}[dict get $handlers_arguments $ds]
     } else {

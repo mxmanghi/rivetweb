@@ -24,13 +24,13 @@ namespace eval ::rwpage {
         public method print_content { language } {
             #puts -nonewline [$::rivetweb::rwebdb coredump]
 
-            foreach ds $::rivetweb::datasources {
-                set tbhead "$ds ([$ds name])"
-                set dscache [$ds cache]
+            foreach urlh [::rwdatas::UrlHandler::registered_handlers] {
+                set tbhead "$urlh ([$urlh name])"
+                set urlhcache [$urlh cache]
 
-                #puts "<pre>$dscache</pre>"
+                #puts "<pre>$urlhcache</pre>"
                 set tbody ""
-                dict for {key p} $dscache {
+                dict for {key p} $urlhcache {
                     dict with p {
 
                         set rowfields "<td>$object</td>\

@@ -103,11 +103,11 @@ namespace eval ::rivetweb {
 
     #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
 
-    $::rivetweb::logger log debug "registered handlers: [::UrlHandler::registered_handlers] "
+    $::rivetweb::logger log debug "registered handlers: [::rwdatas::UrlHandler::registered_handlers] "
     $::rivetweb::logger log debug "argsqs: $argsqs"
     set error_info [dict create]
 
-    set ds [::UrlHandler::start_scan]
+    set ds [::rwdatas::UrlHandler::start_scan]
 
     while {$ds != ""} {
 
@@ -122,12 +122,12 @@ namespace eval ::rivetweb {
             }
             0 -
             4 {
+                set ds [$ds next_handler]
                 continue
             }
 
         }
 
-        set ds [$ds next_handler]
     }
 
     #$::rivetweb::logger log debug "error_code $error_info"

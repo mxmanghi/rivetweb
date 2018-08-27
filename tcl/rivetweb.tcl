@@ -24,7 +24,7 @@ namespace eval ::rivetweb {
 # of the rivetweb status
 
     proc registered_handlers {} {
-        return [::UrlHandler::registered_handlers]
+        return [::rwdatas::UrlHandler::registered_handlers]
     }
     namespace export registered_handlers
 
@@ -34,7 +34,7 @@ namespace eval ::rivetweb {
 
     proc notify_url_handlers {signal signal_arguments} {
         
-        foreach ds [::UrlHandler::registered_handlers] {
+        foreach ds [::rwdatas::UrlHandler::registered_handlers] {
             $ds signal $signal $signal_arguments
         }
 

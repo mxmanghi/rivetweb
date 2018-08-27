@@ -18,7 +18,6 @@ namespace eval ::rwdatas {
         private common URLHANDLERS
         private common URLHANDLERS_ARGS
         private common ALIASDB
-        private common HANDLER_SCAN
 
         set ALIASDB             [dict create]
         set URLHANDLERS         {}
@@ -68,10 +67,11 @@ namespace eval ::rwdatas {
         public proc register_handler {handler {position top} args}
         public proc registered_handlers {} { return $URLHANDLERS }
         public proc handlers_arguments {} { return $URLHANDLERS_ARGS }
+        public proc set_handler_arguments {handler args} { dict set URLHANDLERS_ARGS $handler dict create {*}$args }
         public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
-        public proc start_scan { set HANDLER_SCAN [lindex $URLHANDLERS 0] }
-        public proc start_scan_reverse { set HANDLER_SCAN [lindex $URLHANDLERS end] }
-        public proc next_handler {}
+        public proc start_scan {} { return [lindex $URLHANDLERS 0] }
+        public proc start_scan_reverse { return [lindex $URLHANDLERS end] }
+        public method next_handler {}
     }
 
 
@@ -110,21 +110,24 @@ namespace eval ::rwdatas {
             bottom -
             last -
             default {
-                lappend URLHANDLER $handler
+                lappend URLHANDLERS $handler
             }
         }
         
         dict set URLHANDLERS_ARGS $handler $args
 
+        ::rivet::apache_log_error notice "registered handlers $URLHANDLERS"
     }
 
     ::itcl::body UrlHandler::next_handler {} {
+
         if {$scan_context == ""} {
             set scan_context [lsearch $URLHANDLERS $this]
         }
+        ::rivet::apache_log_error debug "next_handler: $this (context: $scan_context)"
         set p $scan_context
         incr p
-        if {$p >= [llength $URLHANDLER]} {
+        if {$p >= [llength $URLHANDLERS]} {
 
             # in normal operations it shouldn't get 
             # as far as here, as RWDummy is supposed
