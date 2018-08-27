@@ -508,9 +508,12 @@ namespace eval ::rivetweb {
         # this cycle is guaranteed to return a page, al least 
         # through the last datasource in the chain (::RWDummy)
 
-        foreach ds [::rivetweb registered_handlers] {
+        set ds [::rwdatas::UrlHandler::start_scan]
+
+        while {$ds != ""} {
             if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
                 ::rivet::apache_log_error debug "excluding $ds from search for $key"
+                set ds  [$ds next_handler]
                 continue
             }
 
@@ -542,7 +545,11 @@ namespace eval ::rivetweb {
                 }
 
             }
+            
+            set ds  [$ds next_handler]
         }
+        
+        return [::RWDummy fetchData page_not_found_error rkey]
     }
     namespace export search_handler
 

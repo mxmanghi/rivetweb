@@ -79,13 +79,17 @@ namespace eval ::rwpage {
 
         set ::rivetweb::pagemenus [dict create]
 
-        foreach ds [::rivetweb registered_handlers] {
+        set ds [::rwdatas::UrlHandler::start_scan]
+
+        while {$ds != ""} {
 
             set dsmenu [$ds menu_list $::rivetweb::current_page]
             ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
             dict for {k v} $dsmenu {
                 dict lappend ::rivetweb::pagemenus $k {*}$v
             }
+
+            set ds [$ds next_handler]
         }
 
         ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
