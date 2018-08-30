@@ -33,9 +33,10 @@ namespace eval ::rwpage {
         public method headline {language {hdl ""}}
         public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
 
-        #####
+        #
         # interface designed for the Scripted datasource. Can be moved into
         # application specific code
+        #
 
         public method store {var value} { dict set stored_vars $var $value }
         public method lappend {var value} { dict lappend stored_vars $var $value }
@@ -265,7 +266,6 @@ namespace eval ::rwpage {
         ::rivet::parse $::rivetweb::running_template
 
     }
-
 
     proc create {key {class RWStatic}} {
         return [$class ::#auto $key]

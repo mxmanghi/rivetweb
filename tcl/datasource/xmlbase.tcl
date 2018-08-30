@@ -262,7 +262,7 @@ namespace eval ::rwdatas {
 
         set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
         $newpage put_metadata $menu_d
-        $newpage add_metadata datasource ::XMLBase
+        #$newpage add_metadata datasource ::XMLBase
 
         # data are scanned for <content>...</content> elements to be
         # stored in the page object 'newpage'
@@ -676,6 +676,7 @@ namespace eval ::rwdatas {
                                     dict set linfo $language [$infoel text]
                                 }
                             }
+                            urlhandler -
                             datasource 
                             {
                                 set lowner [$linkdata text]
@@ -840,7 +841,7 @@ namespace eval ::rwdatas {
             $this load_sitemap $sitemap
         }
 
-        if {[$page metadata datasource] == "::XMLBase"} {
+        if {[$page current_handler] == "::XMLBase"} {
 
             set menul [$page metadata menu]
 
