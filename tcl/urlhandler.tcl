@@ -15,11 +15,14 @@ namespace eval ::rwdatas {
 
     ::itcl::class UrlHandler {
 
+        private common CURR_URLHANDLER
+
         private common URLHANDLERS
         private common URLHANDLERS_ARGS
         private common ALIASDB
 
         set ALIASDB             [dict create]
+        set CURR_URLHANDLER     ""
         set URLHANDLERS         {}
         set URLHANDLERS_ARGS    [dict create ::XMLBase {} ::RWDummy {}]
 
@@ -52,7 +55,6 @@ namespace eval ::rwdatas {
         public method resource_exists {resource_key} { return false }
         public method get_resource_repr {resource_key}  { return "" }
         public method to_url {lm}
-        #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}
         
         public method store_page {key pobj}
@@ -71,6 +73,11 @@ namespace eval ::rwdatas {
         public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
         public proc start_scan {} { return [lindex $URLHANDLERS 0] }
         public proc start_scan_reverse { return [lindex $URLHANDLERS end] }
+
+        public proc select_handler {argsqs}
+        public proc select_page {argsqs}
+        public proc current_handler {}
+
         public method next_handler {}
     }
 
@@ -138,6 +145,86 @@ namespace eval ::rwdatas {
 
         return [lindex $URLHANDLERS $p]
     }
+
+    # -- select_handler
+    #
+    # handler selection driven by the URL arguments
+    #
+    
+    ::itcl::body UrlHandler::select_handler {urlargs} {
+        set urlh [::rwdatas::UrlHandler::start_scan]
+        set error_info [dict create]
+        set page_key ""
+
+        while {$urlh != ""} {
+
+            #set ::rivetweb::datasource $urlh
+
+            set urlquery [catch { $urlh willHandle $urlargs page_key } error_code error_info]
+            $::rivetweb::logger log info "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
+
+            switch $urlquery {
+
+                3 {
+                    break
+                }
+                0 -
+                4 {
+                    set urlh [$urlh next_handler]
+                    continue
+                }
+
+            }
+
+        }
+
+        #$::rivetweb::logger log debug "error_code $error_info"
+        if {[dict get $error_info -errorcode] == "rw_restart"} {
+            $::rivetweb::logger log debug "url handler search forced"
+            set ::rivetweb::current_page \
+                [::rivetweb::search_handler $page_key page_key urlh]
+        }
+        
+        set ::rivetweb::datasource $urlh
+        set CURR_URLHANDLER $urlh
+
+        $::rivetweb::logger log info "current handler is $CURR_URLHANDLER"
+
+        return $page_key
+
+    }
+    
+    # -- current_handler 
+    #
+    #
+    
+    ::itcl::body UrlHandler::current_handler {} { return $CURR_URLHANDLER }
+    
+
+    # -- select_page
+    #
+    # Front-end call to retrieve a page.
+    #
+    #
+    
+    ::itcl::body UrlHandler::select_page {argsqs} {
+        
+        set page_key [::rwdatas::UrlHandler::select_handler $argsqs]
+        
+        $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
+
+        if {[catch {
+                set selected_page [[::rwdatas::UrlHandler::current_handler] fetch_page $page_key page_key]
+            } e einfo]} {
+            $::rivetweb::logger log err "error: $e ($einfo) "
+            set selected_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
+        }
+        
+        set ::rivetweb::page_key $page_key
+
+        return $selected_page
+    }
+
 
     # -- is_stale
     #

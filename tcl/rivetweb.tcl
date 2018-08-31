@@ -337,8 +337,8 @@ namespace eval ::rivetweb {
 
         set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
         return [::rivet::xml "" [concat script 	type "text/javascript" \
-											    src  [::rivetweb jscript_path $jscript_file] \
-												{*}$attributes]]
+                                                src  [::rivetweb jscript_path $jscript_file] \
+                                                {*}$attributes]]
 
     }
     namespace export javascript
