@@ -14,28 +14,27 @@ catch { package require Rivet }
 #  Rivetweb child process initialization
 #-
 
-# prefetch index page
-#$::rivetweb::rwebdb fetch index 
 
-# building an in-memory database of available templates for this website
+namespace eval ::rivetweb {
 
-::rivet::apache_log_error notice "Initializing Apache child [pid], [pwd]"
+    # building an in-memory database of available templates for this website
 
-set templates_dir [file join $::rivetweb::site_base $::rivetweb::base_templates]
+    ::rivet::apache_log_error notice "Initializing Apache child [pid], [pwd]"
 
-::rivet::apache_log_error info "templates directory tree root $::rivetweb::templates_dir (pwd: [pwd])"
+    set templates_dir [file join $::rivetweb::site_base $::rivetweb::base_templates]
 
-::rivetweb::RWTemplate::load_templates $templates_dir
+    ::rivet::apache_log_error info "templates directory tree root $::rivetweb::templates_dir (pwd: [pwd])"
 
-::rivet::apache_log_error info "registered templates: $::rivetweb::RWTemplate::templates_db"
+    ::rivetweb::RWTemplate::load_templates $templates_dir
 
-dict for {key templ} $::rivetweb::RWTemplate::templates_db {
-    ::rivet::apache_log_error debug "template $key: $templ"
-}
+    ::rivet::apache_log_error info "registered templates: $::rivetweb::RWTemplate::templates_db"
+
+    dict for {key templ} $::rivetweb::RWTemplate::templates_db {
+        ::rivet::apache_log_error debug "template $key: $templ"
+    }
 
 # now we build the hooks database
 
-namespace eval ::rivetweb {
 
 # scanning for hooks from rivetweb installation and thee hooks directory in $site_base
 #
