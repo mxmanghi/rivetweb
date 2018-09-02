@@ -252,8 +252,7 @@ namespace eval ::rivetweb {
 #
 
     proc findPictureFile {picts_file temp_key} {
-        ::rivet::apache_log_error debug \
-        "style $temp_key $::rivetweb::running_picts_path (site_base: $::rivetweb::site_base)"
+        ::rivet::apache_log_error debug "style $temp_key , site_base: $::rivetweb::site_base"
 
 # search list for a picts file. 
 #
@@ -261,9 +260,6 @@ namespace eval ::rivetweb {
 #    - then we try the template picts directory 
 #    - then we try in the website root 'picts' directory
 #    - last we attempt in the rwbase dir
-
-# we have to deceive static links (relative to the ::rivetweb::static_path variable)
-# but still we must be aware we are running from /index.rvt
 
         set template_picts [::rivetweb::RWTemplate::template $temp_key pictures]
         set template_dir   [::rivetweb::RWTemplate::template $temp_key dir]

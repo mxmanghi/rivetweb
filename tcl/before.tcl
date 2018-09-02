@@ -38,7 +38,6 @@ namespace eval ::rivetweb {
 
     set argsqs [dict create {*}[::rivet::var_qs all]]
     set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
-    # site specific 'before' script (if any was created) is evaluated
 
 # site specific 'before' script (if any) runs here.
 
@@ -46,19 +45,6 @@ namespace eval ::rivetweb {
         ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
     }
-
-# when Rivetweb is pretending to be a static site, pages fake their location 
-# to be in the a subdirectory of the site root (default: 'static'), so 
-# 'running_picts_path' and running_css_path have to be set accordingly
-
-    set ::rivetweb::running_picts_path  $::rivetweb::picts_path
-    set ::rivetweb::running_css_path    $::rivetweb::css_path
-
-# let's determine which template we are using. We set a couple of default
-# values for the running template and basic associated CSS
-
-    set running_template base.rvt
-    set running_css      base.css 
 
     if {[::rivet::var exists template]} {
         set template_key [::rivet::var_qs get template]
