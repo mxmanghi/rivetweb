@@ -109,7 +109,7 @@ namespace eval ::rivetweb {
     # temporary hack: this variable should go away as every reference
     # to the now obsolete definition of datasource (at least in this context)
 
-    set ::rivetweb::page_key     [::rwdatas::UrlHandler::select_handler $argsqs]
+    #set ::rivetweb::page_key     [::rwdatas::UrlHandler::select_handler $argsqs]
     set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page    $argsqs]
 
 #

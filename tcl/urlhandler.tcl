@@ -4,8 +4,7 @@
 #
 # abstract class defining the common interface for all URL handlers
 #
-#
-#
+
 
 package require Itcl
 package require rwconf
@@ -126,6 +125,11 @@ namespace eval ::rwdatas {
         ::rivet::apache_log_error notice "registered handlers $URLHANDLERS"
     }
 
+    # -- next_handler
+    #
+    #
+    #
+
     ::itcl::body UrlHandler::next_handler {} {
 
         if {$scan_context == ""} {
@@ -160,8 +164,10 @@ namespace eval ::rwdatas {
 
             #set ::rivetweb::datasource $urlh
 
+            $::rivetweb::logger log debug [::rivet::xml "querying $urlh" pre]
+
             set urlquery [catch { $urlh willHandle $urlargs page_key } error_code error_info]
-            $::rivetweb::logger log info "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
+            $::rivetweb::logger log debug "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
 
             switch $urlquery {
 
@@ -211,7 +217,7 @@ namespace eval ::rwdatas {
         
         set page_key [::rwdatas::UrlHandler::select_handler $argsqs]
         
-        $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
+        $::rivetweb::logger log info "processing request for '$page_key'"
 
         if {[catch {
                 set selected_page [[::rwdatas::UrlHandler::current_handler] fetch_page $page_key page_key]
@@ -224,7 +230,6 @@ namespace eval ::rwdatas {
 
         return $selected_page
     }
-
 
     # -- is_stale
     #
