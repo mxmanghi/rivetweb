@@ -49,6 +49,12 @@ namespace eval ::rwpage {
         public method send_output {language} { $this print_content $language }
         public method refresh {timereference} { return true } 
         public method to_string {} { return [dict create hits $hits key $key] }
+
+        destructor {
+            ::rivet::apache_log_error debug "RWContent destructor for $this running"
+            ::rivetweb::notify_url_handlers page_being_removed [$this key]
+        }
+
     }
 
 # -- send_headers
@@ -81,8 +87,7 @@ namespace eval ::rwpage {
 #        foreach l [split [::rivetweb::stacktrace] "\n"] {
 #            ::rivet::apache:log_error debug $l
 #        }
-        
-        ::rivetweb::notify_url_handlers $this being_removed
+
         ::itcl::delete object $this
     }
 
