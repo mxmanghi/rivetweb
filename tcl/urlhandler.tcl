@@ -197,7 +197,6 @@ namespace eval ::rwdatas {
         $::rivetweb::logger log info "current handler is $CURR_URLHANDLER"
 
         return $page_key
-
     }
     
     # -- current_handler 
@@ -225,7 +224,7 @@ namespace eval ::rwdatas {
             $::rivetweb::logger log err "error: $e ($einfo) "
             set selected_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
         }
-        
+
         set ::rivetweb::page_key $page_key
 
         return $selected_page
@@ -407,12 +406,14 @@ namespace eval ::rwdatas {
     
     # -- set_alias
     #
+    #
 
     ::itcl::body UrlHandler::set_alias {alias aliasdef} {
         dict set ALIASDB $alias $aliasdef
     }
 
     # -- get_alias
+    #
     #
 
     ::itcl::body UrlHandler::get_alias {alias aliasdef} {
@@ -426,6 +427,17 @@ namespace eval ::rwdatas {
 
         return $alias_found
     }
+
+    # -- to_url
+    #
+    # basic method that transforms the arguments stored in
+    # a link object so that URL specified arguments convert
+    # into a form compliant with an application specific 
+    # resource definition
+    #
+    # to the very least the method must return the a link
+    # object. Thus, since this is a base class, we return the
+    # argument itself
 
     ::itcl::body UrlHandler::to_url {lm} {
         return $lm
