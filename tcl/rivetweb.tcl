@@ -9,7 +9,6 @@
 package require Tcl 8.6
 
 package require rwconf
-package require rwebdb
 package require rwlogger
 
 package require rwlink
@@ -25,7 +24,7 @@ namespace eval ::rivetweb {
 # of the rivetweb status
 
     proc registered_handlers {} {
-        return $::rivetweb::datasources
+        return [::rwdatas::UrlHandler::registered_handlers]
     }
     namespace export registered_handlers
 
@@ -35,7 +34,7 @@ namespace eval ::rivetweb {
 
     proc notify_url_handlers {signal signal_arguments} {
         
-        foreach ds [::rivetweb registered_handlers] {
+        foreach ds [::rwdatas::UrlHandler::registered_handlers] {
             $ds signal $signal $signal_arguments
         }
 
@@ -253,8 +252,7 @@ namespace eval ::rivetweb {
 #
 
     proc findPictureFile {picts_file temp_key} {
-        ::rivet::apache_log_error debug \
-        "style $temp_key $::rivetweb::running_picts_path (site_base: $::rivetweb::site_base)"
+        ::rivet::apache_log_error debug "style $temp_key , site_base: $::rivetweb::site_base"
 
 # search list for a picts file. 
 #
@@ -262,9 +260,6 @@ namespace eval ::rivetweb {
 #    - then we try the template picts directory 
 #    - then we try in the website root 'picts' directory
 #    - last we attempt in the rwbase dir
-
-# we have to deceive static links (relative to the ::rivetweb::static_path variable)
-# but still we must be aware we are running from /index.rvt
 
         set template_picts [::rivetweb::RWTemplate::template $temp_key pictures]
         set template_dir   [::rivetweb::RWTemplate::template $temp_key dir]
@@ -338,8 +333,8 @@ namespace eval ::rivetweb {
 
         set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
         return [::rivet::xml "" [concat script 	type "text/javascript" \
-											    src  [::rivetweb jscript_path $jscript_file] \
-												{*}$attributes]]
+                                                src  [::rivetweb jscript_path $jscript_file] \
+                                                {*}$attributes]]
 
     }
     namespace export javascript
@@ -509,9 +504,12 @@ namespace eval ::rivetweb {
         # this cycle is guaranteed to return a page, al least 
         # through the last datasource in the chain (::RWDummy)
 
-        foreach ds [::rivetweb registered_handlers] {
+        set ds [::rwdatas::UrlHandler::start_scan]
+
+        while {$ds != ""} {
             if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
                 ::rivet::apache_log_error debug "excluding $ds from search for $key"
+                set ds  [$ds next_handler]
                 continue
             }
 
@@ -543,7 +541,11 @@ namespace eval ::rivetweb {
                 }
 
             }
+            
+            set ds  [$ds next_handler]
         }
+        
+        return [::RWDummy fetchData page_not_found_error rkey]
     }
     namespace export search_handler
 

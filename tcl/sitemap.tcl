@@ -20,14 +20,14 @@ namespace eval ::rwsitemap {
     ::itcl::class RWSitemap {
         private variable disconnected       
         private variable sitemap_tree 
-        private variable datasource
+        private variable url_handler
         private variable cnt
         private common   smcnt      0
 
-        constructor {ds} {
+        constructor {urlh} {
 
-            set cnt         0
-            set datasource  $ds
+            set cnt             0
+            set url_handler     $urlh
 
 # The sitemap structure is implemented by a ::struct::tree Tcl
 # structure
@@ -74,25 +74,25 @@ namespace eval ::rwsitemap {
 # -- has_updates
 #
 # this method should cycle through the data sources listed
-# in the data_source_l list ("*" means all of the registered datasources)
-# and returns in the ood variable a list of datasources that have
+# in the data_source_l list ("*" means all of the registered url handlers)
+# and returns in the ood variable a list of url_handlers that have
 # updates
 
     ::itcl::body RWSitemap::has_updates {{data_source_l "*"} {ood out_of_date}} {
         upvar $ood need_update_l
 
         set need_update_ds {}
-        return [$datasource has_updates]
+        return [$url_handler has_updates]
     }
 
 # -- sitemap_reload
 #
-# reloads the sitemap and informs the datasource that this
+# reloads the sitemap and informs the url handler that this
 # ensemble is the sitemap manager he has to talk to.
 #
 
     ::itcl::body RWSitemap::sitemap_reload {} {
-        $datasource load_sitemap $this
+        $url_handler load_sitemap $this
     }
 
 # -- add_menu_group 

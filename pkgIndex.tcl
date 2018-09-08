@@ -17,7 +17,6 @@ package ifneeded Scripted 2.0 [list source [file join $rivetweb_dir tcl datasour
 package ifneeded htmlizer 1.0 [list source [file join $rivetweb_dir tcl htmlizer.tcl]]
 package ifneeded rivetweb 2.0 [list source [file join $rivetweb_dir tcl rivetweb.tcl]]
 package ifneeded rwconf 2.1 [list source [file join $rivetweb_dir tcl rivetweb_ns.tcl]]
-package ifneeded rwebdb 2.0 [list source [file join $rivetweb_dir tcl rweb_coredb.tcl]]
 package ifneeded rwlink 2.0 [list source [file join $rivetweb_dir tcl rweb_link.tcl]]
 package ifneeded rwlogger 1.0 [list source [file join $rivetweb_dir tcl rwlogger.tcl]]
 package ifneeded rwmenu 1.0 [list source [file join $rivetweb_dir tcl rweb_menumodel.tcl]]

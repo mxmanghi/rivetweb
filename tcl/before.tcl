@@ -38,7 +38,6 @@ namespace eval ::rivetweb {
 
     set argsqs [dict create {*}[::rivet::var_qs all]]
     set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
-    # site specific 'before' script (if any was created) is evaluated
 
 # site specific 'before' script (if any) runs here.
 
@@ -47,27 +46,16 @@ namespace eval ::rivetweb {
         source $::rivetweb::site_before_script
     }
 
-# when Rivetweb is pretending to be a static site, pages fake their location 
-# to be in the a subdirectory of the site root (default: 'static'), so 
-# 'running_picts_path' and running_css_path have to be set accordingly
-
-    set ::rivetweb::running_picts_path  $::rivetweb::picts_path
-    set ::rivetweb::running_css_path    $::rivetweb::css_path
-
-# let's determine which template we are using. We set a couple of default
-# values for the running template and basic associated CSS
-
-    set running_template base.rvt
-    set running_css      base.css 
-
     if {[::rivet::var exists template]} {
         set template_key [::rivet::var_qs get template]
     } else {
         set template_key [::rivetweb::select_template] 
     } 
 
-    $::rivetweb::logger log info "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
-    $::rivetweb::logger log info "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
+    $::rivetweb::logger log info \
+                "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
+    $::rivetweb::logger log info \
+                "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
 
 # let's build the full path to the template and css files through the Rivetweb specific calls
 
@@ -84,8 +72,8 @@ namespace eval ::rivetweb {
         set ::rivetweb::template_changed false
     }
 
-# we determine the language for this request (keep in mind we are running
-# within the ::rivetweb namespace)
+# we determine the language for this request
+# (keep in mind we are running within the ::rivetweb namespace)
 
     if {[::rivet::var exists lang]} {
         set language [::rivet::var get lang]
@@ -101,45 +89,18 @@ namespace eval ::rivetweb {
 
     #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
 
-    $::rivetweb::logger log debug "registered handlers: [::rivetweb registered_handlers] "
+    $::rivetweb::logger log debug "registered handlers: [::rwdatas::UrlHandler::registered_handlers]"
     $::rivetweb::logger log debug "argsqs: $argsqs"
-    set error_info [dict create]
-    foreach ds [::rivetweb registered_handlers] {
 
-        set ::rivetweb::datasource $ds
-        set dsquery [catch { $ds willHandle $argsqs ::rivetweb::page_key } error_code error_info]
-        $::rivetweb::logger log info "$ds: dsquery, ecode, einfo: $dsquery | $error_code | $error_info"
+    # temporary hack: this variable should go away as every reference
+    # to the now obsolete definition of datasource (at least in this context)
 
-        switch $dsquery {
-
-            3 {
-                break
-            }
-            0 -
-            4 {
-                continue
-            }
-
-        }
-
-    }
-
-    #$::rivetweb::logger log debug "error_code $error_info"
-    if {[dict get $error_info -errorcode] == "rw_restart"} {
-        $::rivetweb::logger log debug "datasource search forced"
-        set ::rivetweb::current_page \
-            [::rivetweb::search_handler $::rivetweb::page_key ::rivetweb::page_key ::rivetweb::datasource]
-    } else {
-        set ::rivetweb::datasource $ds
-        if {[catch {set ::rivetweb::current_page [$::rivetweb::datasource fetch_page $::rivetweb::page_key ::rivetweb::page_key]} e einfo]} {
-            set ::rivetweb::current_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
-        }
-    }
-    $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
+    #set ::rivetweb::page_key     [::rwdatas::UrlHandler::select_handler $argsqs]
+    set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page    $argsqs]
 
 #
 # The three stage generation of a page
-#   
+#
 #     * page content preparation
 #     * HTTP header generation and transmission
 #     * page data transmission

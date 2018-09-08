@@ -1,10 +1,10 @@
 #
-# -- root class for datasources
+# -- root class for URL handlers (formerly named datasources)
 #
 #
-# abstract class defining the common interface for all datasources
+# abstract class defining the common interface for all URL handlers
 #
-#
+
 
 package require Itcl
 package require rwconf
@@ -14,7 +14,19 @@ namespace eval ::rwdatas {
 
     ::itcl::class UrlHandler {
 
-        private common ALIASDB [dict create]
+        private common CURR_URLHANDLER
+
+        private common URLHANDLERS
+        private common URLHANDLERS_ARGS
+        private common ALIASDB
+
+        set ALIASDB             [dict create]
+        set CURR_URLHANDLER     ""
+        set URLHANDLERS         {}
+        set URLHANDLERS_ARGS    [dict create ::XMLBase {} ::RWDummy {}]
+
+        private variable scan_context ""
+
         private variable cache [dict create]
 
         private method get_page_object { key } 
@@ -42,7 +54,6 @@ namespace eval ::rwdatas {
         public method resource_exists {resource_key} { return false }
         public method get_resource_repr {resource_key}  { return "" }
         public method to_url {lm}
-        #public method rewrite_url {rwcode urlscript urlargs rewritten_base}
         public method after_request {} {}
         
         public method store_page {key pobj}
@@ -54,6 +65,19 @@ namespace eval ::rwdatas {
         public method signal {notifying_page signal_code}
         public method cleanup {} {}
 
+        public proc register_handler {handler {position top} args}
+        public proc registered_handlers {} { return $URLHANDLERS }
+        public proc handlers_arguments {} { return $URLHANDLERS_ARGS }
+        public proc set_handler_arguments {handler args} { dict set URLHANDLERS_ARGS $handler dict create {*}$args }
+        public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
+        public proc start_scan {} { return [lindex $URLHANDLERS 0] }
+        public proc start_scan_reverse { return [lindex $URLHANDLERS end] }
+
+        public proc select_handler {argsqs}
+        public proc select_page {argsqs}
+        public proc current_handler {}
+
+        public method next_handler {}
     }
 
 
@@ -68,9 +92,7 @@ namespace eval ::rwdatas {
             if {[catch {
                 set page [dict get $page_o object]
                 $page destroy
-            } e opts]} {
-                ::rivet::apache_log_error err "Error deleting page $page ($e)"
-            }
+            } e opts]} { ::rivet::apache_log_error err "Error deleting page $page ($e)" }
         }
 
         # specific instance clean up
@@ -78,6 +100,134 @@ namespace eval ::rwdatas {
         $this cleanup 
 
         ::itcl::delete object $this
+    }
+
+    # -- register_handler
+    #
+    #
+
+    ::itcl::body UrlHandler::register_handler {handler {position top} args} {
+
+        switch $position {
+            first -
+            top {
+                set URLHANDLERS [linsert $URLHANDLERS 0 $handler]
+            }
+            bottom -
+            last -
+            default {
+                lappend URLHANDLERS $handler
+            }
+        }
+        
+        dict set URLHANDLERS_ARGS $handler $args
+
+        ::rivet::apache_log_error notice "registered handlers $URLHANDLERS"
+    }
+
+    # -- next_handler
+    #
+    #
+    #
+
+    ::itcl::body UrlHandler::next_handler {} {
+
+        if {$scan_context == ""} {
+            set scan_context [lsearch $URLHANDLERS $this]
+        }
+        ::rivet::apache_log_error debug "next_handler: $this (context: $scan_context)"
+        set p $scan_context
+        incr p
+        if {$p >= [llength $URLHANDLERS]} {
+
+            # in normal operations it shouldn't get 
+            # as far as here, as RWDummy is supposed
+            # to always respond to some request of data
+
+            return ""
+        }
+
+        return [lindex $URLHANDLERS $p]
+    }
+
+    # -- select_handler
+    #
+    # handler selection driven by the URL arguments
+    #
+    
+    ::itcl::body UrlHandler::select_handler {urlargs} {
+        set urlh [::rwdatas::UrlHandler::start_scan]
+        set error_info [dict create]
+        set page_key ""
+
+        while {$urlh != ""} {
+
+            #set ::rivetweb::datasource $urlh
+
+            $::rivetweb::logger log debug [::rivet::xml "querying $urlh" pre]
+
+            set urlquery [catch { $urlh willHandle $urlargs page_key } error_code error_info]
+            $::rivetweb::logger log debug "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
+
+            switch $urlquery {
+
+                3 {
+                    break
+                }
+                0 -
+                4 {
+                    set urlh [$urlh next_handler]
+                    continue
+                }
+
+            }
+
+        }
+
+        #$::rivetweb::logger log debug "error_code $error_info"
+        if {[dict get $error_info -errorcode] == "rw_restart"} {
+            $::rivetweb::logger log debug "url handler search forced"
+            set ::rivetweb::current_page \
+                [::rivetweb::search_handler $page_key page_key urlh]
+        }
+        
+        set ::rivetweb::datasource $urlh
+        set CURR_URLHANDLER $urlh
+
+        $::rivetweb::logger log info "current handler is $CURR_URLHANDLER"
+
+        return $page_key
+    }
+    
+    # -- current_handler 
+    #
+    #
+    
+    ::itcl::body UrlHandler::current_handler {} { return $CURR_URLHANDLER }
+    
+
+    # -- select_page
+    #
+    # Front-end call to retrieve a page.
+    #
+    #
+    
+    ::itcl::body UrlHandler::select_page {argsqs} {
+        
+        set page_key [::rwdatas::UrlHandler::select_handler $argsqs]
+        
+        $::rivetweb::logger log info "processing request for '$page_key'"
+
+        if {[catch {
+                set selected_page [[::rwdatas::UrlHandler::current_handler] fetch_page $page_key page_key]
+            } e einfo]} {
+            $::rivetweb::logger log err "error: $e ($einfo) "
+            set selected_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
+        }
+
+        set ::rivetweb::page_key $page_key
+
+        return $selected_page
     }
 
     # -- is_stale
@@ -256,12 +406,14 @@ namespace eval ::rwdatas {
     
     # -- set_alias
     #
+    #
 
     ::itcl::body UrlHandler::set_alias {alias aliasdef} {
         dict set ALIASDB $alias $aliasdef
     }
 
     # -- get_alias
+    #
     #
 
     ::itcl::body UrlHandler::get_alias {alias aliasdef} {
@@ -275,6 +427,17 @@ namespace eval ::rwdatas {
 
         return $alias_found
     }
+
+    # -- to_url
+    #
+    # basic method that transforms the arguments stored in
+    # a link object so that URL specified arguments convert
+    # into a form compliant with an application specific 
+    # resource definition
+    #
+    # to the very least the method must return the a link
+    # object. Thus, since this is a base class, we return the
+    # argument itself
 
     ::itcl::body UrlHandler::to_url {lm} {
         return $lm

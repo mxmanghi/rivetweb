@@ -10,8 +10,9 @@ namespace eval ::rivetweb {
 
 # this must be the local path to the site's document root
 
-    variable site_base
     variable rivetweb_root
+
+    variable site_base
     variable request
     variable scripts
     variable website_init               rivetweb.tcl
@@ -41,8 +42,8 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable http_encoding          utf-8
-    variable datasources            {}
-    variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
+    #variable datasources            {}
+    #variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
     variable datasource             ::XMLBase
     variable rwebdb                 ::rwebdb
     variable logger                 ::rwlogger
@@ -109,14 +110,14 @@ namespace eval ::rivetweb {
 # website root. 'running_*_paths' are needed because paths
 # change when pages are simulating a static website.
 
-    variable running_picts_path     $picts_path
-    variable running_css_path       $css_path
+#    variable running_picts_path     $picts_path
+#    variable running_css_path       $css_path
 
 # static pages will pretend to be stored in this directory
 # (mirroring tools like 'wget' will actually store them
 # in the 'static' subdirectory)
 
-    variable static_path            static
+#   variable static_path            static
 
 # page variables used to pass parameters between procs and pages
 
@@ -203,9 +204,7 @@ namespace eval ::rivetweb {
 #
 
     proc set_handler_args {handler args} {
-        variable datasources_args
-        
-        dict set datasources_args $handler $args
+        ::rwdatas::UrlHandler::set_handler_arguments $handler $args
     }
 
 # -- init
@@ -217,38 +216,15 @@ namespace eval ::rivetweb {
 
     proc init {urlhandler {position "last"} args} {
         variable    site_base
-        variable    datasources
-        variable    datasources_args
         variable    logger
         variable    default_lang
 
         package require $urlhandler
 
-        set urlhobj [::rwdatas::${urlhandler} ::${urlhandler}]
-        switch $position {
-            first -
-            top {
-                set datasources [linsert $datasources 0 $urlhobj]
-            }
-            bottom -
-            last -
-            default {
-                lappend datasources $urlhobj
-            }
-        }
+        set urlobj [::rwdatas::${urlhandler} ::${urlhandler}]
 
-        # lappend because we don't want to override XMLBase and RWDummy
-        # application specific settings
-
-        if {[llength $args] > 0} {
-            dict set datasources_args $urlhobj $args
-        }
-        #if {[catch {$ds init $args} e einfo]} {
-        #    ::rivet::apache_log_error err "Error initializing $ds ($e)"
-        #    ::rivet::apache_log_error err "Error info: $einfo"
-        #}
+        ::rwdatas::UrlHandler::register_handler $urlobj $position {*}$args
     }
 }
 
 package provide rwconf 2.1
-
