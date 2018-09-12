@@ -178,7 +178,7 @@ namespace eval ::rwdatas {
                     "fetching $key from $handler -> returned values: $rkey"
 
                 set pobj [$handler fetch_page $key rkey]
-                if {$pmodel != ""} {
+                if {$pobj != ""} {
                     set CURR_URLHANDLER $handler
                     return              $pobj
                 } else {

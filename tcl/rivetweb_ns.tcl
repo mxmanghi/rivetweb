@@ -44,10 +44,11 @@ namespace eval ::rivetweb {
     variable http_encoding          utf-8
     #variable datasources            {}
     #variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
-    variable datasource             ::XMLBase
-    variable rwebdb                 ::rwebdb
+    #variable datasource             ::XMLBase
+    #variable rwebdb                 ::rwebdb
+    #variable pmodel                 ::rwpmodel
+
     variable logger                 ::rwlogger
-    variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
     variable sitemap                RWSitemap
@@ -70,7 +71,7 @@ namespace eval ::rivetweb {
 # here but it will be assigned by the element <default_language>
 # in site_structure.xml
 
-    variable site_defs              site_defs.xml
+    #variable site_defs              site_defs.xml
     variable language               $default_lang
 
 # 'current_rev' is an integer number specifying
