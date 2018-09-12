@@ -72,7 +72,7 @@ namespace eval ::rwdatas {
         public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
         public proc start_scan {} { return [lindex $URLHANDLERS 0] }
         public proc start_scan_reverse { return [lindex $URLHANDLERS end] }
-
+        private proc search_handler {key returned_key {excluded_handler ""}}
         public proc select_handler {argsqs}
         public proc select_page {argsqs}
         public proc current_handler {}
@@ -122,7 +122,7 @@ namespace eval ::rwdatas {
         
         dict set URLHANDLERS_ARGS $handler $args
 
-        ::rivet::apache_log_error notice "registered handlers $URLHANDLERS"
+        #::rivet::apache_log_error debug "registered handlers $URLHANDLERS"
     }
 
     # -- next_handler
@@ -149,6 +149,61 @@ namespace eval ::rwdatas {
 
         return [lindex $URLHANDLERS $p]
     }
+    
+    # -- search_handler
+    #
+    # recusive search of a page through the URL handler list. 
+    #
+
+    proc search_handler {key returned_key {excluded_handler ""}} {
+        upvar $returned_key rkey
+
+        # this cycle is guaranteed to return a page, al least 
+        # through the last datasource in the chain (::RWDummy)
+
+        set handler [::rwdatas::UrlHandler::start_scan]
+
+        while {$handler != ""} {
+            if {($handler == $excluded_handler) && ($handler != "::RWDummy")} { 
+                ::rivet::apache_log_error debug "excluding $handler from search for $key"
+                set handler  [$handler next_handler]
+                continue
+            }
+
+            ::rivet::apache_log_error info "querying $handler for $key"
+
+            set rkey $key
+            if {[$handler will_provide $key rkey]} {
+                ::rivet::apache_log_error info \
+                    "fetching $key from $handler -> returned values: $rkey"
+
+                set pobj [$handler fetch_page $key rkey]
+                if {$pmodel != ""} {
+                    set CURR_URLHANDLER $handler
+                    return              $pobj
+                } else {
+     
+                    if {[string match $key $rkey]} {
+                        set rkey wrong_datasource_returned_key
+                        return [::RWDummy fetchData $key rkey]
+                    }
+
+                    return [search_handler $rkey rkey $handler]
+                }
+
+            } else {
+
+                if {($rkey != "") && ($key != $rkey)} {
+                    return [search_handler $rkey rkey $handler]
+                }
+
+            }
+            
+            set handler  [$handler next_handler]
+        }
+        
+        return [::RWDummy fetchData page_not_found_error rkey]
+    }
 
     # -- select_handler
     #
@@ -161,8 +216,6 @@ namespace eval ::rwdatas {
         set page_key ""
 
         while {$urlh != ""} {
-
-            #set ::rivetweb::datasource $urlh
 
             $::rivetweb::logger log debug [::rivet::xml "querying $urlh" pre]
 
@@ -187,12 +240,14 @@ namespace eval ::rwdatas {
         #$::rivetweb::logger log debug "error_code $error_info"
         if {[dict get $error_info -errorcode] == "rw_restart"} {
             $::rivetweb::logger log debug "url handler search forced"
-            set ::rivetweb::current_page \
-                [::rivetweb::search_handler $page_key page_key urlh]
+            
+            # search_handler sets CURR_URLHANDLER
+            
+            set ::rivetweb::current_page [::rwdatas::UrlHandler::search_handler $page_key page_key]
+        } else {
+            #set ::rivetweb::datasource $urlh
+            set CURR_URLHANDLER $urlh
         }
-        
-        set ::rivetweb::datasource $urlh
-        set CURR_URLHANDLER $urlh
 
         $::rivetweb::logger log info "current handler is $CURR_URLHANDLER"
 
@@ -384,7 +439,7 @@ namespace eval ::rwdatas {
                     return $p
 
                 } else {
-                    return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $this]
                 }
             }
 
@@ -397,7 +452,7 @@ namespace eval ::rwdatas {
             if {$p != ""} {
                 $this store_page $key $p
             } else {
-                set p [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
+                set p [::rwdatas::UrlHandler::search_handler $rkey rkey $this]
             }
             return $p
 
