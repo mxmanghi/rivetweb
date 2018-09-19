@@ -205,7 +205,7 @@ namespace eval ::rivetweb {
 #
 
     proc set_handler_args {handler args} {
-        ::rwdatas::UrlHandler::set_handler_arguments $handler $args
+        ::rwdatas::UrlHandler::set_handler_arguments $handler {*}$args
     }
 
 # -- init
