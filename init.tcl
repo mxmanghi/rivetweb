@@ -76,10 +76,12 @@ if {[file exists $::rivetweb::website_init]} {
 # UrlHandler::next_handler
 
 ::rivet::apache_log_error debug "[pwd] - Registered handlers pre tampering [::rwdatas::UrlHandler::registered_handlers]"
+::rivet::apache_log_error debug "[pwd] - Handlers arguments pre tampering [::rwdatas::UrlHandler::handlers_arguments]"
 ::rwdatas::UrlHandler::set_installed_handlers \
     [::rivetweb::handlers_list_tampering [::rwdatas::UrlHandler::registered_handlers]]
 
 ::rivet::apache_log_error debug "[pwd] - Registered handlers [::rwdatas::UrlHandler::registered_handlers]"
+::rivet::apache_log_error debug "[pwd] - Handlers arguments post tampering [::rwdatas::UrlHandler::handlers_arguments]"
 
 # this is the very last operation to do after the initialization. We have just
 # instantiated each datasource and we proceed calling the 'init' method for each

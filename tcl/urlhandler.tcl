@@ -68,7 +68,9 @@ namespace eval ::rwdatas {
         public proc register_handler {handler {position top} args}
         public proc registered_handlers {} { return $URLHANDLERS }
         public proc handlers_arguments {} { return $URLHANDLERS_ARGS }
-        public proc set_handler_arguments {handler args} { dict set URLHANDLERS_ARGS $handler [dict create {*}$args] }
+        public proc set_handler_arguments {handler args} { 
+            dict set URLHANDLERS_ARGS $handler [dict create {*}$args] 
+        }
         public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
         public proc start_scan {} { return [lindex $URLHANDLERS 0] }
         public proc start_scan_reverse { return [lindex $URLHANDLERS end] }
@@ -120,8 +122,7 @@ namespace eval ::rwdatas {
             }
         }
         
-        dict set URLHANDLERS_ARGS $handler $args
-
+        #dict set URLHANDLERS_ARGS $handler $args
         #::rivet::apache_log_error debug "registered handlers $URLHANDLERS"
     }
 
