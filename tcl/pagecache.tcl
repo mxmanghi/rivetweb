@@ -1,7 +1,7 @@
 # -- pagecache.tcl
 #
 # This class is meant to be an internal class of the UrlHandler.
-# Its purpose is tp provide an abstraction layer for each url 
+# Its purpose is to provide an abstraction layer for each url 
 # handler page cache
 #
     package require Itcl
