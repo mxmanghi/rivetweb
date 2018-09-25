@@ -26,15 +26,19 @@ namespace eval ::rivetweb {
 #
 # These values are the very last fallback values for the defaults
 
-    variable default_template       rwbase
-    variable default_menu           main
-    variable default_menu_pos       left
-    variable default_lang           en
+    variable default_template           rwbase
+    variable default_menu               main
+    variable default_menu_pos           left
+    variable default_lang               en
 
 # these paths are relative to the DocumentRoot, so we don't need to normalize them
 
-    variable site_url_base          /
+    #variable site_url_base          /
+    
+    # site wide definition of a directory for picture files
+    
     variable picts_path             picts
+
     variable css_path               templates
     variable base_templates         templates
     variable site_scritps           tcl
@@ -42,11 +46,6 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable http_encoding          utf-8
-    #variable datasources            {}
-    #variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
-    #variable datasource             ::XMLBase
-    #variable rwebdb                 ::rwebdb
-    #variable pmodel                 ::rwpmodel
 
     variable logger                 ::rwlogger
     variable linkmodel              ::rwlink

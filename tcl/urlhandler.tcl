@@ -82,7 +82,6 @@ namespace eval ::rwdatas {
         public method next_handler {}
     }
 
-
     # -- destroy
     #
     # application level destruction method

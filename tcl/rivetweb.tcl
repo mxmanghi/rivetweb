@@ -238,7 +238,7 @@ namespace eval ::rivetweb {
         if {$::rivetweb::rewrite_links} {
             ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code \
                                           [::rivetweb::scriptName]  \
-                                            $pict_file rewritten_path
+                                          $pict_file rewritten_path
             return $rewritten_path
         } else {
             return [file join / $pict_file]
