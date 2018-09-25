@@ -601,8 +601,10 @@ namespace eval ::rivetweb {
     proc simple_page {key ptext} {
         variable language 
 
-        if {[::RWDummy cache_query $key]} {
-            set pobj [::RWDummy get_page_object $key]
+        set cache [::RWDummy cache]
+
+        if {[$cache key_query $key]} {
+            set pobj [$cache get_page_object $key]
             if {[$pobj info class] == "::rwpage::BasicPage"} {
                 $pobj pagetext $language $ptext
             }

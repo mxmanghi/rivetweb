@@ -31,7 +31,7 @@ namespace eval ::rwdatas {
         private variable cache
 
         constructor {} {
-            set cache [::rivetweb::PageCache #auto]
+            set cache [::rivetweb::PageCache [namespace current]::#auto]
         }
 
 
@@ -230,7 +230,7 @@ namespace eval ::rwdatas {
 
         while {$urlh != ""} {
 
-            $::rivetweb::logger log debug  "querying $urlh" pre
+            $::rivetweb::logger log debug  "querying $urlh"
 
             set urlquery [catch { $urlh willHandle $urlargs page_key } error_code error_info]
             $::rivetweb::logger log debug "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
@@ -404,7 +404,7 @@ namespace eval ::rwdatas {
         $::rivetweb::logger log debug "[$this info class] cache '$cache'"
         $::rivetweb::logger log debug "[$this info class] fetching key '$key'"
 
-        if {[$cache cache_query $key]} {
+        if {[$cache key_query $key]} {
             set rkey $key
 
             if {[$this is_stale $key [dict get $cache $key timestamp]]} {
@@ -416,7 +416,7 @@ namespace eval ::rwdatas {
                 # may get here and the object could have already been removed from 
                 # the cache
 
-                if {[$cache cache_query $key]} {
+                if {[$cache key_query $key]} {
                     set stored_page [$cache get_page_object $key]
 
                     ### catch added for debugging

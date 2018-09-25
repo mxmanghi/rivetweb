@@ -26,11 +26,13 @@ namespace eval ::rwpage {
 
             foreach urlh [::rwdatas::UrlHandler::registered_handlers] {
                 set tbhead "$urlh ([$urlh name])"
-                set urlhcache [$urlh cache]
+                set urlhcache [[$urlh cache] cache]
 
                 #puts "<pre>$urlhcache</pre>"
                 set tbody ""
+
                 dict for {key p} $urlhcache {
+
                     dict with p {
 
                         set rowfields "<td>$object</td>\
@@ -38,7 +40,6 @@ namespace eval ::rwpage {
                                        <td>[clock format $timestamp]</td>\
                                        <td>[$object info class]</td>"
 
-                        
                     }
                     append tbody [::rivet::xml $rowfields tr]
                 }
