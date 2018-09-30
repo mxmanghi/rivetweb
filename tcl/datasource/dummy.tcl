@@ -55,7 +55,7 @@ namespace eval ::rwpage {
 namespace eval ::rwdatas {
 
     ::itcl::class RWDummy { 
-        inherit Datasource
+        inherit UrlHandler
 
         private variable urlargs
         private common MESSAGES

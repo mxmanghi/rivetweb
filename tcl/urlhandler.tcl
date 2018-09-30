@@ -407,7 +407,7 @@ namespace eval ::rwdatas {
         if {[$cache key_query $key]} {
             set rkey $key
 
-            if {[$this is_stale $key [dict get $cache $key timestamp]]} {
+            if {[$this is_stale $key [$cache get_entry_prop $key timestamp]]} {
 
                 $::rivetweb::logger log debug "[$this info class]::fetch_page refetching page for $key"
 

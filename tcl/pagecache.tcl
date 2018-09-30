@@ -18,6 +18,7 @@ namespace eval ::rivetweb {
         public method clear_entry {key}
         public method key_query {key}
         public method forall {key_var value_var tclcode}
+        public method get_entry_prop {key prop}
         public method get_page_object { key } 
         public method get_entry { key }
         public method cache {} { return $cache }
@@ -57,9 +58,18 @@ namespace eval ::rivetweb {
     ::itcl::body PageCache::key_query {key} {
         return [dict exists $cache $key]
     }
+    
+    ::itcl::body PageCache::get_entry_prop {key prop} {
+        if {[dict exists $cache $key $prop]} {
+            return [dict get $cache $key $prop]
+        } else {
+            return ""
+        }
+    }
 
     ::itcl::body PageCache::get_page_object {key} {
-        return [dict get $cache $key object]
+#        return [dict get $cache $key object]
+        return [$this get_entry_prop $key object]
     }
 
     ::itcl::body PageCache::forall {kvar vvar tclcode} {
