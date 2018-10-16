@@ -27,7 +27,7 @@ namespace eval ::rwpage {
 
         public method init {args} {}
 
-        protected method postprocessing { urlhandler } {}
+        protected method postprocessing {urlhandler} {}
 
         public method set_key {k} { set key $k }
         public method key {} { return $key }
@@ -38,8 +38,8 @@ namespace eval ::rwpage {
         public method binary_content { } { return true }
         public method resource_exists {resource_key} { return false }
         public method get_resource_repr {resource_key} { return "" }
-        public method print_content { language } { }
-        public method current_handler { return $url_handler }
+        public method print_content {language} { }
+        public method current_handler {} { return $url_handler }
         public method mimetype {} { return [$this content_type] }
         public method set_content_type {ct} { set ctype $ct }
         public method content_type {} { return $ctype }
@@ -47,7 +47,7 @@ namespace eval ::rwpage {
         public method content_length {} { return "" }
         public method send_headers {} 
         public method send_output {language} { $this print_content $language }
-        public method refresh {timereference} { return true } 
+        public method refresh {timereference} { return true }
         public method to_string {} { return [dict create hits $hits key $key] }
 
         destructor {
@@ -78,15 +78,15 @@ namespace eval ::rwpage {
 
 # -- destroy
 #
-# releases objects which may hold data stored in the pool (e.g.
-# tdom objects). Abstract method for this class
+# releases objects which may hold data stored in the pool (e.g. tdom
+# objects). Abstract method for this class
 
     ::itcl::body RWContent::destroy { } {
         ::rivet::apache_log_error debug "RWContent::destroy deleting $this"
-        
-#        foreach l [split [::rivetweb::stacktrace] "\n"] {
-#            ::rivet::apache:log_error debug $l
-#        }
+
+#       foreach l [split [::rivetweb::stacktrace] "\n"] {
+#           ::rivet::apache:log_error debug $l
+#       }
 
         ::itcl::delete object $this
     }
@@ -110,5 +110,6 @@ namespace eval ::rwpage {
 
         return $pobject
     }
+
 }
 package provide rwcontent 1.0

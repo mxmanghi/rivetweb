@@ -33,9 +33,10 @@ namespace eval ::rwpage {
         public method headline {language {hdl ""}}
         public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
 
-        #####
+        #
         # interface designed for the Scripted datasource. Can be moved into
         # application specific code
+        #
 
         public method store {var value} { dict set stored_vars $var $value }
         public method lappend {var value} { dict lappend stored_vars $var $value }
@@ -79,13 +80,17 @@ namespace eval ::rwpage {
 
         set ::rivetweb::pagemenus [dict create]
 
-        foreach ds [::rivetweb registered_handlers] {
+        set ds [::rwdatas::UrlHandler::start_scan]
+
+        while {$ds != ""} {
 
             set dsmenu [$ds menu_list $::rivetweb::current_page]
             ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
             dict for {k v} $dsmenu {
                 dict lappend ::rivetweb::pagemenus $k {*}$v
             }
+
+            set ds [$ds next_handler]
         }
 
         ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
@@ -261,7 +266,6 @@ namespace eval ::rwpage {
         ::rivet::parse $::rivetweb::running_template
 
     }
-
 
     proc create {key {class RWStatic}} {
         return [$class ::#auto $key]

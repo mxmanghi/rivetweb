@@ -4,7 +4,7 @@
 # Its purpose is tp provide an abstraction layer for each url 
 # handler page cache
 #
-
+    package require Itcl
 
     catch {::itcl::delete class PageCache}
     catch {::itcl::delete class A}

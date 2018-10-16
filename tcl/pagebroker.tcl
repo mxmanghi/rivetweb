@@ -54,7 +54,7 @@ namespace eval ::rivetweb {
         }
 
         # if a class has been already loaded by
-        # another datasource we skip the file sourcing 
+        # another url handler we skip the file sourcing 
 
         #if {[$this check_class_loaded $class_name $oosys] == 0} {
         #    ::rwlogger log debug "loading $itcl_file for $class_name"
