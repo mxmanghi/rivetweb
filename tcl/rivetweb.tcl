@@ -598,11 +598,22 @@ namespace eval ::rivetweb {
     }
     namespace export make_error_page
     
+    ##
+    # -- simple_page 
+    #
+    #   Arguments
+    #
+    #   + key:   key to the page object
+    #   + ptext: text string to be displayed
+    #
+    
     proc simple_page {key ptext} {
         variable language 
 
-        if {[::RWDummy cache_query $key]} {
-            set pobj [::RWDummy get_page_object $key]
+        set cache [::RWDummy cache]
+
+        if {[$cache key_query $key]} {
+            set pobj [$cache get_page_object $key]
             if {[$pobj info class] == "::rwpage::BasicPage"} {
                 $pobj pagetext $language $ptext
             }
@@ -631,6 +642,12 @@ namespace eval ::rivetweb {
         return $stack
     }
     namespace export stacktrace
+    
+    ##
+    # --- DEPRECATED --
+    #
+    # -- handlers_list_tampering
+    #
     
     proc handlers_list_tampering {urlhandlers} { return $urlhandlers }
     namespace export handlers_list_tampering
