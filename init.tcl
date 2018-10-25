@@ -15,7 +15,6 @@ package require rwmenu
 package require rwpage
 package require rwlink
 package require urlcomposer
-package require Datasource
 package require RWTemplate
 package require UrlHandler
 package require RWDummy
