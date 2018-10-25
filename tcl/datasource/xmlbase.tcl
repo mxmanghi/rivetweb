@@ -94,6 +94,13 @@ namespace eval ::rwdatas {
 
         }
 
+        # It's unusual to have more than one XMLBase-based class 
+        # active in the handlers list and it's unlikely these
+        # variable need to change as their used to share a copy of
+        # the respective private instance variables, but we cannot
+        # initialize them twice because they need to be registered
+        # in the document search list
+
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $LOCAL_PAGES
 

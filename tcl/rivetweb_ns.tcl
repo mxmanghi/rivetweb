@@ -215,7 +215,6 @@ namespace eval ::rivetweb {
 #
 
     proc init {urlhandler {position "last"} args} {
-        variable    site_base
         variable    logger
         variable    default_lang
 
@@ -224,6 +223,9 @@ namespace eval ::rivetweb {
         set urlobj [::rwdatas::${urlhandler} ::${urlhandler}]
 
         ::rwdatas::UrlHandler::register_handler $urlobj $position {*}$args
+        
+        ::rivetweb add_search_path $::rivetweb::site_base 
+        ::rivetweb add_search_path $::rivetweb::rivetweb_root
     }
 }
 
