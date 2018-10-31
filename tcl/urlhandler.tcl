@@ -78,8 +78,16 @@ namespace eval ::rwdatas {
         public proc current_handler {}
 
         public method next_handler {}
-    }
 
+        destructor {
+            set whereami [lsearch $URLHANDLERS $this]
+            if {$whereami > 0} {
+                set URLHANDLERS [concat [lrange $URLHANDLERS 0 $whereami-1] [lrange $URLHANDLERS $whereami+1 end]]
+            } else {$whereami == 0} {
+                set URLHANDLERS [lrange $URLHANDLERS 1 end]
+            }
+        }
+    }
 
     # -- destroy
     #
@@ -92,7 +100,8 @@ namespace eval ::rwdatas {
             if {[catch {
                 set page [dict get $page_o object]
                 $page destroy
-            } e opts]} { ::rivet::apache_log_error err "Error deleting page $page ($e)" }
+            } e opts]} { ::rivet::apache_log_error err "($this) Error deleting page $page ($e)" }
+
         }
 
         # specific instance clean up
@@ -122,7 +131,7 @@ namespace eval ::rwdatas {
         
         dict set URLHANDLERS_ARGS $handler $args
 
-        ::rivet::apache_log_error notice "registered handlers $URLHANDLERS"
+        ::rivet::apache_log_error debug "registered handlers $URLHANDLERS"
     }
 
     # -- next_handler
