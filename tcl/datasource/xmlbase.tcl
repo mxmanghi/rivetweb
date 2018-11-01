@@ -423,11 +423,9 @@ namespace eval ::rwdatas {
 
         file stat $sitemap_dir sitemap_stat
 
-        $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
+        $::rivetweb::logger log debug "menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
         if {($sitemap_stat(mtime) > $timestamp)} { 
-
             return true
-
         }
 
         return false
