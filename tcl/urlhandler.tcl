@@ -166,11 +166,11 @@ namespace eval ::rwdatas {
     # recusive search of a page through the URL handler list. 
     #
 
-    proc search_handler {key returned_key {excluded_handler ""}} {
+    ::itcl::body UrlHandler::search_handler {key returned_key {excluded_handler ""}} {
         upvar $returned_key rkey
 
         # this cycle is guaranteed to return a page, al least 
-        # through the last datasource in the chain (::RWDummy)
+        # through the last handler in the chain (::RWDummy)
 
         set handler [::rwdatas::UrlHandler::start_scan]
 
@@ -199,13 +199,13 @@ namespace eval ::rwdatas {
                         return [::RWDummy fetchData $key rkey]
                     }
 
-                    return [search_handler $rkey rkey $handler]
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $handler]
                 }
 
             } else {
 
                 if {($rkey != "") && ($key != $rkey)} {
-                    return [search_handler $rkey rkey $handler]
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $handler]
                 }
 
             }
