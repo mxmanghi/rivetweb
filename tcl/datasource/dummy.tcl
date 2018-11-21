@@ -24,9 +24,11 @@ namespace eval ::rwpage {
         public method print_content { language } {
             #puts -nonewline [$::rivetweb::rwebdb coredump]
 
+            # this is badly dependend on the internal cache representation
+
             foreach urlh [::rwdatas::UrlHandler::registered_handlers] {
                 set tbhead "$urlh ([$urlh name])"
-                set urlhcache [$urlh cache]
+                set urlhcache [[$urlh cache] cache]
 
                 #puts "<pre>$urlhcache</pre>"
                 set tbody ""
@@ -38,7 +40,6 @@ namespace eval ::rwpage {
                                        <td>[clock format $timestamp]</td>\
                                        <td>[$object info class]</td>"
 
-                        
                     }
                     append tbody [::rivet::xml $rowfields tr]
                 }
@@ -49,12 +50,11 @@ namespace eval ::rwpage {
         }
     }
 }
-    
 
 namespace eval ::rwdatas {
 
     ::itcl::class RWDummy { 
-        inherit Datasource
+        inherit UrlHandler
 
         private variable urlargs
         private common MESSAGES
@@ -121,7 +121,7 @@ and failed to reassigned the resource key ($key)} \
 
                 #set pobj [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
                 set pobj [::rwpage::RWDumpPage ::#auto $key]
-                
+
             } else {
 
                 if {![dict exists $MESSAGES $key]} {

@@ -238,7 +238,7 @@ namespace eval ::rivetweb {
         if {$::rivetweb::rewrite_links} {
             ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code \
                                           [::rivetweb::scriptName]  \
-                                            $pict_file rewritten_path
+                                          $pict_file rewritten_path
             return $rewritten_path
         } else {
             return [file join / $pict_file]
@@ -492,63 +492,6 @@ namespace eval ::rivetweb {
     }
     namespace export strip_sticky_args
 
-# -- search_handler
-#
-# recusive search of a page through the URL handler list. 
-#
-
-    proc search_handler {key returned_key datasrc {excluded_handler ""}} {
-        upvar $returned_key rkey
-        upvar $datasrc datasource
-
-        # this cycle is guaranteed to return a page, al least 
-        # through the last datasource in the chain (::RWDummy)
-
-        set ds [::rwdatas::UrlHandler::start_scan]
-
-        while {$ds != ""} {
-            if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
-                ::rivet::apache_log_error debug "excluding $ds from search for $key"
-                set ds  [$ds next_handler]
-                continue
-            }
-
-            ::rivet::apache_log_error info "querying $ds for $key"
-
-            set rkey $key
-            if {[$ds will_provide $key rkey]} {
-                ::rivet::apache_log_error info \
-                    "fetching $key from $ds -> returned values: $rkey"
-
-                set pmodel [$ds fetch_page $key rkey]
-                if {$pmodel != ""} {
-                    set datasource  $ds
-                    return          $pmodel
-                } else {
-     
-                    if {[string match $key $rkey]} {
-                        set rkey wrong_datasource_returned_key
-                        return [::RWDummy fetchData $key rkey]
-                    }
-
-                    return [search_handler $rkey rkey datasource $ds]
-                }
-
-            } else {
-
-                if {($rkey != "") && ($key != $rkey)} {
-                    return [search_handler $rkey rkey datasource $ds]
-                }
-
-            }
-            
-            set ds  [$ds next_handler]
-        }
-        
-        return [::RWDummy fetchData page_not_found_error rkey]
-    }
-    namespace export search_handler
-
     # -- template_path
     #
     # 
@@ -655,11 +598,22 @@ namespace eval ::rivetweb {
     }
     namespace export make_error_page
     
+    ##
+    # -- simple_page 
+    #
+    #   Arguments
+    #
+    #   + key:   key to the page object
+    #   + ptext: text string to be displayed
+    #
+    
     proc simple_page {key ptext} {
         variable language 
 
-        if {[::RWDummy cache_query $key]} {
-            set pobj [::RWDummy get_page_object $key]
+        set cache [::RWDummy cache]
+
+        if {[$cache key_query $key]} {
+            set pobj [$cache get_page_object $key]
             if {[$pobj info class] == "::rwpage::BasicPage"} {
                 $pobj pagetext $language $ptext
             }
@@ -688,6 +642,12 @@ namespace eval ::rivetweb {
         return $stack
     }
     namespace export stacktrace
+    
+    ##
+    # --- DEPRECATED --
+    #
+    # -- handlers_list_tampering
+    #
     
     proc handlers_list_tampering {urlhandlers} { return $urlhandlers }
     namespace export handlers_list_tampering

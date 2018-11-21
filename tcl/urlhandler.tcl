@@ -9,6 +9,7 @@
 package require Itcl
 package require rwconf
 package require rwlogger
+package require rwpagecache
 
 namespace eval ::rwdatas {
 
@@ -27,7 +28,11 @@ namespace eval ::rwdatas {
 
         private variable scan_context ""
 
-        private variable cache [dict create]
+        private variable cache
+
+        constructor {} {
+            set cache [::rivetweb::PageCache [namespace current]::#auto]
+        }
 
         private method get_page_object { key } 
         public method init {args} { }
@@ -56,10 +61,7 @@ namespace eval ::rwdatas {
         public method to_url {lm}
         public method after_request {} {}
         
-        public method store_page {key pobj}
-        public method clear_cache_entry {key}
         public method cache {} { return $cache }
-        public method cache_query { key }
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
         public method signal {notifying_page signal_code}
@@ -68,18 +70,19 @@ namespace eval ::rwdatas {
         public proc register_handler {handler {position top} args}
         public proc registered_handlers {} { return $URLHANDLERS }
         public proc handlers_arguments {} { return $URLHANDLERS_ARGS }
-        public proc set_handler_arguments {handler args} { dict set URLHANDLERS_ARGS $handler dict create {*}$args }
+        public proc set_handler_arguments {handler args} { 
+            dict set URLHANDLERS_ARGS $handler [dict create {*}$args] 
+        }
         public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
         public proc start_scan {} { return [lindex $URLHANDLERS 0] }
         public proc start_scan_reverse { return [lindex $URLHANDLERS end] }
-
+        private proc search_handler {key returned_key {excluded_handler ""}}
         public proc select_handler {argsqs}
         public proc select_page {argsqs}
         public proc current_handler {}
 
         public method next_handler {}
     }
-
 
     # -- destroy
     #
@@ -88,12 +91,21 @@ namespace eval ::rwdatas {
     
     ::itcl::body UrlHandler::destroy { } {
 
-        dict for {key page_o} $cache {
+        $cache forall {key page_o} {
+
             if {[catch {
                 set page [dict get $page_o object]
                 $page destroy
-            } e opts]} { ::rivet::apache_log_error err "Error deleting page $page ($e)" }
+            } e opts]} { $::rivetweb::logger log err "Error deleting page $page ($e)" }
+
         }
+
+        #dict for {key page_o} $cache {
+        #    if {[catch {
+        #        set page [dict get $page_o object]
+        #        $page destroy
+        #    } e opts]} { ::rivet::apache_log_error err "Error deleting page $page ($e)" }
+        #}
 
         # specific instance clean up
 
@@ -120,9 +132,8 @@ namespace eval ::rwdatas {
             }
         }
         
-        dict set URLHANDLERS_ARGS $handler $args
-
-        ::rivet::apache_log_error notice "registered handlers $URLHANDLERS"
+        #dict set URLHANDLERS_ARGS $handler $args
+        #::rivet::apache_log_error debug "registered handlers $URLHANDLERS"
     }
 
     # -- next_handler
@@ -135,7 +146,7 @@ namespace eval ::rwdatas {
         if {$scan_context == ""} {
             set scan_context [lsearch $URLHANDLERS $this]
         }
-        ::rivet::apache_log_error debug "next_handler: $this (context: $scan_context)"
+        $::rivetweb::logger log debug "next_handler: $this (context: $scan_context)"
         set p $scan_context
         incr p
         if {$p >= [llength $URLHANDLERS]} {
@@ -148,6 +159,61 @@ namespace eval ::rwdatas {
         }
 
         return [lindex $URLHANDLERS $p]
+    }
+    
+    # -- search_handler
+    #
+    # recusive search of a page through the URL handler list. 
+    #
+
+    ::itcl::body UrlHandler::search_handler {key returned_key {excluded_handler ""}} {
+        upvar $returned_key rkey
+
+        # this cycle is guaranteed to return a page, al least 
+        # through the last handler in the chain (::RWDummy)
+
+        set handler [::rwdatas::UrlHandler::start_scan]
+
+        while {$handler != ""} {
+            if {($handler == $excluded_handler) && ($handler != "::RWDummy")} { 
+                $::rivetweb::logger log debug "excluding $handler from search for $key"
+                set handler  [$handler next_handler]
+                continue
+            }
+
+            $::rivetweb::logger log info "querying $handler for $key"
+
+            set rkey $key
+            if {[$handler will_provide $key rkey]} {
+                $::rivetweb::logger log info \
+                    "fetching $key from $handler -> returned values: $rkey"
+
+                set pobj [$handler fetch_page $key rkey]
+                if {$pobj != ""} {
+                    set CURR_URLHANDLER $handler
+                    return              $pobj
+                } else {
+     
+                    if {[string match $key $rkey]} {
+                        set rkey wrong_datasource_returned_key
+                        return [::RWDummy fetchData $key rkey]
+                    }
+
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $handler]
+                }
+
+            } else {
+
+                if {($rkey != "") && ($key != $rkey)} {
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $handler]
+                }
+
+            }
+            
+            set handler  [$handler next_handler]
+        }
+        
+        return [::RWDummy fetchData page_not_found_error rkey]
     }
 
     # -- select_handler
@@ -162,9 +228,7 @@ namespace eval ::rwdatas {
 
         while {$urlh != ""} {
 
-            #set ::rivetweb::datasource $urlh
-
-            $::rivetweb::logger log debug [::rivet::xml "querying $urlh" pre]
+            $::rivetweb::logger log debug  "querying $urlh"
 
             set urlquery [catch { $urlh willHandle $urlargs page_key } error_code error_info]
             $::rivetweb::logger log debug "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
@@ -187,12 +251,14 @@ namespace eval ::rwdatas {
         #$::rivetweb::logger log debug "error_code $error_info"
         if {[dict get $error_info -errorcode] == "rw_restart"} {
             $::rivetweb::logger log debug "url handler search forced"
-            set ::rivetweb::current_page \
-                [::rivetweb::search_handler $page_key page_key urlh]
+            
+            # search_handler sets CURR_URLHANDLER
+            
+            set ::rivetweb::current_page [::rwdatas::UrlHandler::search_handler $page_key page_key]
+        } else {
+            #set ::rivetweb::datasource $urlh
+            set CURR_URLHANDLER $urlh
         }
-        
-        set ::rivetweb::datasource $urlh
-        set CURR_URLHANDLER $urlh
 
         $::rivetweb::logger log info "current handler is $CURR_URLHANDLER"
 
@@ -243,9 +309,12 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::is_stale {key timereference} {
 
-        set page [$this get_page_object $key]
-        return [$page refresh $timereference]
-
+        if {[$cache key_query $key]} {
+            set page [$cache get_page_object $key]
+            return [$page refresh $timereference]
+        } else {
+            return false
+        }
     }
 
     # -- signal
@@ -266,19 +335,28 @@ namespace eval ::rwdatas {
 
                 set to_be_removed {}
 
-                dict for {key cache_entry} $cache {
+                $cache forall key cache_entry {
                     if {[dict get $cache_entry class] == $signal_arg} {
                         lappend to_be_removed $key
                     }
                 }
 
-                foreach k $to_be_removed { $this clear_cache_entry $k }
+                #dict for {key cache_entry} $cache {
+                #    if {[dict get $cache_entry class] == $signal_arg} {
+                #        lappend to_be_removed $key
+                #    }
+                #}
+
+                foreach k $to_be_removed { $cache clear_entry $k }
             }
             page_being_removed {
-                $this clear_cache_entry $signal_arg
+
+                # signal_arg is supposed to be a page object
+
+                $cache clear_entry $signal_arg
             }
             page_obj_being_removed {
-                $this clear_cache_entry [$signal_arg key]
+                $cache clear_entry [$signal_arg key]
             }
 
         }
@@ -293,13 +371,13 @@ namespace eval ::rwdatas {
         upvar $reassigned_key rkey
 
         set rkey $key
-        if {[dict exists $cache $key]} {
+        if {[$cache key_query $key]} {
             return true
         } else {
             set p [$this fetchData $key rkey]
 
             if {$p != ""} {
-                $this store_page $key $p
+                $cache store_page $key $p
                 set response true
             } else {
                 set response false
@@ -309,36 +387,9 @@ namespace eval ::rwdatas {
         }
     }
 
-# -- cache_query
-#
-#
-
-    ::itcl::body UrlHandler::cache_query {key} {
-        return [dict exists $cache $key]
-    }
 
     ::itcl::body UrlHandler::get_page_object {key} {
-        return [dict get $cache $key object]
-    }
-    
-# -- store_page
-#
-#
-
-    ::itcl::body UrlHandler::store_page {key pageobj} {
-        dict set cache $key object      $pageobj
-        dict set cache $key timestamp   [clock seconds]
-        dict set cache $key class       [$pageobj info class]
-    }
-
-# -- clear_cache_entry
-#
-#
-
-    ::itcl::body UrlHandler::clear_cache_entry {key} {
-        catch {
-            dict unset cache $key
-        }
+        return [$cache get_page_object $key]
     }
 
 # -- fetch_page
@@ -348,56 +399,56 @@ namespace eval ::rwdatas {
     ::itcl::body UrlHandler::fetch_page {key reassigned_key} {
         upvar $reassigned_key rkey
 
-        ::rivet::apache_log_error debug "[$this info class] cache '$cache'"
-        ::rivet::apache_log_error debug "[$this info class] fetching key '$key'"
+        $::rivetweb::logger log debug "[$this info class] cache '$cache'"
+        $::rivetweb::logger log debug "[$this info class] fetching key '$key'"
 
-        if {[$this cache_query $key]} {
+        if {[$cache key_query $key]} {
             set rkey $key
 
-            if {[$this is_stale $key [dict get $cache $key timestamp]]} {
+            if {[$this is_stale $key [$cache get_entry_prop $key timestamp]]} {
 
-                ::rivet::apache_log_error debug "[$this info class]::fetch_page refetching page for $key"
+                $::rivetweb::logger log debug "[$this info class]::fetch_page refetching page for $key"
 
                 # is_stale might well delete the entire class thus triggering a 
                 # sequence of deletes of its instances. As a matter of fact we 
                 # may get here and the object could have already been removed from 
                 # the cache
 
-                if {[$this cache_query $key]} {
-                    set stored_page [$this get_page_object $key]
+                if {[$cache key_query $key]} {
+                    set stored_page [$cache get_page_object $key]
 
                     ### catch added for debugging
                     if {[catch {
-                            $this clear_cache_entry $key
+                            $cache clear_entry $key
                             $stored_page destroy
                         } e opts]} {
-                        ::rivet::apache_log_error err \
+                        $::rivetweb::logger log err \
                         "[$this info class]::fetch_page failed to delete $stored_page. Cache dump"
-                        foreach {k page} $cache { ::rivet::apache_log_error err "$k: $page" }
+                        $cache forall k page_e { $::rivetweb::logger log err "$k: $page_e" }
                     }
                 }
 
                 set p [$this fetchData $key rkey]
                 if {$key == $rkey} {
 
-                    $this store_page $key $p
+                    $cache store_page $key $p
                     return $p
 
                 } else {
-                    return [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $this]
                 }
             }
 
-            return [$this get_page_object $key]
+            return [$cache get_page_object $key]
 
         } else {
 
             set p [$this fetchData $key rkey]
-            ::rivet::apache_log_error debug "[$this info class]::fetch_page returns $rkey in response of key $key"
+            $::rivetweb::logger log debug "[$this info class]::fetch_page returns $rkey in response of key $key"
             if {$p != ""} {
-                $this store_page $key $p
+                $cache store_page $key $p
             } else {
-                set p [::rivetweb::search_handler $rkey rkey ::rivetweb::datasource $this]
+                set p [::rwdatas::UrlHandler::search_handler $rkey rkey $this]
             }
             return $p
 
