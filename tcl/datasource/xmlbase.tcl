@@ -257,9 +257,6 @@ namespace eval ::rwdatas {
         set pagetclclass [dict get $menu_d pageclass]
         set newpage [$pagetclclass ::#auto $key]
 
-        # puts "<br/>[html $metadata_l b u]"
-        # $::rivetweb::pmodel set_metadata newpage $metadata_l
-
         set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
         $newpage put_metadata $menu_d
         #$newpage add_metadata datasource ::XMLBase
@@ -832,9 +829,6 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::menu_list {page} {
 
-#       puts "<br/><b>pmodel</b>: $page"
-#       puts "<br/><b>ds</b>: [$page metadata datasource]"
-
         if {[$this has_updates]} {
             $this load_sitemap $sitemap
         }
@@ -850,7 +844,6 @@ namespace eval ::rwdatas {
 
         }
 
-        #puts "<pre>menul: $menul</pre>"
         set menudb [dict create]
         foreach {group menuid} $menul {
             set menuid_list [$sitemap menu_list $menuid]
@@ -858,7 +851,6 @@ namespace eval ::rwdatas {
                 dict set menudb $group $menuid_list
             }
         }
-        #puts "<pre>menudb: $menudb</pre>"
 
         return $menudb
     }

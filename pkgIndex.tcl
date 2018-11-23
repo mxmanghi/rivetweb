@@ -38,3 +38,4 @@ package ifneeded urlcomposer 1.0 [list source [file join $rivetweb_dir tcl urlco
 package ifneeded UrlHandler 1.0 [list source [file join $rivetweb_dir tcl urlhandler.tcl]]
 package ifneeded RWTemplate 1.0 [list source [file join $rivetweb_dir tcl rweb_template.tcl]]
 package ifneeded rwpagebroker 1.0 [list source [file join $rivetweb_dir tcl pagebroker.tcl]]
+package ifneeded rwpagecache 1.0 [list source [file join $rivetweb_dir tcl pagecache.tcl]]

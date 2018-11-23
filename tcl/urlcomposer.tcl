@@ -9,11 +9,11 @@ namespace eval ::rivetweb {
     ::itcl::class UrlComposer {
 
         private variable rewrite_par
-        
+
         # shouldn't they be declared as 'private common' instead?
 
-        private variable sticky_args                {language reset template $rewrite_par lang}
-        private variable conditioned_sticky_args    {$rewrite_par}
+        private variable sticky_args             {language reset template $rewrite_par lang}
+        private variable conditioned_sticky_args {$rewrite_par}
 
         constructor {rewrite_par_def} {
             set rewrite_par                 $rewrite_par_def
@@ -134,7 +134,7 @@ namespace eval ::rivetweb {
 
             }
 
-            if {$hash != ""} {append final_url "#$hash" }
+            if {$hash != ""} { append final_url "#$hash" }
 
             return $final_url
         }
