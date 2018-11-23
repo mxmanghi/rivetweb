@@ -82,6 +82,16 @@ namespace eval ::rwdatas {
         public proc current_handler {}
 
         public method next_handler {}
+
+        destructor {
+            set whereami [lsearch $URLHANDLERS $this]
+            if {$whereami == 0} {
+                set URLHANDLERS [lrange $URLHANDLERS 1 end]
+            } elseif {$whereamin > 0} {
+                set URLHANDLERS [concat [lrange $URLHANDLERS 0 $whereami-1] [lrange $URLHANDLERS $whereami+1 end]]
+            }
+            ::rivet::apache_log_error debug "handler removed (new handlers list: $URLHANDLERS)"
+        }
     }
 
     # -- destroy
@@ -131,9 +141,10 @@ namespace eval ::rwdatas {
                 lappend URLHANDLERS $handler
             }
         }
-        
-        #dict set URLHANDLERS_ARGS $handler $args
-        #::rivet::apache_log_error debug "registered handlers $URLHANDLERS"
+
+        dict set URLHANDLERS_ARGS $handler $args
+
+        ::rivet::apache_log_error debug "registered handlers $URLHANDLERS"
     }
 
     # -- next_handler
