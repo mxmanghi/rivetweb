@@ -611,6 +611,7 @@ namespace eval ::rivetweb {
         variable language 
 
         set cache [::RWDummy cache]
+        puts "::RWDummy cache $cache"
 
         if {[$cache key_query $key]} {
             set pobj [$cache get_page_object $key]
@@ -619,7 +620,7 @@ namespace eval ::rivetweb {
             }
         } else {
             set pobj [::rwpage::RWBasicPage ::#auto $key $ptext]
-            ::RWDummy store_page $key $pobj
+            $cache store_page $key $pobj
         }
         return $pobj
     }

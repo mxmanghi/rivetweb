@@ -159,7 +159,7 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::willHandle {arglist keyvar} {
         upvar $keyvar key 
 
-        ## debug puts "<pre>arglist = $arglist</pre>"
+        # puts "<pre>arglist = $arglist</pre>"
         set key index
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]

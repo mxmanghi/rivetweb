@@ -435,6 +435,7 @@ namespace eval ::rwdatas {
                         } e opts]} {
                         $::rivetweb::logger log err \
                         "[$this info class]::fetch_page failed to delete $stored_page. Cache dump"
+                        $::rivetweb::logger log err "[$this info class]::fetch_page error: $e ($opts)"
                         $cache forall k page_e { $::rivetweb::logger log err "$k: $page_e" }
                     }
                 }
