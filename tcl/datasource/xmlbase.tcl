@@ -52,6 +52,7 @@ namespace eval ::rwdatas {
         private method menuclass {menu_o}        
         protected method xmlfile {key} { return [file join $static_pages ${key}.xml] }
         protected method xmlsitemaps {sitemap_key} { return [glob -nocomplain [file join $sitemap_key *.xml]] }
+        protected method exclude_handler {} { return "" }
 
         public method init {args}
         public method willHandle {arglist keyvar}

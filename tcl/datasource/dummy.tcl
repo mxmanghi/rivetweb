@@ -9,7 +9,7 @@ package require Itcl
 package require rwconf
 package require rwlogger
 package require rwpage
-package require Datasource
+package require UrlHandler
 package require rwbasicpage
 
 namespace eval ::rwpage {
@@ -37,7 +37,7 @@ namespace eval ::rwpage {
 
                         set rowfields "<td>$object</td>\
                                        <td>[$object key]</td>\
-                                       <td>[clock format $timestamp]</td>\
+                                       <td>[clock format $timestamp -format "%d-%m-%Y %T"]</td>\
                                        <td>[$object info class]</td>"
 
                     }
@@ -58,6 +58,7 @@ namespace eval ::rwdatas {
 
         private variable urlargs
         private common MESSAGES
+        protected method exclude_handler {} { return "" }
 
         public method init {args} {
             set MESSAGES [dict create \

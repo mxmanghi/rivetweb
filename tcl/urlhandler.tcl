@@ -76,6 +76,7 @@ namespace eval ::rwdatas {
         public proc set_installed_handlers {urlhandlers} { set URLHANDLERS $urlhandlers }
         public proc start_scan {} { return [lindex $URLHANDLERS 0] }
         public proc start_scan_reverse { return [lindex $URLHANDLERS end] }
+        protected method exclude_handler {} { return $this }
         private proc search_handler {key returned_key {excluded_handler ""}}
         public proc select_handler {argsqs}
         public proc select_page {argsqs}
@@ -210,13 +211,13 @@ namespace eval ::rwdatas {
                         return [::RWDummy fetchData $key rkey]
                     }
 
-                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $handler]
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey [$handler exclude_handler]]
                 }
 
             } else {
 
                 if {($rkey != "") && ($key != $rkey)} {
-                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $handler]
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey [$handler exclude_handler]]
                 }
 
             }
@@ -447,7 +448,7 @@ namespace eval ::rwdatas {
                     return $p
 
                 } else {
-                    return [::rwdatas::UrlHandler::search_handler $rkey rkey $this]
+                    return [::rwdatas::UrlHandler::search_handler $rkey rkey [$this exclude_handler]]
                 }
             }
 
