@@ -102,7 +102,7 @@ namespace eval ::rwdatas {
     
     ::itcl::body UrlHandler::destroy { } {
 
-        $cache forall {key page_o} {
+        $cache forall key page_o {
 
             if {[catch {
                 set page [dict get $page_o object]

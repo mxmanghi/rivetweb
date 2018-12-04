@@ -58,7 +58,12 @@ namespace eval ::rivetweb {
     ::itcl::body PageCache::key_query {key} {
         return [dict exists $cache $key]
     }
-    
+
+# -- get_entry_prop
+#
+#    cache entry property accessor 
+#
+
     ::itcl::body PageCache::get_entry_prop {key prop} {
         if {[dict exists $cache $key $prop]} {
             return [dict get $cache $key $prop]
@@ -68,7 +73,7 @@ namespace eval ::rivetweb {
     }
 
     ::itcl::body PageCache::get_page_object {key} {
-#        return [dict get $cache $key object]
+#       return [dict get $cache $key object]
         return [$this get_entry_prop $key object]
     }
 
