@@ -50,7 +50,8 @@ namespace eval ::rwpage {
             $pagedom delete
         }
         
-        RWPage::destroy
+        #RWPage::destroy
+        chain
     }
 
 # -- set_pagetext
@@ -131,6 +132,7 @@ namespace eval ::rwpage {
             }
         }
 
+        set output_buffer ""
         if {[info exists pagedom]} {
             set xmlnode_pt [$pagedom documentElement]
 

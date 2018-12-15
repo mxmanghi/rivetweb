@@ -26,15 +26,19 @@ namespace eval ::rivetweb {
 #
 # These values are the very last fallback values for the defaults
 
-    variable default_template       rwbase
-    variable default_menu           main
-    variable default_menu_pos       left
-    variable default_lang           en
+    variable default_template           rwbase
+    variable default_menu               main
+    variable default_menu_pos           left
+    variable default_lang               en
 
 # these paths are relative to the DocumentRoot, so we don't need to normalize them
 
-    variable site_url_base          /
+    #variable site_url_base          /
+    
+    # site wide definition of a directory for picture files
+    
     variable picts_path             picts
+
     variable css_path               templates
     variable base_templates         templates
     variable site_scritps           tcl
@@ -42,12 +46,8 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable http_encoding          utf-8
-    #variable datasources            {}
-    #variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
-    variable datasource             ::XMLBase
-    variable rwebdb                 ::rwebdb
+
     variable logger                 ::rwlogger
-    variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
     variable sitemap                RWSitemap
@@ -70,7 +70,7 @@ namespace eval ::rivetweb {
 # here but it will be assigned by the element <default_language>
 # in site_structure.xml
 
-    variable site_defs              site_defs.xml
+    #variable site_defs              site_defs.xml
     variable language               $default_lang
 
 # 'current_rev' is an integer number specifying
@@ -204,7 +204,7 @@ namespace eval ::rivetweb {
 #
 
     proc set_handler_args {handler args} {
-        ::rwdatas::UrlHandler::set_handler_arguments $handler $args
+        ::rwdatas::UrlHandler::set_handler_arguments $handler {*}$args
     }
 
 # -- init

@@ -9,7 +9,7 @@ package require Itcl
 package require rwconf
 package require rwlogger
 package require rwpage
-package require Datasource
+package require UrlHandler
 package require rwbasicpage
 
 namespace eval ::rwpage {
@@ -24,9 +24,11 @@ namespace eval ::rwpage {
         public method print_content { language } {
             #puts -nonewline [$::rivetweb::rwebdb coredump]
 
+            # this is badly dependend on the internal cache representation
+
             foreach urlh [::rwdatas::UrlHandler::registered_handlers] {
                 set tbhead "$urlh ([$urlh name])"
-                set urlhcache [$urlh cache]
+                set urlhcache [[$urlh cache] cache]
 
                 #puts "<pre>$urlhcache</pre>"
                 set tbody ""
@@ -35,10 +37,9 @@ namespace eval ::rwpage {
 
                         set rowfields "<td>$object</td>\
                                        <td>[$object key]</td>\
-                                       <td>[clock format $timestamp]</td>\
+                                       <td>[clock format $timestamp -format "%d-%m-%Y %T"]</td>\
                                        <td>[$object info class]</td>"
 
-                        
                     }
                     append tbody [::rivet::xml $rowfields tr]
                 }
@@ -49,15 +50,15 @@ namespace eval ::rwpage {
         }
     }
 }
-    
 
 namespace eval ::rwdatas {
 
     ::itcl::class RWDummy { 
-        inherit Datasource
+        inherit UrlHandler
 
         private variable urlargs
         private common MESSAGES
+        protected method exclude_handler {} { return "" }
 
         public method init {args} {
             set MESSAGES [dict create \
@@ -121,7 +122,7 @@ and failed to reassigned the resource key ($key)} \
 
                 #set pobj [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
                 set pobj [::rwpage::RWDumpPage ::#auto $key]
-                
+
             } else {
 
                 if {![dict exists $MESSAGES $key]} {

@@ -52,6 +52,7 @@ namespace eval ::rwdatas {
         private method menuclass {menu_o}        
         protected method xmlfile {key} { return [file join $static_pages ${key}.xml] }
         protected method xmlsitemaps {sitemap_key} { return [glob -nocomplain [file join $sitemap_key *.xml]] }
+        protected method exclude_handler {} { return "" }
 
         public method init {args}
         public method willHandle {arglist keyvar}
@@ -166,7 +167,7 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::willHandle {arglist keyvar} {
         upvar $keyvar key 
 
-        ## debug puts "<pre>arglist = $arglist</pre>"
+        # puts "<pre>arglist = $arglist</pre>"
         set key index
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
@@ -263,9 +264,6 @@ namespace eval ::rwdatas {
 
         set pagetclclass [dict get $menu_d pageclass]
         set newpage [$pagetclclass ::#auto $key]
-
-        # puts "<br/>[html $metadata_l b u]"
-        # $::rivetweb::pmodel set_metadata newpage $metadata_l
 
         set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
         $newpage put_metadata $menu_d
@@ -430,11 +428,9 @@ namespace eval ::rwdatas {
 
         file stat $sitemap_dir sitemap_stat
 
-        $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
+        $::rivetweb::logger log debug "menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
         if {($sitemap_stat(mtime) > $timestamp)} { 
-
             return true
-
         }
 
         return false
@@ -841,9 +837,6 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::menu_list {page} {
 
-#       puts "<br/><b>pmodel</b>: $page"
-#       puts "<br/><b>ds</b>: [$page metadata datasource]"
-
         if {[$this has_updates]} {
             $this load_sitemap $sitemap
         }
@@ -859,7 +852,6 @@ namespace eval ::rwdatas {
 
         }
 
-        #puts "<pre>menul: $menul</pre>"
         set menudb [dict create]
         foreach {group menuid} $menul {
             set menuid_list [$sitemap menu_list $menuid]
@@ -867,7 +859,6 @@ namespace eval ::rwdatas {
                 dict set menudb $group $menuid_list
             }
         }
-        #puts "<pre>menudb: $menudb</pre>"
 
         return $menudb
     }

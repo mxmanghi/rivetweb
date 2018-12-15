@@ -14,7 +14,13 @@ namespace eval ::rwlogger {
             puts stderr "\[$severity\] $msg"
         }
     }
+    
+    proc emit {msg {severity info}} {
+        log $severity $msg
+    }
+    
     namespace export log
+    namespace export emit
     namespace ensemble create
 }
 

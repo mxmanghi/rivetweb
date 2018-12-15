@@ -108,7 +108,9 @@ namespace eval ::rivetweb {
 
     set ::rivetweb::page_content $::rivetweb::page_key
     set ::rivetweb::current_page \
-        [$::rivetweb::current_page prepare_content $::rivetweb::datasource $::rivetweb::language $argsqs]
+        [$::rivetweb::current_page prepare_content \
+                                   [::rwdatas::UrlHandler::current_handler] \
+                                   $::rivetweb::language $argsqs]
 
 # sending headers
 
