@@ -7,7 +7,7 @@
 #
 #
 package require Itcl
-package require Datasource
+package require UrlHandler
 package require rwconf
 package require rwlogger
 package require rwsitemap
@@ -19,7 +19,7 @@ package require rwlink
 namespace eval ::rwdatas {
 
     ::itcl::class Scripted {
-        inherit Datasource
+        inherit UrlHandler
 
         private variable sitemap
         private variable script_path tcl
@@ -29,7 +29,7 @@ namespace eval ::rwdatas {
         public method init {args}
         public method willHandle {arglist keyvar}
         public method fetchData {key reassigned_key}
-        public method is_stale {key timereference } { return false }
+        #public method is_stale {key timereference } { return false }
         public method menu_list {page} 
         public method to_url {lm}
         public method resource_exists {resource_key} 
@@ -123,7 +123,7 @@ namespace eval ::rwdatas {
             $newpage put_metadata $varsqs
 
         } else {
-            set rkey rwscript_not_found_error
+            #set rkey rwscript_not_found_error
         }
 
         return $newpage

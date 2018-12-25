@@ -31,7 +31,7 @@ package require rwmenu
 # parse it.
 
 ::itcl::body ScriptBase::template {pageobj rvtname} {
-    parse [file join $::rivetweb::site_base rvt "${rvtname}.rvt"]
+    ::rivet::parse [file join $::rivetweb::site_base rvt "${rvtname}.rvt"]
 }
 
 # -- run

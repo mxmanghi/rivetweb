@@ -435,9 +435,9 @@ namespace eval ::rivetweb {
 #
 
     proc add_search_path {path2add} {
-        
-        lappend ::riverweb::search_list $path2add
-        
+
+        lappend ::rivetweb::search_list $path2add
+
     }
     namespace export add_search_path
     

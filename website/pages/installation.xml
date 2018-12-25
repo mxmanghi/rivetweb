@@ -11,24 +11,22 @@
         <headline>Rivetweb Installation</headline>
         <pagetext>
             <p>
-            	Rivetweb requires Apache HTTP Webserver 2.2 with Apache Rivet >= 2.0.1. It is also
-            	recommended you use Tcl &gt;= 8.5 with Rivet as current implementation of hidden
-            	data structures relies heavily on Tcl's <span class="code">dict</span> command.
-            	Current implementation of some of Rivetweb components also exploits
+	        Rivetweb requires Apache HTTP Webserver 2.4 with Apache Rivet >= 2.3.3 and 
+		Tcl &gt;= 8.6. Current implementation of some of Rivetweb components also exploits
             	<externalref href="http://tdom.github.com/">tdom</externalref> to manipulate 
             	XML and XHTML code. 
             </p>
             <p>
                 As of today Rivetweb hasn't released any artifact, so you if you want to test it
-                you have to clone the code from the 
-                <externref href="http://sourceforge.net/projects/rivetweb/">git repository</externref> 
+                you have to clone the code from 
+                <externref href="http://fossil.biol.unipr.it/cgi-bin/fossil/rivetweb/">fossil repository</externref> 
             </p>
-            <programlisting>git clone git://git.code.sf.net/p/rivetweb/code rivetweb</programlisting>
+            <programlisting>fossil http://fossil.biol.unipr.it/cgi-bin/fossil/rivetweb/ rivetweb</programlisting>
             <p>
             	Rivetweb is still very unstable and under active development. You can have new updates 
             	of your code by <quote>pulling</quote> them from repository
             </p>
-				<programlisting>
+	    <programlisting>
 cd &lt;path-to-rivetweb-dir&gt;
 git pull</programlisting>
             <p>

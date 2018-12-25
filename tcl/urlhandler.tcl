@@ -1,15 +1,15 @@
 #
-# -- root class for URL handlers (formerly named datasources)
+# -- urlhandler.tcl
 #
 #
-# abstract class defining the common interface for all URL handlers
+# URL handlers base class, common data and basic methods
 #
-
 
 package require Itcl
 package require rwconf
 package require rwlogger
 package require rwpagecache
+package require rwpagebroker
 
 namespace eval ::rwdatas {
 
@@ -29,9 +29,12 @@ namespace eval ::rwdatas {
         private variable scan_context ""
 
         private variable cache
+		private variable broker
+		private variable resource_depends   [dict create]
 
         constructor {} {
-            set cache [::rivetweb::PageCache [namespace current]::#auto]
+            set cache 	[::rivetweb::PageCache [namespace current]::#auto]
+			set broker	[::rivetweb::PageBroker [namespace current]::#auto]
         }
 
         private method get_page_object { key } 
@@ -48,7 +51,10 @@ namespace eval ::rwdatas {
 
         ###
 
-        public method is_stale {key timereference}
+		public method add_depend {xmlfile timeref}
+		public method check_depends {key timeref}
+		
+        private method is_stale {key timereference}
         public method dispose {key} {}
         public method has_updates {} { return false }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -67,6 +73,30 @@ namespace eval ::rwdatas {
         public method signal {notifying_page signal_code}
         public method cleanup {} {}
 
+		# page broker interface
+		
+		protected   method register_class {class_name {itcl_file ""} {oosys itcl}} {
+			$broker register_class $class_name $itcl_file $oosys
+		}
+		
+        protected   method check_class {class_name} {
+			return [$broker check_class $class_name]
+		}
+		
+        public      method check_registered_classes {} {
+			$broker check_registered_classes
+		}
+		
+        private     method check_class_loaded {class_name oosys} {
+			return [$broker check_class_loaded $class_name $oosys]
+		}
+		
+        protected   method key_class_map {key {ooclass ""} {itcl_file ""} {oosys itcl}} {
+			return [$broker key_class_map $key $ooclass $itcl_file $oosys]
+		}
+		
+		# common interface
+		
         public proc register_handler {handler {position top} args}
         public proc registered_handlers {} { return $URLHANDLERS }
         public proc handlers_arguments {} { return $URLHANDLERS_ARGS }
@@ -263,9 +293,7 @@ namespace eval ::rwdatas {
         #$::rivetweb::logger log debug "error_code $error_info"
         if {[dict get $error_info -errorcode] == "rw_restart"} {
             $::rivetweb::logger log debug "url handler search forced"
-            
-            # search_handler sets CURR_URLHANDLER
-            
+            # search_handler sets CURR_URLHANDLER            
             set ::rivetweb::current_page [::rwdatas::UrlHandler::search_handler $page_key page_key]
         } else {
             #set ::rivetweb::datasource $urlh
@@ -282,8 +310,36 @@ namespace eval ::rwdatas {
     #
     
     ::itcl::body UrlHandler::current_handler {} { return $CURR_URLHANDLER }
-    
 
+	
+	::itcl::body UrlHandler::add_depend {resource timeref} {
+		dict set resource_depends $::rivetweb::page_key $resource $timeref
+	}
+	
+	
+    # -- check_depends
+	#
+	# 
+	#
+	
+	::itcl::body UrlHandler::check_depends {key timeref} {
+		#puts [::rivet::xml $resource_depends pre]
+		
+		if {[dict exists $resource_depends $key]} {
+			set depends [dict get $resource_depends $key]
+			dict for {resource timestamp} $depends {
+				# file stat $resource file_stat
+				#puts [::rivet::xml "check depends for $key ($resource)" pre]
+
+				if {[expr $timeref < $timestamp]} {
+					return 1
+				}
+			}
+		}
+		return 0
+
+	}
+	
     # -- select_page
     #
     # Front-end call to retrieve a page.
@@ -292,18 +348,19 @@ namespace eval ::rwdatas {
     
     ::itcl::body UrlHandler::select_page {argsqs} {
         
-        set page_key [::rwdatas::UrlHandler::select_handler $argsqs]
+        set ::rivetweb::page_key [::rwdatas::UrlHandler::select_handler $argsqs]
         
-        $::rivetweb::logger log info "processing request for '$page_key'"
+        $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
 
         if {[catch {
-                set selected_page [[::rwdatas::UrlHandler::current_handler] fetch_page $page_key page_key]
+                set selected_page [[::rwdatas::UrlHandler::current_handler] fetch_page $::rivetweb::page_key page_key]
             } e einfo]} {
             $::rivetweb::logger log err "error: $e ($einfo) "
+			
+			set ::rivetweb::page_key fetch_page_error
+			
             set selected_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
         }
-
-        set ::rivetweb::page_key $page_key
 
         return $selected_page
     }
@@ -321,12 +378,14 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::is_stale {key timereference} {
 
-        if {[$cache key_query $key]} {
-            set page [$cache get_page_object $key]
-            return [$page refresh $timereference]
-        } else {
-            return false
-        }
+		puts [::rivet::xml "consider to refresh $key" pre]
+		if {[$this check_depends $key $timereference]} {
+			return 1
+		}
+	
+		set page [$cache get_page_object $key]
+		return [$page refresh $timereference]			
+
     }
 
     # -- signal

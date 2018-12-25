@@ -32,32 +32,6 @@ namespace eval ::rwpage {
         public method title {{language ""} {txt ""}}
         public method headline {language {hdl ""}}
         public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
-
-        #
-        # interface designed for the Scripted datasource. Can be moved into
-        # application specific code
-        #
-
-        public method store {var value} { dict set stored_vars $var $value }
-        public method lappend {var value} { dict lappend stored_vars $var $value }
-        public method erase {var} {
-            if {[dict exists $stored_vars $var]} {
-                dict unset stored_vars $var
-            }
-        }
-        public method recall {var {defvar value}} {
-            upvar 1 $defvar retvalue
-            # puts "--> $stored_vars<br/>"
-            if {[dict exists $stored_vars $var]} {
-                set retvalue [dict get $stored_vars $var]
-                return true
-            } else {
-                set retvalue ""
-                return false
-            }
-        }
-        #####
-
         public method binary_content { } { return false }
         public method content_field {language field {default_val ""}} { return "" }
         public method prepare {language argqs}

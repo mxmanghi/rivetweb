@@ -15,6 +15,7 @@ namespace eval ::rwpage {
         private variable script
         private variable tclpackage
         private variable do_method
+		private variable stored_vars
 
         constructor {pagekey scriptcmd {pkg ""}} {RWPage::constructor $pagekey} {
 
@@ -26,6 +27,31 @@ namespace eval ::rwpage {
         public method print_content {l}
         public method prepare {language argsqs} 
         public method headline {language}
+
+        #
+        # interface designed for the Scripted datasource. Can be moved into
+        # application specific code
+        #
+
+        public method store {var value} { dict set stored_vars $var $value }
+        public method lappend {var value} { dict lappend stored_vars $var $value }
+        public method erase {var} {
+            if {[dict exists $stored_vars $var]} {
+                dict unset stored_vars $var
+            }
+        }
+        public method recall {var {defvar value}} {
+            upvar 1 $defvar retvalue
+            # puts "--> $stored_vars<br/>"
+            if {[dict exists $stored_vars $var]} {
+                set retvalue [dict get $stored_vars $var]
+                return true
+            } else {
+                set retvalue ""
+                return false
+            }
+        }
+
     }
 
 # -- prepare
@@ -34,6 +60,8 @@ namespace eval ::rwpage {
 
     ::itcl::body RWScripted::prepare {language argsqs} {
         RWPage::prepare $language $argsqs
+
+		set stored_vars [dict create {*}$argsqs]
 
     # before we check for specific methods to be run we run a generic
     # 'init' method with the initialization to all methods.

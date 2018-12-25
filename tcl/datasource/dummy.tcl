@@ -82,25 +82,25 @@ and failed to reassigned the resource key ($key)} \
 
             set href [::rivetweb::composeUrl {*}$urlargs]
 
-# we now set the href attribute of the link
+			# we now set the href attribute of the link
 
             $linkmodel set_attribute lm [list href $href]
 
             return $lm
         }
 
-        public method is_stale {key timereference} {
+        # public method is_stale {key timereference} {
 
-            switch $key {
-                rw_dbdump {
-                    return false
-                }
-                default {
-                    return [UrlHandler::is_stale $key $timereference]
-                }
-            }
+            # switch $key {
+                # rw_dbdump {
+                    # return false
+                # }
+                # default {
+                    # return [UrlHandler::is_stale $key $timereference]
+                # }
+            # }
 
-        }
+        # }
 
         public method willHandle {arglist keyvar} { 
             upvar $keyvar key 
