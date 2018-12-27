@@ -20,7 +20,9 @@ namespace eval ::rwdatas {
         private common URLHANDLERS
         private common URLHANDLERS_ARGS
         private common ALIASDB
+		private common PAGE_BROKER 
 
+		
         set ALIASDB             [dict create]
         set CURR_URLHANDLER     ""
         set URLHANDLERS         {}
@@ -29,12 +31,11 @@ namespace eval ::rwdatas {
         private variable scan_context ""
 
         private variable cache
-		private variable broker
 		private variable resource_depends   [dict create]
 
         constructor {} {
-            set cache 	[::rivetweb::PageCache [namespace current]::#auto]
-			set broker	[::rivetweb::PageBroker [namespace current]::#auto]
+            set cache 		[::rivetweb::PageCache [namespace current]::#auto]
+			set PAGE_BROKER	[::rivetweb::PageBroker [namespace current]::#auto]
         }
 
         private method get_page_object { key } 
@@ -76,23 +77,23 @@ namespace eval ::rwdatas {
 		# page broker interface
 		
 		protected   method register_class {class_name {itcl_file ""} {oosys itcl}} {
-			$broker register_class $class_name $itcl_file $oosys
+			$PAGE_BROKER register_class $class_name $itcl_file $oosys
 		}
 		
         protected   method check_class {class_name} {
-			return [$broker check_class $class_name]
+			return [$PAGE_BROKER check_class $class_name]
 		}
 		
         public      method check_registered_classes {} {
-			$broker check_registered_classes
+			$PAGE_BROKER check_registered_classes
 		}
 		
         private     method check_class_loaded {class_name oosys} {
-			return [$broker check_class_loaded $class_name $oosys]
+			return [$PAGE_BROKER check_class_loaded $class_name $oosys]
 		}
 		
         protected   method key_class_map {key {ooclass ""} {itcl_file ""} {oosys itcl}} {
-			return [$broker key_class_map $key $ooclass $itcl_file $oosys]
+			return [$PAGE_BROKER key_class_map $key $ooclass $itcl_file $oosys]
 		}
 		
 		# common interface
@@ -378,6 +379,8 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::is_stale {key timereference} {
 
+	
+	
 		puts [::rivet::xml "consider to refresh $key" pre]
 		if {[$this check_depends $key $timereference]} {
 			return 1
