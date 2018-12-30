@@ -28,18 +28,6 @@ namespace eval ::rivetweb {
     }
     namespace export registered_handlers
 
-# -- notify_url_handlers
-#
-# Method to be used by pages needing to send signals to URL handlers
-
-    proc notify_url_handlers {signal signal_arguments} {
-        
-        foreach ds [::rwdatas::UrlHandler::registered_handlers] {
-            $ds signal $signal $signal_arguments
-        }
-
-    }
-
 # -- select_datasource
 #
 # this function is the central mechanism for selecting

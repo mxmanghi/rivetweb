@@ -146,14 +146,13 @@ namespace eval ::rivetweb {
             return false
         }
 
+		set class_reload false
+		
         if {[$this check_class_loaded $class_name $oosys] == 0} {
 
-           ::rwlogger log info \
+			::rwlogger log info \
                 "$log_prefix: class $class_name not loaded, reading from $itcl_file"
-
-            source $itcl_file
-            dict set class_db $class_name mtime [file mtime $itcl_file]
-            return true
+			set class_reload true
 
         } else {
 
@@ -163,16 +162,20 @@ namespace eval ::rivetweb {
 
                 ::rwlogger log notice \
                 "$log_prefix: class $class_name stale, deleting and then reading from $itcl_file"
-                ::rivetweb::notify_url_handlers class_being_deleted $class_name
+                ::rwdatas::UrlHandler::notify_handlers class_being_deleted $class_name
                 ::itcl::delete class $class_name
-                source $itcl_file
-                dict set class_db $class_name mtime [file mtime $itcl_file]
-                return true
 
+				set class_reload true
             }
 
         }
-        return false
+
+		if {$class_reload} {
+		    source $itcl_file
+            dict set class_db $class_name mtime [file mtime $itcl_file]
+        }
+
+        return $class_reload
     }
 }
 

@@ -42,7 +42,8 @@ namespace eval ::rwdatas {
         public method init {args} { }
         public method destroy {}
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
-        public method fetchData {key reassigned_key} { return "" }
+        #public method fetchData {key reassigned_key} { return "" }
+        public method fetchData {key reassigned_key}
 
         ### unimplemented interface (to be removed?)
 
@@ -112,6 +113,10 @@ namespace eval ::rwdatas {
         public proc select_handler {argsqs}
         public proc select_page {argsqs}
         public proc current_handler {}
+		public proc notify_handlers {signal signal_arguments} {
+		    foreach ds [::rwdatas::UrlHandler::registered_handlers] {
+            $ds signal $signal $signal_arguments
+        }
 
         public method next_handler {}
 
@@ -343,8 +348,7 @@ namespace eval ::rwdatas {
 	
     # -- select_page
     #
-    # Front-end call to retrieve a page.
-    #
+    # Front-end call to page retrieval.
     #
     
     ::itcl::body UrlHandler::select_page {argsqs} {
@@ -379,8 +383,6 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::is_stale {key timereference} {
 
-	
-	
 		puts [::rivet::xml "consider to refresh $key" pre]
 		if {[$this check_depends $key $timereference]} {
 			return 1
@@ -464,6 +466,30 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::get_page_object {key} {
         return [$cache get_page_object $key]
+    }
+
+	##
+	# -- fetchData
+	#
+	
+	::itcl::body UrlHandler::fetchData {key reassigned_key} {
+        upvar $reassigned_key rkey
+
+        set pobj ""
+        set ooclass [$this key_class_map $key]
+
+        if { $ooclass == "" } { 
+			return "" 
+		} else {
+			set rkey $key
+		}
+
+        $this check_class $ooclass
+
+        set pobj [$PAGE_BROKER create_page_obj $key $ooclass $rkey]
+        $pobj init
+
+        return $pobj
     }
 
 # -- fetch_page
