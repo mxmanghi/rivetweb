@@ -46,7 +46,6 @@ namespace eval ::rivetweb {
             }
         }
 
-
         if {[dict exists $class_db $class_name]} {
             ::rwlogger log info "(register_class) registering $class_name twice ($itcl_file)"
             ::rwlogger log info "(register_class) skip registration for $class_name"
@@ -66,7 +65,6 @@ namespace eval ::rivetweb {
 
         ::rwlogger log info "(register_class) class $class_name ($itcl_file)"
     }
-    
 
     # -- key_class_map
     #
@@ -77,9 +75,7 @@ namespace eval ::rivetweb {
         if {$ooclass != ""} {
             $this register_class $ooclass $itcl_file $oosys
             dict set keyclassmap $key class $ooclass
-        }
-
-        if {[dict exists $keyclassmap $key class]} {
+        } elseif { [dict exists $keyclassmap $key class] } {
             set ooclass [dict get $keyclassmap $key class]
         }
         return $ooclass
@@ -150,7 +146,7 @@ namespace eval ::rivetweb {
 		
         if {[$this check_class_loaded $class_name $oosys] == 0} {
 
-			::rwlogger log info \
+			::rwlogger log debug \
                 "$log_prefix: class $class_name not loaded, reading from $itcl_file"
 			set class_reload true
 
@@ -165,13 +161,13 @@ namespace eval ::rivetweb {
                 ::rwdatas::UrlHandler::notify_handlers class_being_deleted $class_name
                 ::itcl::delete class $class_name
 
-				set class_reload true
+		set class_reload true
             }
 
         }
 
-		if {$class_reload} {
-		    source $itcl_file
+	if {$class_reload} {
+	    source $itcl_file
             dict set class_db $class_name mtime [file mtime $itcl_file]
         }
 
