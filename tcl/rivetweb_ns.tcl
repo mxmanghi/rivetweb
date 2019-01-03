@@ -207,6 +207,17 @@ namespace eval ::rivetweb {
         ::rwdatas::UrlHandler::set_handler_arguments $handler {*}$args
     }
 
+# -- lremove
+#
+#   list element removal: taken straight from the Tcl manual page for lreplace
+
+    proc lremove {listVariable value} {
+        upvar 1 $listVariable var
+    
+        set idx [lsearch -exact $var $value]
+        set var [lreplace $var $idx $idx]
+    }
+
 # -- init
 #
 # init used to be the real initialization in Rivetweb 1.0. Most of its tasks
@@ -218,7 +229,12 @@ namespace eval ::rivetweb {
         variable    logger
         variable    default_lang
 
-        package require $urlhandler
+        set argidx [lsearch $args "-nopkg"]
+        if {$argidx < 0} {
+            package require $urlhandler
+        } else {
+            set args [lreplace $args $argidx $argidx]
+        }
 
         set urlobj [::rwdatas::${urlhandler} ::${urlhandler}]
 

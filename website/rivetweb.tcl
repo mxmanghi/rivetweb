@@ -15,7 +15,7 @@ namespace eval ::rwdatas {
     	public method init {args} {
 
             $this add_page_depend testdepend [::rivetweb::Resource [namespace current]#auto]
-            $this register_class ::rwpage::TestDepend
+            $this key_class_map testdepend ::rwpage::TestDepend
 
 		}
 
@@ -34,6 +34,6 @@ namespace eval ::rwdatas {
 
 ::rivetweb::init Scripted 	 top
 ::rivetweb::init XMLMessage  top
-::rivetweb::init PBrokerTest top
+::rivetweb::init PBrokerTest top -nopkg
 
 ::rivet::apache_log_error info "URL handlers: [::rwdatas::UrlHandler::registered_handlers]"

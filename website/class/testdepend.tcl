@@ -9,12 +9,14 @@ namespace eval ::rwpage {
 
         private variable xmlbuffer
 
+        constructor {pagekey} {RWPage::constructor $pagekey} { }
+
         public method init {} {
             set xmlbuffer ""
         }
 
         public method print_content { language } { 
-            puts $xmlbuffer
+            puts [::rivet::xml "test page pid: [pid]" [list div style "border: 1px solid black; padding: 1em;"] pre]
         }
     }
 }

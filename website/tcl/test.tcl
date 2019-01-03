@@ -1,5 +1,5 @@
 #
-# -- test
+# -- test.tcl
 #
 #+
 # early attempts to stretch Rivetweb capabilities and make it suitable
@@ -7,7 +7,6 @@
 #-
 #
 
-package require Itcl
 package require ScriptBase
 
 ::itcl::class Test {
