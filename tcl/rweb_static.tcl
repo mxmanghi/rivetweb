@@ -256,7 +256,7 @@ namespace eval ::rwpage {
     ::itcl::body RWStatic::print_content {language} {
 	
 		if {$xmlbuffer == ""} {
-			puts "[pid]"
+			#puts "[pid]"
 			set xmlbuffer [$this content $language -xml]
 		}
 		

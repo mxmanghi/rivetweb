@@ -342,7 +342,7 @@ namespace eval ::rwdatas {
 
                 if {[file exists $resource]} {
 
-                    puts [::rivet::xml "check depends for $key ($resource)" pre]
+                    #puts [::rivet::xml "check depends for $key ($resource)" pre]
                     file stat $resource fstat
                     set timestamp $fstat(mtime)
                     ::rivet::apache_log_error debug "check_depends: $key $resource $timestamp ($timeref)"
@@ -393,7 +393,7 @@ namespace eval ::rwdatas {
     #
 
     ::itcl::body UrlHandler::is_stale {key timereference} {
-        puts [::rivet::xml "consider to refresh $key" pre]
+        #puts [::rivet::xml "consider to refresh $key" pre]
 
         if {[$this check_depends $key $timereference]} {
              return 1

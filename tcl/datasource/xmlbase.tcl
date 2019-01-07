@@ -135,8 +135,8 @@ namespace eval ::rwdatas {
 
         } elseif {![file isdirectory $static_pages]} {
             $::rivetweb::logger log notice "Wrong path for sitemap ($static_pages)"
-            return -code error  -error_code invalid_path                \
-                                -errorinfo  "Wrong path $static_pages"   \
+            return -code error  -error_code invalid_path                    \
+                                -errorinfo  "Wrong path $static_pages"      \
                                             "Wrong path $static_pages"
         } else {
             $::rivetweb::logger log notice "setting pages path as $static_pages"
