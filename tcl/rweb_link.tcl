@@ -32,7 +32,7 @@ namespace eval ::rwlink {
             if {$linfo != ""} { dict set text info [dict create {*}$linfo]}
             set arguments $largs
             set attributes [dict create]
-            set properties [dict create]
+            set properties [dict create type generic]
         }
 
         public method link_owner {} { return $owner }

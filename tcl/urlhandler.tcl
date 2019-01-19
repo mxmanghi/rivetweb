@@ -22,6 +22,8 @@ namespace eval ::rwdatas {
         private common ALIASDB
 	    private common PAGE_BROKER 
 	
+        private common CURRENT_PAGE_KEY
+
         set ALIASDB             [dict create]
         set CURR_URLHANDLER     ""
         set URLHANDLERS         {}
@@ -112,6 +114,7 @@ namespace eval ::rwdatas {
         private proc search_handler {key returned_key {excluded_handler ""}}
         public proc select_handler {argsqs}
         public proc select_page {argsqs}
+        public proc current_key {} { return $CURRENT_PAGE_KEY }
         public proc current_handler {}
         public proc notify_handlers {signal signal_arguments} {
             foreach ds [::rwdatas::UrlHandler::registered_handlers] {
@@ -380,6 +383,14 @@ namespace eval ::rwdatas {
 	        set ::rivetweb::page_key fetch_page_error
             set selected_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
         }
+
+        # we keep page_key for a while, trying to figure out
+        # if there is some code depending from it and then
+        # moving to the method 'current_key'
+
+        set ::rivetweb::page_key $page_key
+
+        set CURRENT_PAGE_KEY $page_key
 
         return $selected_page
     }

@@ -869,6 +869,7 @@ namespace eval ::rwdatas {
                 }
                 $linkmodel set_attribute lm [list href $href]
             }
+            generic -
             external {
                 $linkmodel set_attribute lm [list href [$linkmodel reference $lm]]
             }
