@@ -9,4 +9,4 @@
 
 source [file join $rweb_root tcl rivetweb_exit.tcl]
 
-# --
+# -- exit.tcl
