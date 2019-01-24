@@ -18,6 +18,7 @@ namespace eval ::rivetweb {
         public method register_class {class_name {itcl_file ""} {oosys itcl}}
         public method check_class {class_name}
         public method check_registered_classes {}
+        public method configure_page {key args}
         public method create_page_obj {key ooclass rkey args}
     }
     
@@ -31,8 +32,7 @@ namespace eval ::rivetweb {
             set itcl_file_found 0
             foreach subd {tcl class} {
                 set itcl_file [file join $::rivetweb::site_base \
-                                         $subd \
-                                         $proposed_file_name]
+                                         $subd $proposed_file_name]
 
                 if {[file exists $itcl_file]} { 
                     set itcl_file_found 1
@@ -42,7 +42,7 @@ namespace eval ::rivetweb {
             }
             if {$itcl_file_found == 0} {
                 return -code error -errorcode class_file_not_found \
-                                              "File for class '$class_name' not found"
+                                    "File for class '$class_name' not found"
             }
         }
 
@@ -75,11 +75,21 @@ namespace eval ::rivetweb {
         if {$ooclass != ""} {
             $this register_class $ooclass $itcl_file $oosys
             dict set keyclassmap $key class $ooclass
-        } elseif { [dict exists $keyclassmap $key class] } {
+        } elseif {[dict exists $keyclassmap $key class]} {
             set ooclass [dict get $keyclassmap $key class]
         }
         return $ooclass
 
+    }
+
+    # -- configure_page
+    #
+    #
+
+    ::itcl::body PageBroker::configure_page {key args} {
+        if {[dict exists $keyclassmap $key]} {
+            dict set keyclassmap $key configure $args
+        }
     }
 
     # -- create_page_obj
@@ -93,7 +103,6 @@ namespace eval ::rivetweb {
         upvar $reassigned_key rkey
 
         set rkey $key
-
         set pobj [eval $ooclass ::rwpage::#auto $key {*}$args]
 
         if {[dict exists $keyclassmap $key configure]} {
@@ -110,15 +119,14 @@ namespace eval ::rivetweb {
     ::itcl::body PageBroker::check_class_loaded {class_name oosys} {
 
         switch $oosys {
-
             itcl {
                 return [::itcl::is class $class_name]
             }
             default {
                 return false
             }
-
         }
+
     }
 
 # -- check_registered_classes

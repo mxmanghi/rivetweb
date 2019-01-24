@@ -9,15 +9,15 @@ package require rwresource
 
 namespace eval ::rwdatas {
 
-	::itcl::class PBrokerTest {
+    ::itcl::class PBrokerTest {
         inherit UrlHandler
 
-    	public method init {args} {
+	public method init {args} {
 
             $this add_page_depend testdepend [::rivetweb::Resource [namespace current]#auto]
             $this key_class_map testdepend ::rwpage::TestDepend
 
-		}
+	}
 
         public method willHandle {arglist keyvar} {
             upvar $keyvar key 
@@ -29,7 +29,7 @@ namespace eval ::rwdatas {
 
             return -code continue -errorcode rw_continue
         }
-	}
+    }
 }
 
 ::rivetweb::init Scripted 	 top

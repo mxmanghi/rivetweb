@@ -21,7 +21,7 @@ namespace eval ::rwdatas {
         private common URLHANDLERS_ARGS
         private common ALIASDB
 	    private common PAGE_BROKER 
-	
+
         private common CURRENT_PAGE_KEY
 
         set ALIASDB             [dict create]
@@ -32,11 +32,11 @@ namespace eval ::rwdatas {
         private variable scan_context ""
 
         private variable cache
-		private variable resource_depends   [dict create]
+        private variable resource_depends   [dict create]
 
         constructor {} {
-            set cache 		[::rivetweb::PageCache  [namespace current]::#auto]
-	        set PAGE_BROKER	[::rivetweb::PageBroker [namespace current]::#auto]
+            set cache       [::rivetweb::PageCache  [namespace current]::#auto]
+            set PAGE_BROKER [::rivetweb::PageBroker [namespace current]::#auto]
         }
 
         private method get_page_object { key } 
@@ -54,10 +54,10 @@ namespace eval ::rwdatas {
 
         ###
 
-	    public method add_depend {xmlfile timeref}
-	    public method check_depends {key timeref}
+        public method add_depend {xmlfile {timeref ""}}
+        public method check_depends {key timeref}
         public method add_page_depend {key resource}
-		
+
         private method is_stale {key timereference}
         public method dispose {key} {}
         public method has_updates {} { return false }
@@ -78,6 +78,10 @@ namespace eval ::rwdatas {
         public method cleanup {} {}
 
         # page broker interface
+
+        protected   method configure_page {key args} {
+            eval $PAGE_BROKER configure_page $key $args
+        }
             
         protected   method register_class {class_name {itcl_file ""} {oosys itcl}} {
             $PAGE_BROKER register_class $class_name $itcl_file $oosys
@@ -98,9 +102,9 @@ namespace eval ::rwdatas {
         protected method key_class_map {key {ooclass ""} {itcl_file ""} {oosys itcl}} {
             return [$PAGE_BROKER key_class_map $key $ooclass $itcl_file $oosys]
         }
-		
-	    # common interface
-		
+
+        # common interface
+
         public proc register_handler {handler {position top} args}
         public proc registered_handlers {} { return $URLHANDLERS }
         public proc handlers_arguments {} { return $URLHANDLERS_ARGS }
@@ -118,8 +122,8 @@ namespace eval ::rwdatas {
         public proc current_handler {}
         public proc notify_handlers {signal signal_arguments} {
             foreach ds [::rwdatas::UrlHandler::registered_handlers] {
-                    $ds signal $signal $signal_arguments
-                }
+                $ds signal $signal $signal_arguments
+            }
         }
         public method next_handler {}
 
@@ -271,7 +275,7 @@ namespace eval ::rwdatas {
     #
     # handler selection driven by the URL arguments
     #
-    
+
     ::itcl::body UrlHandler::select_handler {urlargs} {
         set urlh [::rwdatas::UrlHandler::start_scan]
         set error_info [dict create]
@@ -313,28 +317,28 @@ namespace eval ::rwdatas {
 
         return $page_key
     }
-    
+
     # -- current_handler 
     #
     #
-    
+
     ::itcl::body UrlHandler::current_handler {} { return $CURR_URLHANDLER }
 
     ::itcl::body UrlHandler::add_depend {resource {timeref ""}} {
         if {$timeref == ""} { set timeref [clock seconds] }
 
-	    dict set resource_depends $::rivetweb::page_key $resource $timeref
+        dict set resource_depends $::rivetweb::page_key $resource $timeref
     }
-	
+
     ::itcl::body UrlHandler::add_page_depend {key resource} {
-	    dict set resource_depends $key $resource [clock seconds]
+        dict set resource_depends $key $resource [clock seconds]
     }
 
     # -- check_depends
     #
     # 
     #
-	
+
     ::itcl::body UrlHandler::check_depends {key timeref} {
 	    #puts [::rivet::xml $resource_depends pre]
 		
@@ -362,7 +366,7 @@ namespace eval ::rwdatas {
         return 0
 
     }
-	
+
     # -- select_page
     #
     # Front-end call to page retrieval.
@@ -376,12 +380,13 @@ namespace eval ::rwdatas {
 
         if {[catch {
             set selected_page \
-		    [[::rwdatas::UrlHandler::current_handler] fetch_page $::rivetweb::page_key page_key]
+                [[::rwdatas::UrlHandler::current_handler] fetch_page $::rivetweb::page_key page_key]
         } e einfo]} {
+
             $::rivetweb::logger log err "error: $e ($einfo)"
-			
-	        set ::rivetweb::page_key fetch_page_error
+            set ::rivetweb::page_key fetch_page_error
             set selected_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
+
         }
 
         # we keep page_key for a while, trying to figure out
@@ -489,23 +494,23 @@ namespace eval ::rwdatas {
         return [$cache get_page_object $key]
     }
 
-	##
-	# -- fetchData
-	#
-	
-	::itcl::body UrlHandler::fetchData {key reassigned_key} {
+##
+# -- fetchData
+#
+
+    ::itcl::body UrlHandler::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
 
         set pobj ""
         set ooclass [$this key_class_map $key]
 
-        if { $ooclass == "" } { 
+        if { $ooclass == "" } {
              return ""
         } else {
              set rkey $key
         }
 
-        set pobj [$PAGE_BROKER create_page_obj $key $ooclass $rkey]
+        set pobj [$PAGE_BROKER create_page_obj $key $ooclass rkey]
         $pobj init
 
         return $pobj
@@ -538,9 +543,9 @@ namespace eval ::rwdatas {
 
                 $::rivetweb::logger log debug "[$this info class]::fetch_page refetching page for $key"
 
-		        set stored_page [$cache get_page_object $key]
+                set stored_page [$cache get_page_object $key]
 
-		        ### catch added for debugging
+                ### catch added for debugging
                 if {[catch {
                     $cache clear_entry $key
                     $stored_page destroy
@@ -565,9 +570,9 @@ namespace eval ::rwdatas {
             return [$cache get_page_object $key]
 
         } else {
-
+            set rkey ""
             set p [$this fetchData $key rkey]
-            $::rivetweb::logger log debug "[$this info class]::fetch_page returns $rkey in response of key $key"
+            $::rivetweb::logger log debug "[$this info class]::fetch_page returns '$rkey' in response of key $key"
             if {$p != ""} {
                 $cache store_page $key $p
             } else {
@@ -577,7 +582,7 @@ namespace eval ::rwdatas {
 
         }
     }
-    
+
     # -- set_alias
     #
     #
