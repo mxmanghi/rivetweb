@@ -375,7 +375,7 @@ namespace eval ::rwdatas {
                 set xmldata [regsub -all {\?>} $xmldata {?\&gt;}]
 				
 				file stat $xmlfile file_stat
-				$this add_depend $xmlfile $file_stat(mtime)
+				$this add_page_depend $key $xmlfile $file_stat(mtime)
 
             } fileioerr einfo]} {
                 set page_error_msg "Impossible to read page '$key' ($fileioerr)<br/><ul>"

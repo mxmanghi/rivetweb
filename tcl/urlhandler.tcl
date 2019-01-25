@@ -56,7 +56,7 @@ namespace eval ::rwdatas {
 
         public method add_depend {xmlfile {timeref ""}}
         public method check_depends {key timeref}
-        public method add_page_depend {key resource}
+        public method add_page_depend {key resource {timeref ""}}
 
         private method is_stale {key timereference}
         public method dispose {key} {}
@@ -79,15 +79,15 @@ namespace eval ::rwdatas {
 
         # page broker interface
 
-        protected   method configure_page {key args} {
+        protected method configure_page {key args} {
             eval $PAGE_BROKER configure_page $key $args
         }
             
-        protected   method register_class {class_name {itcl_file ""} {oosys itcl}} {
+        protected method register_class {class_name {itcl_file ""} {oosys itcl}} {
             $PAGE_BROKER register_class $class_name $itcl_file $oosys
         }
             
-        protected   method check_class {class_name} {
+        protected method check_class {class_name} {
             return [$PAGE_BROKER check_class $class_name]
         }
             
@@ -330,8 +330,9 @@ namespace eval ::rwdatas {
         dict set resource_depends $::rivetweb::page_key $resource $timeref
     }
 
-    ::itcl::body UrlHandler::add_page_depend {key resource} {
-        dict set resource_depends $key $resource [clock seconds]
+    ::itcl::body UrlHandler::add_page_depend {key resource {timeref ""}} {
+        if {$timeref == ""} { set timeref [clock seconds] }
+        dict set resource_depends $key $resource $timeref
     }
 
     # -- check_depends
