@@ -20,7 +20,7 @@ namespace eval ::rwdatas {
         private common URLHANDLERS
         private common URLHANDLERS_ARGS
         private common ALIASDB
-	    private common PAGE_BROKER 
+        private common PAGE_BROKER 
 
         private common CURRENT_PAGE_KEY
 
@@ -341,8 +341,8 @@ namespace eval ::rwdatas {
     #
 
     ::itcl::body UrlHandler::check_depends {key timeref} {
-	    #puts [::rivet::xml $resource_depends pre]
-		
+        #puts [::rivet::xml $resource_depends pre]
+
         if {[dict exists $resource_depends $key]} {
             set depends [dict get $resource_depends $key]
             dict for {resource timestamp} $depends {

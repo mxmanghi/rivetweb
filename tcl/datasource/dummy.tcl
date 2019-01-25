@@ -18,7 +18,7 @@ namespace eval ::rwpage {
         inherit RWPage
 
         constructor {pagekey} {RWPage::constructor $pagekey} {
-            $this title $::rivetweb::default_lang "URL handlers database"
+            $this title $::rivetweb::default_lang "URL handlers database pid: [pid]"
         }
 
         public method print_content { language } {
