@@ -32,7 +32,7 @@ namespace eval ::rwdatas {
         private variable scan_context ""
 
         private variable cache
-        private variable resource_depends   [dict create]
+        private common RESOURCE_DEPENDS   [dict create]
 
         constructor {} {
             set cache       [::rivetweb::PageCache  [namespace current]::#auto]
@@ -327,24 +327,29 @@ namespace eval ::rwdatas {
     ::itcl::body UrlHandler::add_depend {resource {timeref ""}} {
         if {$timeref == ""} { set timeref [clock seconds] }
 
-        dict set resource_depends $::rivetweb::page_key $resource $timeref
+        dict set RESOURCE_DEPENDS $::rivetweb::page_key $resource $timeref
     }
 
     ::itcl::body UrlHandler::add_page_depend {key resource {timeref ""}} {
-        if {$timeref == ""} { set timeref [clock seconds] }
-        dict set resource_depends $key $resource $timeref
+        if {$timeref == ""} { 
+            if {[$cache key_query $key]} {
+                set timeref [$cache get_entry_prop $key timestamp]
+            } else {
+                set timeref [clock seconds]
+            }
+        }
+        dict set RESOURCE_DEPENDS $key $resource $timeref
+	    #puts [::rivet::xml ">$RESOURCE_DEPENDS<" pre]
     }
 
     # -- check_depends
     #
-    # 
     #
 
     ::itcl::body UrlHandler::check_depends {key timeref} {
-        #puts [::rivet::xml $resource_depends pre]
 
-        if {[dict exists $resource_depends $key]} {
-            set depends [dict get $resource_depends $key]
+        if {[dict exists $RESOURCE_DEPENDS $key]} {
+            set depends [dict get $RESOURCE_DEPENDS $key]
             dict for {resource timestamp} $depends {
                 # file stat $resource file_stat
 
@@ -359,8 +364,9 @@ namespace eval ::rwdatas {
                 } elseif { ([info commands $resource] != "") && \
                             [$resource isa ::rivetweb::Resource]} {
 
-                    ::rivet::apache_log_error debug "check depend obj: $key $resource ([$resource timestamp])"
+                    ::rivet::apache_log_error debug "check_depends obj: $key $resource ([$resource timestamp])"
                     if {[$resource timestamp] < $timestamp} { return 1 }
+
                 }
             }
         }
@@ -573,7 +579,7 @@ namespace eval ::rwdatas {
         } else {
             set rkey ""
             set p [$this fetchData $key rkey]
-            $::rivetweb::logger log debug "[$this info class]::fetch_page returns '$rkey' in response of key $key"
+            $::rivetweb::logger log debug "[$this info class]::fetch_page returns $p '$rkey' in response of key $key"
             if {$p != ""} {
                 $cache store_page $key $p
             } else {

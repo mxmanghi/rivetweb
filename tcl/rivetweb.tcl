@@ -469,7 +469,7 @@ namespace eval ::rivetweb {
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
-            foreach menuobj $menus {    
+            foreach menuobj $menus {
                 #puts "<div style=\"border: 1px solid red;\">[$menuobj info class]</div>"
                 append htmltext [$menuobj toHTML $htmldefs]    
             }
