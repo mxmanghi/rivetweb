@@ -96,7 +96,9 @@ namespace eval ::rivetweb {
     # to the now obsolete definition of datasource (at least in this context)
 
     #set ::rivetweb::page_key     [::rwdatas::UrlHandler::select_handler $argsqs]
-    set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page    $argsqs]
+    set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page $argsqs]
+
+    $::rivetweb::logger log debug "\[::rwdatas::UrlHandler::select_page $argsqs\] selected $::rivetweb::current_page"
 
 #
 # The three stage generation of a page

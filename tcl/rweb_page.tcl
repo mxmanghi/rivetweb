@@ -43,8 +43,8 @@ namespace eval ::rwpage {
 
 # -- prepare
 #
-# this method's purpose is to generate the content of the page, navigation
-# menus are part of the whole page setup and are collected here
+# Collecting menus to be displayed from the registered urlhandlers 
+#
 
     ::itcl::body RWPage::prepare {language argsqs} {
 

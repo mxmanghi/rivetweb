@@ -32,7 +32,7 @@ namespace eval ::rwdatas {
         private variable scan_context ""
 
         private variable cache
-        private common RESOURCE_DEPENDS   [dict create]
+        private common RESOURCE_DEPENDS [dict create]
 
         constructor {} {
             set cache       [::rivetweb::PageCache  [namespace current]::#auto]
@@ -43,7 +43,6 @@ namespace eval ::rwdatas {
         public method init {args} { }
         public method destroy {}
         public method willHandle {arglist keyvar} { return -code break -errorcode rw_ok }
-        #public method fetchData {key reassigned_key} { return "" }
         public method fetchData {key reassigned_key}
 
         ### unimplemented interface (to be removed?)
@@ -119,7 +118,7 @@ namespace eval ::rwdatas {
         public proc select_handler {argsqs}
         public proc select_page {argsqs}
         public proc current_key {} { return $CURRENT_PAGE_KEY }
-        public proc current_handler {}
+        public proc current_handler {} { return $CURR_URLHANDLER }
         public proc notify_handlers {signal signal_arguments} {
             foreach ds [::rwdatas::UrlHandler::registered_handlers] {
                 $ds signal $signal $signal_arguments
@@ -215,7 +214,7 @@ namespace eval ::rwdatas {
 
         return [lindex $URLHANDLERS $p]
     }
-    
+
     # -- search_handler
     #
     # recusive search of a page through the URL handler list. 
@@ -267,7 +266,7 @@ namespace eval ::rwdatas {
             
             set handler  [$handler next_handler]
         }
-        
+
         return [::RWDummy fetchData page_not_found_error rkey]
     }
 
@@ -277,6 +276,7 @@ namespace eval ::rwdatas {
     #
 
     ::itcl::body UrlHandler::select_handler {urlargs} {
+
         set urlh [::rwdatas::UrlHandler::start_scan]
         set error_info [dict create]
         set page_key ""
@@ -318,18 +318,10 @@ namespace eval ::rwdatas {
         return $page_key
     }
 
-    # -- current_handler 
+    # -- add_page_depend
     #
     #
-
-    ::itcl::body UrlHandler::current_handler {} { return $CURR_URLHANDLER }
-
-    ::itcl::body UrlHandler::add_depend {resource {timeref ""}} {
-        if {$timeref == ""} { set timeref [clock seconds] }
-
-        dict set RESOURCE_DEPENDS $::rivetweb::page_key $resource $timeref
-    }
-
+    
     ::itcl::body UrlHandler::add_page_depend {key resource {timeref ""}} {
         if {$timeref == ""} { 
             if {[$cache key_query $key]} {
@@ -339,7 +331,11 @@ namespace eval ::rwdatas {
             }
         }
         dict set RESOURCE_DEPENDS $key $resource $timeref
-	    #puts [::rivet::xml ">$RESOURCE_DEPENDS<" pre]
+        #puts [::rivet::xml ">$RESOURCE_DEPENDS<" pre]
+    }
+
+    ::itcl::body UrlHandler::add_depend {resource {timeref ""}} {
+        add_page_depend $::rivetweb::page_key $resource $timeref
     }
 
     # -- check_depends
@@ -359,7 +355,9 @@ namespace eval ::rwdatas {
                     file stat $resource fstat
                     set timestamp $fstat(mtime)
                     ::rivet::apache_log_error debug "check_depends: $key $resource $timestamp ($timeref)"
-                    if {$timeref < $timestamp} { return 1 }
+                    if {$timeref < $timestamp} {
+                        return 1 
+                    }
 
                 } elseif { ([info commands $resource] != "") && \
                             [$resource isa ::rivetweb::Resource]} {
@@ -380,7 +378,7 @@ namespace eval ::rwdatas {
     #
     
     ::itcl::body UrlHandler::select_page {argsqs} {
-        
+
         set ::rivetweb::page_key [::rwdatas::UrlHandler::select_handler $argsqs]
         
         $::rivetweb::logger log info "processing request for '$::rivetweb::page_key'"
@@ -421,7 +419,7 @@ namespace eval ::rwdatas {
         if {[$this check_depends $key $timereference]} {
              return 1
         }
-        
+
         set page [$cache get_page_object $key]
         return [$page refresh $timereference]
     }
@@ -472,9 +470,9 @@ namespace eval ::rwdatas {
 
     }
 
-# -- will_provide
-#
-#
+    # -- will_provide
+    #
+    #
 
     ::itcl::body UrlHandler::will_provide {key reassigned_key} {
         upvar $reassigned_key rkey
@@ -501,9 +499,8 @@ namespace eval ::rwdatas {
         return [$cache get_page_object $key]
     }
 
-##
-# -- fetchData
-#
+    # -- fetchData
+    #
 
     ::itcl::body UrlHandler::fetchData {key reassigned_key} {
         upvar $reassigned_key rkey
@@ -523,9 +520,9 @@ namespace eval ::rwdatas {
         return $pobj
     }
 
-# -- fetch_page
-#
-#
+    # -- fetch_page
+    #
+    #
 
     ::itcl::body UrlHandler::fetch_page {key reassigned_key} {
         upvar $reassigned_key rkey
@@ -554,8 +551,10 @@ namespace eval ::rwdatas {
 
                 ### catch added for debugging
                 if {[catch {
+
                     $cache clear_entry $key
                     $stored_page destroy
+
                 } e opts]} {
 
                     $::rivetweb::logger log err \
@@ -577,6 +576,7 @@ namespace eval ::rwdatas {
             return [$cache get_page_object $key]
 
         } else {
+
             set rkey ""
             set p [$this fetchData $key rkey]
             $::rivetweb::logger log debug "[$this info class]::fetch_page returns $p '$rkey' in response of key $key"
