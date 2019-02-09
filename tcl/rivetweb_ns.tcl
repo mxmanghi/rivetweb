@@ -6,7 +6,7 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                    20170802
+    variable version                    20190209
 
 # this must be the local path to the site's document root
 

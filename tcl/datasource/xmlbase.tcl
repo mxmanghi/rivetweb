@@ -70,7 +70,7 @@ namespace eval ::rwdatas {
         public method will_provide {keyword reassigned_key}
         public method cleanup {}
         public proc   makeUrl {reference} 
-	}
+    }
 
     ::itcl::body XMLBase::cleanup {} {
         if {$xmldom != ""} { $xmldom delete }
@@ -135,13 +135,13 @@ namespace eval ::rwdatas {
 
         } elseif {![file isdirectory $static_pages]} {
             $::rivetweb::logger log notice "Wrong path for sitemap ($static_pages)"
-            return -code error  -error_code invalid_path                    \
-                                -errorinfo  "Wrong path $static_pages"      \
+            return -code error  -error_code invalid_path                \
+                                -errorinfo  "Wrong path $static_pages"  \
                                             "Wrong path $static_pages"
         } else {
             $::rivetweb::logger log notice "setting pages path as $static_pages"
         }
-        
+
         # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
