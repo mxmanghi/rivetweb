@@ -69,7 +69,7 @@ namespace eval ::rwdatas {
         public method get_resource_repr {resource_key}  { return "" }
         public method to_url {lm}
         public method after_request {} {}
-        
+
         public method cache {} { return $cache }
         public method will_provide {keyword reassigned_key}
         public method fetch_page {keyworkd reassigned_key}
@@ -81,23 +81,23 @@ namespace eval ::rwdatas {
         protected method configure_page {key args} {
             eval $PAGE_BROKER configure_page $key $args
         }
-            
+
         protected method register_class {class_name {itcl_file ""} {oosys itcl}} {
             $PAGE_BROKER register_class $class_name $itcl_file $oosys
         }
-            
+
         protected method check_class {class_name} {
             return [$PAGE_BROKER check_class $class_name]
         }
-            
+
         public method check_registered_classes {} {
             $PAGE_BROKER check_registered_classes
         }
-            
+
         private method check_class_loaded {class_name oosys} {
             return [$PAGE_BROKER check_class_loaded $class_name $oosys]
         }
-            
+
         protected method key_class_map {key {ooclass ""} {itcl_file ""} {oosys itcl}} {
             return [$PAGE_BROKER key_class_map $key $ooclass $itcl_file $oosys]
         }
@@ -461,9 +461,15 @@ namespace eval ::rwdatas {
                 # signal_arg is supposed to be a page object
 
                 $cache clear_entry $signal_arg
+                $PAGE_BROKER delete_key_map $signal_arg
+
             }
             page_obj_being_removed {
-                $cache clear_entry [$signal_arg key]
+
+                set page_key [$signal_arg key]
+                $cache clear_entry $page_key
+                $PAGE_BROKER delete_key_map $page_key
+
             }
 
         }
