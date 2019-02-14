@@ -461,14 +461,12 @@ namespace eval ::rwdatas {
                 # signal_arg is supposed to be a page object
 
                 $cache clear_entry $signal_arg
-                $PAGE_BROKER delete_key_map $signal_arg
 
             }
             page_obj_being_removed {
 
                 set page_key [$signal_arg key]
                 $cache clear_entry $page_key
-                $PAGE_BROKER delete_key_map $page_key
 
             }
 
@@ -515,7 +513,7 @@ namespace eval ::rwdatas {
         set ooclass [$this key_class_map $key]
 
         if { $ooclass == "" } {
-             return ""
+            return  ""
         } else {
              set rkey $key
         }
@@ -533,8 +531,11 @@ namespace eval ::rwdatas {
     ::itcl::body UrlHandler::fetch_page {key reassigned_key} {
         upvar $reassigned_key rkey
 
-        $::rivetweb::logger log debug "[$this info class] cache '$cache'"
-        $::rivetweb::logger log debug "[$this info class] fetching key '$key'"
+        $::rivetweb::logger log debug "[$this info class]::fetch_page ==================="
+        $::rivetweb::logger log debug "fetching key '$key'"
+        $::rivetweb::logger log debug "cache '$cache'"
+        $::rivetweb::logger log debug "keyclassmap [$PAGE_BROKER dumpkeyclassmap]"
+        $::rivetweb::logger log debug "[$this info class]::fetch_page ==================="
 
         # first of all we check if the page class is loaded and if it
         # needs refresh. We do it by calling 'check_class' method of
@@ -556,6 +557,7 @@ namespace eval ::rwdatas {
                 set stored_page [$cache get_page_object $key]
 
                 ### catch added for debugging
+
                 if {[catch {
 
                     $cache clear_entry $key
@@ -571,6 +573,8 @@ namespace eval ::rwdatas {
                 }
 
                 set p [$this fetchData $key rkey]
+                $::rivetweb::logger log debug "[$this info class]::fetch_page refetched $key (rkey: $rkey) yields '$p'"
+
                 if {$key == $rkey} {
                     $cache store_page $key $p
                     return $p

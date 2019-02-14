@@ -20,14 +20,14 @@ namespace eval ::rwpage {
             set headline    [dict create]
         }
 
-        public method add_metadata {field value} 
+        public method add_metadata {field value}
         public method set_metadata {mdlist}
-        public method put_metadata {dictionary} 
+        public method put_metadata {dictionary}
         public method clear_metadata { } { set metadata [dict create] }
         public method languages { } { return $::rivetweb::default_lang } 
         public method metadata {{key ""}}
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
-        public method metadata_hooks { hooks_d } 
+        public method metadata_hooks { hooks_d }
         public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
         public method title {{language ""} {txt ""}}
         public method headline {language {hdl ""}}
@@ -37,7 +37,7 @@ namespace eval ::rwpage {
         public method prepare {language argqs}
         protected method postprocessing { urlhandler }
         public method send_output {language}
-        public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding"  }
+        public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding" }
     }
 
 
