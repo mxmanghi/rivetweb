@@ -37,7 +37,7 @@ namespace eval ::rwdatas {
         private variable pageclass          ::rwpage::RWStatic 
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
-        private common   LOCAL_PAGES        docs
+        public  common   LOCAL_PAGES        docs
         private variable timestamp          0
         private variable sitemap_stat   
         private variable xmlpath
