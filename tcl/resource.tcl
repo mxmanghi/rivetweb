@@ -6,18 +6,18 @@ namespace eval ::rivetweb {
     ::itcl::class Resource {
         public method timestamp {} { return [clock seconds] }
     }
-    
+
     namespace eval Resource {
         ::itcl::class True {
             inherit Resource
-            
-            public method timestamp {} { return true }
+
+            public method timestamp {} { return [clock seconds] }
         }
         
         ::itcl::class False {
             inherit Resource
-            
-            public method timestamp {} { return false }
+
+            public method timestamp {} { return 0 }
         }
     }
 }

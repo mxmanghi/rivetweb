@@ -217,7 +217,7 @@ namespace eval ::rwdatas {
 
     # -- search_handler
     #
-    # recusive search of a page through the URL handler list. 
+    # recusive search of a page through the URL handler list.
     #
 
     ::itcl::body UrlHandler::search_handler {key returned_key {excluded_handler ""}} {
@@ -264,7 +264,7 @@ namespace eval ::rwdatas {
 
             }
             
-            set handler  [$handler next_handler]
+            set handler [$handler next_handler]
         }
 
         return [::RWDummy fetchData page_not_found_error rkey]
