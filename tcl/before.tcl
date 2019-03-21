@@ -92,10 +92,6 @@ namespace eval ::rivetweb {
     $::rivetweb::logger log debug "registered handlers: [::rwdatas::UrlHandler::registered_handlers]"
     $::rivetweb::logger log debug "argsqs: $argsqs"
 
-    # temporary hack: this variable should go away as every reference
-    # to the now obsolete definition of datasource (at least in this context)
-
-    #set ::rivetweb::page_key     [::rwdatas::UrlHandler::select_handler $argsqs]
     set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page $argsqs]
 
     $::rivetweb::logger log debug "\[::rwdatas::UrlHandler::select_page $argsqs\] selected $::rivetweb::current_page"
