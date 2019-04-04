@@ -15,6 +15,7 @@ namespace eval ::rwpage {
         inherit RWPage
 
         private variable content
+        private variable xmlbuffer
 
         constructor {pagekey} {RWPage::constructor $pagekey} {
             set content [dict create]
@@ -26,6 +27,7 @@ namespace eval ::rwpage {
             set page_o    [$page_dom documentElement]
             $page_o appendXML "<div>undefined</div>"
             dict set content $::rivetweb::default_lang pagetext $page_o
+            set xmlbuffer ""
         }
 
         public method destroy {}
@@ -38,6 +40,7 @@ namespace eval ::rwpage {
         public method to_string {}
         public method headline {language}
         public method content_field {language field {default_val ""}}
+        public method refresh {timereference} { return false }
     }
 
 # -- destroy
@@ -252,8 +255,14 @@ namespace eval ::rwpage {
 # 
 
     ::itcl::body RWStatic::print_content {language} {
-        puts -nonewline [$this content $language -xml]
-    } 
+
+		if {$xmlbuffer == ""} {
+			#puts "[pid]"
+			set xmlbuffer [$this content $language -xml]
+		}
+
+		puts -nonewline $xmlbuffer
+    }
 
 # -- languages
 #

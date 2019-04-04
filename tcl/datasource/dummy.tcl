@@ -18,7 +18,7 @@ namespace eval ::rwpage {
         inherit RWPage
 
         constructor {pagekey} {RWPage::constructor $pagekey} {
-            $this title $::rivetweb::default_lang "URL handlers database"
+            $this title $::rivetweb::default_lang "URL handlers database pid: [pid]"
         }
 
         public method print_content { language } {
@@ -89,18 +89,18 @@ and failed to reassigned the resource key ($key)} \
             return $lm
         }
 
-        public method is_stale {key timereference} {
+        # public method is_stale {key timereference} {
 
-            switch $key {
-                rw_dbdump {
-                    return false
-                }
-                default {
-                    return [UrlHandler::is_stale $key $timereference]
-                }
-            }
+            # switch $key {
+                # rw_dbdump {
+                    # return false
+                # }
+                # default {
+                    # return [UrlHandler::is_stale $key $timereference]
+                # }
+            # }
 
-        }
+        # }
 
         public method willHandle {arglist keyvar} { 
             upvar $keyvar key 

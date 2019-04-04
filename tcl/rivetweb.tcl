@@ -28,18 +28,6 @@ namespace eval ::rivetweb {
     }
     namespace export registered_handlers
 
-# -- notify_url_handlers
-#
-# Method to be used by pages needing to send signals to URL handlers
-
-    proc notify_url_handlers {signal signal_arguments} {
-        
-        foreach ds [::rwdatas::UrlHandler::registered_handlers] {
-            $ds signal $signal $signal_arguments
-        }
-
-    }
-
 # -- select_datasource
 #
 # this function is the central mechanism for selecting
@@ -408,12 +396,13 @@ namespace eval ::rivetweb {
         return "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$::rivetweb::http_encoding\" />"
     }
 
-# -- searchPath 
+# -- searchPath
 # 
 # looks for <filename> in a sequence of paths given in <pathList>
 # and returns the actual path (absolute path) if found, otherwise
 # returns an empty string
 #
+# DEPRECATED
 
     proc searchPath {fileName pathList} {
 
@@ -428,6 +417,38 @@ namespace eval ::rivetweb {
         return ""
     }
     namespace export searchPath
+    
+# -- add_search_path
+#
+#
+
+    proc add_search_path {path2add} {
+
+        lappend ::rivetweb::search_list $path2add
+
+    }
+    namespace export add_search_path
+    
+# -- search_document
+#
+#
+#
+    proc search_document {filename {path_search_list ""}} {
+        
+        if {$path_search_list == ""} {
+            set path_search_list $::rivetweb::search_list
+        }
+
+        foreach pth $path_search_list {
+            set fn [file join $pth $fileName]
+
+            if {[file exists $fn]} {
+                return [file normalize $fn]
+            }
+        }
+        return ""
+    }
+    namespace export search_document
 
 # -- build_html_menu 
 #
@@ -448,7 +469,7 @@ namespace eval ::rivetweb {
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
-            foreach menuobj $menus {    
+            foreach menuobj $menus {
                 #puts "<div style=\"border: 1px solid red;\">[$menuobj info class]</div>"
                 append htmltext [$menuobj toHTML $htmldefs]    
             }

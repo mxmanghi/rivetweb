@@ -39,3 +39,4 @@ package ifneeded UrlHandler 1.0 [list source [file join $rivetweb_dir tcl urlhan
 package ifneeded RWTemplate 1.0 [list source [file join $rivetweb_dir tcl rweb_template.tcl]]
 package ifneeded rwpagebroker 1.0 [list source [file join $rivetweb_dir tcl pagebroker.tcl]]
 package ifneeded rwpagecache 1.0 [list source [file join $rivetweb_dir tcl pagecache.tcl]]
+package ifneeded rwresource 1.0 [list source [file join $rivetweb_dir tcl resource.tcl]]

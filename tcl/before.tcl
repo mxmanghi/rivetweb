@@ -67,7 +67,7 @@ namespace eval ::rivetweb {
 
     if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
         set ::rivetweb::last_selected_template $template_key
-        set ::rivetweb::template_changed true    
+        set ::rivetweb::template_changed true
     } else {
         set ::rivetweb::template_changed false
     }
@@ -94,19 +94,20 @@ namespace eval ::rivetweb {
 
     set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page $argsqs]
 
+    $::rivetweb::logger log debug "\[::rwdatas::UrlHandler::select_page $argsqs\] selected $::rivetweb::current_page"
+
 #
 # The three stage generation of a page
 #
-#     * page content preparation
-#     * HTTP header generation and transmission
-#     * page data transmission
+#    * page content preparation
+#    * HTTP header generation and transmission
+#    * page data transmission
 #
 
     set ::rivetweb::page_content $::rivetweb::page_key
-    set ::rivetweb::current_page \
-        [$::rivetweb::current_page prepare_content \
-                                   [::rwdatas::UrlHandler::current_handler] \
-                                   $::rivetweb::language $argsqs]
+    set ::rivetweb::current_page [$::rivetweb::current_page prepare_content \
+                                  [::rwdatas::UrlHandler::current_handler] \
+                                  $::rivetweb::language $argsqs]
 
 # sending headers
 

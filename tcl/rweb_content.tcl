@@ -52,7 +52,7 @@ namespace eval ::rwpage {
 
         destructor {
             ::rivet::apache_log_error debug "RWContent destructor for $this running"
-            ::rivetweb::notify_url_handlers page_being_removed [$this key]
+            ::rwdatas::UrlHandler::notify_handlers page_being_removed [$this key]
         }
 
     }
@@ -105,7 +105,12 @@ namespace eval ::rwpage {
 
         set url_handler $urlhandler
 
+        ::rivet::apache_log_error debug "$this about to call prepare $language"
+
         set pobject [$this prepare $language $argsqs]
+        
+        ::rivet::apache_log_error debug "\[$this prepare $language $argsqs\] returns '$pobject'"
+        
         $pobject postprocessing $urlhandler
 
         return $pobject

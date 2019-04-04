@@ -29,7 +29,7 @@ namespace eval ::rwdatas {
         public method init {args}
         public method willHandle {arglist keyvar}
         public method fetchData {key reassigned_key}
-        public method is_stale {key timereference } { return false }
+        #public method is_stale {key timereference } { return false }
         public method menu_list {page} 
         public method to_url {lm}
         public method resource_exists {resource_key} 

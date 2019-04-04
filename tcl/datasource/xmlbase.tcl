@@ -37,7 +37,7 @@ namespace eval ::rwdatas {
         private variable pageclass          ::rwpage::RWStatic 
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
-        private common   LOCAL_PAGES        docs
+        public  common   LOCAL_PAGES        docs
         private variable timestamp          0
         private variable sitemap_stat   
         private variable xmlpath
@@ -49,7 +49,7 @@ namespace eval ::rwdatas {
         protected method read_xml_data {xmlfilename}
         protected method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
-        private method menuclass {menu_o}        
+        private method menuclass {menu_o}
         protected method xmlfile {key} { return [file join $static_pages ${key}.xml] }
         protected method xmlsitemaps {sitemap_key} { return [glob -nocomplain [file join $sitemap_key *.xml]] }
         protected method exclude_handler {} { return "" }
@@ -59,7 +59,7 @@ namespace eval ::rwdatas {
         public method fetchData {key reassigned_key}
         public method storeData {key data_dict}
         public method create {key page_data}
-        public method is_stale {key timereference}
+        # public method is_stale {key timereference}
         public method has_updates {} 
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -95,6 +95,13 @@ namespace eval ::rwdatas {
 
         }
 
+        # It's unusual to have more than one XMLBase-based class 
+        # active in the handlers list and it's unlikely these
+        # variable need to change as their used to share a copy of
+        # the respective private instance variables, but we cannot
+        # initialize them twice because they need to be registered
+        # in the document search list
+
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $LOCAL_PAGES
 
@@ -129,12 +136,12 @@ namespace eval ::rwdatas {
         } elseif {![file isdirectory $static_pages]} {
             $::rivetweb::logger log notice "Wrong path for sitemap ($static_pages)"
             return -code error  -error_code invalid_path                \
-                                -errorinfo  "Wrong path $static_pages"   \
+                                -errorinfo  "Wrong path $static_pages"  \
                                             "Wrong path $static_pages"
         } else {
             $::rivetweb::logger log notice "setting pages path as $static_pages"
         }
-        
+
         # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
@@ -313,25 +320,7 @@ namespace eval ::rwdatas {
         return $file_stat(mtime)
 
     }
-
-# -- is_stale
-#
-# returns a boolean condition if the resource linked to 'key' has
-# to be refreshed
-#
-    ::itcl::body XMLBase::is_stale {key timereference} {
-        
-        #if {$key == "xml_page_not_found_error"} { return true }
-
-        if {[$this resource_exists $key]} {
-            set current_timeref [$this time_reference $key]
-            return [expr $timereference < $current_timeref]
-        } else {
-            set errinfo "[$this name] Resource $key not found"
-            return -code error -errorcode resource_not_found -errorinfo $errinfo $errinfo
-        }
-    }
-
+	
 # -- resource_exists
 # -- get_resource_repr
 #
@@ -367,7 +356,7 @@ namespace eval ::rwdatas {
 # -- fetchData 
 # 
 # This method retrieves a page content from the backend. This implementation
-# looks for an XML file in the website directory tree ( now ::XMLBase::static_pages). 
+# looks for an XML file in the website directory tree (now ::XMLBase::static_pages). 
 #
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
@@ -384,6 +373,9 @@ namespace eval ::rwdatas {
                 set xmldata [$this read_xml_data $xmlfile]
                 set xmldata [regsub -all {<\?} $xmldata {\&lt;?}]
                 set xmldata [regsub -all {\?>} $xmldata {?\&gt;}]
+				
+				file stat $xmlfile file_stat
+				$this add_page_depend $key $xmlfile $file_stat(mtime)
 
             } fileioerr einfo]} {
                 set page_error_msg "Impossible to read page '$key' ($fileioerr)<br/><ul>"
