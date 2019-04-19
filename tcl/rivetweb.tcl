@@ -265,7 +265,7 @@ namespace eval ::rivetweb {
 
             set fn [file join $::rivetweb::site_base {*}$uri]
             ::rivet::apache_log_error debug "[incr pathn] pict file: >$fn<"
-            
+            #puts [::rivet::xml "[incr pathn] pict file: >$fn<" pre]
             if {[file exists $fn]} { 
                 return [join $uri "/"] 
             } 
