@@ -27,7 +27,7 @@ namespace eval ::rwpage {
             set page_o    [$page_dom documentElement]
             $page_o appendXML "<div>undefined</div>"
             dict set content $::rivetweb::default_lang pagetext $page_o
-            set xmlbuffer ""
+            set xmlbuffer [dict create]
         }
 
         public method destroy {}
@@ -256,12 +256,12 @@ namespace eval ::rwpage {
 
     ::itcl::body RWStatic::print_content {language} {
 
-		if {$xmlbuffer == ""} {
+		if {![dict exists $xmlbuffer $language]} {
 			#puts "[pid]"
-			set xmlbuffer [$this content $language -xml]
+			dict set xmlbuffer $language [$this content $language -xml]
 		}
 
-		puts -nonewline $xmlbuffer
+		puts -nonewline [dict get $xmlbuffer $language]
     }
 
 # -- languages
