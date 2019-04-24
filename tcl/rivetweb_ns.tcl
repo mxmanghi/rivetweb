@@ -46,6 +46,7 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable http_encoding          utf-8
+    variable handlers_dir           handlers
 
     variable logger                 ::rwlogger
     variable linkmodel              ::rwlink
@@ -57,7 +58,11 @@ namespace eval ::rivetweb {
     variable menuclass              RWMenu
     variable htmlizer               ::htmlizer
 
+# variable to store the list of URL-encoded arguments: it's set at *every* request
+# in tcl/before.tcl
+
     variable argsqs                 {}
+
     variable is_homepage            0
     variable template_key           ""
     variable template_changed       false

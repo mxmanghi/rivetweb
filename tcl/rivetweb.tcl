@@ -649,7 +649,11 @@ namespace eval ::rivetweb {
         return $pobj
     }
     namespace export simple_page
-    
+
+    ##
+    # -- stacktrace
+    #
+
     proc stacktrace {} {
         set stack "Stack trace:\n"
         for {set i 1} {$i < [info level]} {incr i} {
@@ -676,6 +680,28 @@ namespace eval ::rivetweb {
     
     proc handlers_list_tampering {urlhandlers} { return $urlhandlers }
     namespace export handlers_list_tampering
+
+    ##
+    # -- load_handler
+    #
+    #
+
+    proc load_handler { handler_class {position top} {handler_file ""} args} {
+        variable handlers_dir
+        
+        if {$handler_file == ""} {
+            set handler_file [file join $handlers_dir [string tolower $handler_class].tcl]
+        }
+
+        if {![file exists $handler_file]} {
+            $::rivetweb::logger err "Couldn't find handler file for $handler_class ($handler_file)"
+            return
+        }
+
+        source $handler_file
+
+        ::rivetweb::init $handler_class $position -nopkg $args
+    }
 
     namespace ensemble create
 }

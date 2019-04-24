@@ -207,7 +207,9 @@ namespace eval ::rwpage {
     ::itcl::body RWPage::metadata {{key ""}} {
 
         if {$key == ""} {
+
             return $metadata
+
         } else {
 
             if {[dict exists $metadata $key]} {
