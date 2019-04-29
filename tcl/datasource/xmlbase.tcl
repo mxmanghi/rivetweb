@@ -258,7 +258,8 @@ namespace eval ::rwdatas {
                     continue
                 }
                 default {
-                    lappend metadata_l [$c tagName] [::rivet::escape_shell_command [$c text]]
+                    #lappend metadata_l [$c tagName] [::rivet::escape_shell_command [$c text]]
+                    lappend metadata_l [$c tagName] [$c text]
                 }
             }
         }
