@@ -75,8 +75,11 @@ namespace eval ::rwpage {
 
 # -- postprocessing
 #
-# method to store in a page instance the metadata associated
-# with the keyword 'field' and whose value is 'value'
+# Running the page postprocessing hooks (xmlpostproc class)
+#
+# The method definition still reflects the initial design where
+# postproc_hooks handled both xmlpostproc and metadata class 
+# hooks. It should change, being the method visibility 'protected' 
 #
 
     ::itcl::body RWPage::postprocessing {urlhandler} {

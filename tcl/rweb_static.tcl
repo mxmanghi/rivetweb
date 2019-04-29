@@ -102,22 +102,28 @@ namespace eval ::rwpage {
 #
     ::itcl::body RWStatic::content { language {fmt -reference}} {
 
-        if {[dict exists $content $language]} {
-            set page_content [dict get $content $language]
-        } elseif {[dict exists $content $::rivetweb::default_lang]} {
-            set page_content [dict get $content $::rivetweb::default_lang]
+        #if {[dict exists $content $language]} {
+        #    set page_content [dict get $content $language]
+        #} elseif {[dict exists $content $::rivetweb::default_lang]} {
+        #    set page_content [dict get $content $::rivetweb::default_lang]
+        #} else {
+        #    set errormsg "Inconsistent model: Missing data for default language"
+        #
+        #    $::rivetweb::logger log emerg "inconsistent model: $this"
+        #    return -code error  -errorcode missing_default_content  \
+        #                        -errorinfo $errormsg $errormsg
+        #}
+
+        if {[dict exists $content $language pagetext]} {
+            set pagedom [dict get $content $language pagetext]
+        } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
+            set pagedom [dict get $content $::rivetweb::default_lang pagetext]
         } else {
             set errormsg "Inconsistent model: Missing data for default language"
 
             $::rivetweb::logger log emerg "inconsistent model: $this"
             return -code error  -errorcode missing_default_content  \
                                 -errorinfo $errormsg $errormsg
-        }
-
-        if {[dict exists $content $language pagetext]} {
-            set pagedom [dict get $content $language pagetext]
-        } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
-            set pagedom [dict get $content $::rivetweb::default_lang pagetext]
         }
 
         switch -nocase -- $fmt {

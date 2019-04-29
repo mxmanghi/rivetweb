@@ -283,13 +283,16 @@ namespace eval ::rwdatas {
 
         while {$urlh != ""} {
 
-            $::rivetweb::logger log debug  "querying $urlh"
+            $::rivetweb::logger log debug "querying $urlh"
 
             set urlquery [catch { $urlh willHandle $urlargs page_key } error_code error_info]
-            $::rivetweb::logger log debug "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
+            $::rivetweb::logger log err "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
 
             switch $urlquery {
-
+                1 {       
+                    $::rivetweb::logger log err "$urlh: urlquery, ecode, einfo: $urlquery | $error_code | $error_info"
+                    continue
+               }
                 3 {
                     break
                 }

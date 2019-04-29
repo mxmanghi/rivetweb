@@ -220,7 +220,7 @@ namespace eval ::rwdatas {
         }
 
         # we give a default to the pageclass key. It's needed in
-        # order to create an instance of page
+        # order to create an instance of a page
 
         set menu_d      [dict create pageclass $pageclass]
         set metadata_l  {}
@@ -230,6 +230,7 @@ namespace eval ::rwdatas {
         # before they get into the page metadata
 
         foreach c [$domroot child all] {
+            ::rivet::apache_log_error info "XMLBase::buildPageEntry: handling tag [$c tagName]"
             switch [$c tagName] {
                 content {
                     continue
@@ -743,7 +744,7 @@ namespace eval ::rwdatas {
 
         $sitemap_mgr recreate
 
-        file stat $sitemap_dir  sitemap_stat
+        file stat $sitemap_dir sitemap_stat
         set timestamp $sitemap_stat(mtime) 
 
         array unset xmlmenu
@@ -826,11 +827,8 @@ namespace eval ::rwdatas {
             $this load_sitemap $sitemap
         }
 
-        if {[$page current_handler] == "::XMLBase"} {
-
-            set menul [$page metadata menu]
-
-        } else {
+        set menul [$page metadata menu]
+        if {$menul == ""} {
 
             set menul [dict create  $::rivetweb::default_menu_pos \
                                     $::rivetweb::default_menu]
