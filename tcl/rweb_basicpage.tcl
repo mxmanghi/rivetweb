@@ -38,7 +38,7 @@ namespace eval ::rwpage {
             if {[dict exists $pagetext $language]} {
                 return [dict get $pagetext $language]
             } else {
-                return ""
+                return [dict get $pagetext $::rivetweb::default_lang]
             }
 
         }
