@@ -133,7 +133,7 @@ and failed to reassigned the resource key ($key)} \
 
                 set page_text [subst [dict get $MESSAGES $rkey]]
                 set pobj [::rwpage::RWBasicPage ::#auto $rkey $page_text]
-                $pobj set_title $::rivetweb::default_lang "Error $rkey"
+                $pobj title $::rivetweb::default_lang "Error $rkey"
 
             }
             return $pobj

@@ -592,7 +592,7 @@ namespace eval ::rwdatas {
 
             set rkey ""
             set p [$this fetchData $key rkey]
-            $::rivetweb::logger log debug "[$this info class]::fetch_page returns $p '$rkey' in response of key $key"
+            $::rivetweb::logger log debug "[$this info class]::fetch_page returns $p '$rkey' in response of key '$key'"
             if {$p != ""} {
                 $cache store_page $key $p
             } else {
