@@ -136,14 +136,23 @@ namespace eval ::rwpage {
         if {$language == ""} {
             return $title
         } else {
+
             if {$titletxt != ""} {
+
                 dict set title $language $titletxt
+                if {![dict exists title $::rivetweb::default_lang]} {
+                    dict set title $::rivetweb::default_lang $titletxt
+                }
                 return $titletxt
+
             } elseif {[dict exists $title $language]} {
                 return [dict get $title $language]
+            } elseif {[dict exists $title $::rivetweb::default_lang]} {
+                return [dict get $title $::rivetweb::default_lang]
             } else {
                 return ""
             }
+
         }
     }
 
