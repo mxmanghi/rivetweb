@@ -72,7 +72,7 @@ namespace eval ::rwdatas {
 
         public method cache {} { return $cache }
         public method will_provide {keyword reassigned_key}
-        public method fetch_page {keyworkd reassigned_key}
+        public method fetch_page {keyword reassigned_key}
         public method signal {notifying_page signal_code}
         public method cleanup {} {}
 

@@ -703,6 +703,25 @@ namespace eval ::rivetweb {
         ::rivetweb::init $handler_class $position -nopkg $args
     }
 
+    ##
+    # -- dump_data
+    #
+    #   Debug procedure: dumps data in a tmp file
+    #
+ 
+    proc dump_data {txt {hold false}} {
+        variable dumpdata_map
+        variable dumpdata_fp
+
+        set pid [pid]
+
+        incr dumpdata_map($pid)
+
+        set dumpdata_fp [open [file join / tmp [format "dump-%s-%d.log" $pid $dumpdata_map($pid)]] w+]
+        puts $dumpdata_fp $txt
+        close $dumpdata_fp
+    }
+
     namespace ensemble create
 }
 

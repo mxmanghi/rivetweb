@@ -126,6 +126,13 @@ namespace eval ::rivetweb {
 
 # page variables used to pass parameters between procs and pages
 
+# debug array for procedure ::rivetweb::dump_data
+
+    variable dumpdata_map
+    variable dumpdata_fp
+
+    array set dumpdata_map {}
+
     variable html_menu
     variable content
     variable sitemenus_a
