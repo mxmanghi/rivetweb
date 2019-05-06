@@ -700,7 +700,7 @@ namespace eval ::rivetweb {
 
         source $handler_file
 
-        ::rivetweb::init $handler_class $position -nopkg $args
+        ::rivetweb::init $handler_class $position -nopkg {*}$args
     }
 
     ##

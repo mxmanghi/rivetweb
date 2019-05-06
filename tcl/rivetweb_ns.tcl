@@ -10,9 +10,9 @@ namespace eval ::rivetweb {
 
 # this must be the local path to the site's document root
 
-    variable rivetweb_root
+    variable rivetweb_root              ""
 
-    variable site_base
+    variable site_base                  ""
     variable request
     variable scripts
     variable website_init               rivetweb.tcl
