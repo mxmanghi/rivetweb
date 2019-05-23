@@ -14,7 +14,7 @@ namespace eval ::rwpage {
         inherit RWPage
 
         private variable pagetext
-        private variable rootelement
+        public  variable rootelement
 
         constructor {pagekey {message_text ""} {rootel "p"}} {RWPage::constructor $pagekey} {
             set pagetext [dict create $::rivetweb::default_lang $message_text]
