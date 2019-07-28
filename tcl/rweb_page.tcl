@@ -140,7 +140,7 @@ namespace eval ::rwpage {
             if {$titletxt != ""} {
 
                 dict set title $language $titletxt
-                if {![dict exists title $::rivetweb::default_lang]} {
+                if {![dict exists $title $::rivetweb::default_lang]} {
                     dict set title $::rivetweb::default_lang $titletxt
                 }
                 return $titletxt
