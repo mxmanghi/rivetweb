@@ -534,11 +534,11 @@ namespace eval ::rwdatas {
     ::itcl::body UrlHandler::fetch_page {key reassigned_key} {
         upvar $reassigned_key rkey
 
-        $::rivetweb::logger log debug "[$this info class]::fetch_page ==================="
+        $::rivetweb::logger log debug "[$this info class]::fetch_page +++++++++++++++++++"
         $::rivetweb::logger log debug "fetching key '$key'"
         $::rivetweb::logger log debug "cache '$cache'"
         $::rivetweb::logger log debug "keyclassmap [$PAGE_BROKER dumpkeyclassmap]"
-        $::rivetweb::logger log debug "[$this info class]::fetch_page ==================="
+        $::rivetweb::logger log debug "[$this info class]::fetch_page -------------------"
 
         # first of all we check if the page class is loaded and if it
         # needs refresh. We do it by calling 'check_class' method of

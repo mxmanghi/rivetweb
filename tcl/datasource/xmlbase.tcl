@@ -47,6 +47,7 @@ namespace eval ::rwdatas {
 
         protected method buildPageEntry {key xmldata reassigned_key}
         protected method read_xml_data {xmlfilename}
+        protected method read_mtime {xmlfilename}
         protected method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
         private method menuclass {menu_o}
@@ -342,6 +343,16 @@ namespace eval ::rwdatas {
         return [$this resource_exists $keyword]
     }
 
+# -- read_mtime
+#
+#
+    ::itcl::body XMLBase::read_mtime {xmlfile} {
+        file stat $xmlfile file_stat
+        return $file_stat(mtime)
+    }
+
+
+
 # -- read_xml_data
 #
 #
@@ -376,8 +387,7 @@ namespace eval ::rwdatas {
                 set xmldata [regsub -all {<\?} $xmldata {\&lt;?}]
                 set xmldata [regsub -all {\?>} $xmldata {?\&gt;}]
 				
-				file stat $xmlfile file_stat
-				$this add_page_depend $key $xmlfile $file_stat(mtime)
+				$this add_page_depend $key $xmlfile [$this read_mtime $xmlfile] 
 
             } fileioerr einfo]} {
                 set page_error_msg "Impossible to read page '$key' ($fileioerr)<br/><ul>"
