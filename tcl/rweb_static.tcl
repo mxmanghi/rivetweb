@@ -113,7 +113,7 @@ namespace eval ::rwpage {
         #    return -code error  -errorcode missing_default_content  \
         #                        -errorinfo $errormsg $errormsg
         #}
-
+        #dict for {k v} $content { puts [::rivet::xml "$k: $v" pre] }
         if {[dict exists $content $language pagetext]} {
             set pagedom [dict get $content $language pagetext]
         } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {

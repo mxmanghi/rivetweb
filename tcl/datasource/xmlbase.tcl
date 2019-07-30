@@ -220,8 +220,8 @@ namespace eval ::rwdatas {
             set rkey $key
         }
 
-        # we give a default to the pageclass key. It's needed in
-        # order to create an instance of a page
+        # we give a default to the pageclass key. 
+        # It's needed in order to create an instance of a page
 
         set menu_d      [dict create pageclass $pageclass]
         set metadata_l  {}
@@ -245,9 +245,7 @@ namespace eval ::rwdatas {
                     dict set menu_d menu [$c getAttribute position $position] [$c text]
                 }
                 pageclass {
-
                     dict set menu_d pageclass "::rwpage::[$c text]"
-
                 }
                 title -
                 headline {
@@ -294,7 +292,7 @@ namespace eval ::rwdatas {
                         # creiamo un nuovo dom
 
                         set cdom [dom parse [$c asXML]]
-                        $::rivetweb::logger log info "Adding content for language $clang ($key)"
+                        $::rivetweb::logger log info "Adding content for language $clang ($key) [$cdom documentElement]"
                         $newpage set_content $clang pagetext $cdom
 
                     } 
