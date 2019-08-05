@@ -694,7 +694,7 @@ namespace eval ::rivetweb {
         }
 
         if {![file exists $handler_file]} {
-            $::rivetweb::logger err "Couldn't find handler file for $handler_class ($handler_file)"
+            $::rivetweb::logger emit "Couldn't find handler file for $handler_class ($handler_file)" err
             return
         }
 
