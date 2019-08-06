@@ -38,6 +38,7 @@ namespace eval ::rwpage {
         protected method postprocessing { urlhandler }
         public method send_output {language}
         public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding" }
+        public method javascript {} { return "" }
     }
 
 
