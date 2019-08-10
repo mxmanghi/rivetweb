@@ -106,12 +106,8 @@ namespace eval ::rwpage {
         set url_handler $urlhandler
 
         ::rivet::apache_log_error debug "$this about to call prepare $language"
-
         set pobject [$this prepare $language $argsqs]
-        
         ::rivet::apache_log_error debug "\[$this prepare $language $argsqs\] returns '$pobject'"
-        
-        $pobject postprocessing $urlhandler
 
         return $pobject
     }

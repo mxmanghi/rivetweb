@@ -94,7 +94,7 @@ namespace eval ::rivetweb {
 
     set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page $argsqs]
 
-    $::rivetweb::logger log debug "\[::rwdatas::UrlHandler::select_page $argsqs\] selected $::rivetweb::current_page"
+    $::rivetweb::logger log debug "\[::rwdatas::UrlHandler::select_page $argsqs\] returned $::rivetweb::current_page"
 
 #
 # The three stage generation of a page

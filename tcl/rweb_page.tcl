@@ -35,21 +35,19 @@ namespace eval ::rwpage {
         public method binary_content { } { return false }
         public method content_field {language field {default_val ""}} { return "" }
         public method prepare {language argqs}
+        public method prepare_content { urlhandler language argsqs }
         protected method postprocessing { urlhandler }
         public method send_output {language}
         public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding" }
         public method javascript {} { return "" }
     }
 
+    ::itcl::body RWPage::prepare_content {urlhandler language argsqs} {
 
-# -- prepare
-#
-# Collecting menus to be displayed from the registered urlhandlers 
-#
+        # this call to RWContent::prepare_content calls 'prepare' before
+        # collecting the menu listing from the Url handlers
 
-    ::itcl::body RWPage::prepare {language argsqs} {
-
-        RWContent::prepare $language $argsqs
+        set pobject [RWContent::prepare_content $urlhandler $language $argsqs]
 
         # we rebuild the navigation menu dictionary on every request
 
@@ -70,9 +68,21 @@ namespace eval ::rwpage {
 
         ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
 
-        return $this
+        $pobject postprocessing $urlhandler
+
+        return $pobject
     }
 
+# -- prepare
+#
+# Collecting menus to be displayed from the registered urlhandlers 
+#
+
+    ::itcl::body RWPage::prepare {language argsqs} {
+
+        return [RWContent::prepare $language $argsqs]
+
+    }
 
 # -- postprocessing
 #
