@@ -8,7 +8,7 @@ package require Itcl
 
 namespace eval ::rivetweb {
 
-    variable menuclass              RWMenu
+    variable menuclass                  RWMenu
 
     ::itcl::class RWTemplate {
         public common templates_db     [dict create]
