@@ -9,6 +9,15 @@ package require Itcl
 
 ::itcl::class MessagePrinter {
 
+    public variable msg_tag         span
+    public variable css_class_error errormessage
+    public variable css_class_info  infomessage
+    public variable css_class_debug debumessage
+    public variable css_class_undef genericmessage
+
+    public variable msgline_tag     div
+    public variable msgline_class   messageline
+
     private variable    message_queue [::struct::queue]
 
     public method       reset_message_queue {}
@@ -28,16 +37,29 @@ package require Itcl
 #
 #
 
-::itcl::body MessagePrinter::post_message {msg {severity info} {cssclass errormessage}} {
+::itcl::body MessagePrinter::post_message {msg {severity info} {cssclass ""}} {
 
-    switch $severity {
-        err {
-            set msg "<span class=\"$cssclass\">$msg</span>"
-        }
-        default { }
+    if { $cssclass == ""} {
+        set cssclass errormessage
     }
 
-    $message_queue put $msg
+    switch $severity {
+        info {
+            set cssclass $css_class_info
+        }
+        debug {
+            set cssclass $css_class_debug
+        }
+        err {
+            set cssclass $css_class_error
+        }
+        default { 
+            set cssclass $css_class_undef
+        }
+    }
+    set msg 
+
+    $message_queue put [::rivet::xml $msg [list $msg_tag class $cssclass]] 
 }
 
 # -- get_message
@@ -61,10 +83,11 @@ package require Itcl
 ::itcl::body MessagePrinter::print_messages {} {
 
     while {[$this get_message msg]} {
-        puts "<div class=\"messageline\">$msg</div>"
+        # puts "<div class=\"messageline\">$msg</div>"
+        puts [::rivet::xml $msg [list div class $msgline_class]]
     }
 
 }
 
-package provide MessagePrinter 0.1
+package provide MessagePrinter 1.0
 
