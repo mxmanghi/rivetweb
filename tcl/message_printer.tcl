@@ -21,8 +21,10 @@ package require Itcl
     private variable    message_queue [::struct::queue]
 
     public method       reset_message_queue {}
-    public method       post_message {msg {severity info} {cssclass ""}}
+    public method       post_message {msg {severity info}}
     public method       get_message {msg}
+    public method       html_messages {}
+    public method       pop_messages {}
     public method       print_messages {}
     public method       num_messages {} { return [$message_queue size] }
 }
@@ -37,29 +39,11 @@ package require Itcl
 #
 #
 
-::itcl::body MessagePrinter::post_message {msg {severity info} {cssclass ""}} {
+::itcl::body MessagePrinter::post_message {msg {severity info}} {
 
-    if { $cssclass == ""} {
-        set cssclass errormessage
-    }
 
-    switch $severity {
-        info {
-            set cssclass $css_class_info
-        }
-        debug {
-            set cssclass $css_class_debug
-        }
-        err {
-            set cssclass $css_class_error
-        }
-        default { 
-            set cssclass $css_class_undef
-        }
-    }
-    set msg 
+    $message_queue put [list $msg $severity]  
 
-    $message_queue put [::rivet::xml $msg [list $msg_tag class $cssclass]] 
 }
 
 # -- get_message
@@ -76,15 +60,53 @@ package require Itcl
     }
 }
 
+::itcl::body MessagePrinter::pop_messages {} {
+
+    set lmessage ""
+    while {[$this get_message msg]} {
+        lappend lmessage $msg
+    }
+    return $lmessage
+
+}
+
+::itcl::body MessagePrinter::html_messages {} {
+
+    if { $cssclass == ""} {
+        set cssclass errormessage
+    }
+
+
+    set html ""
+    while {[$this get_message msg_l]} {
+
+        lassign $msg_l msg severity
+        switch $severity {
+            info {
+                set cssclass $css_class_info
+            }
+            debug {
+                set cssclass $css_class_debug
+            }
+            err {
+                set cssclass $css_class_error
+            }
+            default { 
+                set cssclass $css_class_undef
+            }
+        }
+        append html [::rivet::xml $msg [list div class $msgline_class]]
+    }
+    return $html
+}
+
 # -- print_message 
 #
 #
 
 ::itcl::body MessagePrinter::print_messages {} {
 
-    while {[$this get_message msg]} {
-        puts [::rivet::xml $msg [list div class $msgline_class]]
-    }
+    puts [$this html_messages]
 
 }
 
