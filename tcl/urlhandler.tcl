@@ -239,8 +239,7 @@ namespace eval ::rwdatas {
 
             set rkey $key
             if {[$handler will_provide $key rkey]} {
-                $::rivetweb::logger log info \
-                    "fetching $key from $handler -> returned values: $rkey"
+                $::rivetweb::logger log info "fetching $key from $handler -> returned values: $rkey"
 
                 set pobj [$handler fetch_page $key rkey]
                 if {$pobj != ""} {
@@ -440,7 +439,7 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::signal {signal_code signal_arg} {
 
-        $::rivetweb::logger log notice "$this signal $signal_code $signal_arg"
+        $::rivetweb::logger log debug "$this signal $signal_code $signal_arg"
 
         switch $signal_code {
 
