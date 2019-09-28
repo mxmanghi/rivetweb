@@ -722,6 +722,20 @@ namespace eval ::rivetweb {
         close $dumpdata_fp
     }
 
+    proc dump_binary {bbuffer {dumpfile "/tmp/dumpfile-%s.txt"}} {
+
+        set dump [format $dumpfile [pid]]
+        if {[file exists $dump]} {
+            set fp [open $dump a]
+        } else {
+            set fp [open $dump w]
+        }
+
+        fconfigure $fp -encoding binary -translation binary
+        puts $fp $bbuffer
+        close $fp
+    }
+
     namespace ensemble create
 }
 
