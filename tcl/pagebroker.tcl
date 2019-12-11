@@ -22,6 +22,7 @@ namespace eval ::rivetweb {
         public method create_page_obj {key ooclass rkey args}
         public method class_registered {class_name}
         public method delete_key_map {page_key}
+        public method key_is_registered {page_key}
 
         public method dumpclassdb {} { return $class_db }
         public method dumpkeyclassmap {} { return $keyclassmap }
@@ -97,6 +98,15 @@ namespace eval ::rivetweb {
         return $ooclass
 
     }
+
+    # -- key_is_registered
+    #
+    #
+
+    ::itcl::body PageBroker::key_is_registered {page_key} {
+        return [dict exists $keyclassmap $key]
+    }
+
 
     # -- delete_key_map 
     #

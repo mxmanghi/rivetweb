@@ -94,6 +94,10 @@ namespace eval ::rwdatas {
             $PAGE_BROKER check_registered_classes
         }
 
+        public method key_is_registered {key}
+            return [$PAGE_BROKER key_is_registered $key]
+        }
+
         private method check_class_loaded {class_name oosys} {
             return [$PAGE_BROKER check_class_loaded $class_name $oosys]
         }
