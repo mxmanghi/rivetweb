@@ -94,7 +94,7 @@ namespace eval ::rwdatas {
             $PAGE_BROKER check_registered_classes
         }
 
-        public method key_is_registered {key}
+        public method key_is_registered {key} {
             return [$PAGE_BROKER key_is_registered $key]
         }
 
