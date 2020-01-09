@@ -98,9 +98,9 @@ namespace eval ::rwpage {
 
         if {[catch {
 
-           $this postproc_hooks   $urlhandler               \
-                                  $::rivetweb::hooks        \
-                                  xmlpostproc               \
+           $this postproc_hooks   $urlhandler           \
+                                  $::rivetweb::hooks    \
+                                  xmlpostproc           \
                                   $::rivetweb::language
 
            $this metadata_hooks $::rivetweb::hooks

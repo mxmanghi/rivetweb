@@ -8,7 +8,6 @@ lappend auto_path $rweb_root $website_root
 
 ::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
 
-package require rivetweb
 package require rwlogger
 package require rwconf
 package require rwmenu
@@ -17,6 +16,7 @@ package require rwlink
 package require urlcomposer
 package require RWTemplate
 package require UrlHandler
+package require rivetweb
 package require RWDummy
 package require XMLBase
 
@@ -31,7 +31,8 @@ if {[file exists $website_definitions]} { source $website_definitions }
 
 ::rivet::apache_log_error info "default_template: $::rivetweb::default_template"
 
-set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
+#set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
+set ::rivetweb::url_composer [::rivetweb::make_url_composer]
 
 # site_defs.tcl is supposed to define the default template, we thus assign this key to the 
 # last_selected_template variable in order to force a template_chanded signal
@@ -55,7 +56,7 @@ if {[file exists $::rivetweb::website_init]} {
         foreach l [split $errorInfo "\n"] {
             ::rivet::apache_log_error crit $l
         }
-        
+
     }
 }
 

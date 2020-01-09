@@ -142,6 +142,18 @@ namespace eval ::rivetweb {
     }
     namespace export composeUrl
 
+
+# -- make_url_composer
+#
+#   Procedure that returns an instance of UrlComposer. 
+#   Only a UrlComposer class makes sense in the context of
+#   an application and by overriding this procedure 
+#   a descendant of ::rivetweb::UrlComposer can be instantiated
+
+    proc make_url_composer {} {
+        return [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
+    }
+
 # -- make_css_path 
 #
 #   creates rivetweb path to a CSS file
