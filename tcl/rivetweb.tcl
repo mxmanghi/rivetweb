@@ -151,7 +151,7 @@ namespace eval ::rivetweb {
 #   a descendant of ::rivetweb::UrlComposer can be instantiated
 
     proc make_url_composer {} {
-        return [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
+        return [::rivetweb::UrlComposer [namespace current]::#auto $::rivetweb::rewrite_par]
     }
 
 # -- make_css_path 
