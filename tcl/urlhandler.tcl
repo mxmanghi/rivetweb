@@ -401,7 +401,7 @@ namespace eval ::rwdatas {
                 [[::rwdatas::UrlHandler::current_handler] fetch_page $::rivetweb::page_key page_key]
         } e einfo]} {
 
-            $::rivetweb::logger log err "error: $e ($einfo)"
+            $::rivetweb::logger log err "\[::UrlHandler::select_page\] error: $e ($einfo)"
             set ::rivetweb::page_key fetch_page_error
             set selected_page [::rivetweb simple_page fetch_page_error [::rivetweb make_error_page $e $einfo]]
 
