@@ -103,7 +103,7 @@ namespace eval ::rivetweb {
     #
     #
 
-    ::itcl::body PageBroker::key_is_registered {page_key} {
+    ::itcl::body PageBroker::key_is_registered {key} {
         return [dict exists $keyclassmap $key]
     }
 

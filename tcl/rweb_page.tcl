@@ -40,6 +40,7 @@ namespace eval ::rwpage {
         public method send_output {language}
         public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding" }
         public method javascript {} { return "" }
+        public method special_headers {language} {}
     }
 
     ::itcl::body RWPage::prepare_content {urlhandler language argsqs} {

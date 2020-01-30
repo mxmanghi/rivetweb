@@ -20,7 +20,7 @@ namespace eval ::rivetweb {
 # -- registered_handlers
 #
 # we now try to phase in a management of URL handlers
-# that eventually will make them an opaque informatio
+# that eventually will make them an opaque information
 # of the rivetweb status
 
     proc registered_handlers {} {
