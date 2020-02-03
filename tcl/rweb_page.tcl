@@ -29,7 +29,8 @@ namespace eval ::rwpage {
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d }
         public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
-        public method title {{language ""} {txt ""}}
+        private method set_title_dict {language title_txt}
+        public method title {{language ""} {txt ""} args}
         public method headline {language {hdl ""}}
         public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
         public method binary_content { } { return false }
@@ -137,6 +138,18 @@ namespace eval ::rwpage {
         }
     }
 
+# -- set_title_dict
+#
+# private method to set the title internal dictionary
+#
+
+    ::itcl::body RWPage::set_title_dict {language title_txt} {
+        dict set title $language $title_txt
+        if {![dict exists $title $::rivetweb::default_lang]} {
+            dict set title $::rivetweb::default_lang $title_txt
+        }
+    }
+
 # -- title
 #
 # A method for getting the page title goes in the base RWPage class
@@ -144,24 +157,37 @@ namespace eval ::rwpage {
 # section of a page and it's part of the standard HTML ever since
 #
 
-    ::itcl::body RWPage::title {{language ""} {titletxt ""}} { 
+    ::itcl::body RWPage::title {{language ""} {titletxt ""} args} { 
         if {$language == ""} {
             return $title
         } else {
 
-            if {$titletxt != ""} {
+            if {[llength $args] == 0} {
+                if {$titletxt != ""} {
 
-                dict set title $language $titletxt
-                if {![dict exists $title $::rivetweb::default_lang]} {
-                    dict set title $::rivetweb::default_lang $titletxt
+                    #dict set title $language $titletxt
+                    #if {![dict exists $title $::rivetweb::default_lang]} {
+                    #    dict set title $::rivetweb::default_lang $titletxt
+                    #}
+
+                    $this set_title_dict $language $titletxt
+
+                    return $titletxt
+
+                } elseif {[dict exists $title $language]} {
+                    return [dict get $title $language]
+                } elseif {[dict exists $title $::rivetweb::default_lang]} {
+                    return [dict get $title $::rivetweb::default_lang]
+                } else {
+                    return ""
                 }
-                return $titletxt
-
-            } elseif {[dict exists $title $language]} {
-                return [dict get $title $language]
-            } elseif {[dict exists $title $::rivetweb::default_lang]} {
-                return [dict get $title $::rivetweb::default_lang]
             } else {
+                foreach {l t} [concat $language $titletxt $args] {
+                    $this set_title_dict $l $t
+                }
+                if {![dict exists $title $::rivetweb::default_lang]} {
+                    return [dict get $title $::rivetweb::default_lang]
+                }
                 return ""
             }
 
