@@ -182,7 +182,7 @@ namespace eval ::rwpage {
                     return ""
                 }
             } else {
-                foreach {l t} [concat $language $titletxt $args] {
+                foreach {l t} [list $language $titletxt {*}$args] {
                     $this set_title_dict $l $t
                 }
                 if {![dict exists $title $::rivetweb::default_lang]} {

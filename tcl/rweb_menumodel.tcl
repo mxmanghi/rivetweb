@@ -103,9 +103,9 @@ namespace eval ::rwmenu {
 
     ::itcl::body RWMenu::title {language {testo ""} args} {
 
-        foreach {language testo} [concat $language $testo $args] {
+        foreach {language testo} [list $language $testo {*}$args] {
             if {$testo == ""} { 
-                return [$this get_title $language] 
+                return [$this get_title $language]
             } else {
                 $this set_title $testo $language
             }
