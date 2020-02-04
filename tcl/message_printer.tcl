@@ -41,8 +41,7 @@ package require Itcl
 
 ::itcl::body MessagePrinter::post_message {msg {severity info}} {
 
-
-    $message_queue put [list $msg $severity]  
+    $message_queue put [list $msg $severity]
 
 }
 
@@ -72,10 +71,7 @@ package require Itcl
 
 ::itcl::body MessagePrinter::html_messages {} {
 
-    if { $cssclass == ""} {
-        set cssclass errormessage
-    }
-
+    set cssclass errormessage
 
     set html ""
     while {[$this get_message msg_l]} {
