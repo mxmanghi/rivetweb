@@ -154,6 +154,20 @@ namespace eval ::rivetweb {
         return [::rivetweb::UrlComposer [namespace current]::#auto $::rivetweb::rewrite_par]
     }
 
+# -- template_root
+#
+#   builds a URI path to the template root
+#
+    proc template_root {tkey args} {
+        set template_root_uri [join [list $::rivetweb::base_templates $tkey {*}$args] "/"]
+        if {$::rivetweb::rewrite_links} {
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            ::rivetweb::rewrite_as_relative $rwcode [::rivetweb::scriptName] $template_root_uri template_root_uri
+        }
+        return $template_root_uri
+    }
+    namespace export template_root
+
 # -- make_css_path 
 #
 #   creates rivetweb path to a CSS file
@@ -185,7 +199,6 @@ namespace eval ::rivetweb {
         return $css_uri 
     }
     namespace export make_css_path
-
 
 # -- csspath
 #

@@ -223,11 +223,11 @@ namespace eval ::rwdatas {
         # we give a default to the pageclass key. 
         # It's needed in order to create an instance of a page
 
-        set menu_d      [dict create pageclass $pageclass]
+        set metadata_d      [dict create pageclass $pageclass]
         set metadata_l  {}
 
         # metadata are stored accordingly. <menu>...</menu> elements
-        # receive a special treatment and go into the menu_d dictionary
+        # receive a special treatment and go into the metadata_d dictionary
         # before they get into the page metadata
 
         foreach c [$domroot child all] {
@@ -242,10 +242,10 @@ namespace eval ::rwdatas {
                     } else {
                         set position $::rivetweb::menu_default_pos
                     }
-                    dict set menu_d menu [$c getAttribute position $position] [$c text]
+                    dict set metadata_d menu [$c getAttribute position $position] [$c text]
                 }
                 pageclass {
-                    dict set menu_d pageclass "::rwpage::[$c text]"
+                    dict set metadata_d pageclass "::rwpage::[$c text]"
                 }
                 title -
                 headline {
@@ -263,11 +263,11 @@ namespace eval ::rwdatas {
             }
         }
 
-        set pagetclclass [dict get $menu_d pageclass]
+        set pagetclclass [dict get $metadata_d pageclass]
         set newpage [$pagetclclass ::#auto $key]
 
-        set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
-        $newpage put_metadata $menu_d
+        set metadata_d [dict merge $metadata_d [dict create {*}$metadata_l]]
+        $newpage put_metadata $metadata_d
         #$newpage add_metadata datasource ::XMLBase
 
         # data are scanned for <content>...</content> elements to be

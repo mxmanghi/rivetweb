@@ -90,7 +90,7 @@ namespace eval ::rivetweb {
     #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
 
     $::rivetweb::logger log debug "registered handlers: [::rwdatas::UrlHandler::registered_handlers]"
-    $::rivetweb::logger log debug "argsqs: $argsqs"
+    $::rivetweb::logger log debug "argsqs: $argsqs, language: $language"
 
     set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page $argsqs]
 
