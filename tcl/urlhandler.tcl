@@ -72,7 +72,7 @@ namespace eval ::rwdatas {
 
         public method cache {} { return $cache }
         public method will_provide {keyword reassigned_key}
-        public method fetch_page {keyword reassigned_key}
+        public method fetch_page {keyword {reassigned_key rkey}}
         public method signal {notifying_page signal_code}
         public method cleanup {} {}
 
@@ -541,7 +541,7 @@ namespace eval ::rwdatas {
     #
     #
 
-    ::itcl::body UrlHandler::fetch_page {key reassigned_key} {
+    ::itcl::body UrlHandler::fetch_page {key {reassigned_key rkey}} {
         upvar $reassigned_key rkey
 
         $::rivetweb::logger log debug "[$this info class]::fetch_page +++++++++++++++++++"

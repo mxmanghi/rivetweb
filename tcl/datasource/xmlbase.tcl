@@ -289,7 +289,7 @@ namespace eval ::rwdatas {
                 switch $node_name {
                     pagetext {
 
-                        # creiamo un nuovo dom
+                        # create a new dom object out of the pagetext element 
 
                         set cdom [dom parse [$c asXML]]
                         $::rivetweb::logger log info "Adding content for language $clang ($key) [$cdom documentElement]"
