@@ -790,17 +790,17 @@ namespace eval ::rwdatas {
             set sitemenus [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             foreach sm $sitemenus {
 
-# any menu without an id is simply ignored. This should be documented
+                # any menu without an id is simply ignored. This should be documented
 
                 if {[$sm hasAttribute id]} {
 
                     set group_menu_id   [$sm getAttribute id]
                     set group_parent    [$sm getAttribute parent root]
                     
-# the attribute 'position' refers to the position within the menu group
-# This is wrong, as the position can't be absolute. This also dependent
-# on the specific implementation of the concept of ordering within the
-# RWSitemap class (currently based on Tcllib's struct::tree objects)
+                # the attribute 'position' refers to the position within the menu group
+                # This is wrong, as the position can't be absolute. This also dependent
+                # on the specific implementation of the concept of ordering within the
+                # RWSitemap class (currently based on Tcllib's struct::tree objects)
 
                     if {[$sm hasAttribute position]} {
                         set position [$sm getAttribute position]

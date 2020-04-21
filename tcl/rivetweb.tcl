@@ -555,7 +555,6 @@ namespace eval ::rivetweb {
 
     proc template {template_key} {
         return [::rivetweb template_path [::rivetweb::RWTemplate::template $template_key template] $template_key]
-
     }
     namespace export template
 

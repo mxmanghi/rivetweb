@@ -39,6 +39,8 @@ set ::rivetweb::url_composer [::rivetweb::make_url_composer]
 
 set ::rivetweb::last_selected_template rwbase
 
+# rivetweb_init.tcl loads the templates database and hooks database
+
 source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
 # we have both the default template and the template database, we proceeded

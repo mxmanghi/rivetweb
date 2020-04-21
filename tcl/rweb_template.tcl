@@ -26,7 +26,7 @@ namespace eval ::rivetweb {
         private variable menuclass      RWMenu
         private variable dir            rwbase
         private variable auxiliary      [dict create]
-
+        private variable template2      ""
         private variable template_key
 
         constructor {key} {
@@ -62,6 +62,7 @@ namespace eval ::rivetweb {
         } else {
             return ""
         }
+
     }
 
     ::itcl::body RWTemplate::setprop {prop value} {
@@ -139,7 +140,7 @@ namespace eval ::rivetweb {
         return $template_o
     }
 
-    # read_formatters
+    # -- read_formatters
     #
     # legge un file contenente le procedure di formattazione
     # di parti di un template e quindi ne registra il contenuto
