@@ -189,8 +189,7 @@ namespace eval ::rwdatas {
             }
         }
 
-        dict set URLHANDLERS_ARGS $handler $args
-
+        #dict set URLHANDLERS_ARGS $handler $args
         #::rivet::apache_log_error debug "registered handlers $URLHANDLERS"
     }
 
