@@ -878,7 +878,11 @@ namespace eval ::rwdatas {
             }
             generic -
             external {
-                $linkmodel set_attribute lm [list href [$linkmodel reference $lm]]
+                set href [$linkmodel reference $lm]
+                if {[::rwdatas::UrlHandler::get_alias $href lref]} {
+                    set href $lref
+                }
+                $linkmodel set_attribute lm [list href $href]
             }
             default {
                 ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"
