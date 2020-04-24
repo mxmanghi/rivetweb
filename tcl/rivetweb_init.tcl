@@ -14,7 +14,6 @@ catch { package require Rivet }
 #  Rivetweb child process initialization
 #-
 
-
 namespace eval ::rivetweb {
 
     # building an in-memory database of available templates for this website

@@ -34,8 +34,11 @@ namespace eval ::rwmenu {
         private method get_title {language}
         private method set_title {testo {language ""}}
 
-        public method destroy {} { ::itcl::delete object $this }
-        public method title {{language ""} {testo ""}}
+        public method destroy {} { 
+            $this destroy_links
+            ::itcl::delete object $this 
+        }
+        public method title {language {testo ""} args}
         public method parent {}
         public method index {} 
         public method attributes {} 
@@ -98,14 +101,15 @@ namespace eval ::rwmenu {
 # no ?language? parameter is passed then the title
 # for the default language is returned
 
-    ::itcl::body RWMenu::title {{language ""} {testo ""}} {
+    ::itcl::body RWMenu::title {language {testo ""} args} {
 
-        if {$testo == ""} { 
-            return [$this get_title $language] 
-        } else {
-            $this set_title $testo $language
+        foreach {language testo} [list $language $testo {*}$args] {
+            if {$testo == ""} { 
+                return [$this get_title $language]
+            } else {
+                $this set_title $testo $language
+            }
         }
-
     }
 
 # -- parent, index, attributes

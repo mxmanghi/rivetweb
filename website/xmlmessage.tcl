@@ -80,7 +80,7 @@ namespace eval ::rwpage {
 namespace eval ::rwdatas {
     
     ::itcl::class XMLMessage {
-        inherit Datasource
+        inherit UrlHandler
 
         public method willHandle {arglist keyvar} 
         #public method will_provide {keyword reassigned_key}

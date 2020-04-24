@@ -6,13 +6,13 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                    20170802
+    variable version                    20190209
 
 # this must be the local path to the site's document root
 
-    variable rivetweb_root
+    variable rivetweb_root              ""
 
-    variable site_base
+    variable site_base                  ""
     variable request
     variable scripts
     variable website_init               rivetweb.tcl
@@ -26,15 +26,19 @@ namespace eval ::rivetweb {
 #
 # These values are the very last fallback values for the defaults
 
-    variable default_template       rwbase
-    variable default_menu           main
-    variable default_menu_pos       left
-    variable default_lang           en
+    variable default_template           rwbase
+    variable default_menu               main
+    variable default_menu_pos           left
+    variable default_lang               en
 
 # these paths are relative to the DocumentRoot, so we don't need to normalize them
 
-    variable site_url_base          /
+    #variable site_url_base          /
+    
+    # site wide definition of a directory for picture files
+    
     variable picts_path             picts
+
     variable css_path               templates
     variable base_templates         templates
     variable site_scritps           tcl
@@ -42,12 +46,9 @@ namespace eval ::rivetweb {
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
     variable http_encoding          utf-8
-    #variable datasources            {}
-    #variable datasources_args       [dict create ::XMLBase {} ::RWDummy {}]
-    variable datasource             ::XMLBase
-    variable rwebdb                 ::rwebdb
+    variable handlers_dir           handlers
+
     variable logger                 ::rwlogger
-    variable pmodel                 ::rwpmodel
     variable linkmodel              ::rwlink
     variable menumodel              ::rwmenu
     variable sitemap                RWSitemap
@@ -57,7 +58,11 @@ namespace eval ::rivetweb {
     variable menuclass              RWMenu
     variable htmlizer               ::htmlizer
 
+# variable to store the list of URL-encoded arguments: it's set at *every* request
+# in tcl/before.tcl
+
     variable argsqs                 {}
+
     variable is_homepage            0
     variable template_key           ""
     variable template_changed       false
@@ -70,7 +75,7 @@ namespace eval ::rivetweb {
 # here but it will be assigned by the element <default_language>
 # in site_structure.xml
 
-    variable site_defs              site_defs.xml
+    #variable site_defs              site_defs.xml
     variable language               $default_lang
 
 # 'current_rev' is an integer number specifying
@@ -120,6 +125,13 @@ namespace eval ::rivetweb {
 #   variable static_path            static
 
 # page variables used to pass parameters between procs and pages
+
+# debug array for procedure ::rivetweb::dump_data
+
+    variable dumpdata_map
+    variable dumpdata_fp
+
+    array set dumpdata_map {}
 
     variable html_menu
     variable content
@@ -204,7 +216,18 @@ namespace eval ::rivetweb {
 #
 
     proc set_handler_args {handler args} {
-        ::rwdatas::UrlHandler::set_handler_arguments $handler $args
+        ::rwdatas::UrlHandler::set_handler_arguments $handler {*}$args
+    }
+
+# -- lremove
+#
+#   list element removal: taken straight from the Tcl manual page for lreplace
+
+    proc lremove {listVariable value} {
+        upvar 1 $listVariable var
+    
+        set idx [lsearch -exact $var $value]
+        set var [lreplace $var $idx $idx]
     }
 
 # -- init
@@ -215,15 +238,22 @@ namespace eval ::rivetweb {
 #
 
     proc init {urlhandler {position "last"} args} {
-        variable    site_base
         variable    logger
         variable    default_lang
 
-        package require $urlhandler
+        set argidx [lsearch $args "-nopkg"]
+        if {$argidx < 0} {
+            package require $urlhandler
+        } else {
+            set args [lreplace $args $argidx $argidx]
+        }
 
         set urlobj [::rwdatas::${urlhandler} ::${urlhandler}]
 
         ::rwdatas::UrlHandler::register_handler $urlobj $position {*}$args
+        
+        ::rivetweb add_search_path $::rivetweb::site_base 
+        ::rivetweb add_search_path $::rivetweb::rivetweb_root
     }
 }
 

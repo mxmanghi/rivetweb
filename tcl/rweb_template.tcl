@@ -15,7 +15,7 @@ package require htmlizer
 
 namespace eval ::rivetweb {
 
-    variable menuclass              RWMenu
+    variable menuclass                  RWMenu
 
     ::itcl::class RWTemplate {
         public common templates_db     [dict create]
@@ -33,7 +33,7 @@ namespace eval ::rivetweb {
         private variable menuclass      RWMenu
         private variable dir            rwbase
         private variable auxiliary      [dict create]
-
+        private variable template2      ""
         private variable template_key
 
         constructor {key} {
@@ -58,6 +58,7 @@ namespace eval ::rivetweb {
         public proc read_formatters {dir template_o}
         public proc make_template_object {template_key}
         public proc load_templates {templates_root args}
+        public proc register_template {templay_key template_o}
         public proc template {template_key {prop ""}}
     }
 
@@ -73,6 +74,7 @@ namespace eval ::rivetweb {
         } else {
             return ""
         }
+
     }
 
     ::itcl::body RWTemplate::setprop {prop value} {
@@ -146,7 +148,7 @@ namespace eval ::rivetweb {
 
         set template_o [RWTemplate::make_template_object $template_key]
         $template_o setprop dir $template_key
-
+    
         set base_descriptor [file join $dir rwtemplate.tcl]
         if {[file exists $base_descriptor]} {
             $template_o init $base_descriptor
@@ -155,7 +157,7 @@ namespace eval ::rivetweb {
         return $template_o
     }
 
-    # read_formatters
+    # -- read_formatters
     #
     # legge un file contenente le procedure di formattazione
     # di parti di un template e quindi ne registra il contenuto
@@ -177,6 +179,13 @@ namespace eval ::rivetweb {
         }
 
     }
+
+    ::itcl::body RWTemplate::register_template {template_key template_o} {
+
+        dict set templates_db $template_key $template_o 
+
+    }
+
 
     # -- load_templates
     #

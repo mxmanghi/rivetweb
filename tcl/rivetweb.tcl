@@ -20,25 +20,13 @@ namespace eval ::rivetweb {
 # -- registered_handlers
 #
 # we now try to phase in a management of URL handlers
-# that eventually will make them an opaque informatio
+# that eventually will make them an opaque information
 # of the rivetweb status
 
     proc registered_handlers {} {
         return [::rwdatas::UrlHandler::registered_handlers]
     }
     namespace export registered_handlers
-
-# -- notify_url_handlers
-#
-# Method to be used by pages needing to send signals to URL handlers
-
-    proc notify_url_handlers {signal signal_arguments} {
-        
-        foreach ds [::rwdatas::UrlHandler::registered_handlers] {
-            $ds signal $signal $signal_arguments
-        }
-
-    }
 
 # -- select_datasource
 #
@@ -154,6 +142,32 @@ namespace eval ::rivetweb {
     }
     namespace export composeUrl
 
+
+# -- make_url_composer
+#
+#   Procedure that returns an instance of UrlComposer. 
+#   Only a UrlComposer class makes sense in the context of
+#   an application and by overriding this procedure 
+#   a descendant of ::rivetweb::UrlComposer can be instantiated
+
+    proc make_url_composer {} {
+        return [::rivetweb::UrlComposer [namespace current]::#auto $::rivetweb::rewrite_par]
+    }
+
+# -- template_root
+#
+#   builds a URI path to the template root
+#
+    proc template_root {tkey args} {
+        set template_root_uri [join [list $::rivetweb::base_templates $tkey {*}$args] "/"]
+        if {$::rivetweb::rewrite_links} {
+            set rwcode [::rivet::var_qs get $::rivetweb::rewrite_par]
+            ::rivetweb::rewrite_as_relative $rwcode [::rivetweb::scriptName] $template_root_uri template_root_uri
+        }
+        return $template_root_uri
+    }
+    namespace export template_root
+
 # -- make_css_path 
 #
 #   creates rivetweb path to a CSS file
@@ -185,7 +199,6 @@ namespace eval ::rivetweb {
         return $css_uri 
     }
     namespace export make_css_path
-
 
 # -- csspath
 #
@@ -238,7 +251,7 @@ namespace eval ::rivetweb {
         if {$::rivetweb::rewrite_links} {
             ::rivetweb::rewrite_pict_path $::rivetweb::rewrite_code \
                                           [::rivetweb::scriptName]  \
-                                            $pict_file rewritten_path
+                                          $pict_file rewritten_path
             return $rewritten_path
         } else {
             return [file join / $pict_file]
@@ -277,7 +290,7 @@ namespace eval ::rivetweb {
 
             set fn [file join $::rivetweb::site_base {*}$uri]
             ::rivet::apache_log_error debug "[incr pathn] pict file: >$fn<"
-            
+            #puts [::rivet::xml "[incr pathn] pict file: >$fn<" pre]
             if {[file exists $fn]} { 
                 return [join $uri "/"] 
             } 
@@ -317,7 +330,7 @@ namespace eval ::rivetweb {
 #
     proc js {jscript_file {attributes ""}} {
 
-        return [::rivet::xml "" [concat script type "text/javascript" src $jscript_file {*}$attributes]]
+        return [::rivet::xml "" [list script type "text/javascript" src $jscript_file {*}$attributes]]
 
     }
     namespace export js
@@ -330,7 +343,7 @@ namespace eval ::rivetweb {
     proc javascript {script {attributes ""}} {
 
         set jscript_file "${::rivetweb::base_templates}/${::rivetweb::template_key}/${script}"
-        return [::rivet::xml "" [concat script 	type "text/javascript" \
+        return [::rivet::xml "" [list script 	type "text/javascript" \
                                                 src  [::rivetweb jscript_path $jscript_file] \
                                                 {*}$attributes]]
 
@@ -406,12 +419,13 @@ namespace eval ::rivetweb {
         return "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$::rivetweb::http_encoding\" />"
     }
 
-# -- searchPath 
+# -- searchPath
 # 
 # looks for <filename> in a sequence of paths given in <pathList>
 # and returns the actual path (absolute path) if found, otherwise
 # returns an empty string
 #
+# DEPRECATED
 
     proc searchPath {fileName pathList} {
 
@@ -426,6 +440,38 @@ namespace eval ::rivetweb {
         return ""
     }
     namespace export searchPath
+    
+# -- add_search_path
+#
+#
+
+    proc add_search_path {path2add} {
+
+        lappend ::rivetweb::search_list $path2add
+
+    }
+    namespace export add_search_path
+    
+# -- search_document
+#
+#
+#
+    proc search_document {filename {path_search_list ""}} {
+        
+        if {$path_search_list == ""} {
+            set path_search_list $::rivetweb::search_list
+        }
+
+        foreach pth $path_search_list {
+            set fn [file join $pth $fileName]
+
+            if {[file exists $fn]} {
+                return [file normalize $fn]
+            }
+        }
+        return ""
+    }
+    namespace export search_document
 
 # -- build_html_menu 
 #
@@ -446,7 +492,7 @@ namespace eval ::rivetweb {
         set htmltext ""
         if {[dict exists $pagemenus $position]} {
             set menus [dict get $pagemenus $position]
-            foreach menuobj $menus {    
+            foreach menuobj $menus {
                 append htmltext [$template to_html $menuobj]    
             }
         }
@@ -489,63 +535,6 @@ namespace eval ::rivetweb {
     }
     namespace export strip_sticky_args
 
-# -- search_handler
-#
-# recusive search of a page through the URL handler list. 
-#
-
-    proc search_handler {key returned_key datasrc {excluded_handler ""}} {
-        upvar $returned_key rkey
-        upvar $datasrc datasource
-
-        # this cycle is guaranteed to return a page, al least 
-        # through the last datasource in the chain (::RWDummy)
-
-        set ds [::rwdatas::UrlHandler::start_scan]
-
-        while {$ds != ""} {
-            if {($ds == $excluded_handler) && ($ds != "::RWDummy")} { 
-                ::rivet::apache_log_error debug "excluding $ds from search for $key"
-                set ds  [$ds next_handler]
-                continue
-            }
-
-            ::rivet::apache_log_error info "querying $ds for $key"
-
-            set rkey $key
-            if {[$ds will_provide $key rkey]} {
-                ::rivet::apache_log_error info \
-                    "fetching $key from $ds -> returned values: $rkey"
-
-                set pmodel [$ds fetch_page $key rkey]
-                if {$pmodel != ""} {
-                    set datasource  $ds
-                    return          $pmodel
-                } else {
-     
-                    if {[string match $key $rkey]} {
-                        set rkey wrong_datasource_returned_key
-                        return [::RWDummy fetchData $key rkey]
-                    }
-
-                    return [search_handler $rkey rkey datasource $ds]
-                }
-
-            } else {
-
-                if {($rkey != "") && ($key != $rkey)} {
-                    return [search_handler $rkey rkey datasource $ds]
-                }
-
-            }
-            
-            set ds  [$ds next_handler]
-        }
-        
-        return [::RWDummy fetchData page_not_found_error rkey]
-    }
-    namespace export search_handler
-
     # -- template_path
     #
     # 
@@ -563,7 +552,6 @@ namespace eval ::rivetweb {
 
     proc template {template_key} {
         return [::rivetweb template_path [::rivetweb::RWTemplate::template $template_key template] $template_key]
-
     }
     namespace export template
 
@@ -652,22 +640,41 @@ namespace eval ::rivetweb {
     }
     namespace export make_error_page
     
+    ##
+    # -- simple_page 
+    #
+    #   Arguments
+    #
+    #   + key:   key to the page object
+    #   + ptext: text string to be displayed
+    #
+    
     proc simple_page {key ptext} {
         variable language 
 
-        if {[::RWDummy cache_query $key]} {
-            set pobj [::RWDummy get_page_object $key]
+        set cache [::RWDummy cache]
+        
+        ## debug ##
+        #puts "::RWDummy cache $cache"
+        ## debug ##
+
+        if {[$cache key_query $key]} {
+            set pobj [$cache get_page_object $key]
             if {[$pobj info class] == "::rwpage::BasicPage"} {
                 $pobj pagetext $language $ptext
             }
         } else {
             set pobj [::rwpage::RWBasicPage ::#auto $key $ptext]
-            ::RWDummy store_page $key $pobj
+            $cache store_page $key $pobj
         }
         return $pobj
     }
     namespace export simple_page
-    
+
+    ##
+    # -- stacktrace
+    #
+
     proc stacktrace {} {
         set stack "Stack trace:\n"
         for {set i 1} {$i < [info level]} {incr i} {
@@ -686,8 +693,69 @@ namespace eval ::rivetweb {
     }
     namespace export stacktrace
     
+    ##
+    # --- DEPRECATED --
+    #
+    # -- handlers_list_tampering
+    #
+    
     proc handlers_list_tampering {urlhandlers} { return $urlhandlers }
     namespace export handlers_list_tampering
+
+    ##
+    # -- load_handler
+    #
+    #
+
+    proc load_handler { handler_class {position top} {handler_file ""} args} {
+        variable handlers_dir
+        
+        if {$handler_file == ""} {
+            set handler_file [file join $handlers_dir [string tolower $handler_class].tcl]
+        }
+
+        if {![file exists $handler_file]} {
+            $::rivetweb::logger emit "Couldn't find handler file for $handler_class ($handler_file)" err
+            return
+        }
+
+        source $handler_file
+
+        ::rivetweb::init $handler_class $position -nopkg {*}$args
+    }
+
+    ##
+    # -- dump_data
+    #
+    #   Debug procedure: dumps data in a tmp file
+    #
+ 
+    proc dump_data {txt {hold false}} {
+        variable dumpdata_map
+        variable dumpdata_fp
+
+        set pid [pid]
+
+        incr dumpdata_map($pid)
+
+        set dumpdata_fp [open [file join / tmp [format "dump-%s-%d.log" $pid $dumpdata_map($pid)]] w+]
+        puts $dumpdata_fp $txt
+        close $dumpdata_fp
+    }
+
+    proc dump_binary {bbuffer {dumpfile "/tmp/dumpfile-%s.txt"}} {
+
+        set dump [format $dumpfile [pid]]
+        if {[file exists $dump]} {
+            set fp [open $dump a]
+        } else {
+            set fp [open $dump w]
+        }
+
+        fconfigure $fp -encoding binary -translation binary
+        puts $fp $bbuffer
+        close $fp
+    }
 
     namespace ensemble create
 }

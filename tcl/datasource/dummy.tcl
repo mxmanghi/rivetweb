@@ -9,7 +9,7 @@ package require Itcl
 package require rwconf
 package require rwlogger
 package require rwpage
-package require Datasource
+package require UrlHandler
 package require rwbasicpage
 
 namespace eval ::rwpage {
@@ -18,15 +18,17 @@ namespace eval ::rwpage {
         inherit RWPage
 
         constructor {pagekey} {RWPage::constructor $pagekey} {
-            $this title $::rivetweb::default_lang "URL handlers database"
+            $this title $::rivetweb::default_lang "URL handlers database pid: [pid]"
         }
 
         public method print_content { language } {
             #puts -nonewline [$::rivetweb::rwebdb coredump]
 
+            # this is badly dependend on the internal cache representation
+
             foreach urlh [::rwdatas::UrlHandler::registered_handlers] {
                 set tbhead "$urlh ([$urlh name])"
-                set urlhcache [$urlh cache]
+                set urlhcache [[$urlh cache] cache]
 
                 #puts "<pre>$urlhcache</pre>"
                 set tbody ""
@@ -35,10 +37,9 @@ namespace eval ::rwpage {
 
                         set rowfields "<td>$object</td>\
                                        <td>[$object key]</td>\
-                                       <td>[clock format $timestamp]</td>\
+                                       <td>[clock format $timestamp -format "%d-%m-%Y %T"]</td>\
                                        <td>[$object info class]</td>"
 
-                        
                     }
                     append tbody [::rivet::xml $rowfields tr]
                 }
@@ -49,15 +50,15 @@ namespace eval ::rwpage {
         }
     }
 }
-    
 
 namespace eval ::rwdatas {
 
     ::itcl::class RWDummy { 
-        inherit Datasource
+        inherit UrlHandler
 
         private variable urlargs
         private common MESSAGES
+        protected method exclude_handler {} { return "" }
 
         public method init {args} {
             set MESSAGES [dict create \
@@ -81,25 +82,25 @@ and failed to reassigned the resource key ($key)} \
 
             set href [::rivetweb::composeUrl {*}$urlargs]
 
-# we now set the href attribute of the link
+			# we now set the href attribute of the link
 
             $linkmodel set_attribute lm [list href $href]
 
             return $lm
         }
 
-        public method is_stale {key timereference} {
+        # public method is_stale {key timereference} {
 
-            switch $key {
-                rw_dbdump {
-                    return false
-                }
-                default {
-                    return [UrlHandler::is_stale $key $timereference]
-                }
-            }
+            # switch $key {
+                # rw_dbdump {
+                    # return false
+                # }
+                # default {
+                    # return [UrlHandler::is_stale $key $timereference]
+                # }
+            # }
 
-        }
+        # }
 
         public method willHandle {arglist keyvar} { 
             upvar $keyvar key 
@@ -121,7 +122,7 @@ and failed to reassigned the resource key ($key)} \
 
                 #set pobj [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
                 set pobj [::rwpage::RWDumpPage ::#auto $key]
-                
+
             } else {
 
                 if {![dict exists $MESSAGES $key]} {
@@ -132,7 +133,7 @@ and failed to reassigned the resource key ($key)} \
 
                 set page_text [subst [dict get $MESSAGES $rkey]]
                 set pobj [::rwpage::RWBasicPage ::#auto $rkey $page_text]
-                $pobj set_title $::rivetweb::default_lang "Error $rkey"
+                $pobj title $::rivetweb::default_lang "Error $rkey"
 
             }
             return $pobj

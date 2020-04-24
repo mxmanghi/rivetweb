@@ -20,61 +20,36 @@ namespace eval ::rwpage {
             set headline    [dict create]
         }
 
-        public method add_metadata {field value} 
+        public method add_metadata {field value}
         public method set_metadata {mdlist}
-        public method put_metadata {dictionary} 
+        public method put_metadata {dictionary}
         public method clear_metadata { } { set metadata [dict create] }
         public method languages { } { return $::rivetweb::default_lang } 
         public method metadata {{key ""}}
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
-        public method metadata_hooks { hooks_d } 
+        public method metadata_hooks { hooks_d }
         public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
-        public method title {{language ""} {txt ""}}
+        private method set_title_dict {language title_txt}
+        public method title {{language ""} {txt ""} args}
         public method headline {language {hdl ""}}
         public method to_string {} { return [dict create metadata $metadata {*}[RWContent::to_string]] }
-
-        #
-        # interface designed for the Scripted datasource. Can be moved into
-        # application specific code
-        #
-
-        public method store {var value} { dict set stored_vars $var $value }
-        public method lappend {var value} { dict lappend stored_vars $var $value }
-        public method erase {var} {
-            if {[dict exists $stored_vars $var]} {
-                dict unset stored_vars $var
-            }
-        }
-        public method recall {var {defvar value}} {
-            upvar 1 $defvar retvalue
-            # puts "--> $stored_vars<br/>"
-            if {[dict exists $stored_vars $var]} {
-                set retvalue [dict get $stored_vars $var]
-                return true
-            } else {
-                set retvalue ""
-                return false
-            }
-        }
-        #####
-
         public method binary_content { } { return false }
         public method content_field {language field {default_val ""}} { return "" }
         public method prepare {language argqs}
+        public method prepare_content { urlhandler language argsqs }
         protected method postprocessing { urlhandler }
         public method send_output {language}
-        public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding"  }
+        public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding" }
+        public method javascript {} { return "" }
+        public method special_headers {language} {}
     }
 
+    ::itcl::body RWPage::prepare_content {urlhandler language argsqs} {
 
-# -- prepare
-#
-# this method's purpose is to generate the content of the page, navigation
-# menus are part of the whole page setup and are collected here
+        # this call to RWContent::prepare_content calls 'prepare' before
+        # collecting the menu listing from the Url handlers
 
-    ::itcl::body RWPage::prepare {language argsqs} {
-
-        RWContent::prepare $language $argsqs
+        set pobject [RWContent::prepare_content $urlhandler $language $argsqs]
 
         # we rebuild the navigation menu dictionary on every request
 
@@ -95,14 +70,29 @@ namespace eval ::rwpage {
 
         ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
 
-        return $this
+        $pobject postprocessing $urlhandler
+
+        return $pobject
     }
 
+# -- prepare
+#
+# Collecting menus to be displayed from the registered urlhandlers 
+#
+
+    ::itcl::body RWPage::prepare {language argsqs} {
+
+        return [RWContent::prepare $language $argsqs]
+
+    }
 
 # -- postprocessing
 #
-# method to store in a page instance the metadata associated
-# with the keyword 'field' and whose value is 'value'
+# Running the page postprocessing hooks (xmlpostproc class)
+#
+# The method definition still reflects the initial design where
+# postproc_hooks handled both xmlpostproc and metadata class 
+# hooks. It should change, being the method visibility 'protected' 
 #
 
     ::itcl::body RWPage::postprocessing {urlhandler} {
@@ -110,9 +100,9 @@ namespace eval ::rwpage {
 
         if {[catch {
 
-           $this postproc_hooks   $urlhandler               \
-                                  $::rivetweb::hooks        \
-                                  xmlpostproc               \
+           $this postproc_hooks   $urlhandler           \
+                                  $::rivetweb::hooks    \
+                                  xmlpostproc           \
                                   $::rivetweb::language
 
            $this metadata_hooks $::rivetweb::hooks
@@ -148,6 +138,18 @@ namespace eval ::rwpage {
         }
     }
 
+# -- set_title_dict
+#
+# private method to set the title internal dictionary
+#
+
+    ::itcl::body RWPage::set_title_dict {language title_txt} {
+        dict set title $language $title_txt
+        if {![dict exists $title $::rivetweb::default_lang]} {
+            dict set title $::rivetweb::default_lang $title_txt
+        }
+    }
+
 # -- title
 #
 # A method for getting the page title goes in the base RWPage class
@@ -155,18 +157,40 @@ namespace eval ::rwpage {
 # section of a page and it's part of the standard HTML ever since
 #
 
-    ::itcl::body RWPage::title {{language ""} {titletxt ""}} { 
+    ::itcl::body RWPage::title {{language ""} {titletxt ""} args} { 
         if {$language == ""} {
             return $title
         } else {
-            if {$titletxt != ""} {
-                dict set title $language $titletxt
-                return $titletxt
-            } elseif {[dict exists $title $language]} {
-                return [dict get $title $language]
+
+            if {[llength $args] == 0} {
+                if {$titletxt != ""} {
+
+                    #dict set title $language $titletxt
+                    #if {![dict exists $title $::rivetweb::default_lang]} {
+                    #    dict set title $::rivetweb::default_lang $titletxt
+                    #}
+
+                    $this set_title_dict $language $titletxt
+
+                    return $titletxt
+
+                } elseif {[dict exists $title $language]} {
+                    return [dict get $title $language]
+                } elseif {[dict exists $title $::rivetweb::default_lang]} {
+                    return [dict get $title $::rivetweb::default_lang]
+                } else {
+                    return ""
+                }
             } else {
+                foreach {l t} [list $language $titletxt {*}$args] {
+                    $this set_title_dict $l $t
+                }
+                if {![dict exists $title $::rivetweb::default_lang]} {
+                    return [dict get $title $::rivetweb::default_lang]
+                }
                 return ""
             }
+
         }
     }
 
@@ -233,7 +257,9 @@ namespace eval ::rwpage {
     ::itcl::body RWPage::metadata {{key ""}} {
 
         if {$key == ""} {
+
             return $metadata
+
         } else {
 
             if {[dict exists $metadata $key]} {

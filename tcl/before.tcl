@@ -67,7 +67,7 @@ namespace eval ::rivetweb {
 
     if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
         set ::rivetweb::last_selected_template $template_key
-        set ::rivetweb::template_changed true    
+        set ::rivetweb::template_changed true
     } else {
         set ::rivetweb::template_changed false
     }
@@ -90,25 +90,24 @@ namespace eval ::rivetweb {
     #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
 
     $::rivetweb::logger log debug "registered handlers: [::rwdatas::UrlHandler::registered_handlers]"
-    $::rivetweb::logger log debug "argsqs: $argsqs"
+    $::rivetweb::logger log debug "argsqs: $argsqs, language: $language"
 
-    # temporary hack: this variable should go away as every reference
-    # to the now obsolete definition of datasource (at least in this context)
+    set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page $argsqs]
 
-    #set ::rivetweb::page_key     [::rwdatas::UrlHandler::select_handler $argsqs]
-    set ::rivetweb::current_page [::rwdatas::UrlHandler::select_page    $argsqs]
+    $::rivetweb::logger log debug "\[::rwdatas::UrlHandler::select_page $argsqs\] returned $::rivetweb::current_page"
 
 #
 # The three stage generation of a page
 #
-#     * page content preparation
-#     * HTTP header generation and transmission
-#     * page data transmission
+#    * page content preparation
+#    * HTTP header generation and transmission
+#    * page data transmission
 #
 
     set ::rivetweb::page_content $::rivetweb::page_key
-    set ::rivetweb::current_page \
-        [$::rivetweb::current_page prepare_content $::rivetweb::datasource $::rivetweb::language $argsqs]
+    set ::rivetweb::current_page [$::rivetweb::current_page prepare_content \
+                                  [::rwdatas::UrlHandler::current_handler]  \
+                                  $::rivetweb::language $argsqs]
 
 # sending headers
 

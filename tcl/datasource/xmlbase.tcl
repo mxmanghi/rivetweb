@@ -37,7 +37,7 @@ namespace eval ::rwdatas {
         private variable pageclass          ::rwpage::RWStatic 
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
-        private common   LOCAL_PAGES        docs
+        public  common   LOCAL_PAGES        docs
         private variable timestamp          0
         private variable sitemap_stat   
         private variable xmlpath
@@ -47,18 +47,20 @@ namespace eval ::rwdatas {
 
         protected method buildPageEntry {key xmldata reassigned_key}
         protected method read_xml_data {xmlfilename}
+        protected method read_mtime {xmlfilename}
         protected method time_reference {xmlbase} 
         private method listStaticMenus {sm parent_mg}
-        private method menuclass {menu_o}        
+        private method menuclass {menu_o}
         protected method xmlfile {key} { return [file join $static_pages ${key}.xml] }
         protected method xmlsitemaps {sitemap_key} { return [glob -nocomplain [file join $sitemap_key *.xml]] }
+        protected method exclude_handler {} { return "" }
 
         public method init {args}
         public method willHandle {arglist keyvar}
         public method fetchData {key reassigned_key}
         public method storeData {key data_dict}
         public method create {key page_data}
-        public method is_stale {key timereference}
+        # public method is_stale {key timereference}
         public method has_updates {} 
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
@@ -94,6 +96,13 @@ namespace eval ::rwdatas {
 
         }
 
+        # It's unusual to have more than one XMLBase-based class 
+        # active in the handlers list and it's unlikely these
+        # variable need to change as their used to share a copy of
+        # the respective private instance variables, but we cannot
+        # initialize them twice because they need to be registered
+        # in the document search list
+
         set ::rwdatas::static_pages $static_pages
         set ::rwdatas::local_pages  $LOCAL_PAGES
 
@@ -128,12 +137,12 @@ namespace eval ::rwdatas {
         } elseif {![file isdirectory $static_pages]} {
             $::rivetweb::logger log notice "Wrong path for sitemap ($static_pages)"
             return -code error  -error_code invalid_path                \
-                                -errorinfo  "Wrong path $static_pages"   \
+                                -errorinfo  "Wrong path $static_pages"  \
                                             "Wrong path $static_pages"
         } else {
             $::rivetweb::logger log notice "setting pages path as $static_pages"
         }
-        
+
         # and the we set the path to the XML pages
 
         set xmlpath [file join $::rivetweb::site_base pages]
@@ -159,7 +168,7 @@ namespace eval ::rwdatas {
     ::itcl::body XMLBase::willHandle {arglist keyvar} {
         upvar $keyvar key 
 
-        ## debug puts "<pre>arglist = $arglist</pre>"
+        # puts "<pre>arglist = $arglist</pre>"
         set key index
         if {[dict exists $arglist show]} {
             set key [dict get $arglist show]
@@ -211,17 +220,18 @@ namespace eval ::rwdatas {
             set rkey $key
         }
 
-        # we give a default to the pageclass key. It's needed in
-        # order to create an instance of page
+        # we give a default to the pageclass key. 
+        # It's needed in order to create an instance of a page
 
-        set menu_d      [dict create pageclass $pageclass]
+        set metadata_d      [dict create pageclass $pageclass]
         set metadata_l  {}
 
         # metadata are stored accordingly. <menu>...</menu> elements
-        # receive a special treatment and go into the menu_d dictionary
+        # receive a special treatment and go into the metadata_d dictionary
         # before they get into the page metadata
 
         foreach c [$domroot child all] {
+            ::rivet::apache_log_error info "XMLBase::buildPageEntry: handling tag [$c tagName]"
             switch [$c tagName] {
                 content {
                     continue
@@ -232,12 +242,10 @@ namespace eval ::rwdatas {
                     } else {
                         set position $::rivetweb::menu_default_pos
                     }
-                    dict set menu_d menu [$c getAttribute position $position] [$c text]
+                    dict set metadata_d menu [$c getAttribute position $position] [$c text]
                 }
                 pageclass {
-
-                    dict set menu_d pageclass "::rwpage::[$c text]"
-
+                    dict set metadata_d pageclass "::rwpage::[$c text]"
                 }
                 title -
                 headline {
@@ -249,19 +257,17 @@ namespace eval ::rwdatas {
                     continue
                 }
                 default {
-                    lappend metadata_l [$c tagName] [::rivet::escape_shell_command [$c text]]
+                    #lappend metadata_l [$c tagName] [::rivet::escape_shell_command [$c text]]
+                    lappend metadata_l [$c tagName] [$c text]
                 }
             }
         }
 
-        set pagetclclass [dict get $menu_d pageclass]
+        set pagetclclass [dict get $metadata_d pageclass]
         set newpage [$pagetclclass ::#auto $key]
 
-        # puts "<br/>[html $metadata_l b u]"
-        # $::rivetweb::pmodel set_metadata newpage $metadata_l
-
-        set menu_d [dict merge $menu_d [dict create {*}$metadata_l]]
-        $newpage put_metadata $menu_d
+        set metadata_d [dict merge $metadata_d [dict create {*}$metadata_l]]
+        $newpage put_metadata $metadata_d
         #$newpage add_metadata datasource ::XMLBase
 
         # data are scanned for <content>...</content> elements to be
@@ -283,10 +289,10 @@ namespace eval ::rwdatas {
                 switch $node_name {
                     pagetext {
 
-                        # creiamo un nuovo dom
+                        # create a new dom object out of the pagetext element 
 
                         set cdom [dom parse [$c asXML]]
-                        $::rivetweb::logger log info "Adding content for language $clang ($key)"
+                        $::rivetweb::logger log info "Adding content for language $clang ($key) [$cdom documentElement]"
                         $newpage set_content $clang pagetext $cdom
 
                     } 
@@ -315,25 +321,7 @@ namespace eval ::rwdatas {
         return $file_stat(mtime)
 
     }
-
-# -- is_stale
-#
-# returns a boolean condition if the resource linked to 'key' has
-# to be refreshed
-#
-    ::itcl::body XMLBase::is_stale {key timereference} {
-        
-        #if {$key == "xml_page_not_found_error"} { return true }
-
-        if {[$this resource_exists $key]} {
-            set current_timeref [$this time_reference $key]
-            return [expr $timereference < $current_timeref]
-        } else {
-            set errinfo "[$this name] Resource $key not found"
-            return -code error -errorcode resource_not_found -errorinfo $errinfo $errinfo
-        }
-    }
-
+	
 # -- resource_exists
 # -- get_resource_repr
 #
@@ -353,6 +341,16 @@ namespace eval ::rwdatas {
         return [$this resource_exists $keyword]
     }
 
+# -- read_mtime
+#
+#
+    ::itcl::body XMLBase::read_mtime {xmlfile} {
+        file stat $xmlfile file_stat
+        return $file_stat(mtime)
+    }
+
+
+
 # -- read_xml_data
 #
 #
@@ -369,7 +367,7 @@ namespace eval ::rwdatas {
 # -- fetchData 
 # 
 # This method retrieves a page content from the backend. This implementation
-# looks for an XML file in the website directory tree ( now ::XMLBase::static_pages). 
+# looks for an XML file in the website directory tree (now ::XMLBase::static_pages). 
 #
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
@@ -386,6 +384,8 @@ namespace eval ::rwdatas {
                 set xmldata [$this read_xml_data $xmlfile]
                 set xmldata [regsub -all {<\?} $xmldata {\&lt;?}]
                 set xmldata [regsub -all {\?>} $xmldata {?\&gt;}]
+				
+				$this add_page_depend $key $xmlfile [$this read_mtime $xmlfile] 
 
             } fileioerr einfo]} {
                 set page_error_msg "Impossible to read page '$key' ($fileioerr)<br/><ul>"
@@ -423,11 +423,9 @@ namespace eval ::rwdatas {
 
         file stat $sitemap_dir sitemap_stat
 
-        $::rivetweb::logger log debug " menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
+        $::rivetweb::logger log debug "menu timestamp t1: $sitemap_stat(mtime), t2: $timestamp"
         if {($sitemap_stat(mtime) > $timestamp)} { 
-
             return true
-
         }
 
         return false
@@ -755,7 +753,7 @@ namespace eval ::rwdatas {
 
         $sitemap_mgr recreate
 
-        file stat $sitemap_dir  sitemap_stat
+        file stat $sitemap_dir sitemap_stat
         set timestamp $sitemap_stat(mtime) 
 
         array unset xmlmenu
@@ -792,17 +790,17 @@ namespace eval ::rwdatas {
             set sitemenus [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             foreach sm $sitemenus {
 
-# any menu without an id is simply ignored. This should be documented
+                # any menu without an id is simply ignored. This should be documented
 
                 if {[$sm hasAttribute id]} {
 
                     set group_menu_id   [$sm getAttribute id]
                     set group_parent    [$sm getAttribute parent root]
                     
-# the attribute 'position' refers to the position within the menu group
-# This is wrong, as the position can't be absolute. This also dependent
-# on the specific implementation of the concept of ordering within the
-# RWSitemap class (currently based on Tcllib's struct::tree objects)
+                # the attribute 'position' refers to the position within the menu group
+                # This is wrong, as the position can't be absolute. This also dependent
+                # on the specific implementation of the concept of ordering within the
+                # RWSitemap class (currently based on Tcllib's struct::tree objects)
 
                     if {[$sm hasAttribute position]} {
                         set position [$sm getAttribute position]
@@ -834,25 +832,18 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::menu_list {page} {
 
-#       puts "<br/><b>pmodel</b>: $page"
-#       puts "<br/><b>ds</b>: [$page metadata datasource]"
-
         if {[$this has_updates]} {
             $this load_sitemap $sitemap
         }
 
-        if {[$page current_handler] == "::XMLBase"} {
-
-            set menul [$page metadata menu]
-
-        } else {
+        set menul [$page metadata menu]
+        if {$menul == ""} {
 
             set menul [dict create  $::rivetweb::default_menu_pos \
                                     $::rivetweb::default_menu]
 
         }
 
-        #puts "<pre>menul: $menul</pre>"
         set menudb [dict create]
         foreach {group menuid} $menul {
             set menuid_list [$sitemap menu_list $menuid]
@@ -860,7 +851,6 @@ namespace eval ::rwdatas {
                 dict set menudb $group $menuid_list
             }
         }
-        #puts "<pre>menudb: $menudb</pre>"
 
         return $menudb
     }
@@ -886,8 +876,13 @@ namespace eval ::rwdatas {
                 }
                 $linkmodel set_attribute lm [list href $href]
             }
+            generic -
             external {
-                $linkmodel set_attribute lm [list href [$linkmodel reference $lm]]
+                set href [$linkmodel reference $lm]
+                if {[::rwdatas::UrlHandler::get_alias $href lref]} {
+                    set href $lref
+                }
+                $linkmodel set_attribute lm [list href $href]
             }
             default {
                 ::rivet::apache_log_error err "Invalid reference for link $lm for data source [$this name]"

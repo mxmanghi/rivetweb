@@ -18,7 +18,22 @@ namespace eval ::rivetweb {
         public method register_class {class_name {itcl_file ""} {oosys itcl}}
         public method check_class {class_name}
         public method check_registered_classes {}
+        public method configure_page {key args}
         public method create_page_obj {key ooclass rkey args}
+        public method class_registered {class_name}
+        public method delete_key_map {page_key}
+        public method key_is_registered {page_key}
+
+        public method dumpclassdb {} { return $class_db }
+        public method dumpkeyclassmap {} { return $keyclassmap }
+
+    }
+
+    # -- class_registered 
+    #
+    
+    ::itcl::body PageBroker::class_registered {class_name} {
+        return [dict exists $class_db $class_name]
     }
     
     # -- register_class
@@ -31,8 +46,7 @@ namespace eval ::rivetweb {
             set itcl_file_found 0
             foreach subd {tcl class} {
                 set itcl_file [file join $::rivetweb::site_base \
-                                         $subd \
-                                         $proposed_file_name]
+                                         $subd $proposed_file_name]
 
                 if {[file exists $itcl_file]} { 
                     set itcl_file_found 1
@@ -42,10 +56,9 @@ namespace eval ::rivetweb {
             }
             if {$itcl_file_found == 0} {
                 return -code error -errorcode class_file_not_found \
-                                              "File for class '$class_name' not found"
+                                    "File for class '$class_name' not found"
             }
         }
-
 
         if {[dict exists $class_db $class_name]} {
             ::rwlogger log info "(register_class) registering $class_name twice ($itcl_file)"
@@ -61,12 +74,12 @@ namespace eval ::rivetweb {
         #    source $itcl_file
         #}
 
-        dict set class_db $class_name file $itcl_file 
+        dict set class_db $class_name file  $itcl_file 
         dict set class_db $class_name oosys $oosys
+        dict set class_db $class_name mtime [file mtime $itcl_file]
 
-        ::rwlogger log info "(register_class) class $class_name ($itcl_file)"
+        ::rwlogger log info "PageBroker::register_class class $class_name ($itcl_file)"
     }
-    
 
     # -- key_class_map
     #
@@ -75,15 +88,44 @@ namespace eval ::rivetweb {
     ::itcl::body PageBroker::key_class_map {key {ooclass ""} {itcl_file ""} {oosys itcl}} {
 
         if {$ooclass != ""} {
-            $this register_class $ooclass $itcl_file $oosys
+            if {![$this class_registered $ooclass]} {
+                $this register_class $ooclass $itcl_file $oosys
+            }
             dict set keyclassmap $key class $ooclass
-        }
-
-        if {[dict exists $keyclassmap $key class]} {
+        } elseif {[dict exists $keyclassmap $key class]} {
             set ooclass [dict get $keyclassmap $key class]
         }
         return $ooclass
 
+    }
+
+    # -- key_is_registered
+    #
+    #
+
+    ::itcl::body PageBroker::key_is_registered {key} {
+        return [dict exists $keyclassmap $key]
+    }
+
+
+    # -- delete_key_map 
+    #
+    #
+
+    ::itcl::body PageBroker::delete_key_map {key} {
+        if {[dict exists $keyclassmap $key]} {
+            dict unset keyclassmap $key
+        }
+    }
+
+    # -- configure_page
+    #
+    #
+
+    ::itcl::body PageBroker::configure_page {key args} {
+        if {[dict exists $keyclassmap $key]} {
+            dict set keyclassmap $key configure $args
+        }
     }
 
     # -- create_page_obj
@@ -97,7 +139,6 @@ namespace eval ::rivetweb {
         upvar $reassigned_key rkey
 
         set rkey $key
-
         set pobj [eval $ooclass ::rwpage::#auto $key {*}$args]
 
         if {[dict exists $keyclassmap $key configure]} {
@@ -114,15 +155,14 @@ namespace eval ::rivetweb {
     ::itcl::body PageBroker::check_class_loaded {class_name oosys} {
 
         switch $oosys {
-
             itcl {
                 return [::itcl::is class $class_name]
             }
             default {
                 return false
             }
-
         }
+
     }
 
 # -- check_registered_classes
@@ -135,44 +175,54 @@ namespace eval ::rivetweb {
 
 # -- check_class
 #
+# Page broker central method to determine whether the class has
+# to be reloaded
 #
 
     ::itcl::body PageBroker::check_class {class_name} {
+        ::rwlogger log debug "PageBroker::check_class class $class_name"
 
         if {[dict exists $class_db $class_name]} {
-            set itcl_file   [dict get $class_db $class_name file]
-            set oosys       [dict get $class_db $class_name oosys]
+            set itcl_file [dict get $class_db $class_name file]
+            set oosys     [dict get $class_db $class_name oosys]
         } else {
             return false
         }
 
+        set class_reload false
+
         if {[$this check_class_loaded $class_name $oosys] == 0} {
 
-           ::rwlogger log info \
-                "$log_prefix: class $class_name not loaded, reading from $itcl_file"
-
-            source $itcl_file
-            dict set class_db $class_name mtime [file mtime $itcl_file]
-            return true
+            ::rwlogger log debug "PageBroker::check_class class $class_name not loaded, reading from $itcl_file"
+            set class_reload true
 
         } else {
 
-            set current_mtime   [file mtime $itcl_file]
-            set last_mtime      [dict get $class_db $class_name mtime]
+            set current_mtime [file mtime $itcl_file]
+            set last_mtime    [dict get $class_db $class_name mtime]
+
+            ::rwlogger log debug "PageBroker::check_class $class_name itcl current mtime $current_mtime (cached: $last_mtime)"
+
             if {$last_mtime < $current_mtime} {
 
                 ::rwlogger log notice \
-                "$log_prefix: class $class_name stale, deleting and then reading from $itcl_file"
-                ::rivetweb::notify_url_handlers class_being_deleted $class_name
+                    "$log_prefix: class $class_name stale, deleting and then reading from $itcl_file"
+                ::rwdatas::UrlHandler::notify_handlers class_being_deleted $class_name
                 ::itcl::delete class $class_name
-                source $itcl_file
-                dict set class_db $class_name mtime [file mtime $itcl_file]
-                return true
 
+                set class_reload true
             }
 
         }
-        return false
+
+        if {$class_reload} {
+            ::rwlogger log debug "PageBroker::check_class reloading $class_name from $itcl_file"
+
+            source $itcl_file
+            dict set class_db $class_name mtime [file mtime $itcl_file]
+        }
+
+        return $class_reload
     }
 }
 

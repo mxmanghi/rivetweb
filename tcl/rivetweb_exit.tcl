@@ -1,12 +1,15 @@
 #
-# $Id: rivet_exit.tcl 2102 2011-12-15 12:01:09Z massimo.manghi $
+# -- rivetweb_exit.tcl
 #
 #+
 # Children cleanup upon exit
 #-
 #
 
-$::rivetweb::logger log notice "Rivetweb: child [pwd] is leaving"
+# waiting for a ::rivet::thread_id command in order to have a thread
+# specific way to log this termination
+
+#$::rivetweb::logger log notice "rivetweb thread [pid] is leaving"
 
 foreach handler [::rivetweb registered_handlers] {
 

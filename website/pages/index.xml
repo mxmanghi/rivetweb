@@ -18,7 +18,7 @@
             turn runs with the <externref href="http://httpd.apache.org/">Apache HTTP Webserver</externref>),
             the <a href="http://www.tcl.tk/">Tcl programming language</a> with its OO extension Itcl
             and (in the current implementation) also 
-            <externref href="http://tdom.github.com">tdom</externref>, the XML and DOM manipulator
+            <externref href="http://tdom.org">tdom</externref>, the XML and DOM manipulator
             package for the Tcl programming language. Some efforts are under way
             in order to rewrite Rivetweb with the TclOO native object system. 
         	At the <sitereference href="examples">Rivetweb examples</sitereference> page

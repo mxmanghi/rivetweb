@@ -7,15 +7,16 @@
 
 set hook_descriptor(tag)            date
 set hook_descriptor(function)       timestamps_extraction
-set hook_descriptor(descrip)        "a function storing the content of the date metadata field"
+set hook_descriptor(descrip)        "Extracting the page timestamp from metadata"
 set hook_descriptor(stage)          metadata
 
 proc timestamps_extraction { pageobj } {
 
-#    namespace eval ::rivetweb::pagestatus { set date "" }
-#
-#    set ::rivetweb::pagestatus::date [$::rivetweb::pmodel metadata $pageobj date]
-#
-#    return $pageobj
+    set datetime [$pageobj metadata date]
+    if {$datetime == ""} { return }
+    
+    if {[regexp {\$Date: (.+) \$} $datetime m dt]} {
+        $pageobj set_metadata [list date $dt]
+    }
 
 }

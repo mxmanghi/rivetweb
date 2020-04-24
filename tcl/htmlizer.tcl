@@ -157,6 +157,9 @@ namespace eval ::htmlizer {
             $item_container_o appendChild $item_o
 
             set link_o [$menudom createElement a]
+            if {[string length $link_class]} {
+                $link_o setAttribute class $link_class
+            }
             $item_o appendChild $link_o
 
             set link_text [$linkmodel link_text $link $language]

@@ -15,6 +15,7 @@ namespace eval ::rwpage {
         inherit RWPage
 
         private variable content
+        private variable xmlbuffer
 
         constructor {pagekey} {RWPage::constructor $pagekey} {
             set content [dict create]
@@ -26,6 +27,7 @@ namespace eval ::rwpage {
             set page_o    [$page_dom documentElement]
             $page_o appendXML "<div>undefined</div>"
             dict set content $::rivetweb::default_lang pagetext $page_o
+            set xmlbuffer [dict create]
         }
 
         public method destroy {}
@@ -38,6 +40,7 @@ namespace eval ::rwpage {
         public method to_string {}
         public method headline {language}
         public method content_field {language field {default_val ""}}
+        public method refresh {timereference} { return false }
     }
 
 # -- destroy
@@ -50,7 +53,8 @@ namespace eval ::rwpage {
             $pagedom delete
         }
         
-        RWPage::destroy
+        #RWPage::destroy
+        chain
     }
 
 # -- set_pagetext
@@ -98,22 +102,28 @@ namespace eval ::rwpage {
 #
     ::itcl::body RWStatic::content { language {fmt -reference}} {
 
-        if {[dict exists $content $language]} {
-            set page_content [dict get $content $language]
-        } elseif {[dict exists $content $::rivetweb::default_lang]} {
-            set page_content [dict get $content $::rivetweb::default_lang]
+        #if {[dict exists $content $language]} {
+        #    set page_content [dict get $content $language]
+        #} elseif {[dict exists $content $::rivetweb::default_lang]} {
+        #    set page_content [dict get $content $::rivetweb::default_lang]
+        #} else {
+        #    set errormsg "Inconsistent model: Missing data for default language"
+        #
+        #    $::rivetweb::logger log emerg "inconsistent model: $this"
+        #    return -code error  -errorcode missing_default_content  \
+        #                        -errorinfo $errormsg $errormsg
+        #}
+        #dict for {k v} $content { puts [::rivet::xml "$k: $v" pre] }
+        if {[dict exists $content $language pagetext]} {
+            set pagedom [dict get $content $language pagetext]
+        } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
+            set pagedom [dict get $content $::rivetweb::default_lang pagetext]
         } else {
             set errormsg "Inconsistent model: Missing data for default language"
 
             $::rivetweb::logger log emerg "inconsistent model: $this"
             return -code error  -errorcode missing_default_content  \
                                 -errorinfo $errormsg $errormsg
-        }
-
-        if {[dict exists $content $language pagetext]} {
-            set pagedom [dict get $content $language pagetext]
-        } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
-            set pagedom [dict get $content $::rivetweb::default_lang pagetext]
         }
 
         switch -nocase -- $fmt {
@@ -131,6 +141,7 @@ namespace eval ::rwpage {
             }
         }
 
+        set output_buffer ""
         if {[info exists pagedom]} {
             set xmlnode_pt [$pagedom documentElement]
 
@@ -250,8 +261,14 @@ namespace eval ::rwpage {
 # 
 
     ::itcl::body RWStatic::print_content {language} {
-        puts -nonewline [$this content $language -xml]
-    } 
+
+		if {![dict exists $xmlbuffer $language]} {
+			#puts "[pid]"
+			dict set xmlbuffer $language [$this content $language -xml]
+		}
+
+		puts -nonewline [dict get $xmlbuffer $language]
+    }
 
 # -- languages
 #

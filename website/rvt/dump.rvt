@@ -1,11 +1,25 @@
-    <h3>DUMP</h3>
+    <h3>DUMP <?= [pid] ?></h3>
     <table>
 	<?
-	    foreach k [dict keys $::rwebdb::sitepages] {
-		set p [dict get $::rwebdb::sitepages $k]
-		foreach f [dict keys $p] {
-		    puts "<tr><td>$k</td><td>$f</td><td>[dict get $::rwebdb::sitepages $k $f]</td></tr>"
-		}
+		set urlh [$pageobj current_handler]
+		set urlhcache [[$urlh cache] cache]
+		set tbody ""
+        set tbhead "$urlh ([$urlh name])"
+
+		dict for {k p} $urlhcache {
+	
+			dict with p {
+
+                set rowfields "<td>$object</td>\
+                               <td>[$object key]</td>\
+                               <td>[clock format $timestamp -format "%d-%m-%Y %T"]</td>\
+                               <td>[$object info class]</td>"
+							   
+                append tbody [::rivet::xml $rowfields tr]
+			}
+			set tbody [::rivet::xml $tbody tbody]
+			set thead [::rivet::xml $tbhead thead [list th colspan 4]]
+			puts [::rivet::xml "$thead $tbody" [list table style "margin: 1em auto;"]]
 	    }
 
 	?>

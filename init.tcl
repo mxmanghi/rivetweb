@@ -8,16 +8,15 @@ lappend auto_path $rweb_root $website_root
 
 ::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
 
-package require rivetweb
 package require rwlogger
 package require rwconf
 package require rwmenu
 package require rwpage
 package require rwlink
 package require urlcomposer
-package require Datasource
 package require RWTemplate
 package require UrlHandler
+package require rivetweb
 package require RWDummy
 package require XMLBase
 
@@ -32,12 +31,15 @@ if {[file exists $website_definitions]} { source $website_definitions }
 
 ::rivet::apache_log_error info "default_template: $::rivetweb::default_template"
 
-set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
+#set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
+set ::rivetweb::url_composer [::rivetweb::make_url_composer]
 
 # site_defs.tcl is supposed to define the default template, we thus assign this key to the 
 # last_selected_template variable in order to force a template_chanded signal
 
 set ::rivetweb::last_selected_template rwbase
+
+# rivetweb_init.tcl loads the templates database and hooks database
 
 source [file join $::rivetweb::scripts rivetweb_init.tcl]
 
@@ -56,7 +58,7 @@ if {[file exists $::rivetweb::website_init]} {
         foreach l [split $errorInfo "\n"] {
             ::rivet::apache_log_error crit $l
         }
-        
+
     }
 }
 
@@ -76,10 +78,12 @@ if {[file exists $::rivetweb::website_init]} {
 # UrlHandler::next_handler
 
 ::rivet::apache_log_error debug "[pwd] - Registered handlers pre tampering [::rwdatas::UrlHandler::registered_handlers]"
+::rivet::apache_log_error debug "[pwd] - Handlers arguments pre tampering [::rwdatas::UrlHandler::handlers_arguments]"
 ::rwdatas::UrlHandler::set_installed_handlers \
     [::rivetweb::handlers_list_tampering [::rwdatas::UrlHandler::registered_handlers]]
 
 ::rivet::apache_log_error debug "[pwd] - Registered handlers [::rwdatas::UrlHandler::registered_handlers]"
+::rivet::apache_log_error debug "[pwd] - Handlers arguments post tampering [::rwdatas::UrlHandler::handlers_arguments]"
 
 # this is the very last operation to do after the initialization. We have just
 # instantiated each datasource and we proceed calling the 'init' method for each
@@ -104,3 +108,5 @@ foreach ds [lreverse [::rwdatas::UrlHandler::registered_handlers]] {
     }
 
 }
+
+# -- init.tcl
