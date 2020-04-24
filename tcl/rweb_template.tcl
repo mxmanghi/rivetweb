@@ -253,4 +253,4 @@ namespace eval ::rivetweb {
 
 }
 
-package provide RWTemplate 1.0
+package provide RWTemplate 2.0
