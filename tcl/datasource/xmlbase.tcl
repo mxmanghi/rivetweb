@@ -80,6 +80,11 @@ namespace eval ::rwdatas {
 
     ::itcl::body XMLBase::init {args} {
 
+        # --------------------------------------------------------------------
+        # GD: I forgot to properly document the purpose of this argument
+        # processing and variable setting (in namespace ::rwpage, in the first
+        # place). Need to investigate which application demanded such a kludge
+
         # processing args. This handler wants 'args' to
         # be a even length list of 'variable name - variable value'
 
@@ -95,6 +100,7 @@ namespace eval ::rwdatas {
             }
 
         }
+        # --------------------------------------------------------------------
 
         # It's unusual to have more than one XMLBase-based class 
         # active in the handlers list and it's unlikely these
@@ -188,6 +194,7 @@ namespace eval ::rwdatas {
             } else {
                 return -code continue -errorcode rw_continue
             }
+
         } 
         if {$key == "index"} { set ::rivetweb::is_homepage 1 }
 
@@ -366,8 +373,9 @@ namespace eval ::rwdatas {
 
 # -- fetchData 
 # 
-# This method retrieves a page content from the backend. This implementation
-# looks for an XML file in the website directory tree (now ::XMLBase::static_pages). 
+# This method retrieves a page content from the backend. 
+# This implementation looks for an XML file in the website
+# directory tree (now ::XMLBase::static_pages). 
 #
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
@@ -555,7 +563,7 @@ namespace eval ::rwdatas {
         #
         #if {[dict exists $::rivetweb::templates_db menuclass]} {
         #    return [dict get $::rivetweb::templates_db menuclass]
-        #}
+        #
 
         return $::rivetweb::menuclass
     }
