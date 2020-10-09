@@ -551,20 +551,6 @@ namespace eval ::rwdatas {
             return [$menu getAttribute tclclass]
         }
 
-        # we may dispose of this...
-
-        #if {[string length $menutclclass] > 0} {
-        #    return $menutclclass
-        #}
-
-        # this one was wrong, in case it had to query the database
-        # through the template_key but this model has been superseded
-        # by the RWTemplate broker
-        #
-        #if {[dict exists $::rivetweb::templates_db menuclass]} {
-        #    return [dict get $::rivetweb::templates_db menuclass]
-        #
-
         return $::rivetweb::menuclass
     }
 
