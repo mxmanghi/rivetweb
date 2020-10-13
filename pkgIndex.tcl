@@ -41,3 +41,4 @@ package ifneeded RWTemplate 1.0 [list source [file join $rivetweb_dir tcl rweb_t
 package ifneeded rwpagebroker 1.0 [list source [file join $rivetweb_dir tcl pagebroker.tcl]]
 package ifneeded rwpagecache 1.0 [list source [file join $rivetweb_dir tcl pagecache.tcl]]
 package ifneeded rwresource 1.0 [list source [file join $rivetweb_dir tcl resource.tcl]]
+package ifneeded rwwebservice 1.0 [list source [file join $rivetweb_dir tcl rweb_webservice.tcl]]
