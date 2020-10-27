@@ -442,7 +442,7 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::signal {signal_code signal_arg} {
 
-        $::rivetweb::logger log debug "$this signal $signal_code $signal_arg"
+        ### $::rivetweb::logger log debug "$this signal $signal_code $signal_arg"
 
         switch $signal_code {
 

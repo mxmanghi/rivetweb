@@ -78,7 +78,7 @@ namespace eval ::rivetweb {
         dict set class_db $class_name oosys $oosys
         dict set class_db $class_name mtime [file mtime $itcl_file]
 
-        ::rwlogger log info "PageBroker::register_class class $class_name ($itcl_file)"
+        #::rwlogger log info "PageBroker::register_class class $class_name ($itcl_file)"
     }
 
     # -- key_class_map

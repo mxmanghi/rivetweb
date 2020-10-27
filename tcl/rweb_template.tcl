@@ -86,6 +86,12 @@ namespace eval ::rivetweb {
         }
     }
 
+    # -- serialize
+    #
+    # serialization method that returns a list of the basic variables
+    # that control the menu HTML generation
+    #
+
     ::itcl::body RWTemplate::serialize {} {
         return [dict create css             $rwcss          \
                             template        $rwtemplate     \
@@ -164,9 +170,7 @@ namespace eval ::rivetweb {
     }
 
     ::itcl::body RWTemplate::register_template {template_key template_o} {
-
         dict set templates_db $template_key $template_o 
-
     }
 
 

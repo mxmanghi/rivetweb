@@ -29,7 +29,11 @@ namespace eval ::rwlink {
                 return -code error -errcode default_lang_missing "Default language text required for link $lref"
             }
 
-            if {$linfo != ""} { dict set text info [dict create {*}$linfo]}
+            if {$linfo != ""} { 
+                dict set text info [dict create {*}$linfo]
+            } else {
+                dict set text info [dict create {*}$ltext]
+            }
             set arguments $largs
             set attributes [dict create]
             set properties [dict create type generic]

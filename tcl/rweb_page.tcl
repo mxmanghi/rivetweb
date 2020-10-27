@@ -47,7 +47,10 @@ namespace eval ::rwpage {
     ::itcl::body RWPage::prepare_content {urlhandler language argsqs} {
 
         # this call to RWContent::prepare_content calls 'prepare' before
-        # collecting the menu listing from the Url handlers
+        # collecting the menu listing from the Url handlers.
+        # 2020/10/26: this fact is badly documented. I guess I placed
+        # content generation before picking up menus because the
+        # execution may change the application or session status
 
         set pobject [RWContent::prepare_content $urlhandler $language $argsqs]
 

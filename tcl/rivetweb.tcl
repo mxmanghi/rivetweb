@@ -710,7 +710,7 @@ namespace eval ::rivetweb {
     #
     #
 
-    proc load_handler { handler_class {position top} {handler_file ""} args} {
+    proc load_handler {handler_class {position top} {handler_file ""} args} {
         variable handlers_dir
         
         if {$handler_file == ""} {
