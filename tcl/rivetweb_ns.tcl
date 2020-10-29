@@ -96,7 +96,7 @@ namespace eval ::rivetweb {
 # would force rewrite of all the web site internal links
 
     variable rewrite_links          false
-    variable rewrite_code
+    variable rewrite_code           ""
 
 # default name of the urlencoded parameter used
 # to signal which rewriting rule was detected (if any)
