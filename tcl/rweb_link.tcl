@@ -90,7 +90,7 @@ namespace eval ::rwlink {
 
         #::rivet::apache_log_error debug "<--- $link_text - ($link_info)<br/>"
 
-        set link_o  [RWLink [namespace current]::#auto $link_owner $reference $link_text $link_args $link_info]
+        set link_o [RWLink [namespace current]::#auto $link_owner $reference $link_text $link_args $link_info]
 
         return $link_o
     }
@@ -106,7 +106,6 @@ namespace eval ::rwlink {
     proc add_text {linkobj language link_text {link_info ""}} {
         $linkobj add_text $language $link_text
         if {$link_info != ""} { add_info $language $link_info }
-
     }
     namespace export add_text 
 

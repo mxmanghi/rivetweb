@@ -11,6 +11,11 @@ namespace eval ::rivetweb {
     variable menuclass                  RWMenu
 
     ::itcl::class RWTemplate {
+
+        # layout database
+
+        private common LAYOUT
+
         public common templates_db     [dict create]
 
         # defaults taken from rwbase/rwtemplate.tcl
@@ -41,6 +46,7 @@ namespace eval ::rivetweb {
         public method formatters_ns {}
         public method setprop {prop value}
         public method build {args}
+        public method layout {page menu_d}
 
         public proc read_template_data {dir}
         public proc read_formatters {dir template_o}
@@ -48,6 +54,7 @@ namespace eval ::rivetweb {
         public proc load_templates {templates_root args}
         public proc register_template {templay_key template_o}
         public proc template {template_key {prop ""}}
+        public proc select_component {position} 
     }
 
     ::itcl::body RWTemplate::getprop {prop} {
@@ -202,6 +209,28 @@ namespace eval ::rivetweb {
             return [$template_o getprop $prop]
         }
     }
+
+    # -- layout
+    #
+    # takes the current page object and the menu database
+    # and reorganizes the menus (or menu groups) in a dictionary
+    # of positions -> menu groups. This clearly depends on the 
+    # template page layout
+    #
+    # For compatibility the basic implementation returns the
+    # menu db represented by a dictionary of keys -> menu groups
+
+    ::itcl::body RWTemplate::layout {page menu_d} {
+        puts "calling layout $page $menu_d"
+        return $menu_d
+    }
+
+    ::itcl::body RWTemplate::select_component {position} { 
+        if {[dict exists $LAYOUT $position]} { 
+            return [dict get $LAYOUT $position] 
+        }
+    }
+
 }
 
 package provide RWTemplate 1.0
