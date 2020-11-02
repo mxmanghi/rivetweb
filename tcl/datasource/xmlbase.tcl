@@ -808,8 +808,6 @@ namespace eval ::rwdatas {
                                                     [listStaticMenus $sm $group_parent] \
                                                     $position
 
-                    $logger log notice "adding $group_menu_id to $group_parent"
-
                 } else {
 
                     $logger log alert "skipping data from $mdoc, missing menu id"

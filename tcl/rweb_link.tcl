@@ -68,7 +68,12 @@ namespace eval ::rwlink {
         public method property {prop} { return [dict get $properties $prop] }
         public method set_property {prop propv} { dict set properties $prop $propv }
         public method property_exists {prop} { return [dict exists $properties $prop] }
-        public method reference {} { return $reference }
+        public method reference {{href ""}} { 
+            if {$href != ""} {
+                set reference $href
+            }
+            return $reference 
+        }
         public method arguments {} { return $arguments }
         public method set_target { t } { set target $t }
         public method target {} { return $target }

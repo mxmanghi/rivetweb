@@ -200,9 +200,8 @@ namespace eval ::rwsitemap {
         return $sitemap_tree
     }
 
-
-    proc create { ds } {
-        return [$::rivetweb::sitemap ::#auto $ds]
+    proc create { urlhandler } {
+        return [$::rivetweb::sitemap ::#auto $urlhandler]
     }
     namespace export create 
     namespace ensemble create
