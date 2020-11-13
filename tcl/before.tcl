@@ -50,7 +50,7 @@ namespace eval ::rivetweb {
         set template_key [::rivet::var_qs get template]
     } else {
         set template_key [::rivetweb::select_template] 
-    } 
+    }
 
     $::rivetweb::logger log info \
                 "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"

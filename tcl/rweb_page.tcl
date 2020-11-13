@@ -42,6 +42,13 @@ namespace eval ::rwpage {
         public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding" }
         public method javascript {} { return "" }
         public method special_headers {language} {}
+        protected proc merge_menus {urlhandler_menus}
+    }
+
+    ::itcl::body RWPage::merge_menus {urlhandler_menus} {
+        dict for {k v} $urlhandler_menus {
+            dict lappend ::rivetweb::pagemenus $k {*}$v
+        }
     }
 
     ::itcl::body RWPage::prepare_content {urlhandler language argsqs} {
@@ -61,13 +68,9 @@ namespace eval ::rwpage {
         set ds [::rwdatas::UrlHandler::start_scan]
 
         while {$ds != ""} {
-
-            set dsmenu [$ds menu_list $::rivetweb::current_page]
-            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
-            dict for {k v} $dsmenu {
-                dict lappend ::rivetweb::pagemenus $k {*}$v
-            }
-
+            set urlhandler_menus [$ds menu_list $::rivetweb::current_page]
+            ::rivet::apache_log_error debug "got '$urlhandler_menus' from $ds"
+            merge_menus $urlhandler_menus
             set ds [$ds next_handler]
         }
 
