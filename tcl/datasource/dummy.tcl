@@ -145,10 +145,10 @@ and failed to reassigned the resource key ($key)} \
     # that might be useful in several context within an application
 
 
-        public proc register_error {key error_message} {
-
-            dict set MESSAGES $key $error_message
-
+        public proc register_error {args} {
+            foreach {key error_message} $args {
+                dict set MESSAGES $key $error_message
+            }
         }
 
     # -- rivetwebPage
