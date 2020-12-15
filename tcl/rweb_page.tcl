@@ -21,6 +21,7 @@ namespace eval ::rwpage {
         }
 
         public method add_metadata {field value}
+        public method lappend_metadata {field value}
         public method set_metadata {mdlist}
         public method put_metadata {dictionary}
         public method clear_metadata { } { set metadata [dict create] }
@@ -226,6 +227,20 @@ namespace eval ::rwpage {
         dict set metadata $field $value
 
     }
+
+# -- lappend_metadata
+#
+# like add_metadata but list-appending a new value to a
+# given fiel
+#
+#
+
+    ::itcl::body RWPage::lappend_metadata {field value} {
+
+        dict lappend metadata $field $value
+
+    }
+
 
 # -- set_metadata
 #
