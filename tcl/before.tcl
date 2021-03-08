@@ -16,7 +16,7 @@ namespace eval ::rivetweb {
     # let's load the environment into array ::request::env
 
     ::rivet::load_env env
-    ::rivet::apache_log_error debug "running rivetweb general tcl/before.tcl"
+    ::rivet::apache_log_error debug "running rivetweb general tcl/before.tcl ([pwd])"
 
 # determining if the 'rewrite_par' argument is in the query
 # list of arguments and in case set the rewrite_links flag

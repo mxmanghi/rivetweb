@@ -7,6 +7,7 @@
 lappend auto_path $rweb_root $website_root
 
 ::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
+cd $website_root
 
 package require rwlogger
 package require rwconf
@@ -20,11 +21,9 @@ package require rivetweb
 package require RWDummy
 package require XMLBase
 
-::rivetweb::setup $rweb_root $website_root 
+::rivetweb::setup $rweb_root $website_root
 
-cd $website_root
-
-# rivetweb initialization 
+# rivetweb initialization
 
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
 if {[file exists $website_definitions]} { source $website_definitions }
@@ -34,7 +33,7 @@ if {[file exists $website_definitions]} { source $website_definitions }
 #set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
 set ::rivetweb::url_composer [::rivetweb::make_url_composer]
 
-# site_defs.tcl is supposed to define the default template, we thus assign this key to the 
+# site_defs.tcl is supposed to define the default template, we thus assign this key to the
 # last_selected_template variable in order to force a template_chanded signal
 
 set ::rivetweb::last_selected_template rwbase
@@ -63,8 +62,7 @@ if {[file exists $::rivetweb::website_init]} {
 }
 
 # if we want to have the Scripted datasource we have to load it from within the
-# initialization of a specific application 
-# ::rivetweb::init Scripted
+# initialization of a specific application ::rivetweb::init Scripted
 
 ::rivetweb::init XMLBase last
 

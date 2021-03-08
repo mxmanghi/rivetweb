@@ -39,6 +39,9 @@ namespace eval ::rwlink {
             set properties [dict create type generic]
         }
 
+
+        public proc generate_name {} { return "[namespace current]::#auto" }
+
         public method link_owner {} { return $owner }
         public method add_text {language ltext}  { dict set text $language $ltext }
         public method add_info {language linfo}  { dict set info $language $ltext }
