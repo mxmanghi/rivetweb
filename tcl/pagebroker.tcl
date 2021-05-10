@@ -61,8 +61,8 @@ namespace eval ::rivetweb {
         }
 
         if {[dict exists $class_db $class_name]} {
-            ::rwlogger log info "(register_class) registering $class_name twice ($itcl_file)"
-            ::rwlogger log info "(register_class) skip registration for $class_name"
+            ::rwlogger log debug "(register_class) registering $class_name twice ($itcl_file)"
+            ::rwlogger log debug "(register_class) skip registration for $class_name"
             return
         }
 

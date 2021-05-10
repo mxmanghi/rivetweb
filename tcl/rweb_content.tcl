@@ -95,7 +95,7 @@ namespace eval ::rwpage {
 #
 #
 # 
-    ::itcl::body RWContent::prepare_content {urlhandler language argsqs} { 
+    ::itcl::body RWContent::prepare_content {urlhandler language argsqs} {
         set stored_vars $argsqs 
         incr hits
 

@@ -46,30 +46,14 @@ namespace eval ::rivetweb {
         source $::rivetweb::site_before_script
     }
 
+    # it's not clear whether the template_key variable is useful
+    # in the stage of page preliminary preparation, we determine
+    # 
+
     if {[::rivet::var exists template]} {
         set template_key [::rivet::var_qs get template]
     } else {
         set template_key [::rivetweb::select_template] 
-    }
-
-    $::rivetweb::logger log info \
-                "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
-    $::rivetweb::logger log info \
-                "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
-
-# let's build the full path to the template and css files through the Rivetweb specific calls
-
-    set ::rivetweb::running_template  [::rivetweb::template $template_key]
-    set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
-    set ::rivetweb::template_key      $template_key
-
-    $::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
-
-    if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
-        set ::rivetweb::last_selected_template $template_key
-        set ::rivetweb::template_changed true
-    } else {
-        set ::rivetweb::template_changed false
     }
 
 # we determine the language for this request
@@ -86,8 +70,6 @@ namespace eval ::rivetweb {
 #
 # the central point is exactly here: we determine which page we have to display
 #
-
-    #puts "<pre>++[::rivetweb::strip_sticky_args $argsqs]-- $::rivetweb::is_homepage</pre>"
 
     $::rivetweb::logger log debug "registered handlers: [::rwdatas::UrlHandler::registered_handlers]"
     $::rivetweb::logger log debug "argsqs: $argsqs, language: $language"
@@ -111,7 +93,7 @@ namespace eval ::rivetweb {
 
 # sending headers
 
-    $::rivetweb::current_page send_headers 
+    $::rivetweb::current_page send_headers
 
 # let's proceed with the post processing and data generation
 

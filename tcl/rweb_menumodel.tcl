@@ -161,7 +161,7 @@ namespace eval ::rwmenu {
                 set_title $pvalue $language
             }
             index {
-                set index $pvalue             
+                set index $pvalue
 
                 if {![string is integer $index] && ($index != "end")} {
                     return -code error \

@@ -156,7 +156,7 @@ namespace eval ::rivetweb {
 
 # -- template_root
 #
-#   builds a URI path to the template root
+#   builds a URI path relative to the template root
 #
     proc template_root {tkey args} {
         set template_root_uri [join [list $::rivetweb::base_templates $tkey {*}$args] "/"]
