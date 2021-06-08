@@ -89,19 +89,6 @@ and failed to reassigned the resource key ($key)} \
             return $lm
         }
 
-        # public method is_stale {key timereference} {
-
-            # switch $key {
-                # rw_dbdump {
-                    # return false
-                # }
-                # default {
-                    # return [UrlHandler::is_stale $key $timereference]
-                # }
-            # }
-
-        # }
-
         public method willHandle {arglist keyvar} { 
             upvar $keyvar key 
 
@@ -120,8 +107,10 @@ and failed to reassigned the resource key ($key)} \
             set rkey $key
             if {$key == "rw_dbdump"} {
 
-                #set pobj [::rwpage::RWBasicPage ::#auto $rkey [$::rivetweb::rwebdb coredump]]
-                set pobj [::rwpage::RWDumpPage ::#auto $key]
+                set rwdumpclass [::rivetweb::RWTemplate::template $::rivetweb::template_key rwdumpclass]
+                if {$rwdumpclass == ""} { set rwdumpclass "::rwpage::RWDumpPage" }                
+
+                set pobj [$rwdumpclass [namespace current]::#auto $key]
 
             } else {
 

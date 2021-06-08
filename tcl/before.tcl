@@ -16,7 +16,7 @@ namespace eval ::rivetweb {
     # let's load the environment into array ::request::env
 
     ::rivet::load_env env
-    ::rivet::apache_log_error debug "running rivetweb general tcl/before.tcl ([pwd])"
+    ::rivet::apache_log_error debug "running rivetweb tcl/before.tcl ([pwd])"
 
 # determining if the 'rewrite_par' argument is in the query
 # list of arguments and in case set the rewrite_links flag
@@ -39,15 +39,11 @@ namespace eval ::rivetweb {
     set argsqs [dict create {*}[::rivet::var_qs all]]
     set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
 
-# site specific 'before' script (if any) runs here.
-
-    if {$::rivetweb::site_before_script != ""} {
-        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
-        source $::rivetweb::site_before_script
-    }
-
-    # it's not clear whether the template_key variable is useful
-    # in the stage of page preliminary preparation, we determine
+    # it's not clear whether determing the template key here
+    # is useful. It's supposed to be in RWPage but since even
+    # classes derived from RWWebService may use template_key
+    # to generate HTML fragments we do determine this
+    # control variable here
     # 
 
     if {[::rivet::var exists template]} {
@@ -65,6 +61,13 @@ namespace eval ::rivetweb {
         set language [::rivet::var get language]
     } else {
         set language $::rivetweb::default_lang
+    }
+
+# site specific 'before' script (if any) runs here.
+
+    if {$::rivetweb::site_before_script != ""} {
+        ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
+        source $::rivetweb::site_before_script
     }
 
 #
@@ -98,5 +101,4 @@ namespace eval ::rivetweb {
 # let's proceed with the post processing and data generation
 
     $::rivetweb::current_page send_output $language
-
 }
