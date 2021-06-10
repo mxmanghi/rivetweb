@@ -24,7 +24,7 @@ namespace eval ::rwpage {
         public method print_content { language } {
             #puts -nonewline [$::rivetweb::rwebdb coredump]
 
-            # this badly depends on the internal cache representation
+            # this is badly dependend on the internal cache representation
 
             foreach urlh [::rwdatas::UrlHandler::registered_handlers] {
                 set tbhead "$urlh ([$urlh name])"

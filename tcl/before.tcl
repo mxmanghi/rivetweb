@@ -39,6 +39,19 @@ namespace eval ::rivetweb {
     set argsqs [dict create {*}[::rivet::var_qs all]]
     set ::rivetweb::is_homepage [::rivet::lempty [::rivetweb::strip_sticky_args $argsqs]]
 
+    # it's not clear whether determing the template key here
+    # is useful. It's supposed to be in RWPage but since even
+    # classes derived from RWWebService may use template_key
+    # to generate HTML fragments we do determine this
+    # control variable here
+    # 
+
+    if {[::rivet::var exists template]} {
+        set template_key [::rivet::var_qs get template]
+    } else {
+        set template_key [::rivetweb::select_template] 
+    }
+
 # we determine the language for this request
 # (keep in mind we are running within the ::rivetweb namespace)
 
@@ -55,19 +68,6 @@ namespace eval ::rivetweb {
     if {$::rivetweb::site_before_script != ""} {
         ::rivet::apache_log_error debug "running specific 'before' script -> $::rivetweb::site_before_script"
         source $::rivetweb::site_before_script
-    }
-
-
-    # it's supposed to be in RWPage but since even
-    # classes derived from RWWebService may use template_key
-    # to generate HTML fragments we do determine this
-    # control variable here
-    # 
-
-    if {[::rivet::var exists template]} {
-        set template_key [::rivet::var_qs get template]
-    } else {
-        set template_key [::rivetweb::select_template] 
     }
 
 #

@@ -180,6 +180,7 @@ namespace eval ::rivetweb {
         dict set templates_db $template_key $template_o 
     }
 
+
     # -- load_templates
     #
     # the whole templates hierarchy is read and a templates
