@@ -301,6 +301,31 @@ namespace eval ::rwpage {
 
     ::itcl::body RWPage::send_output {language} {
 
+        # before we send the output we establish the style template and template rvt scripts
+        set template_key $::rivetweb::template_key
+
+        $::rivetweb::logger log info \
+                    "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
+        $::rivetweb::logger log info \
+                    "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
+
+        # let's build the full path to the template and css files through the Rivetweb specific calls
+
+        set ::rivetweb::running_template  [::rivetweb::template $template_key]
+        set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
+
+        $::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
+
+        # signaling to any template that needs to redefine resources
+        # in case the template has changed
+
+        if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
+            set ::rivetweb::last_selected_template $template_key
+            set ::rivetweb::template_changed true
+        } else {
+            set ::rivetweb::template_changed false
+        }
+
         set class [$this info class]
 
         ::rivet::apache_log_error debug "parsing $::rivetweb::running_template (${this}: $class)"

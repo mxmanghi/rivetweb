@@ -150,7 +150,7 @@ namespace eval ::htmlizer {
             set ds [$linkmodel owner $link]
 
             if {[catch {set link [${ds} to_url $link]} e einfo]} {
-                ::rwlogger::emit "Error: $ds ([$ds info class]) couldn't convert $link ([$link info class]) ($e)"
+                ::rwlogger::emit "HTML generation error: $ds ([$ds info class]) couldn't convert $link ([$link info class]) ($e)"
                 return ""
             }
 

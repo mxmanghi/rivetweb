@@ -6,7 +6,7 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                    20190209
+    variable version                    20200510
 
 # this must be the local path to the site's document root
 
@@ -41,7 +41,6 @@ namespace eval ::rivetweb {
 
     variable css_path               templates
     variable base_templates         templates
-    variable site_scritps           tcl
     variable newsite_templates      rwtemplates
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
