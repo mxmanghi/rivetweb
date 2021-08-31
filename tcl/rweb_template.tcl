@@ -47,6 +47,7 @@ namespace eval ::rivetweb {
         public method setprop {prop value}
         public method build {args}
         public method layout {page menu_d}
+        public method uri {}
 
         public proc read_template_data {dir}
         public proc read_formatters {dir template_o}
@@ -55,6 +56,10 @@ namespace eval ::rivetweb {
         public proc register_template {templay_key template_o}
         public proc template {template_key {prop ""}}
         public proc select_component {position} 
+    }
+
+    ::itcl::body RWTemplate::uri {} {
+        return [join [list $::rivetweb::base_templates $dir] "/"]
     }
 
     ::itcl::body RWTemplate::getprop {prop} {

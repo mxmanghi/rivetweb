@@ -26,10 +26,10 @@ namespace eval ::rivetweb {
 #
 # These values are the very last fallback values for the defaults
 
-    variable default_template           rwbase
-    variable default_menu               main
-    variable default_menu_pos           left
-    variable default_lang               en
+    variable default_template       rwbase
+    variable default_menu           main
+    variable default_menu_pos       left
+    variable default_lang           en
 
 # these paths are relative to the DocumentRoot, so we don't need to normalize them
 
