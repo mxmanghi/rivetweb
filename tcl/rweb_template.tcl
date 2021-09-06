@@ -58,9 +58,19 @@ namespace eval ::rivetweb {
         public proc select_component {position} 
     }
 
+    # -- uri
+    #
+    # returns the local URI to the template files
+    #
+    # safe method to obtain the base directory to construct valid
+    # URIs to files in the templates directory hirarchy
+    #
+
     ::itcl::body RWTemplate::uri {} {
         return [join [list $::rivetweb::base_templates $dir] "/"]
     }
+
+    # -- 
 
     ::itcl::body RWTemplate::getprop {prop} {
 
