@@ -52,7 +52,7 @@ namespace eval ::rwpage {
             set pagedom [dict get $content $l pagetext]
             $pagedom delete
         }
-        
+
         #RWPage::destroy
         chain
     }
@@ -137,7 +137,7 @@ namespace eval ::rwpage {
                 set method asHTML
             }
             default {
-		        return $pagedom
+                return $pagedom
             }
         }
 
@@ -262,12 +262,12 @@ namespace eval ::rwpage {
 
     ::itcl::body RWStatic::print_content {language} {
 
-		if {![dict exists $xmlbuffer $language]} {
-			#puts "[pid]"
-			dict set xmlbuffer $language [$this content $language -xml]
-		}
+        if {![dict exists $xmlbuffer $language]} {
+            #puts "[pid]"
+            dict set xmlbuffer $language [$this content $language -xml]
+        }
+        puts -nonewline [dict get $xmlbuffer $language]
 
-		puts -nonewline [dict get $xmlbuffer $language]
     }
 
 # -- languages

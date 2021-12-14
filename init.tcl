@@ -9,6 +9,7 @@ lappend auto_path $rweb_root $website_root
 ::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
 cd $website_root
 
+package require Itcl
 package require rwlogger
 package require rwconf
 package require rwmenu

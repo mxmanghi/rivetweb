@@ -406,9 +406,9 @@ namespace eval ::rwdatas {
 
         }
 
-        # we keep page_key for a while, trying to figure out
-        # if there is some code depending from it and then
-        # moving to the method 'current_key'
+        # we keep ::rivetweb::page_key for a while, trying to figure out
+        # if there is some code depending on it and then dropping it in
+        # favor to method 'current_key'
 
         set ::rivetweb::page_key $page_key
 

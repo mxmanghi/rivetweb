@@ -6,7 +6,6 @@
 #
 #
 
-package require Itcl
 package require tdom
 package require rwconf
 package require rwlogger
@@ -230,7 +229,7 @@ namespace eval ::rwdatas {
         # we give a default to the pageclass key. 
         # It's needed in order to create an instance of a page
 
-        set metadata_d      [dict create pageclass $pageclass]
+        set metadata_d  [dict create pageclass $pageclass]
         set metadata_l  {}
 
         # metadata are stored accordingly. <menu>...</menu> elements
@@ -247,7 +246,7 @@ namespace eval ::rwdatas {
                     if {[$c hasAttribute position]} {
                         set position [$c getAttribute position]
                     } else {
-                        set position $::rivetweb::menu_default_pos
+                        set position $::rivetweb::default_menu_pos
                     }
                     dict set metadata_d menu [$c getAttribute position $position] [$c text]
                 }

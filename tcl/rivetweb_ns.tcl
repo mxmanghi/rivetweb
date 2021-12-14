@@ -6,7 +6,7 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                    20200510
+    variable version                    20211214
 
 # this must be the local path to the site's document root
 
@@ -143,7 +143,7 @@ namespace eval ::rivetweb {
 # dictionary defining tags and class attributes for elements a menu
 # is made of
 
-    variable templates_db           [dict create]
+    variable templates_db [dict create]
 
     dict set templates_db rwbase menu_html      {div staticmenu}
     dict set templates_db rwbase title_html     {div menuheader}
@@ -152,9 +152,9 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase link_class     navitem
     dict set templates_db rwbase pictures       picts
 
-    variable debug                  1
-    variable hooks_dir              hooks
-    variable hooks                  [dict create]
+    variable debug        1
+    variable hooks_dir    hooks
+    variable hooks        [dict create]
 
 # channel status
 
