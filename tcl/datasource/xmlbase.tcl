@@ -355,8 +355,6 @@ namespace eval ::rwdatas {
         return $file_stat(mtime)
     }
 
-
-
 # -- read_xml_data
 #
 #
