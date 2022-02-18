@@ -41,12 +41,12 @@ namespace eval ::rivetweb {
     # classes derived from RWWebService may use template_key
     # to generate HTML fragments we do determine this
     # control variable here
-    # 
+    #
 
     if {[::rivet::var exists template]} {
         set template_key [::rivet::var_qs get template]
     } else {
-        set template_key [::rivetweb::select_template] 
+        set template_key [::rivetweb::select_template]
     }
 
 # we determine the language for this request

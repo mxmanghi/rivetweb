@@ -215,6 +215,11 @@ namespace eval ::rivetweb {
 
     }
 
+    # -- template
+    #
+    # given a template_key returns the associated template object
+    # or template property in case argument 'prop' is given
+
     ::itcl::body RWTemplate::template {template_key {prop ""}} {
         if {![dict exists $templates_db $template_key]} { return "" }
         set template_o [dict get $templates_db $template_key]
@@ -236,7 +241,7 @@ namespace eval ::rivetweb {
     # menu db represented by a dictionary of keys -> menu groups
 
     ::itcl::body RWTemplate::layout {page menu_d} {
-        puts "calling layout $page $menu_d"
+        #puts "calling layout $page $menu_d"
         return $menu_d
     }
 

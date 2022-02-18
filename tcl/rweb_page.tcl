@@ -25,11 +25,11 @@ namespace eval ::rwpage {
         public method set_metadata {mdlist}
         public method put_metadata {dictionary}
         public method clear_metadata { } { set metadata [dict create] }
-        public method languages { } { return $::rivetweb::default_lang } 
+        public method languages { } { return $::rivetweb::default_lang }
         public method metadata {{key ""}}
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d }
-        public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
+        public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED
         private method set_title_dict {language title_txt}
         public method title {{language ""} {txt ""} args}
         public method headline {language {hdl ""}}
@@ -143,6 +143,7 @@ namespace eval ::rwpage {
                 ::rivetweb::$processor $this
             }
         }
+
     }
 
 # -- set_title_dict
@@ -192,8 +193,11 @@ namespace eval ::rwpage {
                 foreach {l t} [list $language $titletxt {*}$args] {
                     $this set_title_dict $l $t
                 }
-                if {[dict exists $title $::rivetweb::default_lang]} {
-                    return [dict get $title $::rivetweb::default_lang]
+
+                # returning a title anyway
+
+                foreach l [list $language $::rivetweb::default_lang] {
+                    if {[dict exists $title $l]} { return [dict get $title $l] }
                 }
                 return ""
             }

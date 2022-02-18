@@ -157,13 +157,6 @@ namespace eval ::rwdatas {
 
         }
 
-        #dict for {key page_o} $cache {
-        #    if {[catch {
-        #        set page [dict get $page_o object]
-        #        $page destroy
-        #    } e opts]} { ::rivet::apache_log_error err "Error deleting page $page ($e)" }
-        #}
-
         # specific instance clean up
 
         $this cleanup 
@@ -301,7 +294,7 @@ namespace eval ::rwdatas {
 
                     set urlh [$urlh next_handler]
                     continue
-               }
+                }
                 3 {
                     break
                 }
