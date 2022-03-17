@@ -29,7 +29,7 @@ namespace eval ::rwpage {
 
         public method prepare {language argsqs} {
 
-            ::rivet::apache_log_error err "Running webservice: $argsqs"
+            ::rivet::apache_log_error debug "Running webservice: $argsqs"
             if {[catch {$this webservice $language $argsqs} e einfo]} {
                 ::rivet::apache_log_error err "Error in webservice: $e"
                 dict for {einfo_code einfo_text} $einfo {

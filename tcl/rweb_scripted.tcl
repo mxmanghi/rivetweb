@@ -61,16 +61,16 @@ namespace eval ::rwpage {
     ::itcl::body RWScripted::prepare {language argsqs} {
         RWPage::prepare $language $argsqs
 
-		set stored_vars [dict create {*}$argsqs]
+	set stored_vars [dict create {*}$argsqs]
 
-    # before we check for specific methods to be run we run a generic
-    # 'init' method with the initialization to all methods.
+    	# before we check for specific methods to be run we run a generic
+    	# 'init' method with the initialization to all methods.
 
         $this clear_metadata
         if {[catch {$script init $language $this} e opts]} {
 
-    # first of all we run the 'handler' method that could have been 
-    # superseded in the application subclasses of ScriptBase
+	    # first of all we run the 'handler' method that could have been 
+	    # superseded in the application subclasses of ScriptBase
 
             $script handler $opts
 

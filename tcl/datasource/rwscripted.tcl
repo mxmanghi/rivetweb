@@ -123,7 +123,8 @@ namespace eval ::rwdatas {
             $newpage put_metadata $varsqs
 
         } else {
-            #set rkey rwscript_not_found_error
+            set rkey rwscript_not_found_error
+	    return ""
         }
 
         return $newpage
