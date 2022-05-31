@@ -776,7 +776,7 @@ namespace eval ::rwdatas {
 
         foreach mdoc [array names xmlmenu] {
             
-            $logger log info "analyzing data for $mdoc...."
+            $logger log debug "analyzing data for $mdoc...."
 
             set sitemenus [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             foreach sm $sitemenus {

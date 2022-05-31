@@ -26,7 +26,7 @@ namespace eval ::rwpage {
 
         ::rivetweb::save_channel_status 
             
-        fconfigure stdout -translation binary
+        fconfigure stdout -translation binary -encoding binary
         if {[catch { set data_transmitted [$this binary_data $language] } err einfo]} {
             ::rivet::apache_log_error err "Error in RWBinary::binary_data"
         }
