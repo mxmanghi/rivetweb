@@ -6,7 +6,7 @@
 
 lappend auto_path $rweb_root $website_root
 
-::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
+::rivet::apache_log_error info "rweb_root: $rweb_root, website_root: $website_root"
 cd $website_root
 
 package require Itcl
@@ -51,7 +51,7 @@ set ::rivetweb::menuclass [::rivetweb::RWTemplate::template $rivetweb::default_t
 
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $::rivetweb::website_init]} {
-    ::rivet::apache_log_error notice "running website specific initialization $website_init ([pwd])"
+    ::rivet::apache_log_error info "running website specific initialization $website_init ([pwd])"
     if {[catch {source $website_init} e]} {
 
         ::rivet::apache_log_error crit "Error running website specific initialization ($e)"

@@ -130,7 +130,7 @@ namespace eval ::rwdatas {
                                 -errorinfo  "Wrong path $sitemap_dir"   \
                                             "Wrong path $sitemap_dir"
         } else {
-            $::rivetweb::logger log notice "setting sitemap path as $sitemap_dir"
+            $::rivetweb::logger log debug "setting sitemap path as $sitemap_dir"
         }
 
         set static_pages [file normalize [file join $::rivetweb::site_base $static_pages]]
@@ -145,7 +145,7 @@ namespace eval ::rwdatas {
                                 -errorinfo  "Wrong path $static_pages"  \
                                             "Wrong path $static_pages"
         } else {
-            $::rivetweb::logger log notice "setting pages path as $static_pages"
+            $::rivetweb::logger log debug "setting pages path as $static_pages"
         }
 
         # and the we set the path to the XML pages
@@ -763,7 +763,7 @@ namespace eval ::rwdatas {
         } else {
 
             foreach xmlfile $xmlmenus {
-                $logger log notice "reading $xmlfile..."
+                $logger log debug "reading $xmlfile..."
 
                 set xml [::rivet::read_file $xmlfile]
                 set map [file tail $xmlfile]

@@ -18,7 +18,7 @@ namespace eval ::rivetweb {
 
     # building an in-memory database of available templates for this website
 
-    ::rivet::apache_log_error notice "Initializing Apache child [pid], [pwd]"
+    ::rivet::apache_log_error info "Initializing Apache child [pid], [pwd]"
 
     set templates_dir [file join $::rivetweb::site_base $::rivetweb::base_templates]
 
@@ -51,7 +51,7 @@ namespace eval ::rivetweb {
         set nhooks 0
         if {[catch {set hooks_list [glob $hooks_dir_fq]} e]} {
 
-            ::rivet::apache_log_error notice "no hooks read from $hooks_dir_fq"
+            ::rivet::apache_log_error info "no hooks read from $hooks_dir_fq"
 
         } else {
 
@@ -76,7 +76,7 @@ namespace eval ::rivetweb {
                 }
             }
 
-            ::rivet::apache_log_error notice "$nhooks hooks read from $hooks_d"
+            ::rivet::apache_log_error info "$nhooks hooks read from $hooks_d"
             #::rivet::apache_log_error debug   $hooks
         }
     }

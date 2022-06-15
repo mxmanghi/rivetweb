@@ -183,31 +183,31 @@ namespace eval ::rivetweb {
         if {![file exists $site_before_script]} {
             set site_before_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific request script $site_before_script"
+            ::rivet::apache_log_error info "website specific request script $site_before_script"
         }
 
         set site_after_script [file normalize [file join $site_base after.tcl]]
         if {![file exists $site_after_script]} {
             set site_after_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific after request script $site_after_script"
+            ::rivet::apache_log_error info "website specific after request script $site_after_script"
         }
 
         set site_abort_script [file normalize [file join $site_base abort.tcl]]
         if {![file exists $site_abort_script]} {
             set site_abort_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific abort request script $site_abort_script"
+            ::rivet::apache_log_error info "website specific abort request script $site_abort_script"
         }
 
         set site_after_every_script [file normalize [file join $site_base after_every.tcl]]
         if {![file exists $site_after_every_script]} {
             set site_after_every_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific 'after every' request script $site_after_every_script"
+            ::rivet::apache_log_error info "website specific 'after every' request script $site_after_every_script"
         }
 
-        ::rivet::apache_log_error notice "rivetweb_root set as $rivetweb_root"
+        ::rivet::apache_log_error info "rivetweb_root set as $rivetweb_root"
     }
 
 # -- set_handler_args
