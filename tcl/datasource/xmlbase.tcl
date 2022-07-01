@@ -34,6 +34,7 @@ namespace eval ::rwdatas {
         public  variable sitemap
 
         private variable pageclass          ::rwpage::RWStatic 
+        private variable basicpageclass     ::rwpage::RWBasicPage
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
         public  common   LOCAL_PAGES        docs
@@ -399,7 +400,7 @@ namespace eval ::rwdatas {
                 }
                 append page_error_msg "</ul>"
                 $::rivetweb::logger log err "[$this name] $page_error_msg"
-                set pagedbentry [::rwpage::RWBasicPage ::#auto xmlbase_error_reading_data $page_error_msg]
+                set pagedbentry [$basicpageclass ::#auto xmlbase_error_reading_data $page_error_msg]
             } else {
                 set pagedbentry [$this buildPageEntry $key $xmldata rkey]
             }
