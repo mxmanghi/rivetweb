@@ -23,6 +23,7 @@ namespace eval ::rwpage {
             set stored_vars [dict create]
             set hits        0
             set ctype       $contenttype
+            set url_handler ""
         }
 
         public method init {args} {}

@@ -64,13 +64,13 @@ namespace eval ::rwdatas {
         public method has_updates {} 
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
-        public method menu_list {page} 
-        public method resource_exists {resource_key} 
-        public method get_resource_repr {resource_key} 
+        public method menu_list {page}
+        public method resource_exists {resource_key}
+        public method get_resource_repr {resource_key}
         public method to_url {lm}
         public method will_provide {keyword reassigned_key}
         public method cleanup {}
-        public proc   makeUrl {reference} 
+        public proc   makeUrl {reference}
     }
 
     ::itcl::body XMLBase::cleanup {} {
