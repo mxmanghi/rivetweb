@@ -2,6 +2,11 @@
 # -- message_printer.tcl
 #
 #
+# message queue storage and HTML generation
+#
+# an instance of this class has to be initialized
+# when a request processing begins and works as a
+# queue of messages (holding also their severity)
 #
 
 package require struct::queue
@@ -12,21 +17,21 @@ package require Itcl
     public variable msg_tag         span
     public variable css_class_error errormessage
     public variable css_class_info  infomessage
-    public variable css_class_debug debumessage
+    public variable css_class_debug debugmessage
     public variable css_class_undef genericmessage
 
     public variable msgline_tag     div
     public variable msgline_class   messageline
 
-    private variable    message_queue [::struct::queue]
+    private variable message_queue [::struct::queue]
 
-    public method       reset_message_queue {}
-    public method       post_message {msg {severity info}}
-    public method       get_message {msg}
-    public method       html_messages {}
-    public method       pop_messages {}
-    public method       print_messages {}
-    public method       num_messages {} { return [$message_queue size] }
+    public method reset_message_queue {}
+    public method post_message {msg {severity info}}
+    public method get_message {msg}
+    public method html_messages {}
+    public method pop_messages {}
+    public method print_messages {}
+    public method num_messages {} { return [$message_queue size] }
 }
 
 # -- reset_message_queue
@@ -72,7 +77,6 @@ package require Itcl
 ::itcl::body MessagePrinter::html_messages {} {
 
     set cssclass errormessage
-
     set html ""
     while {[$this get_message msg_l]} {
 
@@ -91,7 +95,8 @@ package require Itcl
                 set cssclass $css_class_undef
             }
         }
-        append html [::rivet::xml $msg [list div class $msgline_class]]
+        append html [::rivet::xml $msg [list $msgline_tag class $msgline_class]\
+                                       [list $msg_tag class $cssclass]]
     }
     return $html
 }
@@ -106,5 +111,5 @@ package require Itcl
 
 }
 
-package provide MessagePrinter 1.0
+package provide MessagePrinter 1.1
 
