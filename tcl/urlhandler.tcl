@@ -314,7 +314,6 @@ namespace eval ::rwdatas {
             # search_handler sets CURR_URLHANDLER            
             set ::rivetweb::current_page [::rwdatas::UrlHandler::search_handler $page_key page_key]
         } else {
-            #set ::rivetweb::datasource $urlh
             set CURR_URLHANDLER $urlh
         }
 

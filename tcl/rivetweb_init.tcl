@@ -77,7 +77,7 @@ namespace eval ::rivetweb {
             }
 
             ::rivet::apache_log_error info "$nhooks hooks read from $hooks_d"
-            #::rivet::apache_log_error debug   $hooks
+            #::rivet::apache_log_error debug $hooks
         }
     }
 }

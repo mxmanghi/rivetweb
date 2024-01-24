@@ -13,7 +13,7 @@
 
 namespace eval ::rivetweb {
 
-    ::rivet::apache_log_error debug "running rivetweb tcl/before.tcl ([pwd])"
+    ::rivet::apache_log_error debug "running rivetweb request handler ([pwd])"
 
 # determining if the 'rewrite_par' argument is in the query
 # list of arguments and in case set the rewrite_links flag
