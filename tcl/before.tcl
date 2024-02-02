@@ -43,11 +43,7 @@ namespace eval ::rivetweb {
     # control variable here
     #
 
-    if {[::rivet::var exists template]} {
-        set template_key [::rivet::var_qs get template]
-    } else {
-        set template_key [::rivetweb::select_template]
-    }
+    set template_key [::rivetweb::select_template]
 
 # we determine the language for this request
 # (keep in mind we are running within the ::rivetweb namespace)

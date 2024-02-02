@@ -568,7 +568,12 @@ namespace eval ::rivetweb {
     proc select_template {} {
         variable default_template
 
-        return $default_template
+        if {[::rivet::var exists template]} {
+            set template_key [::rivet::var_qs get template]
+        } else {
+            set template_key $default_template
+        }
+        return $template_key
     }
     namespace export select_template
 
