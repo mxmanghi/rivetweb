@@ -23,9 +23,14 @@ namespace eval ::rwpage {
         # a JSON or XML message that can be parsed by the JavaScript
         # code of the client
 
-        protected method notify_error {ecode einfo} {
+        protected method notify_error {ecode einfo} { }
 
-        }
+        # -- webservice
+        #
+        # Null method that subclasses must implement along with notify_error
+        #
+
+        public method webservice {language argsqs} { }
 
         public method prepare {language argsqs} {
 
