@@ -100,20 +100,15 @@ namespace eval ::rwpage {
 #    -html  HTML code as output of asHTML of tdom
 #    -reference (default) tdom object reference
 #
-    ::itcl::body RWStatic::content { language {fmt -reference}} {
+    ::itcl::body RWStatic::content {language {fmt -reference}} {
 
-        #if {[dict exists $content $language]} {
-        #    set page_content [dict get $content $language]
-        #} elseif {[dict exists $content $::rivetweb::default_lang]} {
-        #    set page_content [dict get $content $::rivetweb::default_lang]
-        #} else {
-        #    set errormsg "Inconsistent model: Missing data for default language"
-        #
-        #    $::rivetweb::logger log emerg "inconsistent model: $this"
-        #    return -code error  -errorcode missing_default_content  \
-        #                        -errorinfo $errormsg $errormsg
+        #dict for {k v} $content { 
+        #    puts "<pre>"
+        #    puts [info level -1]
+        #    puts "$k: $v"
+        #    puts "</pre>"
         #}
-        #dict for {k v} $content { puts [::rivet::xml "$k: $v" pre] }
+
         if {[dict exists $content $language pagetext]} {
             set pagedom [dict get $content $language pagetext]
         } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {

@@ -66,13 +66,13 @@ namespace eval ::rwpage {
 
         set ::rivetweb::pagemenus [dict create]
 
-        set ds [::rwdatas::UrlHandler::start_scan]
+        set urlh [::rwdatas::UrlHandler::start_scan]
 
-        while {$ds != ""} {
-            set urlhandler_menus [$ds menu_list $::rivetweb::current_page]
-            ::rivet::apache_log_error debug "got '$urlhandler_menus' from $ds"
+        while {$urlh != ""} {
+            set urlhandler_menus [$urlh menu_list $::rivetweb::current_page]
+            ::rivet::apache_log_error debug "got '$urlhandler_menus' from $urlh"
             merge_menus $urlhandler_menus
-            set ds [$ds next_handler]
+            set urlh [$urlh next_handler]
         }
 
         ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
@@ -107,10 +107,8 @@ namespace eval ::rwpage {
 
         if {[catch {
 
-           $this postproc_hooks   $urlhandler           \
-                                  $::rivetweb::hooks    \
-                                  xmlpostproc           \
-                                  $::rivetweb::language
+           $this postproc_hooks $urlhandler $::rivetweb::hooks    \
+                                xmlpostproc $::rivetweb::language
 
            $this metadata_hooks $::rivetweb::hooks
 
@@ -316,7 +314,7 @@ namespace eval ::rwpage {
         # let's build the full path to the template and css files through the Rivetweb specific calls
 
         set ::rivetweb::running_template  [::rivetweb::template $template_key]
-        set ::rivetweb::running_css       [::rivetweb::csspath $template_key]
+        set ::rivetweb::running_css       [::rivetweb::csspath  $template_key]
 
         $::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
 
