@@ -306,9 +306,9 @@ namespace eval ::rwpage {
         # before we send the output we establish the style template and template rvt scripts
         set template_key $::rivetweb::template_key
 
-        $::rivetweb::logger log info \
+        $::rivetweb::logger log debug \
                     "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
-        $::rivetweb::logger log info \
+        $::rivetweb::logger log debug \
                     "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
 
         # let's build the full path to the template and css files through the Rivetweb specific calls

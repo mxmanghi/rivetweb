@@ -32,6 +32,7 @@ package require Itcl
     public method pop_messages {}
     public method print_messages {}
     public method num_messages {} { return [$message_queue size] }
+
 }
 
 # -- reset_message_queue
