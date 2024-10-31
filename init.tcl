@@ -4,9 +4,12 @@
 # clear way to make it site specific
 #
 
-lappend auto_path $rweb_root $website_root
+# this is more correct as it allows to override system packages
+# with locally installed equivalent packages
 
 ::rivet::apache_log_error info "rweb_root: $rweb_root, website_root: $website_root"
+set auto_path [concat $website_root $rweb_root $auto_path]
+
 cd $website_root
 
 package require Itcl
