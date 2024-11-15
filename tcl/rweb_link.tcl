@@ -29,11 +29,18 @@ namespace eval ::rwlink {
                 return -code error -errcode default_lang_missing "Default language text required for link $lref"
             }
 
-            if {$linfo != ""} { dict set text info [dict create {*}$linfo]}
+            if {$linfo != ""} { 
+                dict set text info [dict create {*}$linfo]
+            } else {
+                dict set text info [dict create {*}$ltext]
+            }
             set arguments $largs
             set attributes [dict create]
             set properties [dict create type generic]
         }
+
+
+        public proc generate_name {} { return "[namespace current]::#auto" }
 
         public method link_owner {} { return $owner }
         public method add_text {language ltext}  { dict set text $language $ltext }
@@ -64,7 +71,12 @@ namespace eval ::rwlink {
         public method property {prop} { return [dict get $properties $prop] }
         public method set_property {prop propv} { dict set properties $prop $propv }
         public method property_exists {prop} { return [dict exists $properties $prop] }
-        public method reference {} { return $reference }
+        public method reference {{href ""}} { 
+            if {$href != ""} {
+                set reference $href
+            }
+            return $reference 
+        }
         public method arguments {} { return $arguments }
         public method set_target { t } { set target $t }
         public method target {} { return $target }
@@ -86,7 +98,7 @@ namespace eval ::rwlink {
 
         #::rivet::apache_log_error debug "<--- $link_text - ($link_info)<br/>"
 
-        set link_o  [RWLink [namespace current]::#auto $link_owner $reference $link_text $link_args $link_info]
+        set link_o [RWLink [namespace current]::#auto $link_owner $reference $link_text $link_args $link_info]
 
         return $link_o
     }
@@ -102,7 +114,6 @@ namespace eval ::rwlink {
     proc add_text {linkobj language link_text {link_info ""}} {
         $linkobj add_text $language $link_text
         if {$link_info != ""} { add_info $language $link_info }
-
     }
     namespace export add_text 
 

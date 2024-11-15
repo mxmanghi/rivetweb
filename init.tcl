@@ -4,10 +4,15 @@
 # clear way to make it site specific
 #
 
-lappend auto_path $rweb_root $website_root
+# this is more correct as it allows to override system packages
+# with locally installed equivalent packages
 
-::rivet::apache_log_error notice "rweb_root: $rweb_root, website_root: $website_root"
+::rivet::apache_log_error info "rweb_root: $rweb_root, website_root: $website_root"
+set auto_path [concat $website_root $rweb_root $auto_path]
 
+cd $website_root
+
+package require Itcl
 package require rwlogger
 package require rwconf
 package require rwmenu
@@ -20,11 +25,9 @@ package require rivetweb
 package require RWDummy
 package require XMLBase
 
-::rivetweb::setup $rweb_root $website_root 
+::rivetweb::setup $rweb_root $website_root
 
-cd $website_root
-
-# rivetweb initialization 
+# rivetweb initialization
 
 set website_definitions [file join $::rivetweb::site_base site_defs.tcl]
 if {[file exists $website_definitions]} { source $website_definitions }
@@ -34,7 +37,7 @@ if {[file exists $website_definitions]} { source $website_definitions }
 #set ::rivetweb::url_composer [::rivetweb::UrlComposer #auto $::rivetweb::rewrite_par]
 set ::rivetweb::url_composer [::rivetweb::make_url_composer]
 
-# site_defs.tcl is supposed to define the default template, we thus assign this key to the 
+# site_defs.tcl is supposed to define the default template, we thus assign this key to the
 # last_selected_template variable in order to force a template_chanded signal
 
 set ::rivetweb::last_selected_template rwbase
@@ -51,7 +54,7 @@ set ::rivetweb::menuclass [::rivetweb::RWTemplate::template $rivetweb::default_t
 
 set website_init [file join $website_root $::rivetweb::website_init]
 if {[file exists $::rivetweb::website_init]} {
-    ::rivet::apache_log_error notice "running website specific initialization $website_init ([pwd])"
+    ::rivet::apache_log_error info "running website specific initialization $website_init ([pwd])"
     if {[catch {source $website_init} e]} {
 
         ::rivet::apache_log_error crit "Error running website specific initialization ($e)"
@@ -63,8 +66,7 @@ if {[file exists $::rivetweb::website_init]} {
 }
 
 # if we want to have the Scripted datasource we have to load it from within the
-# initialization of a specific application 
-# ::rivetweb::init Scripted
+# initialization of a specific application ::rivetweb::init Scripted
 
 ::rivetweb::init XMLBase last
 

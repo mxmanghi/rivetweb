@@ -189,7 +189,7 @@ namespace eval ::rwsitemap {
 
         } else {
 
-            $::rivetweb::logger log err "No menu group $group_id"
+            $::rivetweb::logger log info "No menu group $group_id"
 
         }        
         $::rivetweb::logger log debug "returning [lreverse $menu_s] as menulist for group '$group_id'"
@@ -200,9 +200,8 @@ namespace eval ::rwsitemap {
         return $sitemap_tree
     }
 
-
-    proc create { ds } {
-        return [$::rivetweb::sitemap ::#auto $ds]
+    proc create { urlhandler } {
+        return [$::rivetweb::sitemap ::#auto $urlhandler]
     }
     namespace export create 
     namespace ensemble create

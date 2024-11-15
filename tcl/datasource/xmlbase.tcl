@@ -6,7 +6,6 @@
 #
 #
 
-package require Itcl
 package require tdom
 package require rwconf
 package require rwlogger
@@ -35,6 +34,7 @@ namespace eval ::rwdatas {
         public  variable sitemap
 
         private variable pageclass          ::rwpage::RWStatic 
+        private variable basicpageclass     ::rwpage::RWBasicPage
         private variable sitemap_dir        sitemap
         private variable static_pages       pages
         public  common   LOCAL_PAGES        docs
@@ -64,13 +64,13 @@ namespace eval ::rwdatas {
         public method has_updates {} 
         public method name {} { return "XMLBase" }
         public method load_sitemap {sitemap_mgr {ctx ""}}
-        public method menu_list {page} 
-        public method resource_exists {resource_key} 
-        public method get_resource_repr {resource_key} 
+        public method menu_list {page}
+        public method resource_exists {resource_key}
+        public method get_resource_repr {resource_key}
         public method to_url {lm}
         public method will_provide {keyword reassigned_key}
         public method cleanup {}
-        public proc   makeUrl {reference} 
+        public proc   makeUrl {reference}
     }
 
     ::itcl::body XMLBase::cleanup {} {
@@ -79,6 +79,11 @@ namespace eval ::rwdatas {
     }
 
     ::itcl::body XMLBase::init {args} {
+
+        # --------------------------------------------------------------------
+        # GD: I forgot to properly document the purpose of this argument
+        # processing and variable setting (in namespace ::rwpage, in the first
+        # place). Need to investigate which application demanded such a kludge
 
         # processing args. This handler wants 'args' to
         # be a even length list of 'variable name - variable value'
@@ -95,6 +100,7 @@ namespace eval ::rwdatas {
             }
 
         }
+        # --------------------------------------------------------------------
 
         # It's unusual to have more than one XMLBase-based class 
         # active in the handlers list and it's unlikely these
@@ -125,7 +131,7 @@ namespace eval ::rwdatas {
                                 -errorinfo  "Wrong path $sitemap_dir"   \
                                             "Wrong path $sitemap_dir"
         } else {
-            $::rivetweb::logger log notice "setting sitemap path as $sitemap_dir"
+            $::rivetweb::logger log debug "setting sitemap path as $sitemap_dir"
         }
 
         set static_pages [file normalize [file join $::rivetweb::site_base $static_pages]]
@@ -140,7 +146,7 @@ namespace eval ::rwdatas {
                                 -errorinfo  "Wrong path $static_pages"  \
                                             "Wrong path $static_pages"
         } else {
-            $::rivetweb::logger log notice "setting pages path as $static_pages"
+            $::rivetweb::logger log debug "setting pages path as $static_pages"
         }
 
         # and the we set the path to the XML pages
@@ -188,6 +194,7 @@ namespace eval ::rwdatas {
             } else {
                 return -code continue -errorcode rw_continue
             }
+
         } 
         if {$key == "index"} { set ::rivetweb::is_homepage 1 }
 
@@ -223,7 +230,7 @@ namespace eval ::rwdatas {
         # we give a default to the pageclass key. 
         # It's needed in order to create an instance of a page
 
-        set metadata_d      [dict create pageclass $pageclass]
+        set metadata_d  [dict create pageclass $pageclass]
         set metadata_l  {}
 
         # metadata are stored accordingly. <menu>...</menu> elements
@@ -240,7 +247,7 @@ namespace eval ::rwdatas {
                     if {[$c hasAttribute position]} {
                         set position [$c getAttribute position]
                     } else {
-                        set position $::rivetweb::menu_default_pos
+                        set position $::rivetweb::default_menu_pos
                     }
                     dict set metadata_d menu [$c getAttribute position $position] [$c text]
                 }
@@ -349,8 +356,6 @@ namespace eval ::rwdatas {
         return $file_stat(mtime)
     }
 
-
-
 # -- read_xml_data
 #
 #
@@ -366,8 +371,9 @@ namespace eval ::rwdatas {
 
 # -- fetchData 
 # 
-# This method retrieves a page content from the backend. This implementation
-# looks for an XML file in the website directory tree (now ::XMLBase::static_pages). 
+# This method retrieves a page content from the backend. 
+# This implementation looks for an XML file in the website
+# directory tree (now ::XMLBase::static_pages). 
 #
 
     ::itcl::body XMLBase::fetchData {key reassigned_key} {
@@ -394,7 +400,7 @@ namespace eval ::rwdatas {
                 }
                 append page_error_msg "</ul>"
                 $::rivetweb::logger log err "[$this name] $page_error_msg"
-                set pagedbentry [::rwpage::RWBasicPage ::#auto xmlbase_error_reading_data $page_error_msg]
+                set pagedbentry [$basicpageclass ::#auto xmlbase_error_reading_data $page_error_msg]
             } else {
                 set pagedbentry [$this buildPageEntry $key $xmldata rkey]
             }
@@ -542,20 +548,6 @@ namespace eval ::rwdatas {
         if {[$menu hasAttribute tclclass]} {
             return [$menu getAttribute tclclass]
         }
-
-        # we may dispose of this...
-
-        #if {[string length $menutclclass] > 0} {
-        #    return $menutclclass
-        #}
-
-        # this one was wrong, in case it had to query the database
-        # through the template_key but this model has been superseded
-        # by the RWTemplate broker
-        #
-        #if {[dict exists $::rivetweb::templates_db menuclass]} {
-        #    return [dict get $::rivetweb::templates_db menuclass]
-        #}
 
         return $::rivetweb::menuclass
     }
@@ -772,7 +764,7 @@ namespace eval ::rwdatas {
         } else {
 
             foreach xmlfile $xmlmenus {
-                $logger log notice "reading $xmlfile..."
+                $logger log debug "reading $xmlfile..."
 
                 set xml [::rivet::read_file $xmlfile]
                 set map [file tail $xmlfile]
@@ -785,7 +777,7 @@ namespace eval ::rwdatas {
 
         foreach mdoc [array names xmlmenu] {
             
-            $logger log info "analyzing data for $mdoc...."
+            $logger log debug "analyzing data for $mdoc...."
 
             set sitemenus [$xmlmenu($mdoc) getElementsByTagName sitemenus]
             foreach sm $sitemenus {
@@ -813,8 +805,6 @@ namespace eval ::rwdatas {
                                                     $group_menu_id \
                                                     [listStaticMenus $sm $group_parent] \
                                                     $position
-
-                    $logger log notice "adding $group_menu_id to $group_parent"
 
                 } else {
 

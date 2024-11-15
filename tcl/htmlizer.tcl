@@ -147,8 +147,12 @@ namespace eval ::htmlizer {
         set links [$menuobj links]
         foreach link $links {
 
-            set ds    [$linkmodel owner $link]
-            set link  [${ds} to_url $link]
+            set ds [$linkmodel owner $link]
+
+            if {[catch {set link [${ds} to_url $link]} e einfo]} {
+                ::rwlogger::emit "HTML generation error: $ds ([$ds info class]) couldn't convert $link ([$link info class]) ($e)"
+                return ""
+            }
 
             set item_o [$menudom createElement $item_tag]
             if {[string length $item_class]} {

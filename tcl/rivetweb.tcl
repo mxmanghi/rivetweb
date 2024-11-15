@@ -156,7 +156,7 @@ namespace eval ::rivetweb {
 
 # -- template_root
 #
-#   builds a URI path to the template root
+#   builds a URI path relative to the template root
 #
     proc template_root {tkey args} {
         set template_root_uri [join [list $::rivetweb::base_templates $tkey {*}$args] "/"]
@@ -565,7 +565,12 @@ namespace eval ::rivetweb {
     proc select_template {} {
         variable default_template
 
-        return $default_template
+        if {[::rivet::var exists template]} {
+            set template_key [::rivet::var_qs get template]
+        } else {
+            set template_key $default_template
+        }
+        return $template_key
     }
     namespace export select_template
 
@@ -707,7 +712,7 @@ namespace eval ::rivetweb {
     #
     #
 
-    proc load_handler { handler_class {position top} {handler_file ""} args} {
+    proc load_handler {handler_class {position top} {handler_file ""} args} {
         variable handlers_dir
         
         if {$handler_file == ""} {

@@ -23,6 +23,7 @@ namespace eval ::rwpage {
             set stored_vars [dict create]
             set hits        0
             set ctype       $contenttype
+            set url_handler ""
         }
 
         public method init {args} {}
@@ -81,8 +82,8 @@ namespace eval ::rwpage {
 # releases objects which may hold data stored in the pool (e.g. tdom
 # objects). Abstract method for this class
 
-    ::itcl::body RWContent::destroy { } {
-        ::rivet::apache_log_error debug "RWContent::destroy deleting $this"
+    ::itcl::body RWContent::destroy {} {
+        ::rivet::apache_log_error debug "RWContent::destroying $this"
 
 #       foreach l [split [::rivetweb::stacktrace] "\n"] {
 #           ::rivet::apache:log_error debug $l
@@ -95,7 +96,7 @@ namespace eval ::rwpage {
 #
 #
 # 
-    ::itcl::body RWContent::prepare_content {urlhandler language argsqs} { 
+    ::itcl::body RWContent::prepare_content {urlhandler language argsqs} {
         set stored_vars $argsqs 
         incr hits
 

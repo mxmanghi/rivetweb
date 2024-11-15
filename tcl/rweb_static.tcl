@@ -52,7 +52,7 @@ namespace eval ::rwpage {
             set pagedom [dict get $content $l pagetext]
             $pagedom delete
         }
-        
+
         #RWPage::destroy
         chain
     }
@@ -100,20 +100,15 @@ namespace eval ::rwpage {
 #    -html  HTML code as output of asHTML of tdom
 #    -reference (default) tdom object reference
 #
-    ::itcl::body RWStatic::content { language {fmt -reference}} {
+    ::itcl::body RWStatic::content {language {fmt -reference}} {
 
-        #if {[dict exists $content $language]} {
-        #    set page_content [dict get $content $language]
-        #} elseif {[dict exists $content $::rivetweb::default_lang]} {
-        #    set page_content [dict get $content $::rivetweb::default_lang]
-        #} else {
-        #    set errormsg "Inconsistent model: Missing data for default language"
-        #
-        #    $::rivetweb::logger log emerg "inconsistent model: $this"
-        #    return -code error  -errorcode missing_default_content  \
-        #                        -errorinfo $errormsg $errormsg
+        #dict for {k v} $content { 
+        #    puts "<pre>"
+        #    puts [info level -1]
+        #    puts "$k: $v"
+        #    puts "</pre>"
         #}
-        #dict for {k v} $content { puts [::rivet::xml "$k: $v" pre] }
+
         if {[dict exists $content $language pagetext]} {
             set pagedom [dict get $content $language pagetext]
         } elseif {[dict exists $content $::rivetweb::default_lang pagetext]} {
@@ -137,7 +132,7 @@ namespace eval ::rwpage {
                 set method asHTML
             }
             default {
-		        return $pagedom
+                return $pagedom
             }
         }
 
@@ -251,7 +246,7 @@ namespace eval ::rwpage {
 
                     }
                 }
-                #::rivet::apache_log_error debug "hook '$hk' processed"
+                ::rivet::apache_log_error debug "hook '$hk' processed"
             }
         }
     }
@@ -262,12 +257,12 @@ namespace eval ::rwpage {
 
     ::itcl::body RWStatic::print_content {language} {
 
-		if {![dict exists $xmlbuffer $language]} {
-			#puts "[pid]"
-			dict set xmlbuffer $language [$this content $language -xml]
-		}
+        if {![dict exists $xmlbuffer $language]} {
+            #puts "[pid]"
+            dict set xmlbuffer $language [$this content $language -xml]
+        }
+        puts -nonewline [dict get $xmlbuffer $language]
 
-		puts -nonewline [dict get $xmlbuffer $language]
     }
 
 # -- languages

@@ -44,7 +44,10 @@ package require ScriptBase
 
 ::itcl::body Test::doRun {language pageobj} {
 
-    if {[catch {$pageobj set_title $language "Running method doRun"} e]} {
+    if {[catch {
+	$pageobj set_title $language "Running method doRun"
+	puts [::rivet::xml "Running method [info proc]" h5 style "text-align: centered;"]
+    } e]} {
         puts $e
     }
 

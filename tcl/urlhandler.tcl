@@ -157,13 +157,6 @@ namespace eval ::rwdatas {
 
         }
 
-        #dict for {key page_o} $cache {
-        #    if {[catch {
-        #        set page [dict get $page_o object]
-        #        $page destroy
-        #    } e opts]} { ::rivet::apache_log_error err "Error deleting page $page ($e)" }
-        #}
-
         # specific instance clean up
 
         $this cleanup 
@@ -301,7 +294,7 @@ namespace eval ::rwdatas {
 
                     set urlh [$urlh next_handler]
                     continue
-               }
+                }
                 3 {
                     break
                 }
@@ -321,7 +314,6 @@ namespace eval ::rwdatas {
             # search_handler sets CURR_URLHANDLER            
             set ::rivetweb::current_page [::rwdatas::UrlHandler::search_handler $page_key page_key]
         } else {
-            #set ::rivetweb::datasource $urlh
             set CURR_URLHANDLER $urlh
         }
 
@@ -406,9 +398,9 @@ namespace eval ::rwdatas {
 
         }
 
-        # we keep page_key for a while, trying to figure out
-        # if there is some code depending from it and then
-        # moving to the method 'current_key'
+        # we keep ::rivetweb::page_key for a while, trying to figure out
+        # if there is some code depending on it and then dropping it in
+        # favor to method 'current_key'
 
         set ::rivetweb::page_key $page_key
 
@@ -442,7 +434,7 @@ namespace eval ::rwdatas {
 
     ::itcl::body UrlHandler::signal {signal_code signal_arg} {
 
-        $::rivetweb::logger log debug "$this signal $signal_code $signal_arg"
+        ### $::rivetweb::logger log debug "$this signal $signal_code $signal_arg"
 
         switch $signal_code {
 

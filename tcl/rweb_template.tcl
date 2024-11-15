@@ -18,6 +18,11 @@ namespace eval ::rivetweb {
     variable menuclass                  RWMenu
 
     ::itcl::class RWTemplate {
+
+        # layout database
+
+        private common LAYOUT
+
         public common templates_db     [dict create]
 
         # defaults taken from rwbase/rwtemplate.tcl
@@ -54,13 +59,31 @@ namespace eval ::rivetweb {
 
         protected method menu_to_html {menu_o}
 
+        public method layout {page menu_d}
+        public method uri {}
+
         public proc read_template_data {dir}
         public proc read_formatters {dir template_o}
         public proc make_template_object {template_key}
         public proc load_templates {templates_root args}
         public proc register_template {templay_key template_o}
         public proc template {template_key {prop ""}}
+        public proc select_component {position} 
     }
+
+    # -- uri
+    #
+    # returns the local URI to the template files
+    #
+    # safe method to obtain the base directory to construct valid
+    # URIs to files in the templates directory hirarchy
+    #
+
+    ::itcl::body RWTemplate::uri {} {
+        return [join [list $::rivetweb::base_templates $dir] "/"]
+    }
+
+    # -- 
 
     ::itcl::body RWTemplate::getprop {prop} {
 
@@ -97,6 +120,12 @@ namespace eval ::rivetweb {
             $this setprop $prop $propvalue 
         }
     }
+
+    # -- serialize
+    #
+    # serialization method that returns a list of the basic variables
+    # that control the menu HTML generation
+    #
 
     ::itcl::body RWTemplate::serialize {} {
         return [dict create css             $rwcss          \
@@ -181,9 +210,7 @@ namespace eval ::rivetweb {
     }
 
     ::itcl::body RWTemplate::register_template {template_key template_o} {
-
         dict set templates_db $template_key $template_o 
-
     }
 
 
@@ -249,6 +276,27 @@ namespace eval ::rivetweb {
             return ""
         }
 
+    }
+
+    # -- layout
+    #
+    # takes the current page object and the menu database
+    # and reorganizes the menus (or menu groups) in a dictionary
+    # of positions -> menu groups. This clearly depends on the 
+    # template page layout
+    #
+    # For compatibility the basic implementation returns the
+    # menu db represented by a dictionary of keys -> menu groups
+
+    ::itcl::body RWTemplate::layout {page menu_d} {
+        #puts "calling layout $page $menu_d"
+        return $menu_d
+    }
+
+    ::itcl::body RWTemplate::select_component {position} { 
+        if {[dict exists $LAYOUT $position]} { 
+            return [dict get $LAYOUT $position] 
+        }
     }
 
 }

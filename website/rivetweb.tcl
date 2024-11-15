@@ -33,7 +33,7 @@ namespace eval ::rwdatas {
 }
 
 ::rivetweb::init Scripted 	 top
-::rivetweb::init XMLMessage  top
-::rivetweb::init PBrokerTest top -nopkg
+::rivetweb::init XMLMessage  	 top
+::rivetweb::init PBrokerTest 	 top -nopkg
 
 ::rivet::apache_log_error info "URL handlers: [::rwdatas::UrlHandler::registered_handlers]"

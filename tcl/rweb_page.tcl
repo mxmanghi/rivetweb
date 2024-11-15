@@ -21,14 +21,15 @@ namespace eval ::rwpage {
         }
 
         public method add_metadata {field value}
+        public method lappend_metadata {field value}
         public method set_metadata {mdlist}
         public method put_metadata {dictionary}
         public method clear_metadata { } { set metadata [dict create] }
-        public method languages { } { return $::rivetweb::default_lang } 
+        public method languages { } { return $::rivetweb::default_lang }
         public method metadata {{key ""}}
         public method postproc_hooks { urlhandler hooks_d hooks_class {language ""}} {}
         public method metadata_hooks { hooks_d }
-        public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED 
+        public method set_title {language title_t} { $this title $language $title_t } ; #DEPRECATED
         private method set_title_dict {language title_txt}
         public method title {{language ""} {txt ""} args}
         public method headline {language {hdl ""}}
@@ -42,12 +43,22 @@ namespace eval ::rwpage {
         public method content_type {} { return "[RWContent::content_type]; charset=$::rivetweb::http_encoding" }
         public method javascript {} { return "" }
         public method special_headers {language} {}
+        protected proc merge_menus {urlhandler_menus}
+    }
+
+    ::itcl::body RWPage::merge_menus {urlhandler_menus} {
+        dict for {k v} $urlhandler_menus {
+            dict lappend ::rivetweb::pagemenus $k {*}$v
+        }
     }
 
     ::itcl::body RWPage::prepare_content {urlhandler language argsqs} {
 
         # this call to RWContent::prepare_content calls 'prepare' before
-        # collecting the menu listing from the Url handlers
+        # collecting the menu listing from the Url handlers.
+        # 2020/10/26: this fact is badly documented. I guess I placed
+        # content generation before picking up menus because the
+        # execution may change the application or session status
 
         set pobject [RWContent::prepare_content $urlhandler $language $argsqs]
 
@@ -55,17 +66,13 @@ namespace eval ::rwpage {
 
         set ::rivetweb::pagemenus [dict create]
 
-        set ds [::rwdatas::UrlHandler::start_scan]
+        set urlh [::rwdatas::UrlHandler::start_scan]
 
-        while {$ds != ""} {
-
-            set dsmenu [$ds menu_list $::rivetweb::current_page]
-            ::rivet::apache_log_error debug "got '$dsmenu' from $ds"
-            dict for {k v} $dsmenu {
-                dict lappend ::rivetweb::pagemenus $k {*}$v
-            }
-
-            set ds [$ds next_handler]
+        while {$urlh != ""} {
+            set urlhandler_menus [$urlh menu_list $::rivetweb::current_page]
+            ::rivet::apache_log_error debug "got '$urlhandler_menus' from $urlh"
+            merge_menus $urlhandler_menus
+            set urlh [$urlh next_handler]
         }
 
         ::rivet::apache_log_error debug "menu database $::rivetweb::pagemenus"
@@ -100,10 +107,8 @@ namespace eval ::rwpage {
 
         if {[catch {
 
-           $this postproc_hooks   $urlhandler           \
-                                  $::rivetweb::hooks    \
-                                  xmlpostproc           \
-                                  $::rivetweb::language
+           $this postproc_hooks $urlhandler $::rivetweb::hooks    \
+                                xmlpostproc $::rivetweb::language
 
            $this metadata_hooks $::rivetweb::hooks
 
@@ -136,6 +141,7 @@ namespace eval ::rwpage {
                 ::rivetweb::$processor $this
             }
         }
+
     }
 
 # -- set_title_dict
@@ -185,8 +191,11 @@ namespace eval ::rwpage {
                 foreach {l t} [list $language $titletxt {*}$args] {
                     $this set_title_dict $l $t
                 }
-                if {![dict exists $title $::rivetweb::default_lang]} {
-                    return [dict get $title $::rivetweb::default_lang]
+
+                # returning a title anyway
+
+                foreach l [list $language $::rivetweb::default_lang] {
+                    if {[dict exists $title $l]} { return [dict get $title $l] }
                 }
                 return ""
             }
@@ -220,6 +229,20 @@ namespace eval ::rwpage {
         dict set metadata $field $value
 
     }
+
+# -- lappend_metadata
+#
+# like add_metadata but list-appending a new value to a
+# given fiel
+#
+#
+
+    ::itcl::body RWPage::lappend_metadata {field value} {
+
+        dict lappend metadata $field $value
+
+    }
+
 
 # -- set_metadata
 #
@@ -279,6 +302,31 @@ namespace eval ::rwpage {
 # namespace to read the template database and page menu database
 
     ::itcl::body RWPage::send_output {language} {
+
+        # before we send the output we establish the style template and template rvt scripts
+        set template_key $::rivetweb::template_key
+
+        $::rivetweb::logger log debug \
+                    "selected template $template_key: [::rivetweb::RWTemplate::template $template_key template]"
+        $::rivetweb::logger log debug \
+                    "selected css $template_key: [::rivetweb::RWTemplate::template $template_key css]"
+
+        # let's build the full path to the template and css files through the Rivetweb specific calls
+
+        set ::rivetweb::running_template  [::rivetweb::template $template_key]
+        set ::rivetweb::running_css       [::rivetweb::csspath  $template_key]
+
+        $::rivetweb::logger log info "running template $::rivetweb::running_template, $::rivetweb::running_css"
+
+        # signaling to any template that needs to redefine resources
+        # in case the template has changed
+
+        if {$::rivetweb::template_key != $::rivetweb::last_selected_template} {
+            set ::rivetweb::last_selected_template $template_key
+            set ::rivetweb::template_changed true
+        } else {
+            set ::rivetweb::template_changed false
+        }
 
         set class [$this info class]
 

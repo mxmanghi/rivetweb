@@ -6,7 +6,7 @@ namespace eval ::rivetweb {
 
 # version 
 
-    variable version                    20190209
+    variable version                    20240202
 
 # this must be the local path to the site's document root
 
@@ -26,10 +26,10 @@ namespace eval ::rivetweb {
 #
 # These values are the very last fallback values for the defaults
 
-    variable default_template           rwbase
-    variable default_menu               main
-    variable default_menu_pos           left
-    variable default_lang               en
+    variable default_template       rwbase
+    variable default_menu           main
+    variable default_menu_pos       left
+    variable default_lang           en
 
 # these paths are relative to the DocumentRoot, so we don't need to normalize them
 
@@ -41,7 +41,6 @@ namespace eval ::rivetweb {
 
     variable css_path               templates
     variable base_templates         templates
-    variable site_scritps           tcl
     variable newsite_templates      rwtemplates
     variable running_template       [file join $base_templates base.rvt]
     variable running_css            [file join $base_templates base.css]
@@ -96,7 +95,7 @@ namespace eval ::rivetweb {
 # would force rewrite of all the web site internal links
 
     variable rewrite_links          false
-    variable rewrite_code
+    variable rewrite_code           ""
 
 # default name of the urlencoded parameter used
 # to signal which rewriting rule was detected (if any)
@@ -144,7 +143,7 @@ namespace eval ::rivetweb {
 # dictionary defining tags and class attributes for elements a menu
 # is made of
 
-    variable templates_db           [dict create]
+    variable templates_db [dict create]
 
     dict set templates_db rwbase menu_html      {div staticmenu}
     dict set templates_db rwbase title_html     {div menuheader}
@@ -153,9 +152,9 @@ namespace eval ::rivetweb {
     dict set templates_db rwbase link_class     navitem
     dict set templates_db rwbase pictures       picts
 
-    variable debug                  1
-    variable hooks_dir              hooks
-    variable hooks                  [dict create]
+    variable debug        1
+    variable hooks_dir    hooks
+    variable hooks        [dict create]
 
 # channel status
 
@@ -184,31 +183,31 @@ namespace eval ::rivetweb {
         if {![file exists $site_before_script]} {
             set site_before_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific request script $site_before_script"
+            ::rivet::apache_log_error info "website specific request script $site_before_script"
         }
 
         set site_after_script [file normalize [file join $site_base after.tcl]]
         if {![file exists $site_after_script]} {
             set site_after_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific after request script $site_after_script"
+            ::rivet::apache_log_error info "website specific after request script $site_after_script"
         }
 
         set site_abort_script [file normalize [file join $site_base abort.tcl]]
         if {![file exists $site_abort_script]} {
             set site_abort_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific abort request script $site_abort_script"
+            ::rivet::apache_log_error info "website specific abort request script $site_abort_script"
         }
 
         set site_after_every_script [file normalize [file join $site_base after_every.tcl]]
         if {![file exists $site_after_every_script]} {
             set site_after_every_script ""
         } else {
-            ::rivet::apache_log_error notice "website specific 'after every' request script $site_after_every_script"
+            ::rivet::apache_log_error info "website specific 'after every' request script $site_after_every_script"
         }
 
-        ::rivet::apache_log_error notice "rivetweb_root set as $rivetweb_root"
+        ::rivet::apache_log_error info "rivetweb_root set as $rivetweb_root"
     }
 
 # -- set_handler_args
