@@ -1,0 +1,38 @@
+<page id="installation">
+    <ident>$Id: $</ident>
+    <author>$Author: mxmanghi $</author>
+    <date>$Date: 2012-01-21$</date>
+    <title>Rivetweb Installation</title>
+    <headline>Rivetweb Installation</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
+    <content>
+        <title>Rivetweb Installation</title>
+        <headline>Rivetweb Installation</headline>
+        <pagetext>
+            <p>
+	        Rivetweb requires Apache HTTP Webserver 2.4 with Apache Rivet >= 2.3.3 and 
+		Tcl &gt;= 8.6. Current implementation of some of Rivetweb components also exploits
+            	<externalref href="http://tdom.github.com/">tdom</externalref> to manipulate 
+            	XML and XHTML code. 
+            </p>
+            <p>
+                As of today Rivetweb hasn't released any artifact, so you if you want to test it
+                you have to clone the code from 
+                <externref href="http://fossil.biol.unipr.it/cgi-bin/fossil/rivetweb/">fossil repository</externref> 
+            </p>
+            <programlisting>fossil http://fossil.biol.unipr.it/cgi-bin/fossil/rivetweb/ rivetweb</programlisting>
+            <p>
+            	Rivetweb is still very unstable and under active development. You can have new updates 
+            	of your code by <quote>pulling</quote> them from repository
+            </p>
+	    <programlisting>
+cd &lt;path-to-rivetweb-dir&gt;
+git pull</programlisting>
+            <p>
+                See the documentation of your OS to install the Apache HTTP Server, Tcl, tdom and git.
+            </p>
+        
+        </pagetext>
+    </content>
+</page>

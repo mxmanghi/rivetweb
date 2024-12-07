@@ -1,0 +1,186 @@
+# -- rweb_scripted
+#
+# Page model for a generic scripted page
+#
+#
+
+package require Itcl
+package require rwpage
+
+namespace eval ::rwpage {
+
+    ::itcl::class RWScripted {
+        inherit RWPage
+
+        private variable script
+        private variable tclpackage
+        private variable do_method
+		private variable stored_vars
+
+        constructor {pagekey scriptcmd {pkg ""}} {RWPage::constructor $pagekey} {
+
+            set script      $scriptcmd
+            set tclpackage  $pkg
+
+        }
+
+        public method print_content {l}
+        public method prepare {language argsqs} 
+        public method headline {language}
+
+        #
+        # interface designed for the Scripted datasource. Can be moved into
+        # application specific code
+        #
+
+        public method store {var value} { dict set stored_vars $var $value }
+        public method lappend {var value} { dict lappend stored_vars $var $value }
+        public method erase {var} {
+            if {[dict exists $stored_vars $var]} {
+                dict unset stored_vars $var
+            }
+        }
+        public method recall {var {defvar value}} {
+            upvar 1 $defvar retvalue
+            # puts "--> $stored_vars<br/>"
+            if {[dict exists $stored_vars $var]} {
+                set retvalue [dict get $stored_vars $var]
+                return true
+            } else {
+                set retvalue ""
+                return false
+            }
+        }
+
+    }
+
+# -- prepare
+#
+#
+
+    ::itcl::body RWScripted::prepare {language argsqs} {
+        RWPage::prepare $language $argsqs
+
+	set stored_vars [dict create {*}$argsqs]
+
+    	# before we check for specific methods to be run we run a generic
+    	# 'init' method with the initialization to all methods.
+
+        $this clear_metadata
+        if {[catch {$script init $language $this} e opts]} {
+
+	    # first of all we run the 'handler' method that could have been 
+	    # superseded in the application subclasses of ScriptBase
+
+            $script handler $opts
+
+            if {[dict exists $opts -errorcode]} {
+
+                set errorCode [dict get $opts -errorcode]
+                if {![$::rivetweb::rwebdb check $errorCode]} {
+
+                    set pobj [::rwpage::RWStatic ::#auto $errorCode]
+                    $pobj set_pagetext $::rivetweb::default_lang \
+                            "<b>$e</b> (code $errorCode): [::rivet::escape_sgml_chars $opts]"
+                    $pobj add_metadata header "[string range $e 0 20]..."
+                    $pobj add_metadata title  "[string range $e 0 20]..."
+                    $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
+
+                } else {
+
+                    set pobj [$::rivetweb::rwebdb fetch $errorCode]
+                    $pobj set_pagetext $::rivetweb::default_lang "<b>$e</b>: $opts"
+                    $pobj add_metadata header "[string range $e 0 20]..."
+                    $pobj add_metadata title  "[string range $e 0 20]..."
+
+                }
+
+            } else {
+                set pobj $this
+            }
+
+            #puts "<h2>Error '$e' (opts: $opts) in init script</h2>"
+            return $pobj
+        }
+
+        if {[$this recall cmd cmd]} {
+            set method $cmd
+        } else {
+            set method "run"
+        }
+
+        set do_method "do[string totitle $method]"
+        #puts "<div style=\"background: #aaf\">do_method -&gt; $do_method</div>"
+ 
+        # the actual method in the subclass is run. Any error is handled
+        # and in case an error page is returned. In case of errors the
+        # method callback is invoked to run each roll back code that might have
+        # been set up (generally in 'init' or in the $do_method method)
+       
+        if {[catch {$script $do_method $language $this} e opts]} {
+            set errorCode [dict get $opts -errorcode]
+
+            set pagetxt "<pre><b>[::rivet::wrapline $e 60]</b> (code <b>$errorCode</b>): $opts</pre>"
+            set pagehdr "[string range $e 0 40]..."
+            set pagetitle "[string range $e 0 40]..."
+            if {![$::rivetweb::rwebdb check $errorCode]} {
+
+                set pobj [::rwpage::RWStatic ::#auto $errorCode]
+                $pobj set_pagetext $::rivetweb::default_lang $pagetxt
+                $pobj add_metadata header $pagehdr
+                $pobj add_metadata title  $pagetitle
+                $::rivetweb::rwebdb store $errorCode $pobj ::RWDummy
+
+            } else {
+
+                set pobj [$::rivetweb::rwebdb fetch $errorCode]
+                $pobj set_pagetext $::rivetweb::default_lang $pagetxt
+                $pobj add_metadata header $pagehdr
+                $pobj add_metadata title  $pagetitle
+
+            }
+            ::rivet::apache_log_error err "invoking rollback"
+            $script rollback
+
+            return $pobj
+
+        } else {
+
+            $script finalize
+            return $this
+
+        }
+
+    }
+
+# -- print_content
+#
+# in case the content is generated by a Rivet template
+# the template is run by calling method 'template' assuming
+# $script is carring a reference to a ScriptBase class instance. 
+# This behavior can be superseded by letting any method
+# of this class to run as actual content generator, provided
+# its name is stored in the 'tcl' property
+
+    ::itcl::body RWScripted::print_content {language} {
+        
+        if {[$this recall rvt rvtfile]} {
+            $script template $this $rvtfile
+        } elseif {[$this recall tcl method]} {
+            $script $method $language $this
+        }
+        
+    }
+
+    ::itcl::body RWScripted::headline {language} {
+
+        set headline [$this metadata headline]
+        if {$headline == ""} {
+            set headline [$this title $language]
+        }
+        return $headline
+
+    }
+}
+
+package provide rwscripted 0.1

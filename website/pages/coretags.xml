@@ -1,0 +1,19 @@
+<page id="coretags">
+    <ident>$Id: $</ident>
+    <author>$Author: mxmanghi $</author>
+    <date>$Date: $</date>
+    <title>Rivetweb Tags</title>
+    <headline>Rivetweb Tags</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
+    <content>
+        <title>Rivetweb Tags</title>
+        <headline>Rivetweb Tags</headline>
+        <pagetext>
+            <i>...to be written yet, in case check the
+                <externref href="http://www.rivetweb.org/">Rivetweb</externref>
+                website for possible updates
+            </i>
+        </pagetext>
+    </content>
+</page>

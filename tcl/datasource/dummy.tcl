@@ -1,0 +1,156 @@
+#
+# -- dummy.tcl
+#
+# dummy datasource for pages generated on the fly
+#
+#
+
+package require Itcl
+package require rwconf
+package require rwlogger
+package require rwpage
+package require UrlHandler
+package require rwbasicpage
+
+namespace eval ::rwpage {
+
+    ::itcl::class RWDumpPage {
+        inherit RWPage
+
+        constructor {pagekey} {RWPage::constructor $pagekey} {
+            $this title $::rivetweb::default_lang "URL handlers database pid: [pid]"
+        }
+
+        public method print_content { language } {
+            #puts -nonewline [$::rivetweb::rwebdb coredump]
+
+            # this is badly dependend on the internal cache representation
+
+            foreach urlh [::rwdatas::UrlHandler::registered_handlers] {
+                set tbhead "$urlh ([$urlh name])"
+                set urlhcache [[$urlh cache] cache]
+
+                #puts "<pre>$urlhcache</pre>"
+                set tbody ""
+                dict for {key p} $urlhcache {
+                    dict with p {
+
+                        set rowfields "<td>$object</td>\
+                                       <td>[$object key]</td>\
+                                       <td>[clock format $timestamp -format "%d-%m-%Y %T"]</td>\
+                                       <td>[$object info class]</td>"
+
+                    }
+                    append tbody [::rivet::xml $rowfields tr]
+                }
+                set tbody [::rivet::xml $tbody tbody]
+                set thead [::rivet::xml $tbhead thead [list th colspan 4]]
+                puts [::rivet::xml "$thead $tbody" [list table style "margin: 1em auto;"]]
+            }
+        }
+    }
+}
+
+namespace eval ::rwdatas {
+
+    ::itcl::class RWDummy { 
+        inherit UrlHandler
+
+        private variable urlargs
+        private common MESSAGES
+        protected method exclude_handler {} { return "" }
+
+        public method init {args} {
+            set MESSAGES [dict create \
+                unknown_error_condition "Unknown error condition (key: \$key)" \
+                page_not_found_error    "page not found error. key: \$key arglist: \$urlargs" \
+                wrong_datasource_returned_key {
+A datasource didn't returned a valid page object
+and failed to reassigned the resource key ($key)} \
+                postproc_hook_error     "Error in page postprocessing"\
+]
+        }
+        public method name {} { return "Dummy" }
+        public method resource_exists {resource_key} { return true }
+        public method to_url {lm} {
+
+            set linkmodel   $::rivetweb::linkmodel
+
+            set urlargs [$linkmodel arguments $lm]
+            set urlargs [::rivetweb merge_sticky_args $urlargs]
+            #::rivet::html "base href: $href ($urlargs)" div b
+
+            set href [::rivetweb::composeUrl {*}$urlargs]
+
+			# we now set the href attribute of the link
+
+            $linkmodel set_attribute lm [list href $href]
+
+            return $lm
+        }
+
+        public method willHandle {arglist keyvar} { 
+            upvar $keyvar key 
+
+            set urlargs [dict create {*}$arglist]
+            if {[dict exists $urlargs dbdump]} { 
+                set key rw_dbdump
+            } else {
+                set key page_not_found_error
+            }
+            return -code break -errorcode rw_ok 
+        }
+
+        public method fetchData {key reassigned_key} {
+            upvar $reassigned_key rkey
+
+            set rkey $key
+            if {$key == "rw_dbdump"} {
+
+                set rwdumpclass [::rivetweb::RWTemplate::template $::rivetweb::template_key rwdumpclass]
+                if {$rwdumpclass == ""} { set rwdumpclass "::rwpage::RWDumpPage" }                
+
+                set pobj [$rwdumpclass [namespace current]::#auto $key]
+
+            } else {
+
+                if {![dict exists $MESSAGES $key]} {
+                    set rkey page_not_found_error
+                }
+
+                set urlargs [::rivet::var_qs all]
+
+                set page_text [subst [dict get $MESSAGES $rkey]]
+                set pobj [::rwpage::RWBasicPage ::#auto $rkey $page_text]
+                $pobj title $::rivetweb::default_lang "Error $rkey"
+
+            }
+            return $pobj
+        }
+
+    # -- register_error
+    #
+    # We register to the message dictionary basic error messages
+    # that might be useful in several context within an application
+
+
+        public proc register_error {args} {
+            foreach {key error_message} $args {
+                dict set MESSAGES $key $error_message
+            }
+        }
+
+    # -- rivetwebPage
+    #
+    # central hub method to create rivetweb specific 
+    # messages
+    #
+
+        public proc rivetwebPage {page_key} {
+
+        }
+
+    }
+}
+
+package provide RWDummy 1.1

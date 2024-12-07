@@ -1,0 +1,63 @@
+                        Rivetweb README
+                        ---------------
+
+ Rivetweb is a minimum requirements Tcl based engine for creating template 
+based web sites. The only mandatory software you need is the Apache HTTP 
+Webserver, Apache Rivet and a few of the most popular Tcl related 
+packages (tdom, Itcl).
+ 
+ Rivetweb relies on Apache Rivet (http://tcl.apache.org/rivet/) for doing 
+most of the work needed to create and manipulate content to be displayed in
+HTML pages. Rivetweb exploits the ability of Rivet of handling 
+templates, therefore page have a consistent appearance thorough the 
+whole website.
+
+ Rivetweb internal machinery and organizazion is entirely developed in 
+Tcl and Itcl, though the latter will be phased out in favor of TclOO.
+Rivetweb was written with an emphasis on indipendence from actual
+implementation of its components and it's a customizable,
+extensible yet easy-to-use framework for simple websites: sometimes
+'less is more'.
+
+ The idea behind the simple design of Rivetweb is an easy to understand 
+pattern of cooperating classes whose inheritance tree is very short and
+easy to explore 
+
+ The 2 key components in Rivetweb are datasources, objects responsible
+to provide a model for the application data and 'page' objects, that
+are views of the data and are responsible for the final representation of them
+
+ Current code provides 3 basic datasource examples: 
+ - XMLBase: a datasource dealing with XML documents bearing both metadata and
+contents of a page.
+ - Scripted: a largely suboptimal datasource whose aim is to provide 
+an example of a component capable of running site specific scripts.
+ - RWDummy: a dummy datasource whose main role is to create pages for
+error messages and provide some introspectio
+
+ Even though they are provided as examples from which new datasources could
+be implemented you may create a simple web site just using or subclassing
+these datasources
+
+ Like in every template based framework Rivetweb can be running different 
+XHTML/CSS templates at once. You can switch between templates by customizing
+the website specific configuration.
+
+ Rivetweb is thought to be multilingual. The internal machinery is designed
+to handle dictionaries of text instead of simple strings, therefore you can
+have the same website running with different languages.
+
+ Rivetweb works gently in conjunction with Apache's mod_rewrite
+module. References to internal resources can automatically switch between 
+2 representations of the URIs: a representation with
+explicit query arguments and a uniform representation without query 
+arguments. In this way Rivetweb was used to generate pure static 
+representations of a web site
+
+Rivetweb has a basic support for extensibility of the markup: 
+page creation can be customized adding 'hook' procedures to the code, 
+thus adding new data transformations and/or tag expansion.
+
+Rivetweb is entirely free and released under the Apache 2.0 licence.
+
+# 2016-06-09

@@ -1,0 +1,34 @@
+<page id="mass">
+    <ident>$Id: mass.xml 1064 2011-05-03 16:04:31Z massimo.manghi $</ident>
+    <author>$Author: massimo.manghi $</author>
+    <date>$Date: 2011-05-03 18:04:31 +0200 (Tue, 03 May 2011) $</date>
+    <title>Mass of a Particle</title>
+    <headline>Mass of a Particle</headline>
+    <menu position="left">level1</menu>
+    <content>
+    	<title>Mass of a particle</title>
+    	<headline>Mass of a Particle</headline>
+	    <pagetext>
+	        <div>
+		    <p>
+			In physics, mass (from Ancient Greek: μᾶζα) commonly refers to any of 
+			following three properties of matter, 
+			which have been shown experimentally to be equivalent:
+		    </p>
+		    <ul><li>inertial mass</li>
+		    <li>active gravitational mass</li> 
+		    <li>passive gravitational mass</li>
+		    </ul>
+		    <p>
+			Although mass must be distinguished from matter in physics, 
+			because matter is a poorly-defined concept, and although all 
+			types of agreed-upon matter exhibit mass, it is also the case 
+			that many types of energy which are not matter—such as potential 
+			energy, kinetic energy, and trapped electromagnetic radiation (photons)—also 
+			exhibit mass. Thus, all matter has the property of mass, but not all mass 
+			is associated with identifiable matter.
+		    </p>
+	        </div>
+	    </pagetext>
+    </content>
+</page>

@@ -1,0 +1,38 @@
+<page id="configuration">
+    <ident>$Id: $</ident>
+    <author>$Author: mxmanghi $</author>
+    <date>$$</date>
+    <title>Configuring Rivetweb</title>
+    <headline>Configuring Rivetweb</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
+    <content>
+        <title>Rivetweb Configuration </title>
+        <headline>Rivetweb Configuration</headline>
+        <pagetext>
+            <p>
+                After you cloned Rivetweb repository you can start a new website configuring
+                Apache to let it know where Rivetweb and your website are.
+            </p>
+            <p>
+                Open Apache's configuration file and create this stanza of Rivet directives
+            </p>
+            <programlisting>&lt;IfModule rivet_module&gt;
+    RivetServerConf ChildInitScript "set rweb_root &lt;rivetweb_root&gt;"
+    RivetServerConf ChildInitScript "set website_root &lt;website_root&gt;"
+    RivetServerConf ChildInitScript "source [file join $rweb_root init.tcl]"
+    RivetServerConf BeforeScript    "cd $website_root"
+    RivetServerConf BeforeScript    "source before.tcl"
+&lt;/IfModule&gt;</programlisting>
+            <p>
+                Depending on your goal you may put these lines within a &lt;VirtualHost&gt;...&lt;/VirtualHost&gt; 
+                definition and consider to add
+            </p>
+            <programlisting>RivetServerConf SeparateVirtualInterps on</programlisting>
+            <p>
+                To improve application safety if you have others Rivet based applications running
+                on the same Apache server.
+            </p>
+        </pagetext>
+    </content>
+</page>

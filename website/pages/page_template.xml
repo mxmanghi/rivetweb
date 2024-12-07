@@ -1,0 +1,20 @@
+<page id="templates">
+    <ident>$Id: page_template.xml 1064 2011-05-03 16:04:31Z massimo.manghi $</ident>
+    <author>$Author: massimo.manghi $</author>
+    <date>$Date: 2011-05-03 18:04:31 +0200 (Tue, 03 May 2011) $</date>
+    <title>Modello di Pagina</title>
+    <headline>Modello di Pagina</headline>
+    <menu position="left">main</menu>
+    <content>
+    	<title>Pagina Modello del Sito</title>
+    	<headline>Modello per una pagina di contenuti</headline>
+	<pagetext>
+	    <!-- all'interno di pagetext va un testo xhtml valido  -->
+	    <div>
+		<p>
+		    Questo documento è un modello per le pagine di contenuti del sito
+		</p>
+	    </div>
+	</pagetext>
+    </content>
+</page>

@@ -1,0 +1,46 @@
+<page id="spin">
+    <ident>$Id: spin.xml 1064 2011-05-03 16:04:31Z massimo.manghi $</ident>
+    <author>$Author: massimo.manghi $</author>
+    <date>$Date: 2011-05-03 18:04:31 +0200 (Tue, 03 May 2011) $</date>
+    <title>Spin of a Particle</title>
+    <headline>Spin of a Particle</headline>
+    <menu position="left">level2</menu>
+    <content>
+    	<title>Spin of a particle</title>
+    	<headline>Spin of a Particle</headline>
+	    <pagetext>
+	        <div>
+                <p>
+
+                    In quantum mechanics and particle physics, spin is a fundamental characteristic 
+                    property of elementary particles, composite particles (hadrons), and atomic nuclei.
+		</p>
+		<p>
+                    All elementary particles of a given kind have the same spin quantum number, an important 
+                    part of a particle's quantum state. When combined with the spin-statistics theorem, the spin 
+                    of electrons results in the Pauli exclusion principle, which in turn underlies the periodic 
+                    table of chemical elements. The spin direction (also called spin for short) of a particle is 
+                    an important intrinsic degree of freedom.
+		</p>
+		<p>
+                    Wolfgang Pauli was the first to propose the concept of spin, but he did not name it. 
+                    In 1925, Ralph Kronig, George Uhlenbeck, and Samuel Goudsmit suggested a physical interpretation 
+                    of particles spinning around their own axis. The mathematical theory was worked out in depth by 
+                    Pauli in 1927. When Paul Dirac derived his relativistic quantum mechanics in 1928, 
+                    electron spin was an essential part of it.
+		</p>
+		<p>
+                    Spin is a type of angular momentum, where angular momentum is defined in the modern way 
+                    (as the "generator of rotations", see Noether's theorem).[1][2] This modern definition of angular 
+                    momentum is not the same as the historical classical mechanics definition, L = r × p. (The historical 
+                    definition, which does not include spin, is more specifically called "orbital angular momentum".)
+
+                    Since spin is a type of angular momentum, it has the same dimensions: J·s in SI units. In practice, 
+                    however, SI units are almost never used to describe spin: Instead, it is written as a multiple of the 
+                    reduced Planck constant ħ. In natural units, the ħ is omitted, so the units of spin are implied. 
+                    However, by definition the "spin quantum number" is always dimensionless.
+                </p>
+	        </div>
+	    </pagetext>
+    </content>
+</page>

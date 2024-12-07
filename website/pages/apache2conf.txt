@@ -1,0 +1,7 @@
+    <IfModule rivet_module>
+        RivetServerConf ChildInitScript "cd /home/manghi/Projects/rivetweb-sf/website"
+        RivetServerConf ChildInitScript "source init.tcl"
+        RivetServerConf ChildExitScript "source exit.tcl"
+        RivetServerConf BeforeScript    "source before.tcl"
+    </IfModule>
+

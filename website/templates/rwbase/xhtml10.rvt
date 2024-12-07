@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <?= [::rivetweb::contentType] ?>
+
+    <title><?= [$::rivetweb::current_pmodel title $::rivetweb::language] ?></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link href="<?= $::rivetweb::running_css ?>" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+    <div id="wrapper">
+
+    <? 
+    ?>
+    <div id="logo">
+        <h1>Rivetweb</h1>
+        <p><em>Simple Website creation<a href="http://www.freecsstemplates.org/"></a></em></p>
+    </div>
+    <hr />
+    <!-- end #logo -->
+    <div id="header">
+        <div id="menu">
+            <ul>
+                <li <?= [::rivetweb::thisClass $::rivetweb::page_content index current_page_item] ?>>
+                <a href="<?= [::rivetweb::composeUrl show index] ?>">Home</a></li>
+                <li <?= [::rivetweb::thisClass $::rivetweb::page_content download current_page_item] ?>>
+                <a href="<?= [::rivetweb::composeUrl show download] ?>">Downloads</a></li>
+                <li></li>
+                <li <?= [::rivetweb::thisClass $::rivetweb::page_content installation current_page_item] ?>>
+                <a href="<?= [::rivetweb::composeUrl show installation] ?>">Installation</a></li>
+            </ul>
+        </div>
+    </div>
+                <?
+    #                   foreach l [$::rivetweb::pmodel languages $::rivetweb::current_pmodel] {
+    #                       puts "<li>$l</li>"
+    #                   }
+                ?>
+    <!-- end #header -->
+    <!-- end #header-wrapper -->
+    <div id="page">
+        <div id="page-bgtop">
+
+            <div id="sidebar">
+                <ul>
+                    <?= [::rivetweb::build_html_menu $::rivetweb::pagemenus $::rivetweb::template_key left] ?>
+                </ul>
+            </div>
+                <!-- end #sidebar -->
+            
+            <div id="content">
+                <div class="post">
+
+                    <h2 class="title"><a href="#"><?= [$::rivetweb::current_pmodel headline $::rivetweb::language] ?></a></h2>
+                    <div class="entry">
+                        <?
+
+                            if {[string equal $::rivetweb::page_content index] == 1} { }
+                            $::rivetweb::current_pmodel print_content $::rivetweb::language
+
+			    # let's print the page's main content
+                            set page_d [$::rivetweb::current_pmodel to_string]
+
+                            html $::rivetweb::current_pmodel div b
+                            puts "<table>"
+                            foreach k [dict keys $page_d] {
+                                puts "<tr><td>$k</td><td>[dict get $page_d $k]</td></tr>"
+                            }
+                            puts "</table>"
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <!-- end #content -->
+            
+            <div style="clear: both;">&nbsp;</div>
+        </div>
+    </div>
+    <!-- end #page -->
+    <div id="footer-bgcontent">
+        <div id="footer">
+            <p>
+                Copyright  2011 Apache Software Foundation. Design by 
+                        <a href="http://www.rickyswebtemplates.com/">Ricky's Free web templates</a>.
+                <!-- a href="http://sixserve.com/"><img src="<? puts -nonewline [::rivetweb::makePictsPath big.png] ?>" /></a -->
+            </p>
+        </div>
+    </div>
+    <!-- end #footer -->
+    </div>
+        <div style="text-align: center; font-size: 0.75em;">Design downloaded from
+                <a href="http://www.freewebtemplates.com/">free website templates</a>.</div>
+    </body>
+</html>

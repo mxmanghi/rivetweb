@@ -1,0 +1,25 @@
+<sitemenus id="rivetweb" parent="main">
+    <menu id="internals" type="node">
+        <title>Extending Rivetweb</title>
+        <link>
+            <type>internal</type>
+            <text>Postprocessing hooks</text>
+            <reference>postprocessing</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Metadata hooks</text>
+            <reference>mdhooks</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Sitemap</text>
+            <reference>sitemap</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Data Sources</text>
+            <reference>datasource</reference>
+        </link>
+    </menu>
+</sitemenus>

@@ -1,0 +1,84 @@
+<!-- $Id: sitemap.xml 1212 2011-10-24 17:25:26Z massimo.manghi $-->
+
+<sitemenus id="main">
+    <menu id="docs" type="node">
+        <title>Rivetweb</title>
+        <link>
+            <type>internal</type>
+            <text>Installation<info>Rivetweb Installation</info></text>
+            <text lang="it">Installazione<info>Installazione di Rivetweb</info></text>
+            <reference>installation</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Configuration<info>Configuring Rivetweb</info></text>
+            <text lang="it">Configurazione<info>Configurazione di Rivetweb</info></text>
+            <reference>configuration</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Core Tags<info>Rivetweb XML Tags</info></text>
+            <reference>coretags</reference>
+        </link>
+        <link>
+            <type>internal</type>
+            <text>Examples<info>Existing Rivetweb websites</info></text>
+            <text lang="it">Siti Esistenti<info>Siti già sviluppati con Rivetweb</info></text>
+            <reference>examples</reference>
+        </link>
+    </menu>
+    <menu id="tclwebsites" type="leaf">
+    	<title>Resources</title>
+        <link>
+            <type>external</type>
+            <text>Rivetweb code<info>Rivetweb git repository at Sourceforge</info></text>
+            <url>http://www.sf.net/projects/rivetweb/</url>
+            <target>rivetwebsf</target>
+        </link>
+        <link>
+            <type>external</type>
+            <text>Apache Rivet<info>Rivet website at ASF</info></text>
+            <url>http://tcl.apache.org/rivet/</url>
+            <target>rivet</target>
+        </link>
+        <link>
+            <type>external</type>
+            <text>The Tcl Developer Xchange<info>The Information Hub for Tcl'ers</info></text>
+            <url>http://www.tcl.tk/</url>
+            <target>tclxchange</target>
+        </link>
+        <link>
+            <type>external</type>
+            <url>http://wiki.tcl.tk/</url>
+            <text>The Tcl/Tk Wiki<info>The Tcl/Tk Wiki pages</info></text>
+            <target>tclwiki</target>
+        </link>
+    </menu>
+    <menu id="scripts" type="leaf">
+        <title>Scripts</title>
+        <link>
+            <datasource>Scripted</datasource>
+            <text>Test Script<info>Testing basic scripting in Rivetweb</info></text>
+            <args>
+                <param value="test">f</param>
+            </args>
+        </link>
+        <link>
+            <datasource>Scripted</datasource>
+            <text>Dump Database<info>Testing basic scripting in Rivetweb</info></text>
+            <args>
+                <param value="test">f</param>
+                <param value="dump">cmd</param>
+                <param value="dump">rvt</param>
+            </args>
+        </link>
+        <link>
+            <datasource>RWDummy</datasource>
+            <text>Embedded Database Dump<info>Testing basic scripting in Rivetweb</info></text>
+            <args>
+                <param value="1">dbdump</param>
+            </args>
+        </link>
+
+    </menu>
+</sitemenus>

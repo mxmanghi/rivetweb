@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+	<?
+        headers type "text/html; charset=utf-8" 
+#	    if {[catch { namespace eval ::rivetweb { source [file join $::rivetweb::rivet_scripts rivet_page.tcl] } } e]} {
+#		    puts "<pre>$e</pre>"
+#		    abort_page
+#	    }
+	?>
+        <title><? puts -nonewline $::rivetweb::page_title ?></title>
+        <link rel="stylesheet" href="<? puts -nonewline [::rivetweb::makeCssPath stile.css] ?>" />
+    </head>
+    <body>
+        <!-- ?
+            parray rivetweb::menus_a
+        ? -->
+        <div id="bigcontainer"> 
+            <div id="pageheadline">
+                <div class="headline"><? puts -nonewline $::rivetweb::page_headline ?></div>
+            </div>
+            <div id="pagecontents">
+                <div class="navbar navleft"><?  if {[info exists ::rivetweb::html_menu(left)]} { puts $::rivetweb::html_menu(left) } ?></div>
+                <div class="navbar navright"><? if {[info exists ::rivetweb::html_menu(right)]} { puts $::rivetweb::html_menu(right) } ?></div>
+                <div id="content"> 
+                    <div class="contentheadline"></div>
+                    <div><? 
+#			            parray ::rivetweb::html_menu
+                        puts $::rivetweb::page_content_html 
+                    ?>
+                    </div>
+                    <? 
+                        if {[string length $::rivetweb::last_modified]} {
+                            ?><div id="last_modified">Last Modified: <? puts -nonewline $::rivetweb::last_modified ?> UTC</div><?
+                        }
+                    # parray ::rivetweb::pagine 
+                    ?>
+                </div>
+                <div class="clearfloats"></div>
+                <!--div class="leftaligned">:<? puts -nonewline $::rivetweb::page_authors ?></div>
+                <div class="rightaligned">:<? puts -nonewline $::rivetweb::last_modified ?></div-->
+                <div>
+<?  
+#		            if {$::rivetweb::static_links} { puts "<div><b>static</b></div>" }
+#		            if {$::rivetweb::is_homepage} { puts "<div><b>homepage</b></div>" }
+                    puts "[clock format [clock seconds]]: [pid]"
+?>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+<page id="prima_lezione">
+    <ident>$Id: prima_lezione.xml 1064 2011-05-03 16:04:31Z massimo.manghi $</ident>
+    <author>$Author: massimo.manghi $</author>
+    <date>$Date: 2011-05-03 18:04:31 +0200 (Tue, 03 May 2011) $</date>
+    <title>Installazione Apache</title>
+    <headline>Installazione Apache</headline>
+    <menu position="left">main</menu>
+    <content>
+        <title>Installazione Apache</title>
+        <headline>Installazione Apache</headline>
+        <pagetext>
+            testo
+        </pagetext>
+    </content>
+</page>

@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by TEMPLATED
+http://templated.co
+Released for free under the Creative Commons Attribution License
+
+Name       : Retention 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20140221
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<?= [::rivetweb::contentType] ?>
+<title><?= [$::rivetweb::current_page title $::rivetweb::language] ?></title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="http://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet" />
+<?
+    set tk $::rivetweb::template_key
+?>
+<?= [::rivetweb::css /templates/${tk}/default.css [list media all]] ?>
+<?= [::rivetweb::css /templates/${tk}/fonts.css [list media all]] ?>
+<!--[if IE 6]>
+<link href="default_ie6.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+</head>
+<body>
+<div id="wrapper">
+	<div id="header-wrapper">
+		<div id="header" class="container">
+			<div id="logo">
+				<h1><a href="/">Rivetweb</a></h1>
+				<p>HTML generation with Tcl</p>
+			</div>
+			<div id="banner"> <a href="#" class="image"><!-- img src="images/pic01.jpg" alt="" /--></a> </div>
+		</div>
+	</div>
+	<div id="menu-wrapper">
+		<div id="menu" class="container">
+			<ul>
+				<li class="current_page_item"><a href="<?= [::rivetweb::composeUrl] ?>">Homepage</a></li>
+				<li><a href="#">About</a></li>
+				<li><a href="#">Blog</a></li>
+				<li><a href="#">Portfolio</a></li>
+				<li><a href="#">Contact</a></li>
+			</ul>
+		</div>
+		<!-- end #menu --> 
+	</div>
+	<div id="page" class="container">
+		<div id="content">
+			<div class="title">
+				<h2><?= [$::rivetweb::current_page title $::rivetweb::language] ?></h2>
+				<span class="byline"><?= [$::rivetweb::current_page content_field \
+                                                                    $::rivetweb::language \
+                                                                    byline ""] ?></span>
+            </div>
+            <p><?= [$::rivetweb::current_page print_content $::rivetweb::language] ?></p>
+		</div>
+		<div id="sidebar">
+			<div class="box2">
+			    <?= [::rivetweb::build_html_menu $::rivetweb::pagemenus $::rivetweb::template_key left] ?>
+			    <?= [::rivetweb::build_html_menu $::rivetweb::pagemenus $::rivetweb::template_key right] ?>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="copyright" class="container">
+	<p>&copy; Untitled. All rights reserved. | Photos by <a href="http://fotogrph.com/">Fotogrph</a> | Design by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>.</p>
+</div>
+</body>
+</html>

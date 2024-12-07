@@ -1,0 +1,20 @@
+<page id="download">
+    <ident></ident>
+    <author>$Author: mxmanghi $</author>
+    <date>2012-01-21</date>
+    <title>Downloading Rivetweb</title>
+    <headline>Download</headline>
+    <menu position="top">banner</menu>
+    <menu position="left">rivetweb</menu>
+    <content>
+        <title>Rivetweb Installation</title>
+        <headline>Rivetweb Installation</headline>
+        <pagetext>
+            <i>I'm working on this. Hopefully this page will be published soon</i>
+            <p> In the meanwhile you may check the 
+            <sitereference href="installation">Installation</sitereference> 
+            page.</p>
+        </pagetext>
+    </content>
+</page>
+
