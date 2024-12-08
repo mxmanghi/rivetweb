@@ -32,6 +32,7 @@ package require Itcl
     public method pop_messages {}
     public method print_messages {}
     public method num_messages {} { return [$message_queue size] }
+    public method size {} { return [$message_queue size] }
 
 }
 
@@ -66,13 +67,11 @@ package require Itcl
 }
 
 ::itcl::body MessagePrinter::pop_messages {} {
-
     set lmessage ""
     while {[$this get_message msg]} {
         lappend lmessage $msg
     }
     return $lmessage
-
 }
 
 ::itcl::body MessagePrinter::html_messages {} {
@@ -112,5 +111,5 @@ package require Itcl
 
 }
 
-package provide MessagePrinter 1.1
+package provide MessagePrinter 1.2
 

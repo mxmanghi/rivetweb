@@ -9,8 +9,6 @@
 # full path name of this file's directory.
 
 set rivetweb_dir [file dirname [info script]]
-#set msg "RW scripts base directory: $rivetweb_dir"
-#if {[catch {::rivet::apache_log_error notice $msg} e]} { puts $msg }
 
 package ifneeded XMLBase 2.1 [list source [file join $rivetweb_dir tcl handlers xmlbase.tcl]]
 package ifneeded Scripted 2.0 [list source [file join $rivetweb_dir tcl handlers scripted.tcl]]
@@ -30,7 +28,7 @@ package ifneeded RWDummy 1.1 [list source [file join $rivetweb_dir tcl handlers 
 package ifneeded rwbinary 1.0 [list source [file join $rivetweb_dir tcl rweb_binary.tcl]]
 package ifneeded Datasource 1.0 [list source [file join $rivetweb_dir tcl datasource datasource.tcl]]
 package ifneeded MessagePrinter 0.1 [list source [file join $rivetweb_dir tcl message_printer_01.tcl]]
-package ifneeded MessagePrinter 1.1 [list source [file join $rivetweb_dir tcl message_printer.tcl]]
+package ifneeded MessagePrinter 1.2 [list source [file join $rivetweb_dir tcl message_printer.tcl]]
 package ifneeded rwbasicpage 0.1 [list source [file join $rivetweb_dir tcl rweb_basicpage.tcl]]
 package ifneeded rwutils 1.0 [list source [file join $rivetweb_dir tcl utils.tcl]]
 package ifneeded downloadbin 1.0 [list source [file join $rivetweb_dir tcl downloadbin.tcl]]
