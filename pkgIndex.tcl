@@ -12,8 +12,8 @@ set rivetweb_dir [file dirname [info script]]
 #set msg "RW scripts base directory: $rivetweb_dir"
 #if {[catch {::rivet::apache_log_error notice $msg} e]} { puts $msg }
 
-package ifneeded XMLBase 2.1 [list source [file join $rivetweb_dir tcl datasource xmlbase.tcl]]
-package ifneeded Scripted 2.0 [list source [file join $rivetweb_dir tcl datasource rwscripted.tcl]]
+package ifneeded XMLBase 2.1 [list source [file join $rivetweb_dir tcl handlers xmlbase.tcl]]
+package ifneeded Scripted 2.0 [list source [file join $rivetweb_dir tcl handlers scripted.tcl]]
 package ifneeded htmlizer 1.0 [list source [file join $rivetweb_dir tcl htmlizer.tcl]]
 package ifneeded rivetweb 2.0 [list source [file join $rivetweb_dir tcl rivetweb.tcl]]
 package ifneeded rwconf 2.1 [list source [file join $rivetweb_dir tcl rivetweb_ns.tcl]]
@@ -26,7 +26,7 @@ package ifneeded rwpage 2.0 [list source [file join $rivetweb_dir tcl rweb_page.
 package ifneeded rwstatic 0.1 [list source [file join $rivetweb_dir tcl rweb_static.tcl]]
 package ifneeded rwscripted 0.1 [list source [file join $rivetweb_dir tcl rweb_scripted.tcl]]
 package ifneeded ScriptBase 0.1 [list source [file join $rivetweb_dir tcl rweb_scriptbase.tcl]]
-package ifneeded RWDummy 1.1 [list source [file join $rivetweb_dir tcl datasource dummy.tcl]]
+package ifneeded RWDummy 1.1 [list source [file join $rivetweb_dir tcl handlers dummy.tcl]]
 package ifneeded rwbinary 1.0 [list source [file join $rivetweb_dir tcl rweb_binary.tcl]]
 package ifneeded Datasource 1.0 [list source [file join $rivetweb_dir tcl datasource datasource.tcl]]
 package ifneeded MessagePrinter 0.1 [list source [file join $rivetweb_dir tcl message_printer_01.tcl]]

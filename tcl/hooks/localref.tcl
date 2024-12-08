@@ -16,7 +16,7 @@ proc localref {datasource tag element_text attribute_list} {
     set text_dict [dict create $::rivetweb::default_lang $element_text]
 
     if {[info exists attributes(alias)] && \
-        [::rwdatas::Datasource::get_alias $attributes(alias) aliasdef]} { 
+        [::rwdatas::UrlHandler::get_alias $attributes(alias) aliasdef]} { 
 
         set link_reference $aliasdef
         unset attributes(alias)
@@ -34,9 +34,6 @@ proc localref {datasource tag element_text attribute_list} {
     $::rivetweb::linkmodel set_attribute lm [array get attributes]
     $::rivetweb::linkmodel set_property lm type local
 
-#   set     file_path           "/$::rivetweb::local_pages/$aliasdef"
-#   set     attributes(href)    $file_path
-
     set transformed_link [$datasource to_url $lm]
     set attributes(href) [$::rivetweb::linkmodel get_attribute $transformed_link href]
     #::rivet::html [array get attributes] div b
@@ -44,5 +41,6 @@ proc localref {datasource tag element_text attribute_list} {
     dict set d tagname a
     dict set d attributes [array get attributes]
     return $d
+
 }
 
