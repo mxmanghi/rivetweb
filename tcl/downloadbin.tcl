@@ -37,7 +37,7 @@ namespace eval ::rwpage {
     ::itcl::body DownloadBin::binary_data {language} {
         ::rivet::apache_log_error debug "attempting to download $file_name"
         set file_handle [open [$this filename] r]
-        fconfigure $file_handle -translation binary
+        fconfigure $file_handle -translation binary -encoding binary
 
         #set mylog [open "/tmp/bin-[pid]-[incr count].log" w]
 

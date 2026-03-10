@@ -74,7 +74,6 @@ namespace eval ::rivetweb {
 # here but it will be assigned by the element <default_language>
 # in site_structure.xml
 
-    #variable site_defs              site_defs.xml
     variable language               $default_lang
 
 # 'current_rev' is an integer number specifying

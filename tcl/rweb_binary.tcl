@@ -7,7 +7,6 @@
 package require rwcontent
 
 namespace eval ::rwpage {
-
     ::itcl::class RWBinary {
         inherit RWContent
 
@@ -16,15 +15,14 @@ namespace eval ::rwpage {
         constructor {pagekey {contenttype "application/octet-stream"}} \
                     {RWContent::constructor $pagekey $contenttype} { set data_transmitted 0 }
 
-        public method binary_data {language} {}
+        public method binary_data {language}
         public method print_binary {language}
         public method send_output {language} { $this print_binary $language }
 
     }
 
     ::itcl::body RWBinary::print_binary {language} {
-
-        ::rivetweb::save_channel_status 
+        ::rivetweb::save_channel_status
             
         fconfigure stdout -translation binary -encoding binary
         if {[catch { set data_transmitted [$this binary_data $language] } err einfo]} {
@@ -35,7 +33,6 @@ namespace eval ::rwpage {
 
         return $data_transmitted
     }
-
 }
 
 package provide rwbinary 1.0

@@ -595,6 +595,12 @@ namespace eval ::rivetweb {
         return $default_lang
     }
 
+    proc current_language {} {
+        variable language
+
+        return $language
+    }
+
     proc default {site_default} {
 
         set procname "::rivetweb::select_${site_default}"
